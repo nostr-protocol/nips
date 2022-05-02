@@ -24,3 +24,13 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 5    | Event Deletion            | 9   |
 
 Please update this list when proposing NIPs introducing new event kinds.
+
+## Criteria for acceptance of NIPs
+
+1. They should be implemented somewhere at least as a prototype somewhere.
+2. They should make sense.
+3. Other rules will be made up when necessary.
+
+## License
+
+All NIPs are public domain.
