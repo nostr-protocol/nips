@@ -1,4 +1,4 @@
-# On 'e' and 'p' tags in Text Events (kind 1).
+# On `e` and `p` tags in Text Events (kind 1).
 ### A recommendation for clients.
 
 The following seems to be the conventions that are used by `Branle`, `Damus`, and `more-speech` for referencing
@@ -10,24 +10,26 @@ replies.
  * A reply thread is the tree of events consisting of all replies beginning at the root.
  * An event id is a 32 byte number in lower-case hexidecimal.
 
-## The 'e' tag
-Used in a text event contains a single event id.  ["e", "~hex number~"]  
+## The `e` tag
+Used in a text event contains a single event id.  ["e", "`hex-number`"]  
 
- * No 'e' tag: 
+ * No `e` tag: 
 This event is not a reply to, nor does it refer to, any other event.
 
- * One 'e' tag:  ["e",id]: 
+ * One `e` tag:  ["e",`id`]: 
 The id of the event to which this event is a reply.
 
- * Two 'e' tags:  ["e",root-id], ["e",reply-id]
-'root-id' is the id of the event at the root of the reply chain.  'reply-id' is the id of the article to which this event is a reply.  
+ * Two `e` tags:  ["e",`root-id`], ["e",`reply-id`]
+'root-id' is the `id` of the event at the root of the reply chain.  `reply-id` is the id of the article to which this event is a reply.  
 
- * Many 'e' tags: ["e",root-id]  ["e",mention-id], ..., ["e",reply-id]
-There may be any number of 'mention-ids'.  These are the ids of events which may, or may not be in the reply chain.  They are citings from this event.  'root-id' and 'reply-id' are as above.
+ * Many `e` tags: ["e",`root-id`]  ["e",`mention-id`], ..., ["e",`reply-id`]
+There may be any number of `mention-ids`.  These are the ids of events which may, or may not be in the reply chain.  
+They are citings from this event.  `root-id` and `reply-id` are as above.
 
-## The 'p' tag
+## The `p` tag
 Used in a text event contains a list of pubkeys used to record who is involved in a reply thread.
 
-When replying to a text event E with 'p' tags P, the replying event's 'p' tags should contain P as well as the pubkey of the of the event being replied to.  
+When replying to a text event E with `p` tags P, the replying event's `p` tags should contain P as well as the pubkey of the of the event being replied to.  
 
-Example:  Given a text event authored by a1 with p tags [p1, p2, p3] then the p tags of the reply should be [a1, p1, p2, p3] in no particular order.
+Example:  Given a text event authored by a1 with `p` tags [`p1`, `p2`, `p3`] then the `p` tags of the reply should be [`a1`, `p1`, `p2`, `p3`] 
+in no particular order.
