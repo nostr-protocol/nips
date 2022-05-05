@@ -14,6 +14,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-10: Conventions for clients' use of `e` and `p` tags in text events.](10.md)
 - [NIP-11: Relay Information Document](11.md)
 - [NIP-12: Generic Tag Queries](12.md)
+- [NIP-13: Proof of Work](13.md)
 
 ## Event Kinds
 
