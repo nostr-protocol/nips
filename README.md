@@ -8,6 +8,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-04: Encrypted Direct Message](04.md)
 - [NIP-05: Mapping Nostr keys to DNS-based internet identifiers](05.md)
 - [NIP-06: Basic key derivation from mnemonic seed phrase](06.md)
+- [NIP-07: `window.nostr` capability for web browsers](07.md)
 - [NIP-08: Handling Mentions](08.md)
 - [NIP-09: Event Deletion](09.md)
 - [NIP-10: Conventions for clients' use of `e` and `p` tags in text events.](10.md)
