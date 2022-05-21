@@ -8,7 +8,7 @@ Subject and Discussion tags in Text events.
 
 `draft` `optional` `author:unclebobmartin`
 
-This HIP defines the use of the Subject and Discussion tags in text (kind: 0) events.
+This HIP defines the use of the Subject and Discussion tags in text (kind: 1) events.
 
 Subject
 -------
