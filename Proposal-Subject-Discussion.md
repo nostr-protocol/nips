@@ -13,7 +13,7 @@ This HIP defines the use of the Subject and Discussion tags in text (kind: 0) ev
 Subject
 -------
 
-`["Subject": <string>]`
+`["subject": <string>]`
 
 Browsers often display threaded lists of messages.  The contents of the subject tag can be used in such lists, instead of the more ad hoc approach of using the first few words of the message.  This is very similar to the way email browsers display lists of incoming emails by subject rather than by contents.
 
@@ -24,7 +24,7 @@ Subjects should generally be short.
 Discussion
 ----------
 
-`["Discussion": <string>]`
+`["discussion": <string>]`
 	
 Sometimes users want to send messages to a general audience based on a discussion topic.  Other users would like to read all messages in a discussion topic without having to specifically follow the authors.  Text messages with Discussion tags allow clients to present those messsages that match the discussion.
 
