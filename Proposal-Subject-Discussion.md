@@ -3,12 +3,12 @@ NIP-??
 
 I am implementing this as a trial in more-speech.  
 
-Subject and Discussion tags in Text events.
--------------------------------------------
+Subject tag in Text events.
+---------------------------
 
 `draft` `optional` `author:unclebobmartin`
 
-This HIP defines the use of the Subject and Discussion tags in text (kind: 1) events.
+This NIP defines the use of the Subject tag in text (kind: 1) events.
 
 Subject
 -------
@@ -19,15 +19,4 @@ Browsers often display threaded lists of messages.  The contents of the subject 
 
 When replying to a message with a subject, clients should replicate the subject tag.
 
-Subjects should generally be short.
-
-Discussion
-----------
-
-`["discussion": <string>]`
-	
-Sometimes users want to send messages to a general audience based on a discussion topic.  Other users would like to read all messages in a discussion topic without having to specifically follow the authors.  Text messages with Discussion tags allow clients to present those messsages that match the discussion.
-
-Thoughts?
-
-
+Subjects should generally be shorter than 80 chars.  Long subjects will likely be trimmed by clients.
