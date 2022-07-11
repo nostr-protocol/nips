@@ -32,6 +32,8 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 
 Please update this list when proposing NIPs introducing new event kinds.
 
+When experimenting with kinds, keep in mind the classification introduced by [NIP-16](16.md).
+
 ## Criteria for acceptance of NIPs
 
 1. They should be implemented somewhere at least as a prototype somewhere.
