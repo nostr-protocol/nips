@@ -22,15 +22,16 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 
 ## Event Kinds
 
-| kind | description               | NIP  |
-|------|---------------------------|------|
-| 0    | Metadata                  | 1, 5 |
-| 1    | Text                      | 1    |
-| 2    | Recommend Relay           | 1    |
-| 3    | Contacts                  | 2    |
-| 4    | Encrypted Direct Messages | 4    |
-| 5    | Event Deletion            | 9    |
-| 7    | Reaction                  | 25   |
+| kind  | description               | NIP  |
+|-------|---------------------------|------|
+| 0     | Metadata                  | 1, 5 |
+| 1     | Text                      | 1    |
+| 2     | Recommend Relay           | 1    |
+| 3     | Contacts                  | 2    |
+| 4     | Encrypted Direct Messages | 4    |
+| 5     | Event Deletion            | 9    |
+| 7     | Reaction                  | 25   |
+| 20001 | Client Identification     | 21   |
 
 Please update this list when proposing NIPs introducing new event kinds.
 
