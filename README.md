@@ -18,6 +18,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-14: Subject tag in text events.](14.md)
 - [NIP-15: End of Stored Events Notice](15.md)
 - [NIP-16: Event Treatment](16.md)
+- [NIP-24: Prevent Data Deletion in Replaceable Events](24.md)
 
 ## Event Kinds
 
