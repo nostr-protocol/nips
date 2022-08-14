@@ -19,18 +19,20 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-15: End of Stored Events Notice](15.md)
 - [NIP-16: Event Treatment](16.md)
 - [NIP-25: Reactions](25.md)
+- [NIP-26: Relays List](26.md)
 
 ## Event Kinds
 
-| kind | description               | NIP  |
-|------|---------------------------|------|
-| 0    | Metadata                  | 1, 5 |
-| 1    | Text                      | 1    |
-| 2    | Recommend Relay           | 1    |
-| 3    | Contacts                  | 2    |
-| 4    | Encrypted Direct Messages | 4    |
-| 5    | Event Deletion            | 9    |
-| 7    | Reaction                  | 25   |
+| kind   | description                 | NIP    |
+| ------ | --------------------------- | ------ |
+| 0      | Metadata                    | 1, 5   |
+| 1      | Text                        | 1      |
+| 2      | Recommend Relay             | 1      |
+| 3      | Contacts                    | 2      |
+| 4      | Encrypted Direct Messages   | 4      |
+| 5      | Event Deletion              | 9      |
+| 7      | Reaction                    | 25     |
+| 10001  | Relays List                 | 26     |
 
 Please update this list when proposing NIPs introducing new event kinds.
 
