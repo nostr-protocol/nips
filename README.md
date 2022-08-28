@@ -20,6 +20,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-16: Event Treatment](16.md)
 - [NIP-22: Event created_at Limits](22.md)
 - [NIP-25: Reactions](25.md)
+- [NIP-29: Bookmarks & Pinned Events](29.md)
 
 ## Event Kinds
 
@@ -32,6 +33,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 4    | Encrypted Direct Messages | 4    |
 | 5    | Event Deletion            | 9    |
 | 7    | Reaction                  | 25   |
+| 8    | Bookmarks                 | 29   |
 
 Please update this list when proposing NIPs introducing new event kinds.
 
