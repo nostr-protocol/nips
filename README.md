@@ -33,6 +33,13 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 4    | Encrypted Direct Messages | 4    |
 | 5    | Event Deletion            | 9    |
 | 7    | Reaction                  | 25   |
+| 40   | Channel Creation          | 28   |
+| 41   | Channel Metadata          | 28   |
+| 42   | Channel Message           | 28   |
+| 43   | Channel Hide Message      | 28   |
+| 44   | Channel Mute User         | 28   |
+| 45-49 | Public Chat Reserved     | 28   |
+
 
 Please update this list when proposing NIPs introducing new event kinds.
 
