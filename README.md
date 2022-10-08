@@ -24,24 +24,42 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 
 ## Event Kinds
 
-| kind | description               | NIP  |
-|------|---------------------------|------|
-| 0    | Metadata                  | 1, 5 |
-| 1    | Text                      | 1    |
-| 2    | Recommend Relay           | 1    |
-| 3    | Contacts                  | 2    |
-| 4    | Encrypted Direct Messages | 4    |
-| 5    | Event Deletion            | 9    |
-| 7    | Reaction                  | 25   |
-| 40   | Channel Creation          | 28   |
-| 41   | Channel Metadata          | 28   |
-| 42   | Channel Message           | 28   |
-| 43   | Channel Hide Message      | 28   |
-| 44   | Channel Mute User         | 28   |
-| 45-49 | Public Chat Reserved     | 28   |
+| kind        | description                | NIP                    |
+|-------------|----------------------------|------------------------|
+| 0           | Metadata                   | [1](01.md), [5](05.md) |
+| 1           | Text                       | [1](01.md)             |
+| 2           | Recommend Relay            | [1](01.md)             |
+| 3           | Contacts                   | [2](02.md)             |
+| 4           | Encrypted Direct Messages  | [4](04.md)             |
+| 5           | Event Deletion             | [9](09.md)             |
+| 7           | Reaction                   | [25](25.md)            |
+| 40          | Channel Creation           | [28](28.md)            |
+| 41          | Channel Metadata           | [28](28.md)            |
+| 42          | Channel Message            | [28](28.md)            |
+| 43          | Channel Hide Message       | [28](28.md)            |
+| 44          | Channel Mute User          | [28](28.md)            |
+| 45-49       | Public Chat Reserved       | [28](28.md)            |
+| 10000-19999 | Replacable Events Reserved | [16](16.md)            |
+| 20000-29999 | Ephemeral Events Reserved  | [16](16.md)            |
 
 
-Please update this list when proposing NIPs introducing new event kinds.
+## Message types
+
+### Client to Relay
+| type  | description                                         | NIP        |
+|-------|-----------------------------------------------------|------------|
+| EVENT | used to publish events                              | [1](01.md) |
+| REQ   | used to request events and subscribe to new updates | [1](01.md) |
+| CLOSE | used to stop previous subscriptions                 | [1](01.md) |
+
+### Relay to Client
+| type   | description                                                            | NIP         |
+|--------|------------------------------------------------------------------------|-------------|
+| EVENT  | used to send events requested by clients                               | [1](01.md)  |
+| NOTICE |  used to send human-readable error messages or other things to clients | [1](01.md)  |
+| EOSE   | used to clients when all stored events have been sent                  | [15](15.md) |
+
+Please update these lists when proposing NIPs introducing new event kinds.
 
 When experimenting with kinds, keep in mind the classification introduced by [NIP-16](16.md).
 
