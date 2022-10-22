@@ -19,6 +19,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-15: End of Stored Events Notice](15.md)
 - [NIP-16: Event Treatment](16.md)
 - [NIP-22: Event created_at Limits](22.md)
+- [NIP-24: Private Messages](24.md)
 - [NIP-25: Reactions](25.md)
 - [NIP-28: Public Chat](28.md)
 
@@ -33,6 +34,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 4    | Encrypted Direct Messages | 4    |
 | 5    | Event Deletion            | 9    |
 | 7    | Reaction                  | 25   |
+| 12   | Decoy Key Proof           | 24   |
 | 40   | Channel Creation          | 28   |
 | 41   | Channel Metadata          | 28   |
 | 42   | Channel Message           | 28   |
