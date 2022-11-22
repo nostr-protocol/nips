@@ -20,7 +20,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-16: Event Treatment](16.md)
 - [NIP-20: Command Results](20.md)
 - [NIP-22: Event created_at Limits](22.md)
-- [NIP-24: Prevent Data Deletion in Replaceable Events](24.md)
+- [NIP-24: Protect the Unknown](24.md)
 - [NIP-25: Reactions](25.md)
 - [NIP-28: Public Chat](28.md)
 - [NIP-35: User Discovery](35.md)
