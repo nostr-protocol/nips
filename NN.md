@@ -11,8 +11,8 @@ This NIP extends NIP-01 `<filters>` definition to add two additional optional fi
 
 ````json
 {
- `seen_since`: <a timestamp, events must have been received by this relay at or later than this to pass>
- `seen_until`: <a timestamp, events must have been received by this relay before this to pass>
+  "seen_since": <a timestamp, events must have been received by this relay at or later than this to pass>
+  "seen_until": <a timestamp, events must have been received by this relay before this to pass>
 }
 ````
 
