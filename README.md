@@ -21,6 +21,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-20: Command Results](20.md)
 - [NIP-22: Event created_at Limits](22.md)
 - [NIP-25: Reactions](25.md)
+- [NIP-26: Delegated Event Signing](26.md)
 - [NIP-28: Public Chat](28.md)
 - [NIP-35: User Discovery](35.md)
 
