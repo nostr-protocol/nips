@@ -69,9 +69,10 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 
 ## Criteria for acceptance of NIPs
 
-1. They should be implemented somewhere at least as a prototype somewhere.
+1. They should be implemented in at least one client and one relay -- when applicable.
 2. They should make sense.
-3. Other rules will be made up when necessary.
+3. They should be optional and backwards-compatible: care must be taken such that clients and relays that choose to not implement them do not stop working when interacting with the ones that choose to.
+4. Other rules will be made up when necessary.
 
 ## License
 
