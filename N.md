@@ -7,7 +7,7 @@ Mail messages
 `draft` `optional` `author:arejula27` 
 
 This NIP defines new event kinds for encrypted messages. It work in the same way as NIP-04,but the structure 
-of the content is different.
+of the content is different. For mail app we `MUST`use the kind `N`
 
 
 **`content`** MUST be equal to the base64-encoded, aes-256-cbc encrypted string of anything a user wants to write, encrypted using a shared cipher 
@@ -22,6 +22,12 @@ has the following format: `{subject:<subject>, content:<content>}`
 
 A mail can be replied by other mail which MUST have a tag
   
-## Mark a mail as read
-For set a mail as read the user MUST send a reaction `NIP-25`
+## Intereact with the mails
+As we cant modify the events make by other people we `MAY` intereact with kind `N+1`. 
+**`content`** `MAY` be encoded as kind `N`messages, but in this case is optional. The content must be all the interactions we must have encoded as Json:
+  - Read(bool): if the mail has been open or not, false by default.
+  - Labels(string[]): if the mail has some labels (spam, university, job,etc..). By default it is empty.
+**`tags`** `MUST` contain a entry indetifying the mail which is interacting    `["e", "<event_id>"]`.
+
+
  
