@@ -25,6 +25,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-28: Public Chat](28.md)
 - [NIP-35: User Discovery](35.md)
 - [NIP-36: Sensitive Content](36.md)
+- [NIP-37: Remote Signing of Events](37.md)
 
 ## Event Kinds
 
@@ -50,19 +51,21 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 ## Message types
 
 ### Client to Relay
-| type  | description                                         | NIP        |
-|-------|-----------------------------------------------------|------------|
-| EVENT | used to publish events                              | [1](01.md) |
-| REQ   | used to request events and subscribe to new updates | [1](01.md) |
-| CLOSE | used to stop previous subscriptions                 | [1](01.md) |
+| type     | description                                           | NIP          |
+| -------  | ----------------------------------------------------- | ------------ |
+| EVENT    | used to publish events                                | [1](01.md)   |
+| REQ      | used to request events and subscribe to new updates   | [1](01.md)   |
+| CLOSE    | used to stop previous subscriptions                   | [1](01.md)   |
+| UNSIGNED | used to send and request unsigned events              | [37](37.md)  |
 
 ### Relay to Client
-| type   | description                                             | NIP         |
-|--------|---------------------------------------------------------|-------------|
-| EVENT  | used to send events requested to clients                | [1](01.md)  |
-| NOTICE | used to send human-readable messages to clients         | [1](01.md)  |
-| EOSE   | used to notify clients all stored events have been sent | [15](15.md) |
-| OK     | used to notify clients if an EVENT was successuful      | [20](20.md) |
+| type     | description                                               | NIP           |
+| -------- | --------------------------------------------------------- | ------------- |
+| EVENT    | used to send events requested to clients                  | [1](01.md)    |
+| NOTICE   | used to send human-readable messages to clients           | [1](01.md)    |
+| EOSE     | used to notify clients all stored events have been sent   | [15](15.md)   |
+| OK       | used to notify clients if an EVENT was successuful        | [20](20.md)   |
+| UNSIGNED | used to send unsigned events                              | [37](37.md)   |
 
 Please update these lists when proposing NIPs introducing new event kinds.
 
