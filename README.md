@@ -25,6 +25,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-28: Public Chat](28.md)
 - [NIP-35: User Discovery](35.md)
 - [NIP-36: Sensitive Content](36.md)
+- [NIP-39: Reposts](39.md)
 
 ## Event Kinds
 
@@ -36,6 +37,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 3           | Contacts                    | [2](02.md)             |
 | 4           | Encrypted Direct Messages   | [4](04.md)             |
 | 5           | Event Deletion              | [9](09.md)             |
+| 6           | Reposts                     | [39](39.md)            |
 | 7           | Reaction                    | [25](25.md)            |
 | 40          | Channel Creation            | [28](28.md)            |
 | 41          | Channel Metadata            | [28](28.md)            |
