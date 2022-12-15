@@ -18,10 +18,14 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-14: Subject tag in text events.](14.md)
 - [NIP-15: End of Stored Events Notice](15.md)
 - [NIP-16: Event Treatment](16.md)
+- [NIP-20: Command Results](20.md)
 - [NIP-22: Event created_at Limits](22.md)
 - [NIP-24: Private Messages](24.md)
 - [NIP-25: Reactions](25.md)
+- [NIP-26: Delegated Event Signing](26.md)
 - [NIP-28: Public Chat](28.md)
+- [NIP-35: User Discovery](35.md)
+- [NIP-36: Sensitive Content](36.md)
 
 ## Event Kinds
 
@@ -60,6 +64,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | EVENT  | used to send events requested to clients                | [1](01.md)  |
 | NOTICE | used to send human-readable messages to clients         | [1](01.md)  |
 | EOSE   | used to notify clients all stored events have been sent | [15](15.md) |
+| OK     | used to notify clients if an EVENT was successuful      | [20](20.md) |
 
 Please update these lists when proposing NIPs introducing new event kinds.
 
@@ -67,9 +72,10 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 
 ## Criteria for acceptance of NIPs
 
-1. They should be implemented somewhere at least as a prototype somewhere.
+1. They should be implemented in at least one client and one relay -- when applicable.
 2. They should make sense.
-3. Other rules will be made up when necessary.
+3. They should be optional and backwards-compatible: care must be taken such that clients and relays that choose to not implement them do not stop working when interacting with the ones that choose to.
+4. Other rules will be made up when necessary.
 
 ## License
 
