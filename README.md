@@ -18,6 +18,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-14: Subject tag in text events.](14.md)
 - [NIP-15: End of Stored Events Notice](15.md)
 - [NIP-16: Event Treatment](16.md)
+- [NIP-19: bech32-encoded entities](19.md)
 - [NIP-20: Command Results](20.md)
 - [NIP-22: Event created_at Limits](22.md)
 - [NIP-25: Reactions](25.md)
@@ -25,6 +26,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-28: Public Chat](28.md)
 - [NIP-35: User Discovery](35.md)
 - [NIP-36: Sensitive Content](36.md)
+- [NIP-40: Expiration Timestamp](40.md)
 
 ## Event Kinds
 
