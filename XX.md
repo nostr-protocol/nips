@@ -12,40 +12,67 @@ This NIP is a proposal for sending and receiving files over the nostr protocol. 
 
 Todays social media has become much more visual than simple texts posts. In order for nostr to become a real alternative it must be able to handle non-text content like images, audio and video. So far users have solved this by uploading files to a third-party file server and including a URL in their transmissions, which make them vulnerable to censorship again. In order to solve this issue, files must be transmitted over the nostr protocol directly.
 
-In order to handle files in the most decentralised and convenient way, we implement a flow based HTTP's 206 Partial-Content.
+In order to handle files in the most decentralised and convenient way, we implement a flow based HTTP's 206 Partial-Content. This allows content to be relayed further and lays the groundwork for future implementations of live content and streaming.
 
 #### Spec
 
-This NIP introduces two new kinds X, Y, as well as a couple of tags.
+This NIP introduces two new kinds `X`, `Y`, as well as a couple of tags.
 
 ```
 tags:
- - ['Content-Length', <Total Content-Length in bytes>] 
+ - ['Content-Length', <Total Content-Length in bytes>]
  - ['Content-Range', <Range of bytes included in the event>] 
- - ['Content-Type', <Type of content according to HTTP content types>] 
+ - ['Content-Type', <Type of content according to MIME type spec>] 
 
 kinds:
 - x (Partial-Content-Entry)
 - y (Partial-Content-Body)
 ```
 
-#### Example
+Files are not attached to the content key of a single event, but instead are split into chunks. The size of the chunks is not defined in this NIP and will be set by the client. Lower chunk size will increase potential decentralization, but decrease convenience.
+The client construct an event of kind `Y` for every single chunk, attach the chunk encoded as HEX string to it's data key. Also the client set the events `Content-Length` tag to the total amount of bytes the file has, the `Content-Range` tag to range of bytes a chunk carries and `Content-Type` to the MIME type of the file.
+
+Once the client has built an event for every single data chunk, it creates a single event of kind `X` that will act as a directory for this file transmission. This event will have the `Content-Length` and the `Content-Type` tags as well. The content key of this event will have a comma seperated list of all the events of type `Y` the client has built for this file transfer in the right order.
+
+After building all the required events, the client will transmit them to the relays.
+
+> Note: Instead of transmitting all event the client could publish the Partial-Content-Entry event first and give the Relay time to reject or accept the proposed upload depending on total size, content-type, successful payment etc.
+
+#### Examples
+
+## Partial-Content-Entry
 
 ```json
 {
     "pubkey": "<pub-key>",
     "created_at": 1000000000,
-    "kind": k,
+    "kind": x,
     "tags": [
-      ["partial-content", "10000", "10000-20000/210021"],
-      ["e", <32-bytes hex of the id of the previous chunk>]
+      ["Content-Length", 48000],
+      ["Content-Type", "video/mp4"]
     ],
-    "content": "<FilestreamChunk>",
+    "content": "7603a125d99eca0ccf1085959b307f64e5dd358000006d8c378af1779d2feebc,8000006d8c378af1779d2feebc7603a125d99eca0ccf1085959b307f64e5dd35,000006d8c378af1779d2feebc7603a125d99eca0ccf1085959b307f64e5dd358",
     "id": "<event-id>"
 }
 ```
 
-Note: e in this case will point at the previous chunks event so that a client can stich the chunks back together
+## Partial-Content-Body
+
+```json
+{
+    "pubkey": "<pub-key>",
+    "created_at": 1000000000,
+    "kind": x,
+    "tags": [
+      ["Content-Length", 48000],
+      ["Content-Range", "0-16000/48000"]
+      ["Content-Type", "video/mp4"]
+    ],
+    "content": "<Chunk of file in HEX>",
+    "id": "7603a125d99eca0ccf1085959b307f64e5dd358000006d8c378af1779d2feebc"
+}
+```
+
 
 Client Behavior
 ---------------
@@ -56,5 +83,5 @@ Relay Behavior
 Suggested Use Cases
 -------------------
 
-* Uploading files and media to multiple relays, introducing censorship resistance
+* Uploading files and media to multiple relays, introducing censorship resistance for non-text files
 * Streaming of content from a source to a receiver / Live content
