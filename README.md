@@ -27,6 +27,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-35: User Discovery](35.md)
 - [NIP-36: Sensitive Content](36.md)
 - [NIP-40: Expiration Timestamp](40.md)
+- [NIP-41: Partial-Cotent](41.md)
 
 ## Event Kinds
 
@@ -39,6 +40,8 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 4           | Encrypted Direct Messages   | [4](04.md)             |
 | 5           | Event Deletion              | [9](09.md)             |
 | 7           | Reaction                    | [25](25.md)            |
+| 11          | Partial-Content-Entry       | [41](41.md)            |
+| 12          | Partial-Content-Body        | [41](41.md)            |
 | 40          | Channel Creation            | [28](28.md)            |
 | 41          | Channel Metadata            | [28](28.md)            |
 | 42          | Channel Message             | [28](28.md)            |
