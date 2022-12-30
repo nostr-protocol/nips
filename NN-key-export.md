@@ -54,6 +54,17 @@ Posting the encrypted private key to a relay
 
 To share the key with yourself at another client, the encrypted private key can be posted as the content of a nostr event using the event kind of NN (FIXME).
 
+Test Data
+---------
+
+For the following hex encoded private key:
+
+`prv a28129ab0b70c8d5e75aaf510ec00bff47fde7ca4ab9e3d9315c77edc86f037f`
+
+when encrypted with the password "nostr" yields the following encrypted private key:
+
+`F+VYIvTCtIZn4c6owPMZyu4Zn5DH9T5XcgZWmFG/3ma4C3PazTTQxQcIF+G+daeFlkqsZiNIh9bcmZ5pfdRPyg==`
+
 Motivation
 ----------
 
