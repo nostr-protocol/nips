@@ -9,13 +9,18 @@ Private Key Transfer
 
 This NIP defines a method by which clients can export and/or import a password-encrypted private key for the purposes of moving it between clients.
 
-Generating the encryption/decryption key
-----------------------------------------
+Key derivation
+--------------
 
 The key used to encrypt/decrypt the private key is generated from a password.
 This same process is used for both encryption and decryption, and is not reversable.
 
-Perform PBKDF2 using HMAC-SHA-256 on the password as bytes, salted with the string "nostr", and run for 4096 cycles.
+Create a 15-byte random salt. Prepend it with the byte 0x01 which represents the version number of this NIP algorithm.
+
+Perform PBKDF2 using HMAC-SHA-256 on the password as bytes, salted with the salt, and run for 100,000 cycles.
+
+Notes about the number of cycles: Encrypting and decrypting a key is not a common operation and can take a number of seconds. Those wishing to brute force guess passwords will be slowed down considerably by these required rounds.
+
 
 Encrypting/Decrypting a private key
 -----------------------------------
@@ -27,18 +32,20 @@ In short, the encryption/export process goes:
      - Append these bytes: [15, 91, 241, 148, 90, 143, 101, 12, 172, 255, 103]
      - Append a `0` if the key has been carelessly handled (printed, cut-n-paste, saved to disk, etc, while not encrypted) or a `1` if it is not known to have been carelessly handled.
  - Generate a random 16-byte initialization vector for AES-256, called IV
- - Pad the input as required by AES
- - Encrypt the padded input with AES-256-CBC using the randomly generated IV and the key generated from the previous section.
+ - Pad the input as required by AES to 48 bytes.
+ - Encrypt the padded input with AES-256-CBC using the randomly generated IV and the key generated from the previous section. The result should be 48 bytes long.
  - Concatenate the output:
-     - Start with the 16-byte IV
+     - Start with the 16-byte salt used in the key derivation step above
+     - Append the 16-byte IV
      - Append the ciphertext output of AES (the total should now be 80 bytes)
  - Encode using base64 using the standard alphabet from RFC 3548
 
 The decryption process is the reverse of the encryption process
 
- - Decode the input using base64 using the standard alphabet from RFC 3548
- - Split the input considering the first 16 bytes as the IV and the rest as ciphertext
- - Decrypt the ciphertext with AES-256-CBC using the IV and the key generated from the previous section.
+ - Decode the input using base64 using the standard alphabet from RFC 3548. The result should be 80 bytes long.
+ - Split the input considering the first 16 bytes as the salt, the next 16 bytes as the AES IV, and the rest as ciphertext
+ - The salt should start with 0x01.
+ - Decrypt the ciphertext with AES-256-CBC using the IV and the key generated from the previous section using the salt. The output should be 44 bytes long.
  - Split the output into three pieces
      - The first 32 bytes, which are the private key
      - The next 11 bytes, which must equal [15, 91, 241, 148, 90, 143, 101, 12, 172, 255, 103] or else there was an error.
@@ -59,7 +66,7 @@ Test Data
 
 The following encrypted private key:
 
-`F+VYIvTCtIZn4c6owPMZyu4Zn5DH9T5XcgZWmFG/3ma4C3PazTTQxQcIF+G+daeFlkqsZiNIh9bcmZ5pfdRPyg==`
+`AZQYNwAGULWyKweTtw6WCljV+1cil8IMRxfZ7Rs3nCfwbVQBV56U6eV9ps3S1wU7ieCx6EraY9Uqdsw71TY5Yv/Ep6yGcy9m1h4YozuxWQE=`
 
 When decrypted with the password 'nostr' yields the following hex-encoded private key:
 
