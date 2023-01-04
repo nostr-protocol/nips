@@ -33,6 +33,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
 - [NIP-42: Authentication of clients to relays](42.md)
+- [NIP-45: Counting results](45.md)
 - [NIP-46: Nostr Connect](46.md)
 - [NIP-50: Keywords filter](50.md)
 - [NIP-51: Lists](51.md)
@@ -88,6 +89,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | REQ   | used to request events and subscribe to new updates | [1](01.md)  |
 | CLOSE | used to stop previous subscriptions                 | [1](01.md)  |
 | AUTH  | used to send authentication events                  | [42](42.md) |
+| COUNT | used to request event counts                        | [45](45.md) |
 
 ### Relay to Client
 | type   | description                                             | NIP         |
@@ -97,6 +99,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | EOSE   | used to notify clients all stored events have been sent | [15](15.md) |
 | OK     | used to notify clients if an EVENT was successful       | [20](20.md) |
 | AUTH   | used to send authentication challenges                  | [42](42.md) |
+| COUNT  | used to send requested event counts to clients          | [45](45.md)  |
 
 Please update these lists when proposing NIPs introducing new event kinds.
 
