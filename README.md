@@ -70,6 +70,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | NOTICE | used to send human-readable messages to clients         | [1](01.md)  |
 | EOSE   | used to notify clients all stored events have been sent | [15](15.md) |
 | OK     | used to notify clients if an EVENT was successuful      | [20](20.md) |
+| AUTH   | used to send authentication challenges                  | [42](42.md) |
 
 Please update these lists when proposing NIPs introducing new event kinds.
 
