@@ -67,7 +67,7 @@ The `content` field must be a JSONRPC-ish **request** or **response**.
 
 ### Nostr Connect URI
 
-**Wallet** discovers **App** by scanning a QR code or clicking on a deep link or copy-pasting an URI.
+**Wallet** discovers **App** by scanning a QR code, clicking on a deep link or copy-pasting an URI.
 
 The **App** generates a special URI with prefix `nostr://` and base path `connect` with the following querystring parameters
 
