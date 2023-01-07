@@ -74,8 +74,8 @@ The **App** generates a special URI with prefix `nostr://` and base path `connec
 - `target` hexadecimal public key of the **App**
 - `relay` URL of the relay of choice where the **App** is connected and the **Signer** must send and listen for messages.
 - `metadata`  metadata JSON of the **App** 
-    - `url` URL of the website requesting the connection
     - `name` human-readable name of the **App** 
+    - `url` (optional) URL of the website requesting the connection
     - `description` (optional) description of the **App**
     - `icons` (optional) array of URLs for icons of the **App**.
 
