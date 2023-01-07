@@ -1,7 +1,7 @@
-NIP-Nostr-Connect
+NIP-XX
 ======
 
-Nostr Connect allows Nostr apps to connect with remote signing devices
+Nostr Connect
 ------------------------
 
 `draft` `optional` `author:tiero` `author:giowe` `author:vforvalerio87`
