@@ -8,7 +8,8 @@ Nostr Connect
 
 ## Rationale
 
-Having to enter your Nostr private key on each website or random app _sucks_.
+Having to enter your Nostr private key on each website or random app _sucks_.  
+Entering your private key on multiple websites or apps increases the risk of it being exposed to hackers or malicious actors. Additionally, there is a risk of falling victim to a phishing attack if you enter your private key on a fake website or app that is designed to look like a legitimate service.
 
 
 ## `TL;DR`
