@@ -41,6 +41,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 5           | Event Deletion              | [9](09.md)             |
 | 6           | Repost                      | [18](18.md)            |
 | 7           | Reaction                    | [25](25.md)            |
+| 13          | Key Invalidation            | [41](41.md)            |
 | 40          | Channel Creation            | [28](28.md)            |
 | 41          | Channel Metadata            | [28](28.md)            |
 | 42          | Channel Message             | [28](28.md)            |
