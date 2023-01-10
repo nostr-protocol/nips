@@ -1,4 +1,4 @@
-NIP-XX
+NIP-46
 ======
 
 Nostr Connect
@@ -70,7 +70,7 @@ The `content` field must be a JSONRPC-ish **request** or **response**.
 
 **Signer** discovers **App** by scanning a QR code, clicking on a deep link or copy-pasting an URI.
 
-The **App** generates a special URI with prefix `nostr://` and base path `connect` with the following querystring parameters
+The **App** generates a special URI with prefix `nostr://` and base path `connect` with the following querystring parameters **URL encoded**
 
 - `target` hexadecimal public key of the **App**
 - `relay` URL of the relay of choice where the **App** is connected and the **Signer** must send and listen for messages.
@@ -83,7 +83,7 @@ The **App** generates a special URI with prefix `nostr://` and base path `connec
 #### Example
 
 ```sh
-nostr://connect?target=<pubkey>&relay=<relay>&metadata={"url": "example.com","name": "Example"}
+nostrconnect://<pubkey>?relay=encodeURIComponent("wss://relay.damus.io")&metadata=encodeURIComponent(JSON.stringify({"name": "Example"})))
 ```
 
 
@@ -126,6 +126,5 @@ nostr://connect?target=<pubkey>&relay=<relay>&metadata={"url": "example.com","na
 1. The **App** will send a kind 4 encrypted message with metadata to the **Signer** with a `delegate` request along with the **conditions** query string and the **pubkey** of the **App** to be delegated.
 2. The **Signer** will show a popup to the user to delegate the **App** to sign on his behalf
 3. The **Signer** will send back a kind 4 encrypted message with the signed [NIP-26 delegation token](https://github.com/nostr-protocol/nips/blob/master/26.md) or reject it
-4. All others subsequent `delegate` Requests will be ACKed automatically
 
 
