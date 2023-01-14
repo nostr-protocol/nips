@@ -27,6 +27,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-35: User Discovery](35.md)
 - [NIP-36: Sensitive Content](36.md)
 - [NIP-40: Expiration Timestamp](40.md)
+- [NIP-49: Private Key Transfer](49.md)
 
 ## Event Kinds
 
@@ -46,6 +47,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 44          | Channel Mute User           | [28](28.md)            |
 | 45-49       | Public Chat Reserved        | [28](28.md)            |
 | 10000-19999 | Replaceable Events Reserved | [16](16.md)            |
+| 10002       | Private Key Transfer        | [49](49.md)            |
 | 20000-29999 | Ephemeral Events Reserved   | [16](16.md)            |
 
 
