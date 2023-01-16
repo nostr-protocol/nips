@@ -28,6 +28,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-33: Parameterized Replaceable Events](33.md)
 - [NIP-36: Sensitive Content](36.md)
 - [NIP-40: Expiration Timestamp](40.md)
+- [NIP-42: Authentication of clients to relays](42.md)
 
 ## Event Kinds
 
@@ -47,6 +48,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 43          | Channel Hide Message        | [28](28.md)            |
 | 44          | Channel Mute User           | [28](28.md)            |
 | 45-49       | Public Chat Reserved        | [28](28.md)            |
+| 22242       | Client Authentication       | [42](42.md)            |
 | 10000-19999 | Replaceable Events Reserved | [16](16.md)            |
 | 20000-29999 | Ephemeral Events Reserved   | [16](16.md)            |
 
@@ -54,11 +56,12 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 ## Message types
 
 ### Client to Relay
-| type  | description                                         | NIP        |
-|-------|-----------------------------------------------------|------------|
-| EVENT | used to publish events                              | [1](01.md) |
-| REQ   | used to request events and subscribe to new updates | [1](01.md) |
-| CLOSE | used to stop previous subscriptions                 | [1](01.md) |
+| type  | description                                         | NIP         |
+|-------|-----------------------------------------------------|-------------|
+| EVENT | used to publish events                              | [1](01.md)  |
+| REQ   | used to request events and subscribe to new updates | [1](01.md)  |
+| CLOSE | used to stop previous subscriptions                 | [1](01.md)  |
+| AUTH  | used to send authentication events                  | [42](42.md) |
 
 ### Relay to Client
 | type   | description                                             | NIP         |
@@ -67,6 +70,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | NOTICE | used to send human-readable messages to clients         | [1](01.md)  |
 | EOSE   | used to notify clients all stored events have been sent | [15](15.md) |
 | OK     | used to notify clients if an EVENT was successuful      | [20](20.md) |
+| AUTH   | used to send authentication challenges                  | [42](42.md) |
 
 Please update these lists when proposing NIPs introducing new event kinds.
 
