@@ -1,0 +1,56 @@
+NIP-XX
+======
+
+Lists
+-------------------------
+
+`draft` `optional` `author:fiatjaf` `author:arcbtc` `author:monlovesmango` `author:eskima` 
+
+A special event with kind `30000`, meaning "list" is defined as having a list of public and/or private tags. Public tags will be listed in the event `tags`. Private tags will be encrypted in the event `content` field. Encryption for private tags will use [NIP-04 - Encrypted Direct Message](04.md) encryption, using the list author's private and public key for the shared secret. This event kind would follow [NIP-33 - Parameterized Replaceable Events](33.md). Lists SHOULD NOT mix different tags (ie. 'p' tags can't be included in the same list as 'e' tags).
+
+The parameter for the list event will comprised of `<type>:<name>`:
+- `<type>` identifies the type of tags included in the list
+- `<name>` identifies the list by name
+
+Commonly established list names for this kind are:
+- `mute` - a list of tags that the user wants to mute
+- `follow` - a list of tags that the user wants to follow
+- `pin` - a list of tags that the user wants to pin (for display on profile)
+- `bookmark` - a list of tags that the user wants to bookmark
+
+Outside of the commonly established list names users are allowed to choose custom names for their lists.
+
+For example, if a user has keys:
+```
+priv: fb505c65d4df950f5d28c9e4d285ee12ffaf315deef1fc24e3c7cd1e7e35f2b1
+pub: b1a5c93edcc8d586566fde53a20bdb50049a97b15483cb763854e57016e0fa3d 
+```
+and wants to publicly follow a list with these users:
+
+```json
+["p", "3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d"],
+["p", "32e1827635450ebb3c5a7d12c1f8e7b2b514439ac10a67eef3d9fd9c5c68e245"]
+```
+and privately follow a list with these users:
+
+```json
+["p", "9ec7a778167afb1d30c4833de9322da0c08ba71a69e1911d5578d3144bb56437"],
+["p", "8c0da4862130283ff9e67d889df264177a508974e2feb96de139804ea66d6168"]
+```
+
+then they would create a list event like below:
+
+```json
+{
+  "kind": 30000,
+  "tags": [
+    ["d", "p:follow"],
+    ["p", "3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d"],
+    ["p", "32e1827635450ebb3c5a7d12c1f8e7b2b514439ac10a67eef3d9fd9c5c68e245"],
+  ],
+  "content": "kHU7tKasd/HD5HXt7DtZcZvcK8Fa+BJMDduG5pfJkvh0jFktbtCG7jll6/b2diG2DRnVO+HJUhY0hfPXD/6TiSMLNh/IcWrqpdXacSIGEeI9VuYI0eoUw77VAhADWvpIPEeyN6qbm4QcEibM2hAVIYg90m1hpiG6/of+8sv5urD4W3QdhUWZqFim281THw3uWHf8rqFgzmHs4+nXX2G4xw==?iv=s74CzOnLHTonCkkjN7lcAg==",
+  ...other fields
+}
+```
+
+
