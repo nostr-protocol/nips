@@ -20,6 +20,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-16: Event Treatment](16.md)
 - [NIP-19: bech32-encoded entities](19.md)
 - [NIP-20: Command Results](20.md)
+- [NIP-21: `nostr:` URL scheme](21.md)
 - [NIP-22: Event created_at Limits](22.md)
 - [NIP-25: Reactions](25.md)
 - [NIP-26: Delegated Event Signing](26.md)
