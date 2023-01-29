@@ -50,7 +50,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 22242       | Client Authentication       | [42](42.md)            |
 | 10000-19999 | Replaceable Events Reserved | [16](16.md)            |
 | 20000-29999 | Ephemeral Events Reserved   | [16](16.md)            |
-| 30000       | Lists                       | [51](51.md)            |
+| 30000-30002 | Lists                       | [51](51.md)            |
 
 
 ## Message types
