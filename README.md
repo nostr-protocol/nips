@@ -20,6 +20,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-16: Event Treatment](16.md)
 - [NIP-19: bech32-encoded entities](19.md)
 - [NIP-20: Command Results](20.md)
+- [NIP-21: `nostr:` URL scheme](21.md)
 - [NIP-22: Event created_at Limits](22.md)
 - [NIP-25: Reactions](25.md)
 - [NIP-26: Delegated Event Signing](26.md)
@@ -29,6 +30,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-40: Expiration Timestamp](40.md)
 - [NIP-42: Authentication of clients to relays](42.md)
 - [NIP-46: Nostr Connect](46.md) 
+- [NIP-50: Keywords filter](50.md)
 
 ## Event Kinds
 
@@ -76,6 +78,20 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 Please update these lists when proposing NIPs introducing new event kinds.
 
 When experimenting with kinds, keep in mind the classification introduced by [NIP-16](16.md).
+
+## Standardized Tags
+
+| name       | value                   | other parameters  | NIP                      |
+| ---------- | ----------------------- | ----------------- | ------------------------ |
+| e          | event id (hex)          | relay URL, marker | [1](01.md), [10](10.md)  |
+| p          | pubkey (hex)            | relay URL         | [1](01.md)               |
+| r          | a reference (URL, etc)  |                   | [12](12.md)              |
+| t          | hashtag                 |                   | [12](12.md)              |
+| g          | geohash                 |                   | [12](12.md)              |
+| nonce      | random                  |                   | [13](13.md)              |
+| subject    | subject                 |                   | [14](14.md)              |
+| d          | identifier              |                   | [33](33.md)              |
+| expiration | unix timestamp (string) |                   | [40](40.md)              |
 
 ## Criteria for acceptance of NIPs
 
