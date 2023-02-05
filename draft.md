@@ -6,7 +6,7 @@ Source Control Context
 
 `draft` `optional` `author:garyKrause_`
 
-This NIP defines ways source control (git, etc.) context can be stored using nostr. Git is already decentralized, but the contexts around a git repository are largely centralized (PR comments, issue tracking, releases, etc). With the correct approach a nostr relay could store this context using many of the existing NIPs. This NIP defines a new kind, `kind: ??`, to represent a source control repository. This NIP purposely does not indicate git as a requirement but many of the concepts will be based around git methods of source control. The author hopes that the NIP is flexible enough to accomodate other source control methodologies.
+This NIP defines ways source control (git, etc.) context can be stored using nostr. Git is already decentralized, but the contexts around a git repository are largely centralized (PR comments, issue tracking, releases, etc). With the correct approach a nostr relay could store this context using many of the existing NIPs. This NIP defines a new kind, `kind: ??`, to represent a source control repository. This NIP purposely does not indicate git as a requirement but many of the concepts will be based around git methods of source control. The author hopes that the NIP is flexible enough to accommodate other source control methodologies.
 
 ## Definition of a Source Control Event
 
@@ -29,7 +29,7 @@ A relay MAY host the repository along side it's nostr database which can be disc
 
 ### Merge Requests
 
-A source control event MAY contain an `m` tag indicating the event is specific to a merge request. If present, the `m` tag SHALL define the branch being merged into and the branch being merged in. An event MAY include the URL of the repository being merged from. This could be included when the URL being merged from is not in the `b` tag of the event or for specificity. When creating a merge request, the `content` field MAY contain a justification/explanation for the merge
+A source control event MAY contain an `m` tag indicating the event is specific to a merge request. If present, the `m` tag SHALL define the branch being merged into and the branch being merged in. An event MAY include the URL of the repository being merged from. This could be included when the URL being merged from is not in the `b` tag of the event or for specificity. When creating a merge request, the `content` field MAY contain a justification/explanation for the merge. The `l` tag MAY be included with an `m` tag. The `l` tag specifies the relative file path and line number that the event is referencing.
 
 ```json
 {
@@ -38,6 +38,7 @@ A source control event MAY contain an `m` tag indicating the event is specific t
   "tags": [
     ["b", <repository url>, <repository url>, ...],
     ["m": <branch to be merged into>, <branch to be merged in>, <URL of merging in repository>],
+    ["l": <file name/path>, <line number>]
   ],
   "content": <arbitrary string>,
   ...
