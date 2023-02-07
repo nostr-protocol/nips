@@ -30,6 +30,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-40: Expiration Timestamp](40.md)
 - [NIP-42: Authentication of clients to relays](42.md)
 - [NIP-50: Keywords filter](50.md)
+- [NIP-65: Relay List Metadata](65.md)
 
 ## Event Kinds
 
