@@ -49,6 +49,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 44          | Channel Mute User           | [28](28.md)            |
 | 45-49       | Public Chat Reserved        | [28](28.md)            |
 | 22242       | Client Authentication       | [42](42.md)            |
+| 1000-9999   | Regular Events Reserved     | [16](16.md)            |
 | 10000-19999 | Replaceable Events Reserved | [16](16.md)            |
 | 20000-29999 | Ephemeral Events Reserved   | [16](16.md)            |
 | 30000-39999 | Param. Repl. Events Reserved| [33](33.md)            |
