@@ -31,6 +31,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-42: Authentication of clients to relays](42.md)
 - [NIP-50: Keywords filter](50.md)
 - [NIP-56: Reporting](56.md)
+- [NIP-65: Relay List Metadata](65.md)
 
 ## Event Kinds
 
@@ -50,7 +51,9 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 44          | Channel Mute User           | [28](28.md)            |
 | 45-49       | Public Chat Reserved        | [28](28.md)            |
 | 1984        | Reporting                   | [56](56.md)            |
+| 10002       | Relay List Metadata         | [65](65.md)            |
 | 22242       | Client Authentication       | [42](42.md)            |
+| 1000-9999   | Regular Events Reserved     | [16](16.md)            |
 | 10000-19999 | Replaceable Events Reserved | [16](16.md)            |
 | 20000-29999 | Ephemeral Events Reserved   | [16](16.md)            |
 | 30000-39999 | Param. Repl. Events Reserved| [33](33.md)            |
