@@ -38,7 +38,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | kind        | description                 | NIP                    |
 |-------------|-----------------------------|------------------------|
 | 0           | Metadata                    | [1](01.md), [5](05.md) |
-| 1           | Text                        | [1](01.md)             |
+| 1           | Short Text Note             | [1](01.md)             |
 | 2           | Recommend Relay             | [1](01.md)             |
 | 3           | Contacts                    | [2](02.md)             |
 | 4           | Encrypted Direct Messages   | [4](04.md)             |
