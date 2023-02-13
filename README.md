@@ -35,7 +35,6 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-65: Relay List Metadata](65.md)
 
 ## Event Kinds
-
 | kind          | description                      | NIP                     |
 | ------------- | -------------------------------- | ----------------------- |
 | 0             | Metadata                         | [1](01.md), [5](05.md)  |
@@ -56,6 +55,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 9735          | Zap                              | [57](57.md)             |
 | 10002         | Relay List Metadata              | [65](65.md)             |
 | 22242         | Client Authentication            | [42](42.md)             |
+| 30023         | Long-form Content                | [23](23.md)             |
 | 1000-9999     | Regular Events                   | [16](16.md)             |
 | 10000-19999   | Replaceable Events               | [16](16.md)             |
 | 20000-29999   | Ephemeral Events                 | [16](16.md)             |
@@ -92,6 +92,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | ---------- | ----------------------- | ----------------- | ------------------------ |
 | e          | event id (hex)          | relay URL, marker | [1](01.md), [10](10.md)  |
 | p          | pubkey (hex)            | relay URL         | [1](01.md)               |
+| a          | coordinates to an event | relay URL         | [33](33.md), [23](23.md) |
 | r          | a reference (URL, etc)  |                   | [12](12.md)              |
 | t          | hashtag                 |                   | [12](12.md)              |
 | g          | geohash                 |                   | [12](12.md)              |
