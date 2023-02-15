@@ -34,6 +34,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-56: Reporting](56.md)
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-65: Relay List Metadata](65.md)
+- [NIP-76: Trace Resistant Private Posts](76.md)
 
 ## Event Kinds
 | kind          | description                      | NIP                     |
