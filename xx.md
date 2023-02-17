@@ -1,87 +1,118 @@
 NIP-XX
-======
+--
 
-Nostr specific keys from Ethereum wallet signatures
-----------------------------------------------------
-
+Nostr-Specific Deterministic Private Key Generation from Ethereum Wallet Signature
+--
 `draft` `optional` `author:0xc0de4c0ffee` `author:sshmatrix`
 
-This NIP ?is optional specification for Nostr clients to generate private key from deterministic Ethereum wallet signatures.
+## Abstract
+
+This specification provides an optional method for Nostr clients to generate deterministic private keys from Ethereum wallet signatures.
+
+## Terminology
+### a) `username`
+Username can be either of the following:
+
+`username` or `user@domain.eth.limo` or `domain.eth.limo` or `sub.domain.eth.limo`, where,
+
+- `username` is a [NIP-02](https://github.com/nostr-protocol/nips/blob/master/05.md) compatible name,
+- `name@domain.eth.limo` is a [NIP-05](https://github.com/nostr-protocol/nips/blob/master/05.md) compatible name,
+- `domain.eth.limo` is [NIP-05](https://github.com/nostr-protocol/nips/blob/master/05.md) equivalent of
+`_@domain.eth.limo`,
+- `sub.domain.eth.limo` is [NIP-05](https://github.com/nostr-protocol/nips/blob/master/05.md) equivalent of
+`_@sub.domain.eth.limo`.
+> Note : `sub@domain.eth.limo` and `sub.domain.eth.limo` are NOT same ID as their signatures will be different.  
 
 
-## A) Username : 
-```
-let username = "mypetname" || "mynip05@domain.eth.limo" || "domain.eth.limo" || "sub.domain.eth.limo"
-```
-
-   1) `mypetname` is NIP02 compatible name
-   2) `mynip05@domain.eth.limo` is NIP05 compatible ID
-   3) `domain.eth.limo` is NIP05 equivalent to `_@domain.eth.limo`
-   4) `sub.domain.eth.limo` is NIP05 equivalent to `_@sub.domain.eth.limo`
-
-~~Implementing clients should verify if generated public keys match NIP05 and NIP02 records.~~ 
-
-## B) Password : 
-Password is optional value used in HKDF salt:
+### b) `password`
+Password is optional string value used in HKDF salt,
 ```js
-let username = "name@domain.eth.limo"
 let password = "horse staple battery"
-let signature = wallet.signMessage(message)
-let salt = sha256(`nostr:${username}:${password}:${signature.slice(68)}`);
-if(!password || password == ""){
-   salt = sha256(`nostr:${username}:${signature.slice(68)}`)
-}
+let salt = await sha256(`eip155:${chainId}:${username}:${password?password:""}:${signature.slice(68)}`);
 ```
 
-
-## C) Message : 
-
+### c) `message`
 ```js
-let message = `Login to Nostr as ${username}\n\nWARNING : DO NOT SIGN THIS REQUEST FROM UNTRUSTED NOSTR CLIENTS.\n${checksum(wallet.address)}`
+let message = `Login to Nostr as ${username}\n\nImportant: Please verify the integrity and authenticity of your Nostr client before signing this message.\n${info}`
 ```
-## D) Signature :
-Signature is 
-
-## C) HKDF : 
-We use HKDF with SHA256
+### d) `signature`
+Deterministic signature from connected wallet. Signatures are 65 bytes long, `bytes1(v)+bytes32(r)+bytes32(s)`.
 ```js
-import { hkdf } from '@noble/hashes/hkdf';
-import { sha256 } from '@noble/hashes/sha256';
-import * as secp256k1 from '@noble/secp256k1';
+let signature = wallet.signMessage(message); 
+```
+### e) `HKDF`
+HKDF-SHA-256 is used to derive 42 bytes long hash key.
+`hkdf(sha256, inputKey, salt, info, dkLen = 42)` 
+- `Input key` is SHA-256 hash of signature bytes.
+   ```js
+   let inputKey = await sha256(hexToBytes(signature.slice(2)));
+   ```
+- `Salt` is SHA-256 hash of following identifier string. `signature.slice(68)` is hex `s` value of signature, last 32 bytes.
+   ```js
+   let salt = await sha256(`eip155:${chainId}:${username}:${password?password:""}:${signature.slice(68)}`);
+   ```
+- `Info` is string with following format.
+   ```js
+   let info = `eip155:${chainId}:${username}:${address}`;
+   ```
+- `Derived Key Length` is set to 42. FIPS 186/4 B.4.1 require hash length to be >=n+8 where, n is length of final private key. (42 >= 32 + 8)
+   ```js
+   let dkLen = 42; 
+   ```
+- `hashToPrivateKey` function is FIPS 186-4 B.4.1 implementation to convert derived hash keys from `HKDF`to valid `secp256k1` private keys. This function is implemented in js `@noble/secp256k1` as `hashToPrivateKey`.
+   ```js
+   let hashKey = hkdf(sha256, inputKey, salt, info, dkLen=42);
+   let privKey = secp256k1.utils.hashToPrivateKey(hashKey);
+   let pubKey = secp256k1.schnorr.getPublicKey(privKey);
+   ```
 
-//let username = 'name@domain.eth.limo';
-//let optPassword = "horse staple battery"; 
-// optional pin/password
+## Implementation Requirements
 
-//let address = wallet.getAddress(); 
-// get checksum'd address from eth wallet
-//let signature = wallet.signMessage(message); 
-// request signature from eth wallet (v,r,s)
-// 0x + bytes1(v) + bytes32(r) + bytes32(s)
-//  2 + (2 + 64 + 64) = 132 String length  
+- Connected Ethereum Wallet signer MUST be EIP191 and RFC6979 compatible.
+- The message MUST be string formatted as `Login to Nostr as ${username}\n\nImportant: Please verify the integrity and authenticity of your Nostr client before signing this message.\n${info}`.
+- HKDF input key MUST be generated as the SHA-256 hash of 65 bytes signature.
+- HKDF salt MUST be generated as SHA-256 hash of string `eip155:${chainID}:${username}:${password?password:""}:${signature.slice(68)}`.
+- HKDF derived key length MUST be 42.
+- HKDF info MUST be string formatted as `eip155:${chainId}:${username}:${address}`
 
-let inputKey = sha256(signature);
-let salt = sha256(`nostr:${username}:${optPassword}:${signature.slice(68)}`); //68~132
-// nostr:${username}:${signature.slice(68)}
+## JS Example 
+```js
+const secp256k1 = require('@noble/secp256k1');
+const {hexToBytes, bytesToHex} = require('@noble/hashes/utils');
+const {hkdf} = require('@noble/hashes/hkdf');
+const {sha256} = require('@noble/hashes/sha256');
 
-let info = `nostr:${username}:${address}`;
+// const wallet = // connected ethereum wallet with ethers.js
+let username = "me@domain.eth.limo"
+let chainId = wallet.getChainId(); // get chainid from connected wallet
+let address = wallet.getAddress(); // get address from wallet
+let info = `eip155:${chainId}:${username}:${address}`;
 
-let dkLen = 42; // 32 + 8 + 2
-//FIPS 186 B.4.1 limit must be >=keylen+8
+let message = `Login to Nostr as ${username}\n\nImportant: Please verify the integrity and authenticity of your Nostr client before signing this message.\n${info}`
+let signature = wallet.signMessage(message); // request signature from wallet
 
-let hashKey = hkdf(sha256, inputKey, salt, info, dkLen);
-let privKey = nobleSecp256k1.hashToPrivateKey(hashKey); 
-//FIPS 186 B.4.1 @noble/secp256k1
+let password = "horse staple battery"
+let inputKey = await sha256(hexToBytes(signature.slice(2))); //skip "0x"
+let salt = await sha256(`eip155:${chainId}:${username}:${password?password:""}:${signature.slice(68)}`);
+let dkLen = 42; 
 
-let pubKey = nobleSecp256k1.getPublicKey(privKey)
+let hashKey = await hkdf(sha256, inputKey, salt, info, dkLen);
+let privKey = secp256k1.utils.hashToPrivateKey(hashKey);
+let pubKey = secp256k1.schnorr.getPublicKey(privKey);
 ```
 
-## Reference :
+## Security Considerations
 
-1) ERC-191: Signed Data Standard - https://eips.ethereum.org/EIPS/eip-191
+- Users should always verify the integrity and authenticity of the Nostr client before signing the message.
+- Users should ensure that they only input their Nostr username and password in trusted and secure clients.
+- Implementing clients should ensure ~~..private key/security~~
 
-2) RFC6979: Deterministic Usage of the DSA and ECDSA - https://datatracker.ietf.org/doc/html/rfc6979
 
-3) RFC5869: HMAC-based Extract-and-Expand Key Derivation Function (HKDF) - https://datatracker.ietf.org/doc/html/rfc5869
-
-4) FIPS 186 B.4.1 - https://csrc.nist.gov/publications/detail/fips/186/4/final
+## References:
+- [RFC6979: Deterministic Usage of the DSA and ECDSA](https://datatracker.ietf.org/doc/html/rfc6979)
+- [RFC5869: HKDF (HMAC-based Extract-and-Expand Key Derivation Function)](https://datatracker.ietf.org/doc/html/rfc5869)
+- [Digital Signature Standard (DSS), FIPS 186-4 B.4.1](https://csrc.nist.gov/publications/detail/fips/186/4/final)
+- [ERC191: Signed Data Standard](https://eips.ethereum.org/EIPS/eip-191)
+- [EIP155: Simple replay attack protection](https://eips.ethereum.org/EIPS/eip-155)
+- [@noble/hashes](https://github.com/paulmillr/noble-hashes)
+- [@noble/secp256k1](https://github.com/paulmillr/noble-secp256k1)
