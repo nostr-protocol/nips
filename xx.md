@@ -49,6 +49,7 @@ HKDF-SHA-256 is used to derive the 42 bytes long hash key: `hkdf(sha256, inputKe
    let salt = await sha256(`eip155:${chainId}:${username}:${password?password:""}:${signature.slice(68)}`);
    ```
    where, `signature.slice(68)` is hex `s` value of Ethereum signature, i.e. the last 32 bytes.
+
 - `Info` is a string with the following format:
    ```js
    let info = `eip155:${chainId}:${username}:${address}`;
@@ -57,7 +58,8 @@ HKDF-SHA-256 is used to derive the 42 bytes long hash key: `hkdf(sha256, inputKe
    ```js
    let dkLen = 42;
    ```
-   FIPS 186/4 B.4.1 requires hash length to be ≥ n+8, where n is the length of final private key, such that 42 ≥ 32 + 8
+   FIPS 186/4 B.4.1 requires hash length to be ≥ n+8, where n is the length of final private key, such that 42 ≥ 32 + 8.
+   
 - `hashToPrivateKey` function is FIPS 186-4 B.4.1 implementation to convert hash keys derived using HKDF to valid `secp256k1` private keys. This function is implemented in JavaScript library `@noble/secp256k1` as `hashToPrivateKey()`.
    ```js
    let hashKey = hkdf(sha256, inputKey, salt, info, dkLen=42);
