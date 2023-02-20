@@ -5,7 +5,7 @@ Nostr-Specific Deterministic Private Key Generation from Ethereum Wallet Signatu
 
 ## Abstract
 
-This specification provides an optional method for Nostr clients to generate deterministic private keys from Ethereum wallet signatures. This NIP proposes HMAC Key Derivation Function (HKDF) coupled with SHA-256 from ECDSA signatures (EIP-191) as an alternative to the Schnorr signatures (BIP-340), allowing Nostr to interact with Ethereum ecosystem.
+This specification provides an optional method for Nostr clients to generate deterministic private keys from Ethereum wallet signatures. This NIP proposes HMAC Key Derivation Function (HKDF) coupled with SHA-256 from ECDSA signatures (EIP-191) as an alternative to the Schnorr signatures (BIP-340), allowing Nostr to interact with Ethereum ecosystem, and vice-versa.
 
 ## Terminology
 ### a) Username
@@ -36,7 +36,7 @@ let message = `Login to Nostr as ${username}\n\nImportant: Please verify the int
 ### d) Signature
 Signature is the deterministic signature from connected Ethereum wallet. Ethereum signatures `(v,r,s)` are 65 bytes long, i.e. `bytes1(v) + bytes32(r) + bytes32(s)`,
 ```js
-let signature = wallet.signMessage(message);
+let signature = wallet.signMessage(message); // implements ethereum-native ECDSA signatures in format (v,r,s)
 ```
 ### e) HKDF (HMAC Key Derivation Function)
 HKDF-SHA-256 is used to derive the 42 bytes long hash key: `hkdf(sha256, inputKey, salt, info, dkLen = 42)`
@@ -58,8 +58,8 @@ HKDF-SHA-256 is used to derive the 42 bytes long hash key: `hkdf(sha256, inputKe
    ```js
    let dkLen = 42;
    ```
-   FIPS 186/4 B.4.1 requires hash length to be ≥ n+8, where n is the length of final private key, such that 42 ≥ 32 + 8.
-   
+   FIPS 186/4 B.4.1 requires hash length to be `>= n + 8`, where n is the length of final private key, such that `42 >= 32 + 8`.
+
 - `hashToPrivateKey` function is FIPS 186-4 B.4.1 implementation to convert hash keys derived using HKDF to valid `secp256k1` private keys. This function is implemented in JavaScript library `@noble/secp256k1` as `hashToPrivateKey()`.
    ```js
    let hashKey = hkdf(sha256, inputKey, salt, info, dkLen=42);
