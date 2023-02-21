@@ -5,7 +5,7 @@ Nostr-Specific Deterministic Private Key Generation from Ethereum Wallet Signatu
 
 ## Abstract
 
-This specification provides an optional method for Nostr clients to generate deterministic private keys from Ethereum wallet signatures. The private keys are derived using HMAC Key Derivation Function (HKDF) applied to SHA-256 of ECDSA signatures (EIP-191), allowing Nostr to interact with Ethereum infrastructure and vice-versa.
+This specification provides an optional method for Nostr clients to generate deterministic private keys from Ethereum wallet signatures. The private keys are derived using HMAC Key Derivation Function (HKDF) applied to SHA-256 of ECDSA signatures native to Ethereum wallets (EIP-191), allowing Nostr to interact with Ethereum infrastructure and vice-versa.
 
 ## Terminology
 ### a) Username
