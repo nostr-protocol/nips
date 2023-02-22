@@ -42,6 +42,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 4           | Encrypted Direct Messages   | [4](04.md)             |
 | 5           | Event Deletion              | [9](09.md)             |
 | 7           | Reaction                    | [25](25.md)            |
+| 8           | Badge Award                 | [58](58.md)            |
 | 40          | Channel Creation            | [28](28.md)            |
 | 41          | Channel Metadata            | [28](28.md)            |
 | 42          | Channel Message             | [28](28.md)            |
@@ -52,8 +53,8 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 10000-19999 | Replaceable Events Reserved | [16](16.md)            |
 | 20000-29999 | Ephemeral Events Reserved   | [16](16.md)            |
 | 30000-39999 | Param. Repl. Events Reserved| [33](33.md)            |
-
-
+| 30008       | Profile Badges              | [58](58.md)            |
+| 30009       | Badge Definition            | [58](58.md)            |
 
 ## Message types
 
@@ -80,17 +81,18 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 
 ## Standardized Tags
 
-| name       | value                   | other parameters  | NIP                      |
-| ---------- | ----------------------- | ----------------- | ------------------------ |
-| e          | event id (hex)          | relay URL, marker | [1](01.md), [10](10.md)  |
-| p          | pubkey (hex)            | relay URL         | [1](01.md)               |
-| r          | a reference (URL, etc)  |                   | [12](12.md)              |
-| t          | hashtag                 |                   | [12](12.md)              |
-| g          | geohash                 |                   | [12](12.md)              |
-| nonce      | random                  |                   | [13](13.md)              |
-| subject    | subject                 |                   | [14](14.md)              |
-| d          | identifier              |                   | [33](33.md)              |
-| expiration | unix timestamp (string) |                   | [40](40.md)              |
+| name       | value                      | other parameters  | NIP                      |
+| ---------- | -------------------------- | ----------------- | ------------------------ |
+| e          | event id (hex)             | relay URL, marker | [1](01.md), [10](10.md)  |
+| p          | pubkey (hex)               | relay URL         | [1](01.md)               |
+| r          | a reference (URL, etc)     |                   | [12](12.md)              |
+| t          | hashtag                    |                   | [12](12.md)              |
+| a          | kind, pubkey, d-identifier |                   | [33](33.md)              |
+| g          | geohash                    |                   | [12](12.md)              |
+| nonce      | random                     |                   | [13](13.md)              |
+| subject    | subject                    |                   | [14](14.md)              |
+| d          | identifier                 |                   | [33](33.md)              |
+| expiration | unix timestamp (string)    |                   | [40](40.md)              |
 
 ## Criteria for acceptance of NIPs
 
