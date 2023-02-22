@@ -92,7 +92,6 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 
 ## Standardized Tags
 
-<<<<<<< HEAD
 | name       | value                   | other parameters  | NIP                      |
 | ---------- | ----------------------- | ----------------- | ------------------------ |
 | e          | event id (hex)          | relay URL, marker | [1](01.md), [10](10.md)  |
@@ -105,20 +104,6 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | subject    | subject                 |                   | [14](14.md)              |
 | d          | identifier              |                   | [33](33.md)              |
 | expiration | unix timestamp (string) |                   | [40](40.md)              |
-=======
-| name       | value                      | other parameters  | NIP                      |
-| ---------- | -------------------------- | ----------------- | ------------------------ |
-| e          | event id (hex)             | relay URL, marker | [1](01.md), [10](10.md)  |
-| p          | pubkey (hex)               | relay URL         | [1](01.md)               |
-| r          | a reference (URL, etc)     |                   | [12](12.md)              |
-| t          | hashtag                    |                   | [12](12.md)              |
-| a          | kind, pubkey, d-identifier |                   | [33](33.md)              |
-| g          | geohash                    |                   | [12](12.md)              |
-| nonce      | random                     |                   | [13](13.md)              |
-| subject    | subject                    |                   | [14](14.md)              |
-| d          | identifier                 |                   | [33](33.md)              |
-| expiration | unix timestamp (string)    |                   | [40](40.md)              |
->>>>>>> 8fc286a (docs: add badge definition event)
 
 ## Criteria for acceptance of NIPs
 
