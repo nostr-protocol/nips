@@ -35,6 +35,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-56: Reporting](56.md)
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-65: Relay List Metadata](65.md)
+- [NIP-66: Decimate](66.md)
 
 ## Event Kinds
 | kind          | description                      | NIP                     |
@@ -46,6 +47,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 4             | Encrypted Direct Messages        | [4](04.md)              |
 | 5             | Event Deletion                   | [9](09.md)              |
 | 7             | Reaction                         | [25](25.md)             |
+| 10            | Decimate                         | [66](66.md)             |
 | 40            | Channel Creation                 | [28](28.md)             |
 | 41            | Channel Metadata                 | [28](28.md)             |
 | 42            | Channel Message                  | [28](28.md)             |
