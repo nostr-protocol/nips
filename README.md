@@ -30,7 +30,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-36: Sensitive Content](36.md)
 - [NIP-40: Expiration Timestamp](40.md)
 - [NIP-42: Authentication of clients to relays](42.md)
-- [NIP-46: Nostr Connect](46.md) 
+- [NIP-46: Nostr Connect](46.md)
 - [NIP-50: Keywords filter](50.md)
 - [NIP-56: Reporting](56.md)
 - [NIP-57: Lightning Zaps](57.md)
@@ -46,6 +46,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 4             | Encrypted Direct Messages        | [4](04.md)              |
 | 5             | Event Deletion                   | [9](09.md)              |
 | 7             | Reaction                         | [25](25.md)             |
+| 8             | Badge Award                      | [58](58.md)             |
 | 40            | Channel Creation                 | [28](28.md)             |
 | 41            | Channel Metadata                 | [28](28.md)             |
 | 42            | Channel Message                  | [28](28.md)             |
@@ -63,8 +64,8 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 10000-19999   | Replaceable Events               | [16](16.md)             |
 | 20000-29999   | Ephemeral Events                 | [16](16.md)             |
 | 30000-39999   | Parameterized Replaceable Events | [33](33.md)             |
-
-
+| 30008         | Profile Badges                   | [58](58.md)             |
+| 30009         | Badge Definition                 | [58](58.md)             |
 
 ## Message types
 
