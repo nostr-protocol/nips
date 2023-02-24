@@ -19,7 +19,7 @@ Consider the following event:
 {
     "pubkey": "npub1p0ew5ln6hq4c20l7zftkwyrnn03php05zl8aydntugg74cu8m28sfk25c6",
     "kind": 0,
-    "content": "{\"nipdid\": \"nostr.bit\"}"
+    "content": "{\"nipdid\": [\"nostr.bit\"]}"
 }
 ```
 
@@ -50,6 +50,19 @@ For example, if a user clicks a button to follow the profile of `nostr.bit`, whi
 ### User set public keys can either be in `NIP-19` npub format or hex format
 Most user can only get their public key in `NIP-19` npub format, so it is difficult to force them to use hex format public key. So we should allow users to set their public key innpub format. As a result, client should consider both hex-format and `NIP-19` format when comparing the value.
 
+### The value of `nipdid` key is array instead of string
+In an ideal scenario, we should use a single DID name to handle all situations. However, from a practical perspective, many of us will have multiple DID names. Also, considering forward compatibility, the value of 'nipdid' should be an array of string instead of a single string. Currently, the client-side should always take the first string as the primary DID name.
+
+### The key of 'nipdid' has a higher priority than 'nip05'.
+This is because the authenticity and uniqueness of the DID name are guaranteed by a decentralized network, while the name in NIP-05 is issued by a centralized server, making it relatively less trustworthy than the DID name. 
+Therefore, when the user sets both NIP-DID and NIP-05, the client should prioritize the valid NIP-DID field and then use the NIP-05 field.
+
+### Keys for Nostr in DID Names
+By default, the key of Nostr public key stored in the DID name records should be `nostr`. However, since different DID names have different data storage methods, here are the relevant keys specified:
+- ENS: `nostr`
+- .bit: `profile.nostr`
+- Unstoppable Domain: `nostr`
+- Solana Name Service: `nostr`
 
 ## Terminology
 
@@ -58,7 +71,7 @@ When different people talk about DID, they are actually referring to different t
 
 The DID and DID name that we mention here are decentralized, human-readable, and formally similar to domain names. 
 
-Popular DIDs include `.bit`, `ENS`, `Unstoppable Domain`, `SpaceID`, `Bonfida`, etc. 
+Popular DIDs include `ENS`, `.bit`, `Unstoppable Domain`, `Bonfida`, etc. 
 
 Each DID has a different suffix. For example, .bit's suffix is directly `.bit`, ENS's suffix is `.eth`, and Bonfida's suffix is `.sol`. Clients can support one or more suffixes (DID) based on their own scenarios.
 
@@ -66,7 +79,15 @@ Each DID has a different suffix. For example, .bit's suffix is directly `.bit`, 
 ### DID Data Provider
 The DID Data Provider is responsible for providing the resolution of DID data. Its possible forms include blockchain nodes, specialized service providers, SDKs, etc.
 
-The Data Provider can support one or more suffixes(DID names) according to their type and purpose.
+It can be a single purpose service resolving only one suffixes. It can also be a unified service resolving all the DID names.
+
+Here are 2 example of possible Data Providers:
+
+**SDK for JavaScript Client**
+- [AllDID](https://github.com/dotbitHQ/AllDID)
+
+**HTTP API**
+- [AllDID-API](https://github.com/dotbitHQ/AllDID-api)
 
 
 ### SubDID
