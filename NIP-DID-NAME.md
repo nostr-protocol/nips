@@ -83,11 +83,19 @@ It can be a single purpose service resolving only one suffixes. It can also be a
 
 Here are 2 example of possible Data Providers:
 
-**SDK for JavaScript Client**
+**SDK for JavaScript Clients**
+
+The JavaScript SDK is the most convenient option for JavaScript Client to use.
+
 - [AllDID](https://github.com/dotbitHQ/AllDID)
 
 **HTTP API**
+
+HTTP API service can provide a wider range of applicability.
+
 - [AllDID-API](https://github.com/dotbitHQ/AllDID-api)
+
+> These Data Providers are **not** mandatory. Clients can choose whichever Data Provider the like, as long as it can resolve the DID names they want to support.
 
 
 ### SubDID
