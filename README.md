@@ -34,6 +34,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-50: Keywords filter](50.md)
 - [NIP-56: Reporting](56.md)
 - [NIP-57: Lightning Zaps](57.md)
+- [NIP-58: Badges](58.md)
 - [NIP-65: Relay List Metadata](65.md)
 
 ## Event Kinds
