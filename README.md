@@ -36,6 +36,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
 - [NIP-65: Relay List Metadata](65.md)
+- [NIP-XX: Proof of Freshness](XX.md)
 
 ## Event Kinds
 | kind          | description                      | NIP                     |
@@ -105,6 +106,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | subject    | subject                 |                   | [14](14.md)              |
 | d          | identifier              |                   | [33](33.md)              |
 | expiration | unix timestamp (string) |                   | [40](40.md)              |
+| f          | block hash (hex)        |                   | [XX](XX.md)              |
 
 ## Criteria for acceptance of NIPs
 
