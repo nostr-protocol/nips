@@ -32,6 +32,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-42: Authentication of clients to relays](42.md)
 - [NIP-46: Nostr Connect](46.md)
 - [NIP-50: Keywords filter](50.md)
+- [NIP-55: Proxied NIP-05 Authetication](55.md)
 - [NIP-56: Reporting](56.md)
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
@@ -71,12 +72,13 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 ## Message types
 
 ### Client to Relay
-| type  | description                                         | NIP         |
-|-------|-----------------------------------------------------|-------------|
-| EVENT | used to publish events                              | [1](01.md)  |
-| REQ   | used to request events and subscribe to new updates | [1](01.md)  |
-| CLOSE | used to stop previous subscriptions                 | [1](01.md)  |
-| AUTH  | used to send authentication events                  | [42](42.md) |
+| type   | description                                         | NIP         |
+|--------|-----------------------------------------------------|-------------|
+| EVENT  | used to publish events                              | [1](01.md)  |
+| REQ    | used to request events and subscribe to new updates | [1](01.md)  |
+| CLOSE  | used to stop previous subscriptions                 | [1](01.md)  |
+| AUTH   | used to send authentication events                  | [42](42.md) |
+| PROXY  | used to proxy requests through relays               | [55](55.md) |
 
 ### Relay to Client
 | type   | description                                             | NIP         |
@@ -86,6 +88,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | EOSE   | used to notify clients all stored events have been sent | [15](15.md) |
 | OK     | used to notify clients if an EVENT was successful       | [20](20.md) |
 | AUTH   | used to send authentication challenges                  | [42](42.md) |
+| PROXY  | used to proxy requests through relays                   | [55](55.md) |
 
 Please update these lists when proposing NIPs introducing new event kinds.
 
