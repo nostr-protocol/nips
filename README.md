@@ -11,7 +11,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-07: `window.nostr` capability for web browsers](07.md)
 - [NIP-08: Handling Mentions](08.md)
 - [NIP-09: Event Deletion](09.md)
-- [NIP-10: Conventions for clients' use of `e` and `p` tags in text events](10.md)
+- [NIP-10: Replies, Reposts, and Quote Posts in text events](10.md)
 - [NIP-11: Relay Information Document](11.md)
 - [NIP-12: Generic Tag Queries](12.md)
 - [NIP-13: Proof of Work](13.md)
