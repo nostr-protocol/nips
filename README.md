@@ -11,7 +11,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-07: `window.nostr` capability for web browsers](07.md)
 - [NIP-08: Handling Mentions](08.md)
 - [NIP-09: Event Deletion](09.md)
-- [NIP-10: Conventions for clients' use of `e` and `p` tags in text events](10.md)
+- [NIP-10: Replies, Reposts, and Quote Posts in text events](10.md)
 - [NIP-11: Relay Information Document](11.md)
 - [NIP-12: Generic Tag Queries](12.md)
 - [NIP-13: Proof of Work](13.md)
@@ -42,7 +42,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | kind          | description                      | NIP                     |
 | ------------- | -------------------------------- | ----------------------- |
 | 0             | Metadata                         | [1](01.md), [5](05.md)  |
-| 1             | Short Text Note                  | [1](01.md)              |
+| 1             | Short Text Note                  | [1](01.md), [10](10.md) |
 | 2             | Recommend Relay                  | [1](01.md)              |
 | 3             | Contacts                         | [2](02.md)              |
 | 4             | Encrypted Direct Messages        | [4](04.md)              |
@@ -95,18 +95,21 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 
 ## Standardized Tags
 
-| name       | value                   | other parameters  | NIP                      |
-| ---------- | ----------------------- | ----------------- | ------------------------ |
-| e          | event id (hex)          | relay URL, marker | [1](01.md), [10](10.md)  |
-| p          | pubkey (hex)            | relay URL         | [1](01.md)               |
-| a          | coordinates to an event | relay URL         | [33](33.md), [23](23.md) |
-| r          | a reference (URL, etc)  |                   | [12](12.md)              |
-| t          | hashtag                 |                   | [12](12.md)              |
-| g          | geohash                 |                   | [12](12.md)              |
-| nonce      | random                  |                   | [13](13.md)              |
-| subject    | subject                 |                   | [14](14.md)              |
-| d          | identifier              |                   | [33](33.md)              |
-| expiration | unix timestamp (string) |                   | [40](40.md)              |
+| name       | value                    | other parameters  | NIP                      |
+| ---------- | ------------------------ | ----------------- | ------------------------ |
+| e          | event id (hex)           | relay URL         | [1](01.md), [10](10.md)  |
+| p          | pubkey (hex)             | relay URL         | [1](01.md), [10](10.md)  |
+| pp         | silent pubkey            | relay URL         | [10](10.md)              |
+| n          | reply ancestor           | relay URL         | [10](10.md)              |
+| l          | reply level              |                   | [10](10.md)              |
+| a          | event address            | relay URL         | [33](33.md), [23](23.md) |
+| r          | a reference (URL, etc)   |                   | [12](12.md)              |
+| t          | hashtag                  |                   | [12](12.md)              |
+| g          | geohash                  |                   | [12](12.md)              |
+| nonce      | random                   |                   | [13](13.md)              |
+| subject    | subject                  |                   | [14](14.md)              |
+| d          | deduplication identifier |                   | [33](33.md)              |
+| expiration | unix timestamp (string)  |                   | [40](40.md)              |
 
 ## Criteria for acceptance of NIPs
 
