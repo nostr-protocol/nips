@@ -32,6 +32,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-42: Authentication of clients to relays](42.md)
 - [NIP-46: Nostr Connect](46.md)
 - [NIP-50: Keywords filter](50.md)
+- [NIP-51: Lists](51.md)
 - [NIP-56: Reporting](56.md)
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
@@ -39,6 +40,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-78: Application-specific data](78.md)
 
 ## Event Kinds
+
 | kind          | description                      | NIP         |
 | ------------- | -------------------------------- | ----------- |
 | 0             | Metadata                         | [1](01.md)  |
@@ -57,9 +59,13 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 1984          | Reporting                        | [56](56.md) |
 | 9734          | Zap Request                      | [57](57.md) |
 | 9735          | Zap                              | [57](57.md) |
+| 10000         | Mute List                        | [51](51.md) |
+| 10001         | Pin List                         | [51](51.md) |
 | 10002         | Relay List Metadata              | [65](65.md) |
 | 22242         | Client Authentication            | [42](42.md) |
 | 24133         | Nostr Connect                    | [46](46.md) |
+| 30000         | Categorized People List          | [51](51.md) |
+| 30001         | Categorized Bookmark List        | [51](51.md) |
 | 30008         | Profile Badges                   | [58](58.md) |
 | 30009         | Badge Definition                 | [58](58.md) |
 | 30023         | Long-form Content                | [23](23.md) |
