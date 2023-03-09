@@ -30,40 +30,45 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-36: Sensitive Content](36.md)
 - [NIP-40: Expiration Timestamp](40.md)
 - [NIP-42: Authentication of clients to relays](42.md)
+- [NIP-46: Nostr Connect](46.md)
 - [NIP-50: Keywords filter](50.md)
 - [NIP-56: Reporting](56.md)
 - [NIP-57: Lightning Zaps](57.md)
+- [NIP-58: Badges](58.md)
 - [NIP-65: Relay List Metadata](65.md)
+- [NIP-78: Application-specific data](78.md)
 - [NIP-89: payto: Payment Targets](89.md)
 
 ## Event Kinds
-| kind          | description                      | NIP                     |
-| ------------- | -------------------------------- | ----------------------- |
-| 0             | Metadata                         | [1](01.md), [5](05.md)  |
-| 1             | Short Text Note                  | [1](01.md)              |
-| 2             | Recommend Relay                  | [1](01.md)              |
-| 3             | Contacts                         | [2](02.md)              |
-| 4             | Encrypted Direct Messages        | [4](04.md)              |
-| 5             | Event Deletion                   | [9](09.md)              |
-| 7             | Reaction                         | [25](25.md)             |
-| 40            | Channel Creation                 | [28](28.md)             |
-| 41            | Channel Metadata                 | [28](28.md)             |
-| 42            | Channel Message                  | [28](28.md)             |
-| 43            | Channel Hide Message             | [28](28.md)             |
-| 44            | Channel Mute User                | [28](28.md)             |
-| 45-49         | Public Chat Reserved             | [28](28.md)             |
-| 1984          | Reporting                        | [56](56.md)             |
-| 9734          | Zap Request                      | [57](57.md)             |
-| 9735          | Zap                              | [57](57.md)             |
-| 10002         | Relay List Metadata              | [65](65.md)             |
-| 22242         | Client Authentication            | [42](42.md)             |
-| 30023         | Long-form Content                | [23](23.md)             |
-| 1000-9999     | Regular Events                   | [16](16.md)             |
-| 10000-19999   | Replaceable Events               | [16](16.md)             |
-| 20000-29999   | Ephemeral Events                 | [16](16.md)             |
-| 30000-39999   | Parameterized Replaceable Events | [33](33.md)             |
-
-
+| kind          | description                      | NIP         |
+| ------------- | -------------------------------- | ----------- |
+| 0             | Metadata                         | [1](01.md)  |
+| 1             | Short Text Note                  | [1](01.md)  |
+| 2             | Recommend Relay                  | [1](01.md)  |
+| 3             | Contacts                         | [2](02.md)  |
+| 4             | Encrypted Direct Messages        | [4](04.md)  |
+| 5             | Event Deletion                   | [9](09.md)  |
+| 7             | Reaction                         | [25](25.md) |
+| 8             | Badge Award                      | [58](58.md) |
+| 40            | Channel Creation                 | [28](28.md) |
+| 41            | Channel Metadata                 | [28](28.md) |
+| 42            | Channel Message                  | [28](28.md) |
+| 43            | Channel Hide Message             | [28](28.md) |
+| 44            | Channel Mute User                | [28](28.md) |
+| 1984          | Reporting                        | [56](56.md) |
+| 9734          | Zap Request                      | [57](57.md) |
+| 9735          | Zap                              | [57](57.md) |
+| 10002         | Relay List Metadata              | [65](65.md) |
+| 22242         | Client Authentication            | [42](42.md) |
+| 24133         | Nostr Connect                    | [46](46.md) |
+| 30008         | Profile Badges                   | [58](58.md) |
+| 30009         | Badge Definition                 | [58](58.md) |
+| 30023         | Long-form Content                | [23](23.md) |
+| 30078         | Application-specific Data        | [78](78.md) |
+| 1000-9999     | Regular Events                   | [16](16.md) |
+| 10000-19999   | Replaceable Events               | [16](16.md) |
+| 20000-29999   | Ephemeral Events                 | [16](16.md) |
+| 30000-39999   | Parameterized Replaceable Events | [33](33.md) |
 
 ## Message types
 
@@ -81,7 +86,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | EVENT  | used to send events requested to clients                | [1](01.md)  |
 | NOTICE | used to send human-readable messages to clients         | [1](01.md)  |
 | EOSE   | used to notify clients all stored events have been sent | [15](15.md) |
-| OK     | used to notify clients if an EVENT was successuful      | [20](20.md) |
+| OK     | used to notify clients if an EVENT was successful       | [20](20.md) |
 | AUTH   | used to send authentication challenges                  | [42](42.md) |
 
 Please update these lists when proposing NIPs introducing new event kinds.
