@@ -7,7 +7,7 @@ Nostr-Specific Private Keys from Deterministic Wallet Signatures (Sign-In-With-X
 
 ## Abstract
 
-This specification provides an optional method for Nostr clients and NIP-07 providers and coin wallet providers to generate deterministic private keys from Chain Agnostic `Sign-in-With-X`[(CAIP-122)](https://github.com/ChainAgnostic/CAIPs/pull/122) signature. Nostr-specific private key is derived from HKDF-SHA-256 using NIP02/NIP05 names, [(CAIP-02: Blockchain ID Specification)](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md), [CAIP-10: Account ID Specification](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md) identifiers, and deterministic signature from connected coin-wallet as inputs.
+This specification provides an optional method for Nostr clients and NIP-07 providers and coin wallet providers to generate deterministic private keys from Chain Agnostic `Sign-in-With-X`[(CAIP-122)](https://github.com/ChainAgnostic/CAIPs/pull/122) signature. Nostr-specific private key is derived from HKDF-SHA-256 using NIP-02/NIP-05 names, [CAIP-02: Blockchain ID Specification](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md), [CAIP-10: Account ID Specification](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md) identifiers, and deterministic signature from connected coin-wallet as inputs.
 
 ## Terminology
 
@@ -39,11 +39,11 @@ RFC6979 compatible deterministic signature from coin-wallet provider.
 let signature = wallet.signMessage(message);
 ```
 
-### e) Blockchain and Address Identifier 
+### e) Blockchain and Address Identifier
 Chain Agnostic [CAIP-02: Blockchain ID Specification](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) and [CAIP-10: Account ID Specification](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md) are used to generate blockchain and address identifiers.
 ```
 let caip02 =
-      `eip155:<evm_chain_id>` || 
+      `eip155:<evm_chain_id>` ||
       `cosmos:<hub_id_name>` ||
       `bip122:<16 bytes genesis/fork hash>`;
 
@@ -113,7 +113,7 @@ let password = "horse staple battery"
 
 
 /**
- * 
+ *
  * @param username nip02/nip05 identifier
  * @param caip10 CAIP identifier for the blockchain account
  * @param sig Deterministic signature from X-wallet provider
@@ -136,12 +136,12 @@ export async function privateKeyFromX(
 }
 
 /**
- * 
+ *
  * @param username nip02/nip05 identifier
  * @param caip10 CAIP identifier for the blockchain account
  * @param sig Deterministic signature from X-wallet provider
  * @param password Optional password
- * @returns 
+ * @returns
  */
 export async function signInWithX(
   username: string,
@@ -164,7 +164,7 @@ export async function signInWithX(
     }
     if(profile == null){
       throw new Error("Nostr Profile Not Found")
-    } 
+    }
     petname = (username.split("@").length == 2) ? username.split("@")[0] : username.split(".")[0]
   }
   let privkey = await privateKeyFromX(username, caip10, sig, password)
@@ -180,9 +180,9 @@ export async function signInWithX(
 }
 ```
 
-## Implementations 
-1) Nostr tools : https://github.com/nbd-wtf/nostr-tools/pull/132 (PR)
-2) Nostr client: (WIP)
+## Implementations
+1) Nostr Tools : [Sign-In-With-X](https://github.com/dostr-eth/nostr-tools/tree/sign-in-with-x) ([Pull Request #132](https://github.com/nbd-wtf/nostr-tools/pull/132))
+2) Nostr Client: [Dostr Client](https://github.com/dostr-eth/dostr-client)
 
 
 ## Security Considerations
@@ -195,7 +195,7 @@ export async function signInWithX(
 - [RFC5869: HKDF (HMAC-based Extract-and-Expand Key Derivation Function)](https://datatracker.ietf.org/doc/html/rfc5869)
 - [CAIP-02: Blockchain ID Specification](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md)
 - [CAIP-10: Account ID Specification](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md)
-- [CAIP-122: Sign-in-With-X)](https://github.com/ChainAgnostic/CAIPs/pull/122) 
+- [CAIP-122: Sign-in-With-X)](https://github.com/ChainAgnostic/CAIPs/pull/122)
 
 - [Digital Signature Standard (DSS), FIPS 186-4 B.4.1](https://csrc.nist.gov/publications/detail/fips/186/4/final)
 - [BIP340: Schnorr Signature Standard](https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki)
