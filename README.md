@@ -28,6 +28,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-28: Public Chat](28.md)
 - [NIP-33: Parameterized Replaceable Events](33.md)
 - [NIP-36: Sensitive Content](36.md)
+- [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
 - [NIP-42: Authentication of clients to relays](42.md)
 - [NIP-46: Nostr Connect](46.md)
