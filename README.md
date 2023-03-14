@@ -39,6 +39,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-58: Badges](58.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-78: Application-specific data](78.md)
+- [NIP-100: WebRTC Signaling](100.md)
 
 ## Event Kinds
 
@@ -65,6 +66,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 10002         | Relay List Metadata              | [65](65.md) |
 | 22242         | Client Authentication            | [42](42.md) |
 | 24133         | Nostr Connect                    | [46](46.md) |
+| 25050         | WebRTC Signaling                 | [100](100.md) |
 | 30000         | Categorized People List          | [51](51.md) |
 | 30001         | Categorized Bookmark List        | [51](51.md) |
 | 30008         | Profile Badges                   | [58](58.md) |
