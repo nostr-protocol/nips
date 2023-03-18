@@ -1,47 +1,44 @@
-NIP-XX
---
+# NIP-XX
 
-Nostr-Specific Private Keys from Deterministic Wallet Signatures (Sign-In-With-X)
+Nostr-Specific Private Key Generation from Deterministic Wallet Signatures (Sign-In-With-X)
 --
 `draft` `optional` `author:0xc0de4c0ffee` `author:sshmatrix`
 
 ## Abstract
 
-This specification provides an optional method for Nostr clients and NIP-07 providers and coin wallet providers to generate deterministic private keys from Chain Agnostic `Sign-in-With-X`[(CAIP-122)](https://github.com/ChainAgnostic/CAIPs/pull/122) signature. Nostr-specific private key is derived from HKDF-SHA-256 using NIP-02/NIP-05 names, [CAIP-02: Blockchain ID Specification](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md), [CAIP-10: Account ID Specification](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md) identifiers, and deterministic signature from connected coin-wallet as inputs.
+This specification provides an optional method for Nostr Clients, NIP-07 providers and Wallet providers to generate deterministic private keys from chain-agnostic CAIP-122 Signatures (`Sign-In-With-X` specification). The keypairs generated using this specification are Nostr-specific and do not expose the original signing keypair. The new private keys are derived using SHA-256 HMAC Key Derivation Function (HKDF) with NIP-02 or NIP-05 names, CAIP-02 Blockchain ID & CAIP-10 Account ID Specification identifiers, and deterministic signatures from connected wallets as inputs.
+
+## Introduction
+
+NIP-XX at its core is an account abstraction specification in which a cryptographic signature calculated by one signing algorithm and its native keypair (e.g. [Bitcoin-native Schnorr algorithm](https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki)) can be used to derive a deterministic cryptographic keypair for another signing algorithm (e.g. [Ethereum-native ECDSA algorithm](https://eips.ethereum.org/EIPS/eip-191)) using an appropriate singular (non-invertible) key derivation function. This specification particularly describes the case where the former and latter algorithms are Schnorr and ECDSA respectively, and the one-way adaptor from ECDSA to Schnorr keypair is HMAC-based Key Derivation Function ([HKDF](https://datatracker.ietf.org/doc/html/rfc586)).
+
+NIP-XX specification originated from the desire to allow Nostr to function with widely popular Ethereum wallets such as Metamask and leverage the strong network effects of Ethereum ecosystem. The problem however lay in the fact that Nostr Protocol uses Bitcoin-native Schnorr algorithm for signing messages/data while Ethereum (and its wallets such as Metamask etc) uses ECDSA algorithm. The difference in two signing algorithms and respective signing keypairs is the exact technical incompatibility that this specification originally succeeded in resolving by enabling [Sign-In With Ethereum](https://login.xyz) (SIWE) on Nostr. The underlying schema however is fully capable of functioning as a chain-agnostic workflow and this improved draft reflects that property by using [CAIP](https://github.com/ChainAgnostic/CAIPs) (Chain-Agnostic Improvement Proposals) implementations.
 
 ## Terminology
 
 ### a) Username
-Username can be either of the following:
+Username is either of the following:
 
-- `petname` is a NIP-02 compatible name,
-- `petname@example.com` is a NIP-05 identifier,
+- `petname` is a [NIP-02](https://github.com/nostr-protocol/nips/blob/master/02.md) compatible name,
+- `petname@example.com` is a [NIP-05](https://github.com/nostr-protocol/nips/blob/master/05.md) identifier,
 - `example.com` is NIP-05 identifier `_@example.com`,
-- `sub.example.com` is NIP-05 identifier `_@sub.example.com`.
+- `sub.example.com` is NIP-05 identifier `_@sub.example.com`,
+
+such that
+
+```js
+let username = 'petname' || 'petname@example.com' || 'example.com' || 'sub.example.com'
+```
 
 ### b) Password
-Password is an optional string value used in HKDF salt,
+Password is an optional `string` value used to salt the key derivation function (HKDF),
 ```js
 let password = "horse staple battery"
-//...
-let salt = await sha256(`${caip10}:${username}:${password?password:""}:${signature.slice(68)}`);
 ```
 
-### c) Message
-Deterministic message to be signed by coin-wallet provider.
+## c) Chain-agnostic Identifiers
+Chain-agnostic [CAIP-02: Blockchain ID Specification](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) and [CAIP-10: Account ID Specification](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md) schemes are used to generate blockchain and address identifiers,
 ```js
-let message = `Login to Nostr as ${username}\n\nImportant: Please verify the integrity and authenticity of your Nostr client before signing this message.\n${info}`
-```
-
-### d) Signature
-RFC6979 compatible deterministic signature from coin-wallet provider.
-```js
-let signature = wallet.signMessage(message);
-```
-
-### e) Blockchain and Address Identifier
-Chain Agnostic [CAIP-02: Blockchain ID Specification](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) and [CAIP-10: Account ID Specification](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md) are used to generate blockchain and address identifiers.
-```
 let caip02 =
       `eip155:<evm_chain_id>` ||
       `cosmos:<hub_id_name>` ||
@@ -50,47 +47,86 @@ let caip02 =
 let caip10 = `${caip02}:<checksum_address>`;
 ```
 
-### f) HKDF
-HKDF-SHA-256 is used to derive the 42 bytes long hash key: `hkdf(sha256, inputKey, salt, info, dkLen = 42)`
+### d) Info
+- `info` is CAIP-10 and NIP-02/NIP-05 identifier string formatted as:
+ ```js
+ let info = `${caip10}:${username}`;
+ ```
 
-- `Input key` is SHA-256 hash of signature bytes.
+### e) Message
+Deterministic message to be signed by the wallet provider,
+```js
+let message = `Login to Nostr as ${username}\n\nImportant: Please verify the integrity and authenticity of your Nostr client before signing this message.\n${info}`
+```
+
+### f) Signature
+[RFC-6979](https://datatracker.ietf.org/doc/html/rfc6979) compatible (ECDSA) deterministic signature calculated by the wallet provider using native keypair,
+```js
+let signature = wallet.signMessage(message);
+```
+
+### g) Salt
+- `salt` is SHA-256 hash of the `info`, optional password and last **32 bytes** of signature string formatted as:
+  ```js
+  let salt = await sha256(`${info}:${password?password:""}:${signature.slice(68)}`);
+  ```
+  where, `signature.slice(68)` are the last 32 bytes of the deterministic ECDSA-derived Ethereum signature.
+
+### h) Key Derivation Function (KDF)
+HMAC-Based KDF `hkdf(sha256, inputKey, salt, info, dkLen = 42)` is used to derive the **42 bytes** long **hashkey** with inputs,
+
+- `inputKey` is SHA-256 hash of signature bytes,
    ```js
    let inputKey = await sha256(hexToBytes(signature.slice(2)));
    ```
-- `Info` is CAIP10 and NIP02/NIP05 identifier string formatted as :
+
+- `info` is same as defined before, i.e.
    ```js
    let info = `${caip10}:${username}`;
    ```
 
-- `Salt` is SHA-256 hash of the `info`, optional password and last 32 bytes of signature string formatted as :
+- `salt` is same as defined before, i.e.
    ```js
    let salt = await sha256(`${info}:${password?password:""}:${signature.slice(68)}`);
    ```
-   where, `signature.slice(68)` last 32 bytes of deterministic signature.
 
-
-- Derived Key Length `dkLen` is set to 42.
+- `dkLen` (Derived Key Length) is set to `42`,
    ```js
    let dkLen = 42;
    ```
-   FIPS 186/4 B.4.1 requires hashkey length to be `>= n + 8`. Where n = 32 bytes length of final `secp256k1` private key, such that `42 >= 32 + 8`.
+   [FIPS 186-4 B.4.1](https://csrc.nist.gov/publications/detail/fips/186/4/final) requires hashkey length to be `>= n + 8`, where `n = 32` is the **bytelength** of the final `secp256k1` private key, such that `42 >= 32 + 8`.
 
-- `hashToPrivateKey` function is FIPS 186-4 B.4.1 implementation to convert hashkey derived using HKDF to valid `secp256k1` private keys. This function is implemented in JavaScript library `@noble/secp256k1` as `hashToPrivateKey()`.
+- `hashToPrivateKey()` function is FIPS 186-4 B.4.1 implementation to convert HKDF-derived hashkey to valid `secp256k1` keypair. This function is implemented in JavaScript library `@noble/secp256k1` as `hashToPrivateKey()`.
 
    ```js
-   let hashKey = hkdf(sha256, inputKey, salt, info, dkLen=42);
+   let hashKey = hkdf(sha256, inputKey, salt, info, dkLen = 42);
    let privKey = secp256k1.utils.hashToPrivateKey(hashKey);
    let pubKey = secp256k1.schnorr.getPublicKey(privKey);
    ```
 
+## Architecture
+
+The resulting architecture of NIP-XX can be visually interpreted as follows:
+
+![](https://raw.githubusercontent.com/dostr-eth/resources/main/graphics/nip-xx.png)
+
 ## Implementation Requirements
 
-- Connected Ethereum wallet signer MUST be EIP191 and RFC6979 compatible.
-- The message MUST be string formatted as `Login to Nostr as ${username}\n\nImportant: Please verify the integrity and authenticity of your Nostr client before signing this message.\n${info}`.
-- HKDF input key MUST be generated as the SHA-256 hash of 65 bytes signature.
-- HKDF salt MUST be generated as SHA-256 hash of string `${info}:${username}:${password?password:""}:${signature.slice(68)}`.
-- HKDF derived key length MUST be 42.
-- HKDF info MUST be string formatted as `${CAIP_10}:${address}:${username}`.
+- Connected Ethereum wallet Signer **MUST** be EIP-191 and RFC-6979 compatible.
+- The `message` **MUST** be string formatted as
+```
+Login to Nostr as ${username}\n\nImportant: Please verify the integrity and authenticity of your Nostr client before signing this message.\n${info}`.
+```
+- HKDF `inputKey` **MUST** be generated as the SHA-256 hash of 65 bytes long signature.
+- HKDF `salt` **MUST** be generated as SHA-256 hash of string
+```
+${info}:${username}:${password?password:""}:${signature.slice(68)}
+```
+- HKDF Derived Key Length (`dkLen`) MUST be 42.
+- HKDF `info` MUST be string formatted as
+```
+${CAIP_10}:${address}:${username}
+```
 
 ## JS Example
 ```js
@@ -101,20 +137,18 @@ import {queryProfile} from './nip05'
 import {getPublicKey} from './keys'
 import {ProfilePointer} from './nip19'
 
-
 // const wallet = connected ethereum wallet with ethers.js
 let username = "me@example.com"
-let chainId = wallet.getChainId(); // get chainid from connected wallet
-let address = wallet.getAddress(); // get address from wallet
+let chainId = wallet.getChainId(); // get ChainID from connected wallet
+let address = wallet.getAddress(); // get Address from wallet
 let caip10 = `eip155:${chainId}:${address}`;
 let message = `Login to Nostr as ${username}\n\nImportant: Please verify the integrity and authenticity of your Nostr client before signing this message.\n${caip10}`
-let signature = wallet.signMessage(message); // request signature from wallet
+let signature = wallet.signMessage(message); // request Signature from wallet
 let password = "horse staple battery"
-
 
 /**
  *
- * @param username nip02/nip05 identifier
+ * @param username NIP-02/NIP-05 identifier
  * @param caip10 CAIP identifier for the blockchain account
  * @param sig Deterministic signature from X-wallet provider
  * @param password Optional password
@@ -137,7 +171,7 @@ export async function privateKeyFromX(
 
 /**
  *
- * @param username nip02/nip05 identifier
+ * @param username NIP-02/NIP-05 identifier
  * @param caip10 CAIP identifier for the blockchain account
  * @param sig Deterministic signature from X-wallet provider
  * @param password Optional password
@@ -181,27 +215,28 @@ export async function signInWithX(
 ```
 
 ## Implementations
-1) Nostr Tools : [Sign-In-With-X](https://github.com/dostr-eth/nostr-tools/tree/sign-in-with-x) ([Pull Request #132](https://github.com/nbd-wtf/nostr-tools/pull/132))
-2) Nostr Client: [Dostr Client](https://github.com/dostr-eth/dostr-client)
+1) Nostr Tools : [Sign-In-With-X](https://github.com/dostr-eth/nostr-tools/tree/siwx) ([Pull Request #132](https://github.com/nbd-wtf/nostr-tools/pull/132))
+2) Nostr Client: [Dostr](https://github.com/dostr-eth/dostr-client)
 
 
 ## Security Considerations
 
-- Users should always verify the integrity and authenticity of the Nostr client before signing the message.
-- Users should ensure that they only input their Nostr Username and Password in trusted and secure clients.
+- Users **SHOULD** always verify the integrity and authenticity of the Nostr client before signing the message.
+- Users **SHOULD** ensure that they only input their Nostr `username` and `password` in trusted and secure clients.
 
 ## References:
-- [RFC6979: Deterministic Usage of the DSA and ECDSA](https://datatracker.ietf.org/doc/html/rfc6979)
-- [RFC5869: HKDF (HMAC-based Extract-and-Expand Key Derivation Function)](https://datatracker.ietf.org/doc/html/rfc5869)
+
+- [RFC-6979: Deterministic Usage of the DSA and ECDSA](https://datatracker.ietf.org/doc/html/rfc6979)
+- [RFC-5869: HKDF (HMAC-based Extract-and-Expand Key Derivation Function)](https://datatracker.ietf.org/doc/html/rfc5869)
 - [CAIP-02: Blockchain ID Specification](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md)
 - [CAIP-10: Account ID Specification](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md)
 - [CAIP-122: Sign-in-With-X)](https://github.com/ChainAgnostic/CAIPs/pull/122)
-
 - [Digital Signature Standard (DSS), FIPS 186-4 B.4.1](https://csrc.nist.gov/publications/detail/fips/186/4/final)
-- [BIP340: Schnorr Signature Standard](https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki)
-- [ERC191: Signed Data Standard](https://eips.ethereum.org/EIPS/eip-191)
-- [EIP155: Simple replay attack protection](https://eips.ethereum.org/EIPS/eip-155)
+- [BIP-340: Schnorr Signature Standard](https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki)
+- [ERC-191: Signed Data Standard](https://eips.ethereum.org/EIPS/eip-191)
+- [EIP-155: Simple Replay Attack Protection](https://eips.ethereum.org/EIPS/eip-155)
 - [NIP-02: Contact List and Petnames](https://github.com/nostr-protocol/nips/blob/master/02.md)
-- [NIP-05: Mapping Nostr keys to DNS-based internet identifiers](https://github.com/nostr-protocol/nips/blob/master/05.md)
+- [NIP-05: Mapping Nostr Keys to DNS-based Internet Identifiers](https://github.com/nostr-protocol/nips/blob/master/05.md)
+- [ECDSA Signature Standard](https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.38.8014)
 - [@noble/hashes](https://github.com/paulmillr/noble-hashes)
 - [@noble/secp256k1](https://github.com/paulmillr/noble-secp256k1)
