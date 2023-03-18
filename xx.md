@@ -17,7 +17,7 @@ NIP-XX specification originated from the desire to allow Nostr to function with 
 ## Terminology
 
 ### a) Username
-Username is either of the following:
+`username` is either of the following:
 
 - `petname` is a [NIP-02](https://github.com/nostr-protocol/nips/blob/master/02.md) compatible name,
 - `petname@example.com` is a [NIP-05](https://github.com/nostr-protocol/nips/blob/master/05.md) identifier,
@@ -31,13 +31,13 @@ let username = 'petname' || 'petname@example.com' || 'example.com' || 'sub.examp
 ```
 
 ### b) Password
-Password is an optional `string` value used to salt the key derivation function (HKDF),
+`password` is an optional `string` value used to salt the key derivation function (HKDF),
 ```js
 let password = "horse staple battery"
 ```
 
 ## c) Chain-agnostic Identifiers
-Chain-agnostic [CAIP-02: Blockchain ID Specification](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) and [CAIP-10: Account ID Specification](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md) schemes are used to generate blockchain and address identifiers,
+Chain-agnostic [CAIP-02: Blockchain ID Specification](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md) and [CAIP-10: Account ID Specification](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md) schemes are used to generate blockchain and address identifiers `caip02` and `caip10` respectively,
 ```js
 let caip02 =
       `eip155:<evm_chain_id>` ||
@@ -48,25 +48,25 @@ let caip10 = `${caip02}:<checksum_address>`;
 ```
 
 ### d) Info
-- `info` is CAIP-10 and NIP-02/NIP-05 identifier string formatted as:
+`info` is CAIP-10 and NIP-02/NIP-05 identifier string formatted as:
  ```js
  let info = `${caip10}:${username}`;
  ```
 
 ### e) Message
-Deterministic message to be signed by the wallet provider,
+Deterministic `message` to be signed by the wallet provider,
 ```js
 let message = `Login to Nostr as ${username}\n\nImportant: Please verify the integrity and authenticity of your Nostr client before signing this message.\n${info}`
 ```
 
 ### f) Signature
-[RFC-6979](https://datatracker.ietf.org/doc/html/rfc6979) compatible (ECDSA) deterministic signature calculated by the wallet provider using native keypair,
+[RFC-6979](https://datatracker.ietf.org/doc/html/rfc6979) compatible (ECDSA) deterministic `signature` calculated by the wallet provider using native keypair,
 ```js
 let signature = wallet.signMessage(message);
 ```
 
 ### g) Salt
-- `salt` is SHA-256 hash of the `info`, optional password and last **32 bytes** of signature string formatted as:
+`salt` is SHA-256 hash of the `info`, optional password and last **32 bytes** of signature string formatted as:
   ```js
   let salt = await sha256(`${info}:${password?password:""}:${signature.slice(68)}`);
   ```
