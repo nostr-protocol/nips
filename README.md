@@ -38,8 +38,8 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
 - [NIP-65: Relay List Metadata](65.md)
-- [NIP-69: Public Key Revocation](69.md)
 - [NIP-78: Application-specific data](78.md)
+- [NIP-109: Public Key Revocation](109.md)
 
 ## Event Kinds
 
