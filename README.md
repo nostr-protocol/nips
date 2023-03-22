@@ -25,7 +25,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-23: Long-form Content](23.md)
 - [NIP-25: Reactions](25.md)
 - [NIP-26: Delegated Event Signing](26.md)
-- [NIP-27: Handling Mentions](27.md)
+- [NIP-27: Text Note References](27.md)
 - [NIP-28: Public Chat](28.md)
 - [NIP-33: Parameterized Replaceable Events](33.md)
 - [NIP-36: Sensitive Content](36.md)
