@@ -18,6 +18,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-14: Subject tag in text events.](14.md)
 - [NIP-15: End of Stored Events Notice](15.md)
 - [NIP-16: Event Treatment](16.md)
+- [NIP-18: Reposts](18.md)
 - [NIP-19: bech32-encoded entities](19.md)
 - [NIP-20: Command Results](20.md)
 - [NIP-21: `nostr:` URL scheme](21.md)
