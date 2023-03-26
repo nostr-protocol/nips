@@ -28,6 +28,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-27: Text Note References](27.md)
 - [NIP-28: Public Chat](28.md)
 - [NIP-33: Parameterized Replaceable Events](33.md)
+- [NIP-34: Parameterized Versioned Events](34.md)
 - [NIP-36: Sensitive Content](36.md)
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
@@ -76,6 +77,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 10000-19999   | Replaceable Events               | [16](16.md) |
 | 20000-29999   | Ephemeral Events                 | [16](16.md) |
 | 30000-39999   | Parameterized Replaceable Events | [33](33.md) |
+| 40000-49999   | Parameterized Versioned Events   | [34](34.md) |
 
 ## Message types
 
