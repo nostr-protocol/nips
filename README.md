@@ -28,6 +28,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-26: Delegated Event Signing](26.md)
 - [NIP-27: Text Note References](27.md)
 - [NIP-28: Public Chat](28.md)
+- [NIP-30: Event Copy](30.md)
 - [NIP-33: Parameterized Replaceable Events](33.md)
 - [NIP-36: Sensitive Content](36.md)
 - [NIP-39: External Identities in Profiles](39.md)
@@ -55,6 +56,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 6             | Reposts                          | [18](18.md) |
 | 7             | Reaction                         | [25](25.md) |
 | 8             | Badge Award                      | [58](58.md) |
+| 9             | Event Copy                       | [30](30.md) |
 | 40            | Channel Creation                 | [28](28.md) |
 | 41            | Channel Metadata                 | [28](28.md) |
 | 42            | Channel Message                  | [28](28.md) |
@@ -114,6 +116,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | g          | geohash                 |                   | [12](12.md)              |
 | nonce      | random                  |                   | [13](13.md)              |
 | subject    | subject                 |                   | [14](14.md)              |
+| k          | referenced event kind   |                   | [30](30.md)              |
 | d          | identifier              |                   | [33](33.md)              |
 | expiration | unix timestamp (string) |                   | [40](40.md)              |
 
