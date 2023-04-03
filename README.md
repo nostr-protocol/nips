@@ -61,6 +61,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 42            | Channel Message                  | [28](28.md) |
 | 43            | Channel Hide Message             | [28](28.md) |
 | 44            | Channel Mute User                | [28](28.md) |
+| 1031          | Incognito Direct Messages        | [31](31.md) | 
 | 1984          | Reporting                        | [56](56.md) |
 | 9734          | Zap Request                      | [57](57.md) |
 | 9735          | Zap                              | [57](57.md) |
