@@ -67,7 +67,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 10000         | Mute List                        | [51](51.md) |
 | 10001         | Pin List                         | [51](51.md) |
 | 10002         | Relay List Metadata              | [65](65.md) |
-| 17761         | Private Channel Events           | [76](76.md) |
+| 17761         | Private Channel Event            | [76](76.md) |
 | 22242         | Client Authentication            | [42](42.md) |
 | 24133         | Nostr Connect                    | [46](46.md) |
 | 30000         | Categorized People List          | [51](51.md) |
