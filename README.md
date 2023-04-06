@@ -128,6 +128,12 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 4. There should be no more than one way of doing the same thing.
 5. Other rules will be made up when necessary.
 
+## Contributors
+<a align="center" href="https://github.com/nostr-protocol/nips/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=nostr-protocol/nips" />
+</a>
+
+
 ## License
 
 All NIPs are public domain.
