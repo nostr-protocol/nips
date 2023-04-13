@@ -82,6 +82,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 ## Message types
 
 ### Client to Relay
+
 | type  | description                                         | NIP         |
 |-------|-----------------------------------------------------|-------------|
 | EVENT | used to publish events                              | [1](01.md)  |
@@ -91,6 +92,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | COUNT | used to request event counts                        | [45](45.md) |
 
 ### Relay to Client
+
 | type   | description                                             | NIP         |
 |--------|---------------------------------------------------------|-------------|
 | EVENT  | used to send events requested to clients                | [1](01.md)  |
