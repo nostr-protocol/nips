@@ -102,7 +102,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 
 Please update these lists when proposing NIPs introducing new event kinds.
 
-When experimenting with kinds, keep in mind the classification introduced by [NIP-16](16.md).
+When experimenting with kinds, keep in mind the classification introduced by [NIP-16](16.md) and [NIP-33](33.md).
 
 ## Standardized Tags
 
