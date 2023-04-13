@@ -82,23 +82,25 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 ## Message types
 
 ### Client to Relay
-| type  | description                                         | NIP         |
-|-------|-----------------------------------------------------|-------------|
-| EVENT | used to publish events                              | [1](01.md)  |
-| REQ   | used to request events and subscribe to new updates | [1](01.md)  |
-| CLOSE | used to stop previous subscriptions                 | [1](01.md)  |
-| AUTH  | used to send authentication events                  | [42](42.md) |
-| COUNT | used to request event counts                        | [45](45.md) |
+
+| type    | description                                         | NIP         |
+| ------- | --------------------------------------------------- | ----------- |
+| `AUTH`  | used to send authentication events                  | [42](42.md) |
+| `CLOSE` | used to stop previous subscriptions                 | [1](01.md)  |
+| `COUNT` | used to request event counts                        | [45](45.md) |
+| `EVENT` | used to publish events                              | [1](01.md)  |
+| `REQ`   | used to request events and subscribe to new updates | [1](01.md)  |
 
 ### Relay to Client
-| type   | description                                             | NIP         |
-|--------|---------------------------------------------------------|-------------|
-| EVENT  | used to send events requested to clients                | [1](01.md)  |
-| NOTICE | used to send human-readable messages to clients         | [1](01.md)  |
-| EOSE   | used to notify clients all stored events have been sent | [1](01.md) |
-| OK     | used to notify clients if an EVENT was successful       | [20](20.md) |
-| AUTH   | used to send authentication challenges                  | [42](42.md) |
-| COUNT  | used to send requested event counts to clients          | [45](45.md)  |
+
+| type     | description                                             | NIP         |
+| -------- | ------------------------------------------------------- | ----------- |
+| `AUTH`   | used to send authentication challenges                  | [42](42.md) |
+| `COUNT`  | used to send requested event counts to clients          | [45](45.md) |
+| `EOSE`   | used to notify clients all stored events have been sent | [1](01.md)  |
+| `EVENT`  | used to send events requested to clients                | [1](01.md)  |
+| `NOTICE` | used to send human-readable messages to clients         | [1](01.md)  |
+| `OK`     | used to notify clients if an EVENT was successful       | [20](20.md) |
 
 Please update these lists when proposing NIPs introducing new event kinds.
 
