@@ -61,38 +61,38 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 
 ## Event Kinds
 
-| kind     | description                | NIP         |
-| -------- | -------------------------- | ----------- |
-| `0`      | Metadata                   | [1](01.md)  |
-| `1`      | Short Text Note            | [1](01.md)  |
-| `2`      | Recommend Relay            | [1](01.md)  |
-| `3`      | Contacts                   | [2](02.md)  |
-| `4`      | Encrypted Direct Messages  | [4](04.md)  |
-| `5`      | Event Deletion             | [9](09.md)  |
-| `6`      | Reposts                    | [18](18.md) |
-| `7`      | Reaction                   | [25](25.md) |
-| `8`      | Badge Award                | [58](58.md) |
-| `40`     | Channel Creation           | [28](28.md) |
-| `41`     | Channel Metadata           | [28](28.md) |
-| `42`     | Channel Message            | [28](28.md) |
-| `43`     | Channel Hide Message       | [28](28.md) |
-| `44`     | Channel Mute User          | [28](28.md) |
-| `1984`   | Reporting                  | [56](56.md) |
-| `9734`   | Zap Request                | [57](57.md) |
-| `9735`   | Zap                        | [57](57.md) |
-| `10000`  | Mute List                  | [51](51.md) |
-| `10001`  | Pin List                   | [51](51.md) |
-| `10002`  | Relay List Metadata        | [65](65.md) |
-| `22242`  | Client Authentication      | [42](42.md) |
-| `24133`  | Nostr Connect              | [46](46.md) |
-| `30000`  | Categorized People List    | [51](51.md) |
-| `30001`  | Categorized Bookmark List  | [51](51.md) |
-| `30008`  | Profile Badges             | [58](58.md) |
-| `30009`  | Badge Definition           | [58](58.md) |
-| `30017`  | Create or update a stall   | [15](15.md) |
-| `30018`  | Create or update a product | [15](15.md) |
-| `30023`  | Long-form Content          | [23](23.md) |
-| `30078`  | Application-specific Data  | [78](78.md) |
+| kind    | description                | NIP         |
+| ------- | -------------------------- | ----------- |
+| `0`     | Metadata                   | [1](01.md)  |
+| `1`     | Short Text Note            | [1](01.md)  |
+| `2`     | Recommend Relay            | [1](01.md)  |
+| `3`     | Contacts                   | [2](02.md)  |
+| `4`     | Encrypted Direct Messages  | [4](04.md)  |
+| `5`     | Event Deletion             | [9](09.md)  |
+| `6`     | Reposts                    | [18](18.md) |
+| `7`     | Reaction                   | [25](25.md) |
+| `8`     | Badge Award                | [58](58.md) |
+| `40`    | Channel Creation           | [28](28.md) |
+| `41`    | Channel Metadata           | [28](28.md) |
+| `42`    | Channel Message            | [28](28.md) |
+| `43`    | Channel Hide Message       | [28](28.md) |
+| `44`    | Channel Mute User          | [28](28.md) |
+| `1984`  | Reporting                  | [56](56.md) |
+| `9734`  | Zap Request                | [57](57.md) |
+| `9735`  | Zap                        | [57](57.md) |
+| `10000` | Mute List                  | [51](51.md) |
+| `10001` | Pin List                   | [51](51.md) |
+| `10002` | Relay List Metadata        | [65](65.md) |
+| `22242` | Client Authentication      | [42](42.md) |
+| `24133` | Nostr Connect              | [46](46.md) |
+| `30000` | Categorized People List    | [51](51.md) |
+| `30001` | Categorized Bookmark List  | [51](51.md) |
+| `30008` | Profile Badges             | [58](58.md) |
+| `30009` | Badge Definition           | [58](58.md) |
+| `30017` | Create or update a stall   | [15](15.md) |
+| `30018` | Create or update a product | [15](15.md) |
+| `30023` | Long-form Content          | [23](23.md) |
+| `30078` | Application-specific Data  | [78](78.md) |
 
 ### Event Kind Ranges
 
