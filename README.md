@@ -136,6 +136,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `d`          | identifier              | --                | [33](33.md)              |
 | `e`          | event id (hex)          | relay URL, marker | [1](01.md), [10](10.md)  |
 | `g`          | geohash                 | --                | [12](12.md)              |
+| `i`          | identity                | identity, proof   | [39](39.md)              |
 | `p`          | pubkey (hex)            | relay URL         | [1](01.md)               |
 | `r`          | a reference (URL, etc)  | --                | [12](12.md)              |
 | `t`          | hashtag                 | --                | [12](12.md)              |
