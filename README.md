@@ -2,6 +2,22 @@
 
 NIPs stand for **Nostr Implementation Possibilities**. They exist to document what may be implemented by [Nostr](https://github.com/fiatjaf/nostr)-compatible _relay_ and _client_ software.
 
+---
+
+- [List](#list)
+- [Event Kinds](#event-kinds)
+  - [Event Kind Ranges](#event-kind-ranges)
+- [Message Types](#message-types)
+  - [Client to Relay](#client-to-relay)
+  - [Relay to Client](#relay-to-client)
+- [Standardized Tags](#standardized-tags)
+- [Criteria for acceptance of NIPs](#criteria-for-acceptance-of-nips)
+- [License](#license)
+
+---
+
+## List
+
 - [NIP-01: Basic protocol flow description](01.md)
 - [NIP-02: Contact List and Petnames](02.md)
 - [NIP-03: OpenTimestamps Attestations for Events](03.md)
