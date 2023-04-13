@@ -1,6 +1,7 @@
 # NIPs
 
-NIPs stand for **Nostr Implementation Possibilities**. They exist to document what may be implemented by [Nostr](https://github.com/fiatjaf/nostr)-compatible _relay_ and _client_ software.
+NIPs stand for **Nostr Implementation Possibilities**.
+They exist to document what may be implemented by [Nostr](https://github.com/fiatjaf/nostr)-compatible _relay_ and _client_ software.
 
 - [NIP-01: Basic protocol flow description](01.md)
 - [NIP-02: Contact List and Petnames](02.md)
