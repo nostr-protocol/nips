@@ -27,6 +27,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-26: Delegated Event Signing](26.md)
 - [NIP-27: Text Note References](27.md)
 - [NIP-28: Public Chat](28.md)
+- [NIP-31: Incognito Direct Messages](31.md)
 - [NIP-33: Parameterized Replaceable Events](33.md)
 - [NIP-36: Sensitive Content](36.md)
 - [NIP-39: External Identities in Profiles](39.md)
@@ -60,6 +61,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 42            | Channel Message                  | [28](28.md) |
 | 43            | Channel Hide Message             | [28](28.md) |
 | 44            | Channel Mute User                | [28](28.md) |
+| 1031          | Incognito Direct Messages        | [31](31.md) | 
 | 1984          | Reporting                        | [56](56.md) |
 | 9734          | Zap Request                      | [57](57.md) |
 | 9735          | Zap                              | [57](57.md) |
