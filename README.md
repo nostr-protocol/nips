@@ -132,36 +132,37 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 
 ## Standardized Tags
 
-| name           | value                                | other parameters     | NIP                      |
-| -------------- | ------------------------------------ | -------------------- | ------------------------ |
-| `a`            | coordinates to an event              | relay URL            | [33](33.md), [23](23.md) |
-| `d`            | identifier                           | --                   | [33](33.md)              |
-| `e`            | event id (hex)                       | relay URL, marker    | [1](01.md), [10](10.md)  |
-| `g`            | geohash                              | --                   | [12](12.md)              |
-| `i`            | identity                             | proof                | [39](39.md)              |
-| `p`            | pubkey (hex)                         | relay URL            | [1](01.md)               |
-| `r`            | a reference (URL, etc)               | --                   | [12](12.md)              |
-| `t`            | hashtag                              | --                   | [12](12.md)              |
-| `amount`       | millisats                            | --                   | [57](57.md)              |
-| `bolt11`       | `bolt11` invoice                     | --                   | [57](57.md)              |
-| `challenge`    | challenge string                     | --                   | [42](42.md)              |
-| `delegation`   | pubkey, conditions, delegation token | --                   | [26](26.md)              |
-| `description`  | badge description                    | --                   | [58](58.md)              |
-| `description`  | invoice description                  | --                   | [57](57.md)              |
-| `expiration`   | unix timestamp (string)              | --                   | [40](40.md)              |
-| `image`        | image URL                            | dimensions in pixels | [23](23.md), [58](58.md) |
-| `lnurl`        | `bech32` encoded `lnurl`             | --                   | [57](57.md)              |
-| `name`         | badge name                           | --                   | [58](58.md)              |
-| `nonce`        | random                               | --                   | [13](13.md)              |
-| `preimage`     | hash of `bolt11` invoice             | --                   | [57](57.md)              |
-| `published_at` | unix timestamp (string)              | --                   | [23](23.md)              |
-| `relay`        | relay url                            | --                   | [42](42.md)              |
-| `relays`       | relay list                           | --                   | [57](57.md)              |
-| `subject`      | subject                              | --                   | [14](14.md)              |
-| `summary`      | article summary                      | --                   | [23](23.md)              |
-| `thumb`        | badge thumbnail                      | dimensions in pixels | [58](58.md)              |
-| `title`        | article title                        | --                   | [23](23.md)              |
-| `zap`          | profile name                         | type of value        | [57](57.md)              |
+| name              | value                                | other parameters     | NIP                      |
+| ----------------- | ------------------------------------ | -------------------- | ------------------------ |
+| `a`               | coordinates to an event              | relay URL            | [33](33.md), [23](23.md) |
+| `d`               | identifier                           | --                   | [33](33.md)              |
+| `e`               | event id (hex)                       | relay URL, marker    | [1](01.md), [10](10.md)  |
+| `g`               | geohash                              | --                   | [12](12.md)              |
+| `i`               | identity                             | proof                | [39](39.md)              |
+| `p`               | pubkey (hex)                         | relay URL            | [1](01.md)               |
+| `r`               | a reference (URL, etc)               | --                   | [12](12.md)              |
+| `t`               | hashtag                              | --                   | [12](12.md)              |
+| `amount`          | millisats                            | --                   | [57](57.md)              |
+| `bolt11`          | `bolt11` invoice                     | --                   | [57](57.md)              |
+| `challenge`       | challenge string                     | --                   | [42](42.md)              |
+| `content-warning` | reason                               | --                   | [36](36.md)              |
+| `delegation`      | pubkey, conditions, delegation token | --                   | [26](26.md)              |
+| `description`     | badge description                    | --                   | [58](58.md)              |
+| `description`     | invoice description                  | --                   | [57](57.md)              |
+| `expiration`      | unix timestamp (string)              | --                   | [40](40.md)              |
+| `image`           | image URL                            | dimensions in pixels | [23](23.md), [58](58.md) |
+| `lnurl`           | `bech32` encoded `lnurl`             | --                   | [57](57.md)              |
+| `name`            | badge name                           | --                   | [58](58.md)              |
+| `nonce`           | random                               | --                   | [13](13.md)              |
+| `preimage`        | hash of `bolt11` invoice             | --                   | [57](57.md)              |
+| `published_at`    | unix timestamp (string)              | --                   | [23](23.md)              |
+| `relay`           | relay url                            | --                   | [42](42.md)              |
+| `relays`          | relay list                           | --                   | [57](57.md)              |
+| `subject`         | subject                              | --                   | [14](14.md)              |
+| `summary`         | article summary                      | --                   | [23](23.md)              |
+| `thumb`           | badge thumbnail                      | dimensions in pixels | [58](58.md)              |
+| `title`           | article title                        | --                   | [23](23.md)              |
+| `zap`             | profile name                         | type of value        | [57](57.md)              |
 
 ## Criteria for acceptance of NIPs
 
