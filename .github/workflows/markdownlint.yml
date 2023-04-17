@@ -8,5 +8,7 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@v2
-    - name: Run mdl
-      uses: actionshub/markdownlint@main
+    - name: Run markdownlint
+      uses: articulate/actions-markdownlint@v1
+      with:
+        config: markdownlint.json
