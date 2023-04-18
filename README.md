@@ -58,6 +58,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 - [NIP-58: Badges](58.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-78: Application-specific data](78.md)
+- [NIP-109: Public Key Revocation](109.md)
 
 ## Event Kinds
 
