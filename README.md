@@ -79,7 +79,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 | `42`    | Channel Message            | [28](28.md) |
 | `43`    | Channel Hide Message       | [28](28.md) |
 | `44`    | Channel Mute User          | [28](28.md) |
-| `1063`  | File Header                | [94](94.md) |
+| `1063`  | File Metadata              | [94](94.md) |
 | `1984`  | Reporting                  | [56](56.md) |
 | `9734`  | Zap Request                | [57](57.md) |
 | `9735`  | Zap                        | [57](57.md) |
