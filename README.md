@@ -54,6 +54,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 - [NIP-46: Nostr Connect](46.md)
 - [NIP-50: Keywords filter](50.md)
 - [NIP-51: Lists](51.md)
+- [NIP-54: Image Metadata](54.md)
 - [NIP-56: Reporting](56.md)
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
