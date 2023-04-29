@@ -54,7 +54,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 - [NIP-46: Nostr Connect](46.md)
 - [NIP-50: Keywords filter](50.md)
 - [NIP-51: Lists](51.md)
-- [NIP-56: Reporting](56.md)
+- [NIP-56: Labeling](56.md)
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
 - [NIP-65: Relay List Metadata](65.md)
@@ -80,7 +80,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 | `43`    | Channel Hide Message       | [28](28.md) |
 | `44`    | Channel Mute User          | [28](28.md) |
 | `1063`  | File Metadata              | [94](94.md) |
-| `1984`  | Reporting                  | [56](56.md) |
+| `1984`  | Labeling                   | [56](56.md) |
 | `9734`  | Zap Request                | [57](57.md) |
 | `9735`  | Zap                        | [57](57.md) |
 | `10000` | Mute List                  | [51](51.md) |
