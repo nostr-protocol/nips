@@ -1,0 +1,34 @@
+# NIP-24
+## Topics
+
+This NIP defines `kind:31000` (a parameterized replaceable event according to [NIP-33](https://github.com/nostr-protocol/nips/blob/master/33.md)) for topics that group a selection of articles from of a `kind:30023` of the NIP-23.
+
+## Format
+The `.content` property should hold a `String` of a `JSON` syntax, a `Stringyfied` JSON.
+
+The detailed structure of the `Strigyfied` content should hold the following properties:
+- `title`
+- `excerpt`
+- `thumbnail`
+
+## Editibality
+These articles are meant to be editable, so they should make use of the replaceability feature of NIP-33 and include a `d`  tag with an identifier for the article. Clients should take care to only publish and read these events from relays that implement that. If they don't do that they should also take care to hide old versions of the same article they may receive.
+
+## Linking
+The article may be linked to using the NIP-19 naddr code along with the "a" tag (see [NIP-33](https://github.com/nostr-protocol/nips/blob/master/33.md) and [NIP-19](https://github.com/nostr-protocol/nips/blob/master/19.md)).
+
+## Example event
+
+```
+{
+  "kind": 31000,
+  "created_at": 1675642635,
+  "content": "{title: "Lorem title", excerpt: "lorem excerpt", thumbnail: "https://example.com/image.png"}",
+  "tags": [
+    ["d", "12hAei3kQw381"],
+    ["a", "30023:a695f6b60119d9521934a691347d9f78e8770b56da16bb255ee286ddf9fda919:ipsum", "wss://relay.nostr.org"]
+  ],
+  "pubkey": "...",
+  "id": "..."
+}
+```
