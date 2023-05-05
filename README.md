@@ -60,6 +60,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 - [NIP-58: Badges](58.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-78: Application-specific data](78.md)
+- [NIP-84: Highlights](84.md)
 - [NIP-94: File Metadata](94.md)
 
 ## Event Kinds
@@ -84,6 +85,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 | `1984`  | Reporting                  | [56](56.md) |
 | `9734`  | Zap Request                | [57](57.md) |
 | `9735`  | Zap                        | [57](57.md) |
+| `9802`  | Highlights                 | [84](84.md) |
 | `10000` | Mute List                  | [51](51.md) |
 | `10001` | Pin List                   | [51](51.md) |
 | `10002` | Relay List Metadata        | [65](65.md) |
