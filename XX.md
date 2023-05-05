@@ -28,7 +28,6 @@ This NIP specifies a `X` event kind for Zap Gated Resources, having in `content`
 * `url` the url of the NIP-98 protected resource
 * `m` a string indicating the data type of the file. The MIME types format must be used (https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types)
 * `price`  the price in SATS that is to be paid to access the resource.
-* `dim` (optional) size of file in pixels in the form `<width>x<height>`
 * `preview` (optional) a preview of the protected ressource that should be accessible prior to paying (see preview examples)
 
 ```json
@@ -41,7 +40,6 @@ This NIP specifies a `X` event kind for Zap Gated Resources, having in `content`
     ["url",<string with URI of file>],
     ["m", <MIME type>],
     ["price", <price in SATS>],
-    ["dim", <size of file in pixels>],
     ["preview",<preview tag> ],
   ],
   "content": <description>,
