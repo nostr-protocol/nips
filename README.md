@@ -52,6 +52,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 - [NIP-42: Authentication of clients to relays](42.md)
 - [NIP-45: Counting results](45.md)
 - [NIP-46: Nostr Connect](46.md)
+- [NIP-47: Wallet Connect](47.md)
 - [NIP-50: Keywords filter](50.md)
 - [NIP-51: Lists](51.md)
 - [NIP-56: Reporting](56.md)
@@ -86,7 +87,10 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 | `10000` | Mute List                  | [51](51.md) |
 | `10001` | Pin List                   | [51](51.md) |
 | `10002` | Relay List Metadata        | [65](65.md) |
+| `13194` | Wallet Info                | [47](47.md) |
 | `22242` | Client Authentication      | [42](42.md) |
+| `23194` | Wallet Request             | [47](47.md) |
+| `23195` | Wallet Response            | [47](47.md) |
 | `24133` | Nostr Connect              | [46](46.md) |
 | `30000` | Categorized People List    | [51](51.md) |
 | `30001` | Categorized Bookmark List  | [51](51.md) |
