@@ -60,6 +60,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-58: Badges](58.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-78: Application-specific data](78.md)
+- [NIP-88: Binary event encoding](88.md)
 - [NIP-94: File Metadata](94.md)
 
 ## Event Kinds
