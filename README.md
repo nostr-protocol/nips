@@ -80,6 +80,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `42`    | Channel Message            | [28](28.md) |
 | `43`    | Channel Hide Message       | [28](28.md) |
 | `44`    | Channel Mute User          | [28](28.md) |
+| `1006`  | Event Copy                 | [81](81.md) |
 | `1063`  | File Metadata              | [94](94.md) |
 | `1984`  | Reporting                  | [56](56.md) |
 | `9734`  | Zap Request                | [57](57.md) |
@@ -149,6 +150,9 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `p`               | pubkey (hex)                         | relay URL            | [1](01.md)               |
 | `r`               | a reference (URL, etc)               | --                   | [12](12.md)              |
 | `t`               | hashtag                              | --                   | [12](12.md)              |
+| `I`               | (reserved) copied id                 | --                   | [81](81.md)              |
+| `P`               | (reserved) copied pubkey             | --                   | [81](81.md)              |
+| `K`               | (reserved) copied kind               | --                   | [81](81.md)              |
 | `amount`          | millisats                            | --                   | [57](57.md)              |
 | `bolt11`          | `bolt11` invoice                     | --                   | [57](57.md)              |
 | `challenge`       | challenge string                     | --                   | [42](42.md)              |
