@@ -45,6 +45,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-26: Delegated Event Signing](26.md)
 - [NIP-27: Text Note References](27.md)
 - [NIP-28: Public Chat](28.md)
+- [NIP-30: Custom Emoji](30.md)
 - [NIP-33: Parameterized Replaceable Events](33.md)
 - [NIP-36: Sensitive Content](36.md)
 - [NIP-39: External Identities in Profiles](39.md)
