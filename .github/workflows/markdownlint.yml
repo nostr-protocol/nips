@@ -1,0 +1,14 @@
+name: markdownlint
+
+on: [push, pull_request]
+
+jobs:
+  delivery:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v3
+    - name: Run markdownlint
+      uses: articulate/actions-markdownlint@v1
+      with:
+        config: .markdownlint.jsonc

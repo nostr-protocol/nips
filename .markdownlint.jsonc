@@ -1,0 +1,69 @@
+{
+    "default": true,
+    //
+    "heading-increment": true,
+    "first-heading-h1": false,  // deprecated
+    "heading-style": true,
+    "ul-style": true,
+    "list-indent": true,
+    "ul-start-left": false,  // deprecated
+    "ul-indent": true,
+    "no-trailing-spaces": {
+        "list_item_empty_lines": true,
+        "strict": true
+    },
+    "no-hard-tabs": {
+        "spaces_per_tab": 8
+    },
+    "no-reversed-links": true,
+    "no-multiple-blanks": true,
+    "line-length": false,
+    "commands-show-output": true,
+    "no-missing-space-atx": true,
+    "no-multiple-space-atx": true,
+    "no-missing-space-closed-atx": true,
+    "no-multiple-space-closed-atx": true,
+    "blanks-around-headings": true,
+    "heading-start-left": true,
+    "no-duplicate-heading": {
+        "allow_different_nesting": true,
+        "siblings_only": true
+    },
+    "single-title": true,
+    "no-trailing-punctuation": true,
+    "no-multiple-space-blockquote": true,
+    "no-blanks-blockquote": true,
+    "ol-prefix": {
+        "style": "ordered"
+    },
+    "list-marker-space": true,
+    "blanks-around-fences": true,
+    "blanks-around-lists": true,
+    "no-inline-html": {
+        "allowed_elements": ["a", "!--"]
+    },
+    "no-bare-urls": true,
+    "hr-style": true,
+    "no-emphasis-as-heading": true,
+    "no-space-in-emphasis": true,
+    "no-space-in-code": true,
+    "no-space-in-links": true,
+    "fenced-code-language": true,
+    "first-line-heading": true,
+    "no-empty-links": true,
+    "required-headings": false,
+    "proper-names": {
+        "names": ["Merkle", "Schnorr"],
+        "code_blocks": false,
+        "html_elements": false
+    },
+    "no-alt-text": true,
+    "code-block-style": true,
+    "single-trailing-newline": true,
+    "code-fence-style": true,
+    "emphasis-style": true,
+    "strong-style": true,
+    "link-fragments": true,
+    "reference-links-images": true,
+    "link-image-reference-definitions": true
+}
