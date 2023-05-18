@@ -10,7 +10,7 @@ The purpose of this NIP is to allow external resources that are protected by NIP
 
 ## Creating Zap Gated Resources (Creator)
 
-In order to create a Zap Gated Resource a creator uploads the resource (e.g, a text-, audio-, or image-file) to a NIP-XX enabled provider, specifying a price, the pubkey that will be used to publish the event, a payment destination according to NIP-57, as well as a list of relays that should be used for zapping. The provider returns an unsigned event of kind-X, containing relevant metadata and the resource url that the creator can then sign and publish.
+In order to create a Zap Gated Resource a creator uploads the resource (e.g, a text-, audio-, or image-file) to a NIP-XX enabled provider, specifying a price, the public key that will be used to publish the event, a payment destination according to NIP-57, as well as a list of relays that should be used for zapping. The provider returns an unsigned event of kind-X, containing relevant metadata and the resource url that the creator can then sign and publish.
 
 ## Protecting a Zap Gated Ressource (Provider)
 
@@ -20,6 +20,18 @@ In order to only return the resource to users that have paid for the resource, t
 ## Accessing a Zap Gated Resource (User)
 
 When a client discovers a kind-X event, it should render the preview if applicable and let the user know that they need to pay in order to view the full resource (e.g., by showing a "pay to unlock" button). If the user wishes to pay for the resource, the client should facilitate a Zap according to NIP-57 on the kind-X event, specifying the relays from the kind-X event relays tag. After successful payment it should go ahead and construct an AUTH header according to NIP-98 and request the full resource from the `url` in the kind-X event.
+
+## Exemplary Flow
+
+1. Alice uploads a podcast episode she recorded to a NIX-XX enabled provider, constructs a Kind-X event with the providers help and then publishes said event to the relays of her choice. The provider begins watching for Zap Receipts with an `e` tag matching Alice's Kind-X event.
+
+2. Bob discovers Alice's Kind-XX event in his feed. In order to request the resource Bob's client will construct a Authorization HTTP header per NIP98 and add it to the request. Because Bob has not yet paid for it the provider will respond with a 402 Payment required. Bob's client will render the appropriate UI with the content preview, the resource's price and a button to initiate payment.
+
+3. If Bob wishes to purchase the resource he will ask his Client to zap Alice's kind-X event with at least the amount specified in the `amount` tag. Because the provider needs to be aware of this Zap, they included a `relays` tag in the Kind-X event when it was constructed in Step 1. These relays must be included in Bobs NIP57 Zap-Request event so that the Zap Provider knows to publishes the NIP57 Zap Receipt to the same set of relays.
+
+4. Once the provider receives information about Bob's Zap Receipt it will verify its integrity and if it's amount is >= the amount specified in the Kind-X event it will add Bob's public key to a list of authorized public keys.
+
+5. After the zap per NIP57 is completed Bob's client can request the resource again, still adding authentication per NIP98. Because the provider has added his public key to the authorized public keys it will no longer respond with 402 Payment required, but with 200 and the requested resource. Because it might take a few seconds for the Zap Receipt to propagate.
 
 ## Kind-X Event format
 
