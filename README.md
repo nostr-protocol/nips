@@ -58,6 +58,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 - [NIP-56: Reporting](56.md)
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
+- [NIP-60: ZapGates](60.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-78: Application-specific data](78.md)
 - [NIP-94: File Metadata](94.md)
@@ -80,6 +81,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 | `42`    | Channel Message            | [28](28.md) |
 | `43`    | Channel Hide Message       | [28](28.md) |
 | `44`    | Channel Mute User          | [28](28.md) |
+| `60`    | ZapGate                    | [60](60.md) |
 | `1063`  | File Metadata              | [94](94.md) |
 | `1984`  | Reporting                  | [56](56.md) |
 | `9734`  | Zap Request                | [57](57.md) |
