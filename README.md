@@ -1,7 +1,7 @@
 # NIPs
 
 NIPs stand for **Nostr Implementation Possibilities**.
-They exist to document what may be implemented by [Nostr](https://github.com/fiatjaf/nostr)-compatible _relay_ and _client_ software.
+They exist to document what may be implemented by [Nostr](https://github.com/nostr-protocol/nostr)-compatible _relay_ and _client_ software.
 
 ---
 
@@ -45,6 +45,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 - [NIP-26: Delegated Event Signing](26.md)
 - [NIP-27: Text Note References](27.md)
 - [NIP-28: Public Chat](28.md)
+- [NIP-30: Custom Emoji](30.md)
 - [NIP-33: Parameterized Replaceable Events](33.md)
 - [NIP-36: Sensitive Content](36.md)
 - [NIP-39: External Identities in Profiles](39.md)
@@ -52,6 +53,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 - [NIP-42: Authentication of clients to relays](42.md)
 - [NIP-45: Counting results](45.md)
 - [NIP-46: Nostr Connect](46.md)
+- [NIP-47: Wallet Connect](47.md)
 - [NIP-50: Keywords filter](50.md)
 - [NIP-51: Lists](51.md)
 - [NIP-56: Reporting](56.md)
@@ -86,7 +88,10 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 | `10000` | Mute List                  | [51](51.md) |
 | `10001` | Pin List                   | [51](51.md) |
 | `10002` | Relay List Metadata        | [65](65.md) |
+| `13194` | Wallet Info                | [47](47.md) |
 | `22242` | Client Authentication      | [42](42.md) |
+| `23194` | Wallet Request             | [47](47.md) |
+| `23195` | Wallet Response            | [47](47.md) |
 | `24133` | Nostr Connect              | [46](46.md) |
 | `30000` | Categorized People List    | [51](51.md) |
 | `30001` | Categorized Bookmark List  | [51](51.md) |
@@ -152,6 +157,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `delegation`      | pubkey, conditions, delegation token | --                   | [26](26.md)              |
 | `description`     | badge description                    | --                   | [58](58.md)              |
 | `description`     | invoice description                  | --                   | [57](57.md)              |
+| `emoji`           | shortcode                            | image URL            | [30](30.md)              |
 | `expiration`      | unix timestamp (string)              | --                   | [40](40.md)              |
 | `image`           | image URL                            | dimensions in pixels | [23](23.md), [58](58.md) |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                   | [57](57.md)              |
