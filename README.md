@@ -173,6 +173,15 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `title`           | article title                        | --                   | [23](23.md)              |
 | `zap`             | profile name                         | type of value        | [57](57.md)              |
 
+## Process to submit a NIP
+
+1. Create an issue describing the problem and proposed solutions. The title should be "NIP-XX Title" where the title is descriptive and less than 80 chars. This is a tracking issue which should exist for all NIP drafts and ideas.
+2. If the author has a draft prepared, they create a pull request (PR) with that draft and mention the issue. If a draft is asking to reserve a kind, message type, etc. this should be placed near the top so that maintainers can easily see such requests.
+3. Maintainers assign a NIP number and edit the tracking issue and PR titles to match. This makes it easier to search in a consistent way (i.e. by NIP-XX).
+4. Discussion ensues in tracking issue, links added to tracking issue, and in the PR.
+5. When the author feels that issues raised by the community have been addressed, they tag the maintainers and request in the tracking issue to finalize the NIP.
+6. After 14 days with no additional blocking feedback, the NIP is finalized.
+
 ## Criteria for acceptance of NIPs
 
 1. They should be implemented in at least two clients and one relay -- when applicable.
