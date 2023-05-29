@@ -49,6 +49,10 @@ Events can go missing because of
 - political reasons (censorship)
 - technical reasons (data loss)
 
+Political censorship can use the method of "shadow banning", also known as "selective scamming" in other contexts.
+In that case, most events are **not** censored to create the illusion of "free speech", and only some events are censored.
+To detect this form of censorship, we need a steady chain of events.
+
 Redundancy
 ----------
 
