@@ -6,9 +6,7 @@ References to previous events
 
 `draft` `optional` `author:milahu`
 
-Events contain references to previous events.
-
-<!-- "can"? Events CAN contain references to previous events. -->
+Events can contain references to previous events.
 
 Implementation
 --------------
