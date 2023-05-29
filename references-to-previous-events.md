@@ -15,6 +15,7 @@ Each reference to a previous events consists of
 
 - the distance between this event and the previous event, as an integer number, greater-or-equal than 1
 - the ID of the previous event
+- optional: relay URL
 
 The choice of distances is arbitrary.
 Some choices:
@@ -32,6 +33,7 @@ Some choices:
   "e_prev": [
     [<previous event distance>, <previous event ID>],
     [<previous event distance>, <previous event ID>],
+    [<previous event distance>, <previous event ID>, <previous event relay URL>],
     ...
   ]
 }
