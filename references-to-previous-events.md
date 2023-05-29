@@ -31,7 +31,7 @@ Some choices:
   "kind": ...,
   ...,
   ...,
-  "chain": [
+  "e_prev": [
     [<previous event distance>, <previous event ID>],
     [<previous event distance>, <previous event ID>],
     ...
@@ -110,24 +110,26 @@ Clients should visualize:
 
 If there are many missing previous events, these can be collapsed to a "N missing events" block.
 
-TODO: rename "chain"
---------------------
+TODO: rename key
+----------------
 
 ```json
 {
   ...,
-  "chain": [
+  "e_prev": [
     ...
   ]
 }
 ```
 
-Rename the key "chain" to ...
+Rename the key to ...
 
 - previous_events
+- e_prev
 - prevs
 - history
 - soft_chain
+- chain
 
 Keywords
 --------
