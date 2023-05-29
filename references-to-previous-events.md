@@ -74,6 +74,7 @@ The last received event `E0` contains references to previous events `[E1, E3, E7
 
 Problem:
 How can we find `E2`?
+We only know the distance `2` (relative to `E0`) of `E2`, but not the event ID of `E2`.
 Usually we would use the previous-event-reference with distance 1 of `E1`, but we dont have `E1`.
 
 Solution:
