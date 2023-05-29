@@ -32,8 +32,8 @@ Some choices:
   ...,
   ...,
   "chain": [
-    <previous event distance>, <previous event ID>,
-    <previous event distance>, <previous event ID>,
+    [<previous event distance>, <previous event ID>],
+    [<previous event distance>, <previous event ID>],
     ...
   ]
 }
