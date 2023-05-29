@@ -91,6 +91,25 @@ Adoption
 Events created before the adoption of this NIP can be referenced in future events.
 To improve space-efficiency, it can make sense to distribute these back-references across multiple events ("sparse chains", "fragmented chains").
 
+Inconsistencies
+---------------
+
+There is no guarantee that the merging of multiple previous-events-lists produces a consistent chain of events.
+Eventual inconsistencies can be resolved by sorting events by time or event ID.
+(Multiple diverging chains can be merged by sorting events by time or event ID.)
+
+Such inconsistencies allow modification of the chain (insertion or deletion of previous events), so the chain is mutable.
+
+Visualization
+-------------
+
+Clients should visualize:
+
+- the reference to the first previous event
+- missing previous events
+
+If there are many missing previous events, these can be collapsed to a "N missing events" block.
+
 TODO: rename "chain"
 --------------------
 
