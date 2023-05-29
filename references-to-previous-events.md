@@ -43,6 +43,8 @@ Soft chain of events
 --------------------
 
 This is useful to build a "soft chain" of events, so the recipient can detect missing events.
+This chain is "soft", because it tolerates missing events.
+A "hard" chain would store only the first previous event, and if that event is missing, the chain is broken.
 
 Events can go missing because of
 
