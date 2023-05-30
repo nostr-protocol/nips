@@ -50,7 +50,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-38: User Statuses](38.md)
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
-- [NIP-42: Authentication of clients to relays](42.md)
+- [NIP-42: Authentication of clients to relays](42.md) --- **unrecommended**: deprecated in favor of [NIP-43](43.md)
+- [NIP-43: Fast Authentication](43.md)
 - [NIP-45: Counting results](45.md)
 - [NIP-46: Nostr Connect](46.md)
 - [NIP-47: Wallet Connect](47.md)
@@ -103,7 +104,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10001` | Pin List                   | [51](51.md) |
 | `10002` | Relay List Metadata        | [65](65.md) |
 | `13194` | Wallet Info                | [47](47.md) |
-| `22242` | Client Authentication      | [42](42.md) |
+| `22242` | Client Authentication      | [42](42.md), [43](43.md) |
 | `23194` | Wallet Request             | [47](47.md) |
 | `23195` | Wallet Response            | [47](47.md) |
 | `24133` | Nostr Connect              | [46](46.md) |
@@ -191,7 +192,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `price`           | price                                | currency, frequency  | [99](99.md)                           |
 | `proxy`           | external ID                          | protocol             | [48](48.md)                           |
 | `published_at`    | unix timestamp (string)              | --                   | [23](23.md)                           |
-| `relay`           | relay url                            | --                   | [42](42.md)                           |
+| `relay`           | relay url                            | --                   | [42](42.md), [43](43.md)              |
 | `relays`          | relay list                           | --                   | [57](57.md)                           |
 | `subject`         | subject                              | --                   | [14](14.md)                           |
 | `summary`         | article summary                      | --                   | [23](23.md)                           |
