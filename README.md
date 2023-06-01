@@ -88,6 +88,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10000` | Mute List                      | [51](51.md) |
 | `10001` | Pin List                       | [51](51.md) |
 | `10002` | Relay List Metadata            | [65](65.md) |
+| `10030` | Custom Emoji List              | [51](51.md) |
 | `13194` | Wallet Info                    | [47](47.md) |
 | `22242` | Client Authentication          | [42](42.md) |
 | `23194` | Wallet Request                 | [47](47.md) |
@@ -100,6 +101,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30017` | Create or update a stall       | [15](15.md) |
 | `30018` | Create or update a product     | [15](15.md) |
 | `30023` | Long-form Content              | [23](23.md) |
+| `30024` | Long-form Content Draft        | [23](23.md) |
 | `30030` | Categorized Custom Emojis List | [51](51.md) |
 | `30078` | Application-specific Data      | [78](78.md) |
 
