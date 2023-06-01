@@ -50,8 +50,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-38: User Statuses](38.md)
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
-- [NIP-42: Authentication of clients to relays](42.md) --- **unrecommended**: deprecated in favor of [NIP-43](43.md)
-- [NIP-43: Fast Authentication](43.md)
+- [NIP-42: Authentication of clients to relays](42.md)
 - [NIP-45: Counting results](45.md)
 - [NIP-46: Nostr Connect](46.md)
 - [NIP-47: Wallet Connect](47.md)
@@ -140,7 +139,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `EVENT` | used to publish events                              | [01](01.md) |
 | `REQ`   | used to request events and subscribe to new updates | [01](01.md) |
 | `CLOSE` | used to stop previous subscriptions                 | [01](01.md) |
-| `AUTH`  | used to send authentication events                  | [42](42.md) |
+| `AUTH`  | (legacy) used to send authentication events         | [42](42.md) |
 | `COUNT` | used to request event counts                        | [45](45.md) |
 
 ### Relay to Client
@@ -151,7 +150,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `EVENT`  | used to send events requested to clients                | [01](01.md) |
 | `NOTICE` | used to send human-readable messages to clients         | [01](01.md) |
 | `OK`     | used to notify clients if an EVENT was successful       | [01](01.md) |
-| `AUTH`   | used to send authentication challenges                  | [42](42.md) |
+| `AUTH`   | (legacy) used to send authentication challenges         | [42](42.md) |
 | `COUNT`  | used to send requested event counts to clients          | [45](45.md) |
 
 Please update these lists when proposing NIPs introducing new event kinds.
