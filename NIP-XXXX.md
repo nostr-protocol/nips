@@ -51,19 +51,19 @@ Clients implementing this NIP should register the `nostr-share` URI scheme with 
 
 ## Example Implementation  
 
-I have develop a sample integration in the form of 2 apps.
+I have developed a sample integration in the form of 2 android apps.
 
 The first app is an example game that generates the nostr-share URI containing a message, imageUrl, base64 encoded image, a video URL, as well as a route hint.
 
 https://github.com/mandelmonkey/nostr-share-sample-game
 
-![Nostr Game](https://i.imgur.com/ym6azwT.jpg)
+<img src="https://i.imgur.com/ym6azwT.jpg" width="200">
 
 The second app is an Android app which receives the nostr-share data and displays the media.
+ 
+<img src="https://i.imgur.com/qmFYUmz.jpg" width="200">
 
-![Nostr Client](https://i.imgur.com/qmFYUmz.jpg)
-
-![Nostr Client](https://i.imgur.com/MCItlcV.jpg)
+<img src="https://i.imgur.com/MCItlcV.jpg" width="200">
 
 https://github.com/mandelmonkey/nostr-share-wallet-demo
 
