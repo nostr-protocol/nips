@@ -1,7 +1,7 @@
 # NIPs
 
 NIPs stand for **Nostr Implementation Possibilities**.
-They exist to document what may be implemented by [Nostr](https://github.com/fiatjaf/nostr)-compatible _relay_ and _client_ software.
+They exist to document what may be implemented by [Nostr](https://github.com/nostr-protocol/nostr)-compatible _relay_ and _client_ software.
 
 ---
 
@@ -45,6 +45,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 - [NIP-26: Delegated Event Signing](26.md)
 - [NIP-27: Text Note References](27.md)
 - [NIP-28: Public Chat](28.md)
+- [NIP-30: Custom Emoji](30.md)
 - [NIP-31: Dealing with Unknown Events](31.md)
 - [NIP-33: Parameterized Replaceable Events](33.md)
 - [NIP-36: Sensitive Content](36.md)
@@ -61,6 +62,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 - [NIP-58: Badges](58.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-78: Application-specific data](78.md)
+- [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-94: File Metadata](94.md)
 
 ## Event Kinds
@@ -101,6 +103,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/fia
 | `30018` | Create or update a product | [15](15.md) |
 | `30023` | Long-form Content          | [23](23.md) |
 | `30078` | Application-specific Data  | [78](78.md) |
+| `31989` | Handler recommendation     | [89](89.md) |
+| `31990` | Handler information        | [89](89.md) |
 
 ### Event Kind Ranges
 
@@ -143,6 +147,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | name              | value                                | other parameters     | NIP                      |
 | ----------------- | ------------------------------------ | -------------------- | ------------------------ |
 | `a`               | coordinates to an event              | relay URL            | [33](33.md), [23](23.md) |
+| `alt`             | Alt tag                              | --                   | [31](31.md)              |
 | `d`               | identifier                           | --                   | [33](33.md)              |
 | `e`               | event id (hex)                       | relay URL, marker    | [1](01.md), [10](10.md)  |
 | `g`               | geohash                              | --                   | [12](12.md)              |
@@ -157,6 +162,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `delegation`      | pubkey, conditions, delegation token | --                   | [26](26.md)              |
 | `description`     | badge description                    | --                   | [58](58.md)              |
 | `description`     | invoice description                  | --                   | [57](57.md)              |
+| `emoji`           | shortcode                            | image URL            | [30](30.md)              |
 | `expiration`      | unix timestamp (string)              | --                   | [40](40.md)              |
 | `image`           | image URL                            | dimensions in pixels | [23](23.md), [58](58.md) |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                   | [57](57.md)              |
