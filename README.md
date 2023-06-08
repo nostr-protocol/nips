@@ -46,6 +46,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-27: Text Note References](27.md)
 - [NIP-28: Public Chat](28.md)
 - [NIP-30: Custom Emoji](30.md)
+- [NIP-31: Dealing with Unknown Events](31.md)
 - [NIP-33: Parameterized Replaceable Events](33.md)
 - [NIP-36: Sensitive Content](36.md)
 - [NIP-39: External Identities in Profiles](39.md)
@@ -146,6 +147,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | name              | value                                | other parameters     | NIP                      |
 | ----------------- | ------------------------------------ | -------------------- | ------------------------ |
 | `a`               | coordinates to an event              | relay URL            | [33](33.md), [23](23.md) |
+| `alt`             | Alt tag                              | --                   | [31](31.md)              |
 | `d`               | identifier                           | --                   | [33](33.md)              |
 | `e`               | event id (hex)                       | relay URL, marker    | [1](01.md), [10](10.md)  |
 | `g`               | geohash                              | --                   | [12](12.md)              |
