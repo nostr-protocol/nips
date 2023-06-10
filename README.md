@@ -46,6 +46,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-27: Text Note References](27.md)
 - [NIP-28: Public Chat](28.md)
 - [NIP-30: Custom Emoji](30.md)
+- [NIP-31: Dealing with Unknown Events](31.md)
 - [NIP-33: Parameterized Replaceable Events](33.md)
 - [NIP-36: Sensitive Content](36.md)
 - [NIP-39: External Identities in Profiles](39.md)
@@ -61,6 +62,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-58: Badges](58.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-78: Application-specific data](78.md)
+- [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-94: File Metadata](94.md)
 
 ## Event Kinds
@@ -101,6 +103,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30018` | Create or update a product | [15](15.md) |
 | `30023` | Long-form Content          | [23](23.md) |
 | `30078` | Application-specific Data  | [78](78.md) |
+| `31989` | Handler recommendation     | [89](89.md) |
+| `31990` | Handler information        | [89](89.md) |
 
 ### Event Kind Ranges
 
@@ -143,6 +147,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | name              | value                                | other parameters     | NIP                      |
 | ----------------- | ------------------------------------ | -------------------- | ------------------------ |
 | `a`               | coordinates to an event              | relay URL            | [33](33.md), [23](23.md) |
+| `alt`             | Alt tag                              | --                   | [31](31.md)              |
 | `d`               | identifier                           | --                   | [33](33.md)              |
 | `e`               | event id (hex)                       | relay URL, marker    | [1](01.md), [10](10.md)  |
 | `g`               | geohash                              | --                   | [12](12.md)              |
