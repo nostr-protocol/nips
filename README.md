@@ -58,6 +58,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-47: Wallet Connect](47.md)
 - [NIP-50: Keywords filter](50.md)
 - [NIP-51: Lists](51.md)
+- [NIP-52: Calendar Events](52.md)
 - [NIP-53: Live Activities](53.md)
 - [NIP-56: Reporting](56.md)
 - [NIP-57: Lightning Zaps](57.md)
@@ -115,6 +116,10 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30311` | Live Event                 | [53](53.md) |
 | `30402` | Classified Listing         | [99](99.md) |
 | `30403` | Draft Classified Listing   | [99](99.md) |
+| `31922` | Date-Based Calendar Event  | [52](52.md) |
+| `31923` | Time-Based Calendar Event  | [52](52.md) |
+| `31924` | Calendar                   | [52](52.md) |
+| `31925` | Calendar Event RSVP        | [52](52.md) |
 | `31989` | Handler recommendation     | [89](89.md) |
 | `31990` | Handler information        | [89](89.md) |
 
@@ -162,7 +167,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `alt`             | Alt tag                              | --                   | [31](31.md)              |
 | `d`               | identifier                           | --                   | [33](33.md)              |
 | `e`               | event id (hex)                       | relay URL, marker    | [1](01.md), [10](10.md)  |
-| `g`               | geohash                              | --                   | [12](12.md)              |
+| `g`               | geohash                              | --                   | [12](12.md), [52](52.md) |
 | `i`               | identity                             | proof                | [39](39.md)              |
 | `k`               | kind number (string)                 | --                   | [18](18.md)              |
 | `l`               | label, label namespace               | annotations          | [32](32.md)              |
@@ -181,7 +186,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `expiration`      | unix timestamp (string)              | --                   | [40](40.md)              |
 | `image`           | image URL                            | dimensions in pixels | [23](23.md), [58](58.md) |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                   | [57](57.md)              |
-| `location`        | location string                      | --                   | [99](99.md)              |
+| `location`        | location string                      | --                   | [52](52.md), [99](99.md) |
 | `name`            | badge name                           | --                   | [58](58.md)              |
 | `nonce`           | random                               | --                   | [13](13.md)              |
 | `preimage`        | hash of `bolt11` invoice             | --                   | [57](57.md)              |
