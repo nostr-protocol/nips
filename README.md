@@ -64,6 +64,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-78: Application-specific data](78.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-94: File Metadata](94.md)
+- [NIP-98: HTTP Auth](98.md)
 
 ## Event Kinds
 
@@ -95,6 +96,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `23194` | Wallet Request             | [47](47.md) |
 | `23195` | Wallet Response            | [47](47.md) |
 | `24133` | Nostr Connect              | [46](46.md) |
+| `27235` | HTTP Auth                  | [98](98.md) |
 | `30000` | Categorized People List    | [51](51.md) |
 | `30001` | Categorized Bookmark List  | [51](51.md) |
 | `30008` | Profile Badges             | [58](58.md) |
