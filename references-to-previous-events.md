@@ -14,6 +14,7 @@ Implementation
 Each reference to a previous events consists of
 
 - the distance between this event and the previous event, as an integer number, greater-or-equal than 1
+   - TODO: maybe allow float numbers for the event distance, to insert events between integer distances, to avoid collision of integer distances
 - the ID of the previous event
 - optional: relay URL
 
