@@ -48,12 +48,16 @@ A "hard" chain would store only the first previous event, and if that event is m
 
 Events can go missing because of
 
+- cultural reasons (moderation)
 - political reasons (censorship)
 - technical reasons (data loss)
 
 Political censorship can use the method of "shadow banning", also known as "selective scamming" in other contexts.
 In that case, most events are **not** censored to create the illusion of "free speech", and only some events are censored.
 To detect this form of censorship, we need a steady chain of events.
+
+Cultural censorship (moderation) may remove "legal but annoying" content (for example: NSFW content), so we want to tolerate some missing events.
+When broadcasting "politically incorrect" content, authors should avoid such events in their chain of events, to make verification easier.
 
 Redundancy
 ----------
@@ -143,5 +147,8 @@ Keywords
 
 - blockchain
 - censorship-resistance
+- fault-tolerance
 - tamper-proof
 - append-only
+- verification
+- data integrity
