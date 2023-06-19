@@ -143,6 +143,12 @@ Rename the key to ...
 - soft_chain
 - chain
 
+Related
+-------
+
+* Pinned posts: Services like Twitter allow users to "pin" posts to the top of their feed.
+  In nostr, this could be implemented with references to previous events.
+
 Keywords
 --------
 
