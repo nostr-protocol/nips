@@ -47,6 +47,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-28: Public Chat](28.md)
 - [NIP-30: Custom Emoji](30.md)
 - [NIP-31: Dealing with Unknown Events](31.md)
+- [NIP-32: Labeling](32.md)
 - [NIP-33: Parameterized Replaceable Events](33.md)
 - [NIP-36: Sensitive Content](36.md)
 - [NIP-39: External Identities in Profiles](39.md)
