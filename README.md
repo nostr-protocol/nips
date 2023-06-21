@@ -65,6 +65,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-78: Application-specific data](78.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-94: File Metadata](94.md)
+- [NIP-96: File Distribution over Nostr](96.md)
 - [NIP-98: HTTP Auth](98.md)
 
 ## Event Kinds
