@@ -88,6 +88,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `44`    | Channel Mute User          | [28](28.md) |
 | `1063`  | File Metadata              | [94](94.md) |
 | `1984`  | Reporting                  | [56](56.md) |
+| `1985`  | Label                      | [32](32.md) |
 | `9734`  | Zap Request                | [57](57.md) |
 | `9735`  | Zap                        | [57](57.md) |
 | `10000` | Mute List                  | [51](51.md) |
@@ -156,6 +157,8 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `e`               | event id (hex)                       | relay URL, marker    | [1](01.md), [10](10.md)  |
 | `g`               | geohash                              | --                   | [12](12.md)              |
 | `i`               | identity                             | proof                | [39](39.md)              |
+| `l`               | label, label namespace               | annotations          | [32](32.md)              |
+| `L`               | label namespace                      | --                   | [32](32.md)              |
 | `p`               | pubkey (hex)                         | relay URL            | [1](01.md)               |
 | `r`               | a reference (URL, etc)               | --                   | [12](12.md)              |
 | `t`               | hashtag                              | --                   | [12](12.md)              |
