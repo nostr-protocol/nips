@@ -8,6 +8,11 @@ Ascending
 
 Events with older `created_at` are retrieved first.
 
+## Motivation
+
+For thread building it may better showing first comments at top to make it easier to understand
+the context of newer comments.
+
 ## Implementation
 
 `Relay` computes `nip34asc` field once upon receiving the event.
@@ -26,8 +31,10 @@ const maxSecondsLength = maxTs.toString().length
 
 function getNip34asc (createdAt, id = '') {
   // The id length must always be the same to not affect sorting
+  // All relays must use the same length
   if (id.length !== 64) { throw new Error('Wrong id length') }
   let seconds = Math.trunc(createdAt) // Make sure it is int instead of float
+  if (Number.isNaN(seconds)) { throw new Error('Wrong createdAt') }
   seconds = Math.max(seconds, -maxDateNowSeconds) // Keep min limit
   seconds = Math.min(seconds, maxDateNowSeconds) // Keep max limit
   // Allow negative createdAt but remove minus sign
