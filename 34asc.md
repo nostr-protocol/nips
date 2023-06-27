@@ -1,8 +1,8 @@
-NIP-34a
-=======
+NIP-34asc
+=========
 
-Oldest First
-------------
+Ascending
+---------
 
 `draft` `optional` `author:arthurfranca`
 
@@ -10,9 +10,9 @@ Events with older `created_at` are retrieved first.
 
 ## Implementation
 
-`Relay` computes `nip34a` field once upon receiving the event.
+`Relay` computes `nip34asc` field once upon receiving the event.
 
-The lower the `created_at`, the higher `nip34a` will be.
+The lower the `created_at`, the higher `nip34asc` will be.
 
 ### Javascript
 
@@ -24,7 +24,7 @@ const maxDateNowSeconds = 8640000000000 // 8.64e15 ms / 1000
 const maxTs = maxDateNowSeconds * 2
 const maxSecondsLength = maxTs.toString().length
 
-function getNip34a (createdAt, id = '') {
+function getNip34asc (createdAt, id = '') {
   // The id length must always be the same to not affect sorting
   if (id.length !== 64) { throw new Error('Wrong id length') }
   let seconds = Math.trunc(createdAt) // Make sure it is int instead of float
@@ -42,10 +42,5 @@ function getNip34a (createdAt, id = '') {
   return `${paddedTsSeconds}${id}`
 }
 
-event.nip34a = getNip34a(event.created_at, event.id)
+event.nip34asc = getNip34asc(event.created_at, event.id)
 ```
-
-## Notes
-
-This implementation should be updated if we find out a popular programming
-language doesn't support 17280000000000 int.
