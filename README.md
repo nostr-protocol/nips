@@ -50,6 +50,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-32: Labeling](32.md)
 - [NIP-33: Parameterized Replaceable Events](33.md)
 - [NIP-36: Sensitive Content](36.md)
+- [NIP-37: Language Tag](37.md)
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
 - [NIP-42: Authentication of clients to relays](42.md)
@@ -172,6 +173,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `emoji`           | shortcode                            | image URL            | [30](30.md)              |
 | `expiration`      | unix timestamp (string)              | --                   | [40](40.md)              |
 | `image`           | image URL                            | dimensions in pixels | [23](23.md), [58](58.md) |
+| `lang`            | language                             | --                   | [37](37.md)              |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                   | [57](57.md)              |
 | `name`            | badge name                           | --                   | [58](58.md)              |
 | `nonce`           | random                               | --                   | [13](13.md)              |
