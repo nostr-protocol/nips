@@ -77,8 +77,8 @@ Specified the input that the job should be executed with.
 * `<input-type>`: The way this argument should be interpreted
     * Possible values:
         * `url`: a URL to be fetched
-        * `event`: a different event ID
-        * `job`: the output of a previous job
+        * `event`: a nostr event ID
+        * `job`: the output of a previous job with the specified event ID
 * `<marker>`:
 
 #### `relays` tag
@@ -161,3 +161,83 @@ It's out of scope (and undesirable) to have this NIP address this issue; the mar
 ### Multitple job acceptance
 * Nothing prevents a user from accepting multiple job results.
 
+# Appendix 1: Examples
+
+## Customer wants to get a transcript of a podcast from second 900 to 930.
+
+### `kind:68001`: Job Request
+```json
+{
+    "id": "12345",
+    "pubkey": "abcdef",
+    "content": "I need a transcript of Bitcoin.review",
+    "tags": [
+        [ "j", "speech-to-text" ],
+        [ "params", "range", "900", "930" ],
+        [ "input", "https://bitcoin.review/episode1.mp3", "url" ],
+        [ "bid", "5000", "9000" ]
+    ]
+}
+```
+
+### `kind:1021`: Job fulfillment
+```json
+{
+    "content": "Person 1: blah blah blah",
+    "tags": [
+        ["e", "12345"],
+        ["p", "abcdef"],
+        ["status", "success"]
+    ]
+}
+```
+
+## Customer wants to get a summarization of a podcast
+
+User publishes two job requests at the same time in the order they should be executed.
+
+### `kind:68001`: Job Request #1
+```json
+{
+    "id": "12345",
+    "pubkey": "abcdef",
+    "content": "I need a transcript of Bitcoin.review from second 900 to 930",
+    "tags": [
+        [ "j", "speech-to-text" ],
+        [ "params", "range", "900", "930" ],
+        [ "input", "https://bitcoin.review/episode1.mp3", "url" ],
+        [ "bid", "5000", "9000" ]
+    ]
+}
+```
+
+### `kind:68001`: Job Request #2
+```json
+{
+    "id": "12346",
+    "pubkey": "abcdef",
+    "content": "I need a summarization",
+    "tags": [
+        [ "j", "summarization" ],
+        [ "params", "length", "3 paragraphs" ],
+        [ "input", "12346", "job" ],
+        [ "bid", "300", "900" ]
+    ]
+}
+```
+
+## Customer wants a translation of a note
+### `kind:68001`: Job Request #1
+```json
+{
+    "id": "12346",
+    "pubkey": "abcdef",
+    "content": "",
+    "tags": [
+        [ "j", "translation" ],
+        [ "input", "<hexid>", "event" ]
+        [ "params", "language", "es_AR" ],
+        [ "bid", "100", "500" ]
+    ]
+}
+```
