@@ -27,7 +27,7 @@ A request to have data processed -- published by a customer
     "kind": 68001,
     "content": "",
     "tags": [
-        // The type data processing the user wants to be performed
+        // The type of data processing the user wants to be performed
         [ "j", "<job-type>", "<optional-model>" ],
 
         // input(s) for the job request
@@ -49,12 +49,12 @@ A request to have data processed -- published by a customer
 An optional, human-readable description of what this job is for.
 
 ### `j` tag
-Specifies the job to be executed. A job request MUST have exactly one `j` tag.
+Specifies the job to be executed. A job request MUST have exactly one (1) `j` tag.
 
-A `j` tag MIGHT name a specific model to be used for the computed with as the second value.
+A `j` tag MAY include a second value specifying the name of a model to be used when computing the result.
 
 ### `i` (input) tag
-Specifies the input that the job should be executed with. The input is relay-indexable so that clients interested in the exact same job can find it it's result if it's already fulfilled.
+Specifies the input data that the job is to be executed against. The input is relay-indexable so that clients interested in the exact same job can find the input data and the result result (if it's already fulfilled).
 
 A job request CAN have zero or more inputs.
 
@@ -64,50 +64,51 @@ A job request CAN have zero or more inputs.
         * `url`: a URL to be fetched
         * `event`: a nostr event ID
         * `job`: the output of a previous job with the specified event ID
-* `<marker>`:
+* `<marker>`: an optional field indicating where the data can be found if it is a subset of the provided values, for example the name of the key(s) in a key/value set, or the start and end positions of the data if it's a bytestream.
 
 ### `bid` tag
-The user MIGHT specify an amount of millisats they are willing to pay for the job to be processed. The user MIGHT also specify a maximum amount of millisats they are willing to pay.
+The Customer MAY specify a maximum amount (in millisats) they are willing to pay for the job to be processed.
 
 ### `relays` tag
-A list of relays the service provider should publish its job result to.
+The Service Provider SHOULD publish job results to the relays specified in this this tag. 
 
 ### `p` tags
-A user MIGHT want to explicitly request this job to be processed by specific service provider(s). Other service providers might still choose to compete for this job.
+If a Customer has a preference for specific Service Provider(s) to process this job, they SHOULD indicate this by including the Service Provider(s) pubkey in a `p` tag. This is NOT intended to exclude other Service Providers and they MAY still choose to compete for jobs that have not tagged them.
 
 ### `exp`
-A user might specify that they will not be interested in results past a certain time (e.g. a time-sensitive job whos value is no longer relevant after some time, like a live transcription service)
+A Customer MAY indicate that they will not pay for results produced after a specific Block height or Unix Timestamp. This is intended for time-sensitive jobs where the result is not relevant unless produced within a certain timeframe, e.g. a live transcription service.
 
 ## Job result
-The output of processing the data -- published by the service provider.
+The output of processing the data -- published by the Service Provider.
 ```json
 {
-    "pubkey": "service-provider",
+    "pubkey": "service-provider pubkey in hex",
 
     // result
-    "content": "<payload>",
+    "content": "string: <payload>",
+    "kind": 68002,
     "tags" [
         // stringified JSON request event
-        [ "request", "<68001-event>" ],
-        [ "e", <id-of-68001-event>],
-        [ "p", "<job-requester's pubkey>" ],
-        [ "status", "success", "<more-info>"],
+        [ "request", "<id-of-68001-event>" ],
+        [ "e", "<id-of-68001-event>" ],
+        [ "p", "<Customer's pubkey>" ],
+        [ "status", "success", "<more-info>" ],
         [ "amount", "requested-payment-amount" ]
     ]
 }
 ```
 
-The result of the job should be in the `content`. If the output is not text, the `content` field should be empty and an `output` tag should be used instead as described below.
+The result of the job SHOULD be included in the `content` field. If the output is not text, the `content` field SHOULD be empty and an `output` tag should be used instead as described below.
 
 #### `status` tag
-The service provider might want to return an error to the user in case the job could not be processed correctly
+The Service Provider MAY indicate errors during processing by including them in the `status` tag, these errors are intended to be consumed by the Customer.
 
 #### `amount`
-The amount of millisats the service provider is requesting to be paid. This amount MIGHT be different than the amount specified by the user in the `bid` tag. The amount SHOULD be less than the maximum amount specified by the user in the `bid` tag.
+The amount (in millisats) that the Service Provider is requesting to be paid. This amount MAY differ to the amount specified by the Customer in the `bid` tag. The amount SHOULD be less than the maximum amount specified by the user in the `bid` tag.
 
 ## Job types
 
-This NIP defines some job types, clients SHOULD specify these types for maximum compatibility with service providers. Other job types might be added to this NIP.
+This NIP defines some example job types, Customers SHOULD specify these types for maximum compatibility with Service Providers. Other job types MAY be added to this NIP after being observed in the wild.
 
 ### `speech-to-text`
 #### params
@@ -127,24 +128,24 @@ This NIP defines some job types, clients SHOULD specify these types for maximum 
 | `language`                     | req  | requested language in BCP 47 format.
 
 # Protocol Flow
-* User publishes a job request
+* Customer publishes a job request
 `{ "kind": 68001, "tags": [ [ "j", "speech-to-text" ], ... ] }`
 
-* Service providers listen for the type of jobs they can perform
+* Service Providers subsribe to the type of jobs they can perform
 `{"kinds":[68001], "#j": ["speech-to-text", "image-generation", ... ]}`
 
-* When a job comes in, the service providers who opt to attempt to fulfill the request begin processing it, or they can react to it with feedback for the user (e.g. _payment required_, _unprocessable entity_, etc.)
+* When a job comes in, the Service Providers who opt to attempt to fulfill the request begin processing it, or they can react to it with feedback for the user (e.g. _payment required_, _unprocessable entity_, etc.)
 * Upon completion, the service provider publishes the result of the job with a `job-result` event.
 * Upon acceptance, the user zaps the service provider, tagging the job result event.
 
 # Payment
-Customers SHOULD pay service providers whose job results they accept. Users should zap the service provider, tagging the `kind:68002` job result.
+Customers SHOULD pay service providers whose job results they accept by zapping the Service Provider and tagging the `kind:68002` job result.
 
 
 # Job chaining
-A customer CAN request multiple jobs to be chained, so that the output of a job can be the input of the next job. (e.g. summarization of a podcast's transcription). This is done by specifying as `input` an eventID of a different job with the `job` marker.
+A Customer MAY request multiple jobs to be processed in a chained form, so that the output of a job can be the input of the next job. (e.g. summarization of a podcast's transcription). This is done by specifying as `input` an eventID of a different job with the `job` marker.
 
-Service providers might opt to start processing a subsequent job the moment they see the prior job's result, or they might choose to wait for a zap to have been published. This introduces the risk that service provider of job #1 might delay publishing the zap event in order to have an advantage. This risk is up to service providers to mitigate or to decide whether the service provider of job#1 tends to have good-enough results so as to not wait for a explicit zap to assume the job was accepted.
+Service Providers MAY begin processing a subsequent job the moment they see the prior job's result, but they will likely wait for a zap to be published first. This introduces a risk that Service Provider of job #1 might delay publishing the zap event in order to have an advantage. This risk is up to Service Providers to mitigate or to decide whether the service provider of job #1 tends to have good-enough results so as to not wait for a explicit zap to assume the job was accepted.
 
 # Reactions
 > **Warning**
