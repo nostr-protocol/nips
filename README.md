@@ -58,6 +58,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-47: Wallet Connect](47.md)
 - [NIP-50: Keywords filter](50.md)
 - [NIP-51: Lists](51.md)
+- [NIP-53: Live Activities](53.md)
 - [NIP-56: Reporting](56.md)
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
@@ -87,6 +88,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `43`    | Channel Hide Message       | [28](28.md) |
 | `44`    | Channel Mute User          | [28](28.md) |
 | `1063`  | File Metadata              | [94](94.md) |
+| `1311`  | Live Chat Message          | [53](53.md) |
 | `1984`  | Reporting                  | [56](56.md) |
 | `1985`  | Label                      | [32](32.md) |
 | `9734`  | Zap Request                | [57](57.md) |
@@ -108,6 +110,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30018` | Create or update a product | [15](15.md) |
 | `30023` | Long-form Content          | [23](23.md) |
 | `30078` | Application-specific Data  | [78](78.md) |
+| `30311` | Live Event                 | [53](53.md) |
 | `31989` | Handler recommendation     | [89](89.md) |
 | `31990` | Handler information        | [89](89.md) |
 
