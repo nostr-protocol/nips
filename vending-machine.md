@@ -89,7 +89,7 @@ The output of processing the data -- published by the Service Provider.
     "kind": 68002,
     "tags" [
         // stringified JSON request event
-        [ "request", "<id-of-68001-event>" ],
+        [ "request", "<68001-event-as-stringified JSON>" ],
         [ "e", "<id-of-68001-event>" ],
         [ "p", "<Customer's pubkey>" ],
         [ "status", "success", "<more-info>" ],
@@ -115,6 +115,7 @@ This NIP defines some example job types, Customers SHOULD specify these types fo
 | param                          | req? | description
 |--------------------------------|------|--------
 | `range`                        | opt  | timestamp range (in seconds) of desired text to be transcribed
+| `alignment`                    | opt  | word, segment, raw :  word-level, segment-level or raw outputs
 
 ### `summarization`
 | param                          | req? | description
