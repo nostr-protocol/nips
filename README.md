@@ -196,6 +196,21 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 4. There should be no more than one way of doing the same thing.
 5. Other rules will be made up when necessary.
 
+## Mailing Lists
+
+The nostr ecosystem is getting large with many different organizations, relays
+and clients. Following the nips repo on github is becoming more difficult and
+noisy. To coordinate on protocol development outside of github, there are
+mailing lists where you can work on NIPs before submitting them here:
+
+* [w3c nostr community group][w3-nostr] - [public-nostr@w3.org][mailto-w3] - requires signup
+* [nostr-protocol google group][nostr-google-group] - [nostr-protocol@googlegroups.com][mailto-google] - no signup required
+
+[w3-nostr]: https://www.w3.org/community/nostr/
+[mailto-w3]: mailto:public-nostr@w3.org
+[nostr-google-group]: https://groups.google.com/g/nostr-protocol
+[mailto-google]: mailto:nostr-protocol@googlegroups.com
+
 ## License
 
 All NIPs are public domain.
