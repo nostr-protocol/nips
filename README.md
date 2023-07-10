@@ -172,7 +172,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `delegation`      | pubkey, conditions, delegation token | --                   | [26](26.md)              |
 | `description`     | badge description                    | --                   | [58](58.md)              |
 | `description`     | invoice description                  | --                   | [57](57.md)              |
-| `emoji`           | shortcode                            | image URL            | [30](30.md)              |
+| `emoji`           | shortcode, image URL                 | --                   | [30](30.md)              |
 | `expiration`      | unix timestamp (string)              | --                   | [40](40.md)              |
 | `image`           | image URL                            | dimensions in pixels | [23](23.md), [58](58.md) |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                   | [57](57.md)              |
