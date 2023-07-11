@@ -27,19 +27,10 @@ A request to have data processed -- published by a customer
     "kind": 68001,
     "content": "",
     "tags": [
-        // The type of data processing the user wants to be performed
         [ "j", "<job-type>", "<optional-model>" ],
-
-        // input(s) for the job request
         [ "i", "<data>", "<input-type>", "<marker>" ],
-
-        // expected output format
-        [ "output", "mimetype" ],
-
-        // relays where the job result should be published
+        [ "output", "<mime-type>" ],
         [ "relays", "wss://..."],
-
-        // millisats amount that the user is offering to pay
         [ "bid", "<msat-amount>", "<optional-max-price>" ],
         [ "exp", "<timestamp>" ],
         [ "p", "service-provider-1" ],
@@ -94,7 +85,6 @@ The result of the job SHOULD be included in the `content` field. If the output i
 * `status` tag: Service Providers MAY indicate errors or extra info about the results by including them in the `status` tag.
 * `amount`: millisats that the Service Provider is requesting to be paid.
 
-##
 # Protocol Flow
 * Customer publishes a job request
 `{ "kind": 68001, "tags": [ [ "j", "speech-to-text" ], ... ] }`
@@ -127,7 +117,7 @@ Service Providers might opt to give feedback about a job.
 ### E.g. Payment required
 ```json
 {
-    "kind": 7,
+    "kind": 68003,
     "content": "Please pay 7 sats for job xxxx",
     "tags": [
         [ "e", <job-request-id> ],
@@ -148,11 +138,6 @@ Service providers are at obvious risk of having their results not compensated. M
 
 It's out of scope (and undesirable) to have this NIP address this issue; the market should.
 
-## Notes
-
-### Multitple job acceptance
-* Nothing prevents a user from accepting multiple job results.
-
 # Appendix 1: Examples
 
 ## Transcript of a podcast from second `900` to `930`.
@@ -162,7 +147,7 @@ It's out of scope (and undesirable) to have this NIP address this issue; the mar
 {
     "id": "12345",
     "pubkey": "abcdef",
-    "content": "I need a transcript of Bitcoin.review",
+    "content": "",
     "tags": [
         [ "j", "speech-to-text" ],
         [ "i", "https://bitcoin.review/episode1.mp3", "url" ],
@@ -173,13 +158,30 @@ It's out of scope (and undesirable) to have this NIP address this issue; the mar
 }
 ```
 
-### `kind:68002`: Job fulfillment
+### `kind:68003`: Job Feedback: request for (partial) payment
+```json
+{
+    "kind": 68003,
+    "content": "",
+    "tags": [
+        ["e", "12345"],
+        ["p", "abcdef"],
+        ["status", "payment-required"],
+        ["amount", "1000"]
+    ]
+}
+```
+
+* User zaps 1000 sats to event kind:68003.
+
+### `kind:68002`: Job fulfillment + request for remaining payment
 ```json
 {
     "content": "blah blah blah",
     "tags": [
         ["e", "12345"],
         ["p", "abcdef"],
+        ["amount", "6000"]
     ]
 }
 ```
@@ -208,7 +210,7 @@ User publishes two job requests at the same time in the order they should be exe
 {
     "id": "12346",
     "pubkey": "abcdef",
-    "content": "I need a summarization",
+    "content": "",
     "tags": [
         [ "j", "summarization" ],
         [ "params", "length", "3 paragraphs" ],
@@ -227,9 +229,22 @@ User publishes two job requests at the same time in the order they should be exe
     "content": "",
     "tags": [
         [ "j", "translation" ],
-        [ "i", "<hexid>", "event" ]
+        [ "i", "<hexid>", "event", "wss://relay.nostr.com" ]
         [ "params", "language", "es_AR" ],
         [ "bid", "100", "500" ]
+    ]
+}
+```
+
+### `kind:68003`: Job respomse
+```json
+{
+    "kind": 68003,
+    "content": "Che, que copado, boludo!",
+    "tags": [
+        ["e", "12346"],
+        ["p", "abcdef"],
+        ["amount", "1000"]
     ]
 }
 ```
