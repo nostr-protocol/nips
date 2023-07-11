@@ -33,6 +33,9 @@ A request to have data processed -- published by a customer
         // input(s) for the job request
         [ "i", "<data>", "<input-type>", "<marker>" ],
 
+        // expected output format
+        [ "output", "mimetype" ],
+
         // relays where the job result should be published
         [ "relays", "wss://..."],
 
@@ -45,51 +48,36 @@ A request to have data processed -- published by a customer
 }
 ```
 
-### `content` field
-An optional, human-readable description of what this job is for.
+* `content` field: An optional, human-readable description of what this job is for.
+* `j` tag: Job-type to be executed.
+    * A job request MUST have exactly one `j` tag.
+    * It MAY include a second value specifying the name of a model to be used when computing the result.
 
-### `j` tag
-Specifies the job to be executed. A job request MUST have exactly one (1) `j` tag.
-
-A `j` tag MAY include a second value specifying the name of a model to be used when computing the result.
-
-### `i` (input) tag
-Specifies the input data that the job is to be executed against. The input is relay-indexable so that clients interested in the exact same job can find the input data and the result result (if it's already fulfilled).
-
-A job request CAN have zero or more inputs.
-
-* `<data>`: The argument for the input
-* `<input-type>`: The way this argument should be interpreted
-    * Possible values:
+* `i` tag: Input data for the job.
+    * A job request CAN have zero or more inputs.
+    * Positional arguments: `["i", "<data>", "<input-type>", "<relay>", "<marker>"]`
+    * `<data>`: The argument for the input
+    * `<input-type>`: The way this argument should be interpreted, one of:
         * `url`: a URL to be fetched
-        * `event`: a nostr event ID
+        * `event`: a nostr event ID, include an optional relay-url extra param
         * `job`: the output of a previous job with the specified event ID
-* `<marker>`: an optional field indicating where the data can be found if it is a subset of the provided values, for example the name of the key(s) in a key/value set, or the start and end positions of the data if it's a bytestream.
-
-### `bid` tag
-The Customer MAY specify a maximum amount (in millisats) they are willing to pay for the job to be processed.
-
-### `relays` tag
-The Service Provider SHOULD publish job results to the relays specified in this this tag. 
-
-### `p` tags
-If a Customer has a preference for specific Service Provider(s) to process this job, they SHOULD indicate this by including the Service Provider(s) pubkey in a `p` tag. This is NOT intended to exclude other Service Providers and they MAY still choose to compete for jobs that have not tagged them.
-
-### `exp`
-A Customer MAY indicate that they will not pay for results produced after a specific Block height or Unix Timestamp. This is intended for time-sensitive jobs where the result is not relevant unless produced within a certain timeframe, e.g. a live transcription service.
+    * `<relay>`: if `event` or `job` input-type, the relay where the event/job was published, otherwise optional or empty string.
+    * `<marker>`: an optional field indicating how this input should be used.
+* `output` tag: MIME type. Expected output format. Service Providers SHOULD publish the result of the job in this format.
+* `bid` tag: Customer MAY specify a maximum amount (in millisats) they are willing to pay.
+* `relays` tag: relays where Service Providers SHOULD publish responses to.
+* `p` tags: Service Providers the customer is interested in having process this job. Other SP MIGHT still choose to process the job.
+* `exp`: Optional expiration timestamp. Service Providers SHOULD not send results after this timestamp.
 
 ## Job result
 The output of processing the data -- published by the Service Provider.
 ```json
 {
     "pubkey": "service-provider pubkey in hex",
-
-    // result
-    "content": "string: <payload>",
+    "content": "<payload>",
     "kind": 68002,
     "tags" [
-        // stringified JSON request event
-        [ "request", "<68001-event-as-stringified JSON>" ],
+        [ "request", "<68001-event>" ],
         [ "e", "<id-of-68001-event>" ],
         [ "p", "<Customer's pubkey>" ],
         [ "status", "success", "<more-info>" ],
@@ -98,36 +86,15 @@ The output of processing the data -- published by the Service Provider.
 }
 ```
 
+## Job feedback
+Both customers and service providers can give feedback about a job.
+
 The result of the job SHOULD be included in the `content` field. If the output is not text, the `content` field SHOULD be empty and an `output` tag should be used instead as described below.
 
-#### `status` tag
-The Service Provider MAY indicate errors during processing by including them in the `status` tag, these errors are intended to be consumed by the Customer.
+* `status` tag: Service Providers MAY indicate errors or extra info about the results by including them in the `status` tag.
+* `amount`: millisats that the Service Provider is requesting to be paid.
 
-#### `amount`
-The amount (in millisats) that the Service Provider is requesting to be paid. This amount MAY differ to the amount specified by the Customer in the `bid` tag. The amount SHOULD be less than the maximum amount specified by the user in the `bid` tag.
-
-## Job types
-
-This NIP defines some example job types, Customers SHOULD specify these types for maximum compatibility with Service Providers. Other job types MAY be added to this NIP after being observed in the wild.
-
-### `speech-to-text`
-#### params
-| param                          | req? | description
-|--------------------------------|------|--------
-| `range`                        | opt  | timestamp range (in seconds) of desired text to be transcribed
-| `alignment`                    | opt  | word, segment, raw :  word-level, segment-level or raw outputs
-
-### `summarization`
-| param                          | req? | description
-|--------------------------------|------|--------
-| `length`                       | opt  | desired length
-
-### `translation` -- Translate text to a specific language
-#### params
-| param                          | req? | description
-|--------------------------------|------|--------
-| `language`                     | req  | requested language in BCP 47 format.
-
+##
 # Protocol Flow
 * Customer publishes a job request
 `{ "kind": 68001, "tags": [ [ "j", "speech-to-text" ], ... ] }`
@@ -142,15 +109,17 @@ This NIP defines some example job types, Customers SHOULD specify these types fo
 # Payment
 Customers SHOULD pay service providers whose job results they accept by zapping the Service Provider and tagging the `kind:68002` job result.
 
+Additionally, if a service provider requests full or partial prepayment via a `kind:68003` job-feedback event, the customer SHOULD zap that event to pay the service provider.
+
+# Cancellation
+A `kind:68001` job request might be cancelled by publishing a `kind:5` delete request event tagging the job request event.
 
 # Job chaining
 A Customer MAY request multiple jobs to be processed in a chained form, so that the output of a job can be the input of the next job. (e.g. summarization of a podcast's transcription). This is done by specifying as `input` an eventID of a different job with the `job` marker.
 
 Service Providers MAY begin processing a subsequent job the moment they see the prior job's result, but they will likely wait for a zap to be published first. This introduces a risk that Service Provider of job #1 might delay publishing the zap event in order to have an advantage. This risk is up to Service Providers to mitigate or to decide whether the service provider of job #1 tends to have good-enough results so as to not wait for a explicit zap to assume the job was accepted.
 
-# Reactions
-> **Warning**
-> Is this hijacking/modifying the meaning of NIP-25 reactions too much?
+# Job Feedback
 
 ## Job request reactions
 Service Providers might opt to give feedback about a job.
@@ -169,7 +138,6 @@ Service Providers might opt to give feedback about a job.
 ```
 
 ## Job feedback
-
 A user might choose to not accept a job result for any reason. A user can provide feedback via NIP-25 reactions.
 The `content` of the `kind:7` event SHOULD include a description of how the user reacted to the job result.
 
@@ -197,21 +165,21 @@ It's out of scope (and undesirable) to have this NIP address this issue; the mar
     "content": "I need a transcript of Bitcoin.review",
     "tags": [
         [ "j", "speech-to-text" ],
-        [ "params", "range", "900", "930" ],
         [ "i", "https://bitcoin.review/episode1.mp3", "url" ],
-        [ "bid", "5000", "9000" ]
+        [ "params", "range", "900", "930" ],
+        [ "bid", "5000", "9000" ],
+        [ "output", "text/plain" ]
     ]
 }
 ```
 
-### `kind:1021`: Job fulfillment
+### `kind:68002`: Job fulfillment
 ```json
 {
-    "content": "Person 1: blah blah blah",
+    "content": "blah blah blah",
     "tags": [
         ["e", "12345"],
         ["p", "abcdef"],
-        ["status", "success"]
     ]
 }
 ```
@@ -305,6 +273,29 @@ User publishes two job requests at the same time in the order they should be exe
     ]
 }
 ```
+
+# Appendix 2: Job types
+
+This NIP defines some example job types, Customers SHOULD specify these types for maximum compatibility with Service Providers. Other job types MAY be added to this NIP after being observed in the wild.
+
+### `speech-to-text`
+#### params
+| param                          | req? | description
+|--------------------------------|------|--------
+| `range`                        | opt  | timestamp range (in seconds) of desired text to be transcribed
+| `alignment`                    | opt  | word, segment, raw :  word-level, segment-level or raw outputs
+
+### `summarization`
+| param                          | req? | description
+|--------------------------------|------|--------
+| `length`                       | opt  | desired length
+
+### `translation` -- Translate text to a specific language
+#### params
+| param                          | req? | description
+|--------------------------------|------|--------
+| `language`                     | req  | requested language in BCP 47 format.
+
 
 # Notes
 
