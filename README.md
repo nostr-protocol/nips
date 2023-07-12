@@ -1,10 +1,3 @@
-# NIPs
-
-NIPs stand for **Nostr Implementation Possibilities**.
-They exist to document what may be implemented by [Nostr](https://github.com/nostr-protocol/nostr)-compatible _relay_ and _client_ software.
-
----
-
 - [List](#list)
 - [Event Kinds](#event-kinds)
   - [Event Kind Ranges](#event-kind-ranges)
@@ -63,6 +56,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
 - [NIP-65: Relay List Metadata](65.md)
+- [NIP-69: Zap Polls](69.md)
 - [NIP-78: Application-specific data](78.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-94: File Metadata](94.md)
@@ -91,6 +85,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1311`  | Live Chat Message          | [53](53.md) |
 | `1984`  | Reporting                  | [56](56.md) |
 | `1985`  | Label                      | [32](32.md) |
+| `6969`  | Zap Poll                   | [69](69.md) |
 | `9734`  | Zap Request                | [57](57.md) |
 | `9735`  | Zap                        | [57](57.md) |
 | `10000` | Mute List                  | [51](51.md) |
@@ -178,6 +173,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `lnurl`           | `bech32` encoded `lnurl`             | --                   | [57](57.md)              |
 | `name`            | badge name                           | --                   | [58](58.md)              |
 | `nonce`           | random                               | --                   | [13](13.md)              |
+| `poll_option`     | option key value (string)            | --                   | [57](57.md), [69](69.md) |
 | `preimage`        | hash of `bolt11` invoice             | --                   | [57](57.md)              |
 | `published_at`    | unix timestamp (string)              | --                   | [23](23.md)              |
 | `relay`           | relay url                            | --                   | [42](42.md)              |
