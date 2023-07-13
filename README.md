@@ -160,6 +160,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `e`               | event id (hex)                       | relay URL, marker    | [1](01.md), [10](10.md)  |
 | `g`               | geohash                              | --                   | [12](12.md)              |
 | `i`               | identity                             | proof                | [39](39.md)              |
+| `k`               | kind number (string)                 | --                   | [18](18.md)              |
 | `l`               | label, label namespace               | annotations          | [32](32.md)              |
 | `L`               | label namespace                      | --                   | [32](32.md)              |
 | `p`               | pubkey (hex)                         | relay URL            | [1](01.md)               |
