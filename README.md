@@ -32,19 +32,22 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-11: Relay Information Document](11.md)
 - [NIP-12: Generic Tag Queries](12.md)
 - [NIP-13: Proof of Work](13.md)
-- [NIP-14: Subject tag in text events.](14.md)
+- [NIP-14: Subject tag in text events](14.md)
 - [NIP-15: Nostr Marketplace (for resilient marketplaces)](15.md)
 - [NIP-16: Event Treatment](16.md)
 - [NIP-18: Reposts](18.md)
 - [NIP-19: bech32-encoded entities](19.md)
 - [NIP-20: Command Results](20.md)
-- [NIP-21: `nostr:` URL scheme](21.md)
+- [NIP-21: `nostr:` URI scheme](21.md)
 - [NIP-22: Event `created_at` Limits](22.md)
 - [NIP-23: Long-form Content](23.md)
 - [NIP-25: Reactions](25.md)
 - [NIP-26: Delegated Event Signing](26.md)
 - [NIP-27: Text Note References](27.md)
 - [NIP-28: Public Chat](28.md)
+- [NIP-30: Custom Emoji](30.md)
+- [NIP-31: Dealing with Unknown Events](31.md)
+- [NIP-32: Labeling](32.md)
 - [NIP-33: Parameterized Replaceable Events](33.md)
 - [NIP-36: Sensitive Content](36.md)
 - [NIP-39: External Identities in Profiles](39.md)
@@ -55,12 +58,15 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-47: Wallet Connect](47.md)
 - [NIP-50: Keywords filter](50.md)
 - [NIP-51: Lists](51.md)
+- [NIP-53: Live Activities](53.md)
 - [NIP-56: Reporting](56.md)
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-78: Application-specific data](78.md)
+- [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-94: File Metadata](94.md)
+- [NIP-98: HTTP Auth](98.md)
 
 ## Event Kinds
 
@@ -72,16 +78,19 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `3`     | Contacts                   | [2](02.md)  |
 | `4`     | Encrypted Direct Messages  | [4](04.md)  |
 | `5`     | Event Deletion             | [9](09.md)  |
-| `6`     | Reposts                    | [18](18.md) |
+| `6`     | Repost                     | [18](18.md) |
 | `7`     | Reaction                   | [25](25.md) |
 | `8`     | Badge Award                | [58](58.md) |
+| `16`    | Generic Repost             | [18](18.md) |
 | `40`    | Channel Creation           | [28](28.md) |
 | `41`    | Channel Metadata           | [28](28.md) |
 | `42`    | Channel Message            | [28](28.md) |
 | `43`    | Channel Hide Message       | [28](28.md) |
 | `44`    | Channel Mute User          | [28](28.md) |
 | `1063`  | File Metadata              | [94](94.md) |
+| `1311`  | Live Chat Message          | [53](53.md) |
 | `1984`  | Reporting                  | [56](56.md) |
+| `1985`  | Label                      | [32](32.md) |
 | `9734`  | Zap Request                | [57](57.md) |
 | `9735`  | Zap                        | [57](57.md) |
 | `10000` | Mute List                  | [51](51.md) |
@@ -92,6 +101,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `23194` | Wallet Request             | [47](47.md) |
 | `23195` | Wallet Response            | [47](47.md) |
 | `24133` | Nostr Connect              | [46](46.md) |
+| `27235` | HTTP Auth                  | [98](98.md) |
 | `30000` | Categorized People List    | [51](51.md) |
 | `30001` | Categorized Bookmark List  | [51](51.md) |
 | `30008` | Profile Badges             | [58](58.md) |
@@ -100,6 +110,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30018` | Create or update a product | [15](15.md) |
 | `30023` | Long-form Content          | [23](23.md) |
 | `30078` | Application-specific Data  | [78](78.md) |
+| `30311` | Live Event                 | [53](53.md) |
+| `31989` | Handler recommendation     | [89](89.md) |
+| `31990` | Handler information        | [89](89.md) |
 
 ### Event Kind Ranges
 
@@ -142,10 +155,14 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | name              | value                                | other parameters     | NIP                      |
 | ----------------- | ------------------------------------ | -------------------- | ------------------------ |
 | `a`               | coordinates to an event              | relay URL            | [33](33.md), [23](23.md) |
+| `alt`             | Alt tag                              | --                   | [31](31.md)              |
 | `d`               | identifier                           | --                   | [33](33.md)              |
 | `e`               | event id (hex)                       | relay URL, marker    | [1](01.md), [10](10.md)  |
 | `g`               | geohash                              | --                   | [12](12.md)              |
 | `i`               | identity                             | proof                | [39](39.md)              |
+| `k`               | kind number (string)                 | --                   | [18](18.md)              |
+| `l`               | label, label namespace               | annotations          | [32](32.md)              |
+| `L`               | label namespace                      | --                   | [32](32.md)              |
 | `p`               | pubkey (hex)                         | relay URL            | [1](01.md)               |
 | `r`               | a reference (URL, etc)               | --                   | [12](12.md)              |
 | `t`               | hashtag                              | --                   | [12](12.md)              |
@@ -156,6 +173,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `delegation`      | pubkey, conditions, delegation token | --                   | [26](26.md)              |
 | `description`     | badge description                    | --                   | [58](58.md)              |
 | `description`     | invoice description                  | --                   | [57](57.md)              |
+| `emoji`           | shortcode, image URL                 | --                   | [30](30.md)              |
 | `expiration`      | unix timestamp (string)              | --                   | [40](40.md)              |
 | `image`           | image URL                            | dimensions in pixels | [23](23.md), [58](58.md) |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                   | [57](57.md)              |
