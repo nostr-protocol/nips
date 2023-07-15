@@ -72,7 +72,7 @@ The output of processing the data -- published by the Service Provider.
         [ "e", "<id-of-68001-event>" ],
         [ "p", "<Customer's pubkey>" ],
         [ "status", "success", "<more-info>" ],
-        [ "amount", "requested-payment-amount" ]
+        [ "amount", "requested-payment-amount", "<optional-bolt11>" ]
     ]
 }
 ```
@@ -80,21 +80,27 @@ The output of processing the data -- published by the Service Provider.
 ## Job feedback
 Both customers and service providers can give feedback about a job.
 
-The result of the job SHOULD be included in the `content` field. If the output is not text, the `content` field SHOULD be empty and an `output` tag should be used instead as described below.
+The result of the job SHOULD be included in the `content` field.
 
 * `status` tag: Service Providers MAY indicate errors or extra info about the results by including them in the `status` tag.
-* `amount`: millisats that the Service Provider is requesting to be paid.
+* `amount`: millisats that the Service Provider is requesting to be paid. An optional third value can be a bolt11 invoice.
 
 # Protocol Flow
 * Customer publishes a job request
 `{ "kind": 68001, "tags": [ [ "j", "speech-to-text" ], ... ] }`
+* Service Prpvoders can submit `kind:68003` job-feedback events (e.g. `payment-required`, `processing`, `unprocessable-entity`, etc.).
+* Upon completion, the service provider publishes the result of the job with a `kind:68002` job-result event.
+* Upon acceptance, the user zaps the service provider, tagging the job result event with a `kind:7` 👍 reaction.
 
-* Service Providers subsribe to the type of jobs they can perform
-`{"kinds":[68001], "#j": ["speech-to-text", "image-generation", ... ]}`
+`kind:68002` and `kind:68003` events MAY include an `amount` tag, this can be interpreted as a suggestion to pay. Service Providers
+SHOULD use the `payment-required` feedback event to signal that a payment must be done before moving on to the next step.
 
-* When a job comes in, the Service Providers who opt to attempt to fulfill the request begin processing it, or they can react to it with feedback for the user (e.g. _payment required_, _unprocessable entity_, etc.)
-* Upon completion, the service provider publishes the result of the job with a `job-result` event.
-* Upon acceptance, the user zaps the service provider, tagging the job result event.
+## Notes about the protocol flow
+The flow is deliverately left ambiguos, allowing vast flexibility for the interaction between customers and service providers so that
+service providers can model their behavior based on their own decisions. Some service providers might choose to submit a `payment-required`
+as the first reaction before sending an `processing` or before delivering `kind:68002` results, some might choose to serve partial results
+for the job (e.g. as a sample), send a `payment-required`to deliver the rest of the results, and some service providers might choose to
+assess likelyhood of payment based on an npub's past behavior and thus serve the job results before requesting payment for the best possible UX.
 
 # Payment
 Customers SHOULD pay service providers whose job results they accept by zapping the Service Provider and tagging the `kind:68002` job result.
@@ -131,7 +137,7 @@ Service Providers might opt to give feedback about a job.
 A user might choose to not accept a job result for any reason. A user can provide feedback via NIP-25 reactions.
 The `content` of the `kind:7` event SHOULD include a description of how the user reacted to the job result.
 
-## Explicitly not addressed in this NIP
+## Not addressed in this NIP
 
 ### Reputation system
 Service providers are at obvious risk of having their results not compensated. Mitigation of this risk is up to service providers to figure out (i.e. building reputation systems, requiring npub "balances", etc, etc).
