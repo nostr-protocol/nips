@@ -67,6 +67,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-94: File Metadata](94.md)
 - [NIP-98: HTTP Auth](98.md)
+- [NIP-99: Classified Listings](99.md)
 
 ## Event Kinds
 
@@ -111,6 +112,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30023` | Long-form Content          | [23](23.md) |
 | `30078` | Application-specific Data  | [78](78.md) |
 | `30311` | Live Event                 | [53](53.md) |
+| `30402` | Classified Listing         | [99](99.md) |
 | `31989` | Handler recommendation     | [89](89.md) |
 | `31990` | Handler information        | [89](89.md) |
 
@@ -177,9 +179,11 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `expiration`      | unix timestamp (string)              | --                   | [40](40.md)              |
 | `image`           | image URL                            | dimensions in pixels | [23](23.md), [58](58.md) |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                   | [57](57.md)              |
+| `location`        | location string                      | --                   | [99](99.md)              |
 | `name`            | badge name                           | --                   | [58](58.md)              |
 | `nonce`           | random                               | --                   | [13](13.md)              |
 | `preimage`        | hash of `bolt11` invoice             | --                   | [57](57.md)              |
+| `price`           | price                                | currency, frequency  | [99](99.md)              |
 | `published_at`    | unix timestamp (string)              | --                   | [23](23.md)              |
 | `relay`           | relay url                            | --                   | [42](42.md)              |
 | `relays`          | relay list                           | --                   | [57](57.md)              |
