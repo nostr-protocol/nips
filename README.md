@@ -177,6 +177,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `description`     | invoice description                  | --                   | [57](57.md)              |
 | `emoji`           | shortcode, image URL                 | --                   | [30](30.md)              |
 | `expiration`      | unix timestamp (string)              | --                   | [40](40.md)              |
+| `hide`            | keyword                              | --                   | [51](51.md)              |
 | `image`           | image URL                            | dimensions in pixels | [23](23.md), [58](58.md) |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                   | [57](57.md)              |
 | `location`        | location string                      | --                   | [99](99.md)              |
