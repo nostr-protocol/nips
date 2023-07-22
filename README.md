@@ -110,9 +110,11 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30017` | Create or update a stall   | [15](15.md) |
 | `30018` | Create or update a product | [15](15.md) |
 | `30023` | Long-form Content          | [23](23.md) |
+| `30024` | Draft Long-form Content    | [23](23.md) |
 | `30078` | Application-specific Data  | [78](78.md) |
 | `30311` | Live Event                 | [53](53.md) |
 | `30402` | Classified Listing         | [99](99.md) |
+| `30403` | Draft Classified Listing   | [99](99.md) |
 | `31989` | Handler recommendation     | [89](89.md) |
 | `31990` | Handler information        | [89](89.md) |
 
