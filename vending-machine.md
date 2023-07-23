@@ -9,13 +9,13 @@ Data Vending Machine
 This NIP defines the interaction between customers and Service Providers to perform on-demand computation.
 
 ## Kinds
-This NIP reserves the range `65000-69999` for data vending machine use.
+This NIP reserves the range `65000-66000` for data vending machine use.
 
 | Kind | Description |
 | ---- | ----------- |
 | 65000 | Job feedback |
 | 65001 | Job result |
-| 65002-69999 | Job request kinds |
+| 65002-66000 | Job request kinds |
 
 ## Rationale
 Nostr can act as a marketplace for data processing, where users request jobs to be processed in certain ways (e.g. "speech-to-text", "summarization", etc.), but where they don't necessarily care about "who" processes the data.
@@ -33,7 +33,7 @@ A request to have data processed -- published by a customer
 
 ```json
 {
-    "kind": 6xxxx,
+    "kind": <65002-66000>,
     "content": "",
     "tags": [
         [ "i", "<data>", "<input-type>", "<marker>", "<relay>" ],
@@ -46,6 +46,8 @@ A request to have data processed -- published by a customer
 }
 ```
 
+All tags are optional.
+
 * `i` tag: Input data for the job, (zero or more inputs may exist)
     * `<data>`: The argument for the input
     * `<input-type>`: The way this argument should be interpreted, MUST be one of:
@@ -55,11 +57,11 @@ A request to have data processed -- published by a customer
         * `content`:
     * `<marker>`: an optional field indicating how this input should be used.
     * `<relay>`: if `event` or `job` input-type, the relay where the event/job was published, otherwise optional or empty string.
-* `output` tag (opt): MIME type. Expected output format. Service Providers SHOULD publish the result of the job in this format if it has been specified.
-* `bid` tag (opt): Customer MAY specify a maximum amount (in millisats) they are willing to pay.
-* `relays` tag: relays where Service Providers SHOULD publish responses to.
-* `p` tags (opt): Service Providers the customer is interested in having process this job. Other SP MIGHT still choose to process the job.
-* `exp` (opt): expiration timestamp. Service Providers SHOULD not send results after this timestamp.
+* `output`: MIME type. Expected output format. Service Providers SHOULD publish the result of the job in this format if it has been specified.
+* `bid`: Customer MAY specify a maximum amount (in millisats) they are willing to pay.
+* `relays`: relays where Service Providers SHOULD publish responses to.
+* `p`: Service Providers the customer is interested in. Other SP MIGHT still choose to process the job.
+* `exp`: expiration timestamp. Service Providers SHOULD not send results after this timestamp.
 
 ## Job result
 The output of processing the data -- published by the Service Provider.
