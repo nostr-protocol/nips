@@ -17,6 +17,8 @@ This NIP reserves the range `65000-66000` for data vending machine use.
 | 65001 | Job result |
 | 65002-66000 | Job request kinds |
 
+[Appendix 2](#appendix-2-job-types) defines the job types.
+
 ## Rationale
 Nostr can act as a marketplace for data processing, where users request jobs to be processed in certain ways (e.g. "speech-to-text", "summarization", etc.), but where they don't necessarily care about "who" processes the data.
 
@@ -33,7 +35,7 @@ A request to have data processed -- published by a customer
 
 ```json
 {
-    "kind": <65002-66000>,
+    "kind": xxx, // kind in 65002-66000 range
     "content": "",
     "tags": [
         [ "i", "<data>", "<input-type>", "<marker>", "<relay>" ],
@@ -54,8 +56,8 @@ All tags are optional.
         * `url`: a URL to be fetched
         * `event`: a nostr event ID, include an optional relay-url extra param
         * `job`: the output of a previous job with the specified event ID
-        * `content`:
-    * `<marker>`: an optional field indicating how this input should be used.
+        * `text`: `<data>` is the value of the input, no resolution is needed
+    * `<marker>`: an optional field indicating how this input should be used within the context of the job.
     * `<relay>`: if `event` or `job` input-type, the relay where the event/job was published, otherwise optional or empty string.
 * `output`: MIME type. Expected output format. Service Providers SHOULD publish the result of the job in this format if it has been specified.
 * `bid`: Customer MAY specify a maximum amount (in millisats) they are willing to pay.
@@ -97,7 +99,7 @@ The result of the job SHOULD be included in the `content` field.
 * Upon completion, the service provider publishes the result of the job with a `kind:65001` job-result event.
 * At any point, the user can pay the included `bolt11` or zap any of the events the service provider has sent to the user.
 
-`kind:65000` and `kind:65001` events MAY include an `amount` tag, this can be interpreted as a suggestion to pay. Service Providers SHOULD use the `payment-required` feedback event to signal that a payment is required and no further actions will be performed until the payment is sent. Custeroms are can always either pay the included `bolt11` invoice or zap the event requesting the payment and service providers should monitor for both if they choose to include a bolt11 invoice.
+`kind:65000` and `kind:65001` events MAY include an `amount` tag, this can be interpreted as a suggestion to pay. Service Providers SHOULD use the `payment-required` feedback event to signal that a payment is required and no further actions will be performed until the payment is sent. Customers are can always either pay the included `bolt11` invoice or zap the event requesting the payment and service providers should monitor for both if they choose to include a bolt11 invoice.
 
 ## Notes about the protocol flow
 The flow is deliverately ambiguos, allowing vast flexibility for the interaction between customers and service providers so that service providers can model their behavior based on their own decisions. Some service providers might choose to submit a `payment-required` as the first reaction before sending an `processing` or before delivering `kind:65001` results, some might choose to serve partial results for the job (e.g. as a sample), send a `payment-required`to deliver the rest of the results, and some service providers might choose to assess likelyhood of payment based on an npub's past behavior and thus serve the job results before requesting payment for the best possible UX.
@@ -116,6 +118,8 @@ A job request might be cancelled by publishing a `kind:5` delete request event t
 A Customer MAY request multiple jobs to be processed in a chained form, so that the output of a job can be the input of the next job. (e.g. summarization of a podcast's transcription). This is done by specifying as `input` an eventID of a different job with the `job` marker.
 
 Service Providers MAY begin processing a subsequent job the moment they see the prior job's result, but they will likely wait for a zap to be published first. This introduces a risk that Service Provider of job #1 might delay publishing the zap event in order to have an advantage. This risk is up to Service Providers to mitigate or to decide whether the service provider of job #1 tends to have good-enough results so as to not wait for a explicit zap to assume the job was accepted.
+
+Consult [Appendix 1: Example](#appendix-1-examples)'s [Summarization of a podcast](#summarization-of-a-podcast)
 
 # Job Feedback
 The parties to a job request can use `kind:65000` to provide feedback about the job, using a `status` tag to indicate the type of feedback.
@@ -215,7 +219,9 @@ Not to be included in the first draft of this NIP, but encrypted job requests sh
 ```
 
 ## Summarization of a podcast
-User publishes two job requests at the same time.
+User publishes two job requests at the same time. A job that transcribes an audio and a job that summarizes the transcription (output of job #1).
+
+User publishes event #1 and #2 together.
 
 ### `kind:65002`: Job Request #1: speech-to-text
 ```json
@@ -223,7 +229,7 @@ User publishes two job requests at the same time.
     "id": "12345",
     "pubkey": "abcdef",
     "kinds" 65002,
-    "content": "I need a transcript of Bitcoin.review from second 900 to 930",
+    "content": "",
     "tags": [
         [ "i", "https://bitcoin.review/episode1.mp3", "url" ],
         [ "output", "text/plain" ],
@@ -233,7 +239,7 @@ User publishes two job requests at the same time.
 }
 ```
 
-### `kind:65003`: Job Request #2: summarization of job #1's result
+### `kind:65002`: Job Request #2: summarization of job #1's result
 ```json
 {
     "id": "12346",
@@ -241,7 +247,7 @@ User publishes two job requests at the same time.
     "kinds": 65003,
     "content": "",
     "tags": [
-        [ "i", "12346", "job" ],
+        [ "i", "12345", "job" ], // input is the output of job with id 12345
         [ "output", "text/plain" ],
         [ "params", "length", "3 paragraphs" ],
         [ "bid", "10000" ]
@@ -317,30 +323,60 @@ User publishes two job requests at the same time.
     ]
 }
 ```
+## AI-image of embedded input
+
+### `kind:65005`: Job request
+```json
+{
+    "kind": 65004,
+    "tags": [
+        [ "i", "Millions of vending machines, interconnected with tubes with eah other", "text" ],
+        [ "param", "prompt", "photorealistic" ],
+        [ "bid", "500000" ]
+    ]
+}
+```
+
+### `kind:65006`: Job request #4 (generate image based on the summary)
+```json
+{
+    "id": "126",
+    "kind": 65004,
+    "tags": [
+        [ "i", "125", "job" ],
+        [ "param", "prompt", "photorealistic" ],
+        [ "param", "size", "4000x4000" ],
+        [ "bid", "500000" ]
+    ]
+}
+```
 
 # Appendix 2: Job types
 
-This NIP defines some example job types, Customers SHOULD specify these types for maximum compatibility with Service Providers. Other job types MAY be added to this NIP after being observed in the wild.
-
-### speech-to-text: `kind:65002`
-#### params
+This is a list of all the supported job requests
+.
+## speech-to-text: `kind:65002`
+### params
 | param                          | req? | description
 |--------------------------------|------|--------
 | `range`                        | opt  | timestamp range (in seconds) of desired text to be transcribed
 | `alignment`                    | opt  | word, segment, raw:  word-level, segment-level or raw outputs
 
-### summarization: `kind:65003`
+## summarization: `kind:65003`
 | param                          | req? | description
 |--------------------------------|------|--------
 | `length`                       | opt  | desired length
 
-### translation: `kind:65004`
+## translation: `kind:65004`
 | param                          | req? | description
 |--------------------------------|------|--------
 | `lang`                         | req  | desired language in BCP 47 format.
 
-### image generation: `kind:65005`
-* `input`
+## image generation: `kind:65005`
+| param                          | req? | description
+|--------------------------------|------|--------
+| `prompt`                       | opt  | extra prompt to be used for the image generation
+| `size`                         | opt  | desired size of the image
 
 # Notes
 
