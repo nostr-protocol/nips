@@ -19,7 +19,7 @@ This NIP reserves the range `65000-66000` for data vending machine use.
 | 65001 | Job result |
 | 65002-66000 | Job request kinds |
 
-[Appendix 2](#appendix-2-job-types) defines the job types.
+[Appendix 2](#appendix-2-job-types) defines the job request types.
 
 ## Rationale
 Nostr can act as a marketplace for data processing, where users request jobs to be processed in certain ways (e.g., "speech-to-text", "summarization", etc.), but they don't necessarily care about "who" processes the data.
@@ -32,19 +32,23 @@ There are two actors in the workflow described in this NIP:
 * Service providers (npubs who fulfill jobs)
 
 # Event Kinds
+
+* `kind:65000`: job feedback
+* `kind:65001`: job result
+* `kind:65002`-`kind:66000`: job requests
+
 ## Job request
-A request to have data processed, published by a customer
+A request to have data processed, published by a customer. This event signals that an npub is interested in receiving the result of some kind of compute.
 
 ```json
 {
-    "kind": xxx, // kind in 65002-66000 range
+    "kind": 65xxx, // kind in 65002-66000 range
     "content": "",
     "tags": [
         [ "i", "<data>", "<input-type>", "<marker>", "<relay>" ],
         [ "output", "<mime-type>" ],
         [ "relays", "wss://..."],
         [ "bid", "<msat-amount>" ],
-        [ "exp", "<timestamp>" ],
         [ "t", "bitcoin" ]
     ]
 }
@@ -52,24 +56,25 @@ A request to have data processed, published by a customer
 
 All tags are optional.
 
-* `i` tag: Input data for the job (zero or more inputs may exist)
+* `i` tag: Input data for the job (zero or more inputs)
     * `<data>`: The argument for the input
-    * `<input-type>`: The way this argument should be interpreted, MUST be one of:
+    * `<input-type>`: The way this argument should be interpreted. MUST be one of:
         * `url`: A URL to be fetched
-        * `event`: A Nostr event ID, include an optional relay-url extra param
+        * `event`: A Nostr event ID.
         * `job`: The output of a previous job with the specified event ID
         * `text`: `<data>` is the value of the input, no resolution is needed
     * `<marker>`: An optional field indicating how this input should be used within the context of the job
     * `<relay>`: If `event` or `job` input-type, the relay where the event/job was published, otherwise optional or empty string
-* `output`: MIME type. Expected output format. Service Providers SHOULD publish the result of the job in this format if it has been specified
+* `output`: Expected output format. (e.g. MIME type)
+    * Service Providers MUST publish the result of the job in this format if it has been specified.
+    * Each job-type ([Appendix 2](#appendix-2-job-types)) might define the output format more narrowly.
 * `bid`: Customer MAY specify a maximum amount (in millisats) they are willing to pay
-* `relays`: Relays where Service Providers SHOULD publish responses to
+* `relays`: List of relays where Service Providers SHOULD publish responses to
 * `p`: Service Providers the customer is interested in. Other SPs MIGHT still choose to process the job
-* `exp`: Expiration timestamp. Service Providers SHOULD not send results after this timestamp
 
 ## Job result
 
-The output of processing the data -- published by the Service Provider.
+Service providers publish job results, providing the output of the job result. They should tag the original job request event id as well as the customer's pubkey.
 
 ```json
 {
@@ -79,28 +84,40 @@ The output of processing the data -- published by the Service Provider.
     "tags": [
         [ "request", "<job-request>" ],
         [ "e", "<job-request-id>", "<relay-hint>" ],
-        [ "p", "<Customer's pubkey>" ],
+        [ "p", "<customer's-pubkey>" ],
         [ "amount", "requested-payment-amount", "<optional-bolt11>" ]
     ]
 }
 ```
 
-* `request` tag: The job request event ID.
+* `request`: The job request event stringified-JSON.
 * `amount`: millisats that the Service Provider is requesting to be paid. An optional third value can be a bolt11 invoice.
 
 ## Job feedback
-Both customers and service providers can give feedback about a job.
+Service providers can give feedback about a job back to the customer.
 
-The result of the job SHOULD be included in the `content` field.
+```json
+{
+    "kind": 65000,
+    "content": "<empty-or-payload>",
+    "tags": [
+        [ "status", "<status>", "<extra-info>" ],
+        [ "amount", "requested-payment-amount", "<bolt11>" ],
+        [ "e", "<job-request-id>", "<relay-hint>" ],
+        [ "p", "<customer's-pubkey>" ],
+    ]
+}
+```
 
-* `status` tag: Service Providers MAY indicate errors or extra info about the results by including them in the `status` tag.
-* `amount`: as defined in the [Job Result](#job-result) section.
+* `content`: Either empty or a job-result (e.g. for partial-result samples)
+* `status` tag: Service Providers SHOULD indicate what this feedback status refers to. [Appendix 3](#appendix-3-job-feedback-status) defines status. Extra human-readable information can be added as an extra argument.
+* `amount` tag: as defined in the [Job Result](#job-result) section.
 
 # Protocol Flow
-* Customer publishes a job request (e.g. `kind:65002`).
+* Customer publishes a job request (e.g. `kind:65002` speech-to-text).
 * Service Providers can submit `kind:65000` job-feedback events (e.g. `payment-required`, `processing`, `error`, etc.).
 * Upon completion, the service provider publishes the result of the job with a `kind:65001` job-result event.
-* At any point, the user can pay the included `bolt11` or zap any of the events the service provider has sent to the user.
+* At any point, if there is an `amount` pending to be paid as instructed by the service provider, the user can pay the included `bolt11` or zap the job result event the service provider has sent to the user
 
 `kind:65000` and `kind:65001` events MAY include an `amount` tag, this can be interpreted as a suggestion to pay. Service Providers SHOULD use the `payment-required` feedback event to signal that a payment is required and no further actions will be performed until the payment is sent. Customers can always either pay the included `bolt11` invoice or zap the event requesting the payment and service providers should monitor for both if they choose to include a bolt11 invoice.
 
@@ -136,16 +153,6 @@ Consult [Appendix 1: Example](#appendix-1-examples)'s [Summarization of a podcas
     ]
 }
 ```
-
-## Not addressed in this NIP
-
-### Reputation system
-Service providers are at an obvious risk of having their results not compensated. Mitigation of this risk is up to service providers to figure out (i.e., building reputation systems, requiring npub "balances", etc.). It's out of scope (and undesirable) to have this NIP address this issue; the market should.
-
-### Encrypted job requests
-Not to be included in the first draft of this NIP, but encrypted job requests should be added. A few ways:
-    * publish job requests with some useful metadata of the job "e.g., length of audio to be transcribed", service providers offer to do the job, the customer replies with a NIP-04-like encrypted job requested encrypted with the service provider's pubkey.
-
 
 # Appendix 1: Examples
 
@@ -316,7 +323,7 @@ User publishes event #1 and #2 together.
         [ "bid", "500000" ]
     ]
 }
-``
+```
 
 ## AI-image of embedded input
 
@@ -364,6 +371,43 @@ This is a list of all the supported job requests.
 | `prompt`  | opt  | extra prompt to be used for the image generation      |
 | `size`    | opt  | desired size of the image                             |
 
+## event list generation: `kind:65006`
+
+Generates a list of event ids, (e.g. algorithmic feeds, spam-free notifications, trending topics)
+
+Output should be a stringified array of elements usually find in a nostr event' `tags`, e.g.:
+
+```json
+{ "content": "[
+    [\"e\", \"<id>\"],
+    [\"a\", \"30023:pubkey:id\"],
+    [\"t\", \"tag\"],
+    [\"p\", \"pubkey\"],
+]" }
+```
+
+| param     | req? | description                                           |
+|-----------|------|-------------------------------------------------------|
+| `filter` | opt | JSON-stringified `REQ`-like filter
+| `prompt` | opt | A human-readable description of the desired results. Which might be used with e.g. an LLM to tune the results.
+| `p` | opt | Array of pubkeys to generate a feed from someone else's point-of-view. This param allows for a client to choose to generate the feeds and incur the costs of its users.
+
+### example job-request
+
+Generate an algorithmic feed of the most interesting `kind:1`s related to the topic "bitcoin", tagging service providers specializing in safe-for-work content
+that would interest pubkey `pubkey1`.
+
+```json
+{
+    "kind": 65006,
+    "tags": [
+        [ "param", "filter", "{ \"kinds\": [1], \"#t\": [\"bitcoin\"] }" ],
+        [ "param", "p", "[\"pubkey1\"]"]
+        [ "bid", "5000" ],
+        [ "t", "sfw" ]
+    ]
+}
+```
 
 # Appendix 3: Job feedback status
 
