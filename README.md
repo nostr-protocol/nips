@@ -64,6 +64,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-78: Application-specific data](78.md)
 - [NIP-89: Recommended Application Handlers](89.md)
+- [NIP-90: Data Vending Machines](90.md)
 - [NIP-94: File Metadata](94.md)
 - [NIP-98: HTTP Auth](98.md)
 
@@ -110,6 +111,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30078` | Application-specific Data  | [78](78.md) |
 | `31989` | Handler recommendation     | [89](89.md) |
 | `31990` | Handler information        | [89](89.md) |
+| `65000` | Job Feedback               | [90](90.md) |
+| `65001` | Job Result                 | [90](90.md) |
 
 ### Event Kind Ranges
 
@@ -119,6 +122,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10000`--`19999` | Replaceable Events               | [16](16.md) |
 | `20000`--`29999` | Ephemeral Events                 | [16](16.md) |
 | `30000`--`39999` | Parameterized Replaceable Events | [33](33.md) |
+| `65002`--`66000` | Job Requests                     | [90](90.md) |
 
 ## Message types
 
