@@ -68,7 +68,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-94: File Metadata](94.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
-- [NIP-100: Querying Events by Tags Structure](100.md)
+- [NIP-100: Querying Events by Tags Presence](100.md)
 
 ## Event Kinds
 
