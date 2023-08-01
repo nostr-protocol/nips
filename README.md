@@ -69,6 +69,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-94: File Metadata](94.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-101: Mailing Lists](101.md)
 
 ## Event Kinds
 
@@ -91,6 +92,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `44`    | Channel Mute User          | [28](28.md) |
 | `1063`  | File Metadata              | [94](94.md) |
 | `1311`  | Live Chat Message          | [53](53.md) |
+| `1923`  | Mailing List Subscription  |[101](101.md)|
 | `1984`  | Reporting                  | [56](56.md) |
 | `1985`  | Label                      | [32](32.md) |
 | `9734`  | Zap Request                | [57](57.md) |
