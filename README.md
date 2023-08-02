@@ -198,7 +198,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `summary`         | article summary                      | --                   | [23](23.md)              |
 | `thumb`           | badge thumbnail                      | dimensions in pixels | [58](58.md)              |
 | `title`           | article title                        | --                   | [23](23.md)              |
-| `zap`             | profile name                         | type of value        | [57](57.md)              |
+| `zap`             | pubkey (hex), relay URL              | weight               | [57](57.md)              |
 
 ## Criteria for acceptance of NIPs
 
