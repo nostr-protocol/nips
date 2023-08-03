@@ -247,8 +247,8 @@ We are trying to find an event-based key rotation scheme, this is an experiment 
     "kind": 485,
     "content": <Anonymous content>,
     "tags": [
-	    ["p", <new group_pubkey>],
-	    ["e", <group_create_event_id>],
+	   ["p", <new group_pubkey>],
+	   ["e", <group_create_event_id>],
     	["p",<member tag of A>],
     	["p",<member tag of B>],
     	["p",<member tag of C>],
@@ -265,9 +265,9 @@ We are trying to find an event-based key rotation scheme, this is an experiment 
     "kind": 486,
     "content": <Anonymous content>,
     "tags": [
-	    ["p", <new group_pubkey>],
-	    ["e", <group_create_event_id>],
-	    ["e", <the_last_group_owner_rotate_event_id>]
+	   ["p", <new group_pubkey>],
+	   ["e", <group_create_event_id>],
+	   ["e", <the_last_group_owner_rotate_event_id>]
     	["e", <kind_484_event_id>],
     	["e", <kind_484_event_id>],
     	["p", <member tag of A>],
