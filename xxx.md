@@ -105,7 +105,7 @@ The following privacy protections can be achieved:
 - 482: Send group messages
 - 483: Join group request
 - 484: Leave group
-- 485: Group owner rotates (updating group members, group information etc.)
+- 485: Group owner rotation (updating group members, group information etc.)
 - 486: Group member rotation
 
 ### Create Group Chat (kind 480)
@@ -233,13 +233,13 @@ The group owner updates the group members, directly triggers a rotate event, and
 
 ---
 
-### KEY ROTATE
+### KEY ROTATION
 
 For large group chats, a fast key rotation is required, especially when the group owner is not online, allowing group members to independently update keys. The TreeKEM protocol of MLS is an effective way. However, in nostr, an event-based key rotation scheme is needed.
 
 We are trying to find an event-based key rotation scheme, this is an experiment :)
 
-### Kind 485: Group Owner Rotate
+### Group Owner Rotation (kind 485)
 
 ```
 {
@@ -257,7 +257,7 @@ We are trying to find an event-based key rotation scheme, this is an experiment 
 }
 ```
 
-### Kind 486: Group Member Rotate
+### Group Member Rotation (kind 486)
 
 ```
 {
