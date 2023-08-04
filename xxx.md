@@ -1,12 +1,12 @@
-## Anonymous Event & Group Chat Implementation - Darft
+## Anonymous Event & Moderated Group Chat Implementation - Darft
 
 This document presents an approach to implement an Anonymous Event & Group Chat. 
 
-
-### Anonymous Event
-
 Before we start, let's introduce an "Anonymous Event" method to hide the real sender's pubkey, (This balancing privacy and exposing tags for clients to request the necessary data)
 
+
+
+### Anonymous Event
 
 #### Event 1 
 
@@ -25,9 +25,10 @@ The first step involves generating a regular Event 1 using an alias public key, 
   "sig": <sig with alias's key>
 }
 ```
+
 #### Event 2
 
-In Event 2, we remove the signature and include the following content:
+In Event 2, we remove the signature&pubkey of Event 1 and include the following content:
 
 ```
 {
@@ -41,6 +42,7 @@ In Event 2, we remove the signature and include the following content:
   "created_at": 1686840217,
 }
 ```
+
 #### Event 3
 
 Event 3 signs Event 2 with the sender's real public key and includes the signature in the content.
@@ -57,9 +59,10 @@ Event 3 signs Event 2 with the sender's real public key and includes the signatu
   "created_at": 1686840217
 }
 ```
+
 #### Event 4
 
-Event 4 encrypts the content with the shared secret of the alias & recipient.
+Event 4 encrypts the Event 3's content with the shared secret of the alias & recipient.
 
 ```
 {
@@ -73,6 +76,7 @@ Event 4 encrypts the content with the shared secret of the alias & recipient.
   "created_at": 1686840217
 }
 ```
+
 #### Event 5
 
 Finally, Event 5 signs Event 4 with the alias key and sends it out.
@@ -90,7 +94,8 @@ Finally, Event 5 signs Event 4 with the alias key and sends it out.
   "sig": <sig with alias key>
 }
 ```
-### Group Chat Based on Anonymous Event
+
+### Moderated Group Chat Based on Anonymous Event
 
 The following privacy protections can be achieved:
 
@@ -98,6 +103,10 @@ The following privacy protections can be achieved:
 - Message forward/backward secrecy; only members can decrypt messages.
 - Due to sender anonymity, it's challenging to count the sender's messages.
 - Fast key rotation, suitable for large groups.
+
+Limitations:
+
+- The public can count how many messages a group has. Group changes and key rotations can be counted as well.
 
 ### Event Kind Definitions
 
@@ -116,17 +125,17 @@ The group owner initiates the creation event message.
 {
   "pubkey": <alias pubkey of the group owner>,
   "kind": 480,
-  "content": "Anonymous content",
+  "content": "group metadata",
   "tags": [
      ["p", <group pubkey>],
-     ["p", <member tag of A>],
-     ["p", <member tag of B>],
-     ["p", <member tag of C>],
+     ["m", <member tag of A>],
+     ["m", <member tag of B>],
+     ["m", <member tag of C>],
      ...
   ]
 }
 ```
-Real content example:
+Group metadata example:
 
 ```
 {  
@@ -138,10 +147,10 @@ Real content example:
   <...otherfields>
 }
 ```
-The initial group members' data will be included in the `p` tags. The data structure is as follows:
+The initial group members' data will be included in the `m` tags. The data structure is as follows:
 
 ```
-["p", <member A's alias pubkey>, <encrypted group privkey>, <encrypted member A's detail>]
+["m", <member A's alias pubkey>, <encrypted group privkey>, <encrypted member A's detail>]
 ```
 Member detail example:
 
@@ -247,11 +256,11 @@ We are trying to find an event-based key rotation scheme, this is an experiment 
     "kind": 485,
     "content": <Anonymous content>,
     "tags": [
-	   ["p", <new group_pubkey>],
-	   ["e", <group_create_event_id>],
-    	["p",<member tag of A>],
-    	["p",<member tag of B>],
-    	["p",<member tag of C>],
+	    ["p", <new group_pubkey>],
+	    ["e", <group_create_event_id>],
+    	["m",<member tag of A>],
+    	["m",<member tag of B>],
+    	["m",<member tag of C>],
     	...
     ]
 }
@@ -265,14 +274,14 @@ We are trying to find an event-based key rotation scheme, this is an experiment 
     "kind": 486,
     "content": <Anonymous content>,
     "tags": [
-	   ["p", <new group_pubkey>],
-	   ["e", <group_create_event_id>],
-	   ["e", <the_last_group_owner_rotate_event_id>]
+	    ["p", <new group_pubkey>],
+	    ["e", <group_create_event_id>],
+	    ["e", <the_last_group_owner_rotate_event_id>]
     	["e", <kind_484_event_id>],
     	["e", <kind_484_event_id>],
-    	["p", <member tag of A>],
-    	["p", <member tag of B>],
-    	["p", <member tag of C>],
+    	["m", <member tag of A>],
+    	["m", <member tag of B>],
+    	["m", <member tag of C>],
     	...
     ]
 }
