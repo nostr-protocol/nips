@@ -65,6 +65,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
 - [NIP-65: Relay List Metadata](65.md)
+- [NIP-72: Moderated Communities](72.md)
 - [NIP-78: Application-specific data](78.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-94: File Metadata](94.md)
@@ -94,6 +95,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1311`  | Live Chat Message          | [53](53.md) |
 | `1984`  | Reporting                  | [56](56.md) |
 | `1985`  | Label                      | [32](32.md) |
+| `4550`  | Community Post Approval    | [72](72.md) |
 | `9734`  | Zap Request                | [57](57.md) |
 | `9735`  | Zap                        | [57](57.md) |
 | `10000` | Mute List                  | [51](51.md) |
@@ -123,6 +125,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31925` | Calendar Event RSVP        | [52](52.md) |
 | `31989` | Handler recommendation     | [89](89.md) |
 | `31990` | Handler information        | [89](89.md) |
+| `34550` | Community Definition       | [72](72.md) |
+
 
 ### Event Kind Ranges
 
@@ -170,7 +174,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `e`               | event id (hex)                       | relay URL, marker    | [1](01.md), [10](10.md)  |
 | `g`               | geohash                              | --                   | [12](12.md), [52](52.md) |
 | `i`               | identity                             | proof                | [39](39.md)              |
-| `k`               | kind number (string)                 | --                   | [18](18.md)              |
+| `k`               | kind number (string)                 | --                   | [18](18.md), [72](72.md) |
 | `l`               | label, label namespace               | annotations          | [32](32.md)              |
 | `L`               | label namespace                      | --                   | [32](32.md)              |
 | `p`               | pubkey (hex)                         | relay URL            | [1](01.md)               |
