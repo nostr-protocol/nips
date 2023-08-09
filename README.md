@@ -32,13 +32,13 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-11: Relay Information Document](11.md)
 - [NIP-12: Generic Tag Queries](12.md)
 - [NIP-13: Proof of Work](13.md)
-- [NIP-14: Subject tag in text events.](14.md)
+- [NIP-14: Subject tag in text events](14.md)
 - [NIP-15: Nostr Marketplace (for resilient marketplaces)](15.md)
 - [NIP-16: Event Treatment](16.md)
 - [NIP-18: Reposts](18.md)
 - [NIP-19: bech32-encoded entities](19.md)
 - [NIP-20: Command Results](20.md)
-- [NIP-21: `nostr:` URL scheme](21.md)
+- [NIP-21: `nostr:` URI scheme](21.md)
 - [NIP-22: Event `created_at` Limits](22.md)
 - [NIP-23: Long-form Content](23.md)
 - [NIP-25: Reactions](25.md)
@@ -56,17 +56,22 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-45: Counting results](45.md)
 - [NIP-46: Nostr Connect](46.md)
 - [NIP-47: Wallet Connect](47.md)
+- [NIP-48: Proxy Tags](48.md)
 - [NIP-50: Keywords filter](50.md)
 - [NIP-51: Lists](51.md)
+- [NIP-52: Calendar Events](52.md)
+- [NIP-53: Live Activities](53.md)
 - [NIP-56: Reporting](56.md)
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
 - [NIP-65: Relay List Metadata](65.md)
+- [NIP-72: Moderated Communities](72.md)
 - [NIP-78: Application-specific data](78.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-90: Data Vending Machines](90.md)
 - [NIP-94: File Metadata](94.md)
 - [NIP-98: HTTP Auth](98.md)
+- [NIP-99: Classified Listings](99.md)
 
 ## Event Kinds
 
@@ -88,8 +93,10 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `43`    | Channel Hide Message       | [28](28.md) |
 | `44`    | Channel Mute User          | [28](28.md) |
 | `1063`  | File Metadata              | [94](94.md) |
+| `1311`  | Live Chat Message          | [53](53.md) |
 | `1984`  | Reporting                  | [56](56.md) |
 | `1985`  | Label                      | [32](32.md) |
+| `4550`  | Community Post Approval    | [72](72.md) |
 | `9734`  | Zap Request                | [57](57.md) |
 | `9735`  | Zap                        | [57](57.md) |
 | `10000` | Mute List                  | [51](51.md) |
@@ -108,9 +115,18 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30017` | Create or update a stall   | [15](15.md) |
 | `30018` | Create or update a product | [15](15.md) |
 | `30023` | Long-form Content          | [23](23.md) |
+| `30024` | Draft Long-form Content    | [23](23.md) |
 | `30078` | Application-specific Data  | [78](78.md) |
+| `30311` | Live Event                 | [53](53.md) |
+| `30402` | Classified Listing         | [99](99.md) |
+| `30403` | Draft Classified Listing   | [99](99.md) |
+| `31922` | Date-Based Calendar Event  | [52](52.md) |
+| `31923` | Time-Based Calendar Event  | [52](52.md) |
+| `31924` | Calendar                   | [52](52.md) |
+| `31925` | Calendar Event RSVP        | [52](52.md) |
 | `31989` | Handler recommendation     | [89](89.md) |
 | `31990` | Handler information        | [89](89.md) |
+| `34550` | Community Definition       | [72](72.md) |
 | `65000` | Job Feedback               | [90](90.md) |
 | `65001` | Job Result                 | [90](90.md) |
 
@@ -159,8 +175,9 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `alt`             | Alt tag                              | --                   | [31](31.md)              |
 | `d`               | identifier                           | --                   | [33](33.md)              |
 | `e`               | event id (hex)                       | relay URL, marker    | [1](01.md), [10](10.md)  |
-| `g`               | geohash                              | --                   | [12](12.md)              |
+| `g`               | geohash                              | --                   | [12](12.md), [52](52.md) |
 | `i`               | identity                             | proof                | [39](39.md)              |
+| `k`               | kind number (string)                 | --                   | [18](18.md), [72](72.md) |
 | `l`               | label, label namespace               | annotations          | [32](32.md)              |
 | `L`               | label namespace                      | --                   | [32](32.md)              |
 | `p`               | pubkey (hex)                         | relay URL            | [1](01.md)               |
@@ -173,13 +190,16 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `delegation`      | pubkey, conditions, delegation token | --                   | [26](26.md)              |
 | `description`     | badge description                    | --                   | [58](58.md)              |
 | `description`     | invoice description                  | --                   | [57](57.md)              |
-| `emoji`           | shortcode                            | image URL            | [30](30.md)              |
+| `emoji`           | shortcode, image URL                 | --                   | [30](30.md)              |
 | `expiration`      | unix timestamp (string)              | --                   | [40](40.md)              |
 | `image`           | image URL                            | dimensions in pixels | [23](23.md), [58](58.md) |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                   | [57](57.md)              |
+| `location`        | location string                      | --                   | [52](52.md), [99](99.md) |
 | `name`            | badge name                           | --                   | [58](58.md)              |
 | `nonce`           | random                               | --                   | [13](13.md)              |
 | `preimage`        | hash of `bolt11` invoice             | --                   | [57](57.md)              |
+| `price`           | price                                | currency, frequency  | [99](99.md)              |
+| `proxy`           | external ID                          | protocol             | [48](48.md)              |
 | `published_at`    | unix timestamp (string)              | --                   | [23](23.md)              |
 | `relay`           | relay url                            | --                   | [42](42.md)              |
 | `relays`          | relay list                           | --                   | [57](57.md)              |
@@ -196,6 +216,21 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 3. They should be optional and backwards-compatible: care must be taken such that clients and relays that choose to not implement them do not stop working when interacting with the ones that choose to.
 4. There should be no more than one way of doing the same thing.
 5. Other rules will be made up when necessary.
+
+## Mailing Lists
+
+The nostr ecosystem is getting large with many different organizations, relays
+and clients. Following the nips repo on github is becoming more difficult and
+noisy. To coordinate on protocol development outside of github, there are
+mailing lists where you can work on NIPs before submitting them here:
+
+* [w3c nostr community group][w3-nostr] - [public-nostr@w3.org][mailto-w3] - requires signup
+* [nostr-protocol google group][nostr-google-group] - [nostr-protocol@googlegroups.com][mailto-google] - no signup required
+
+[w3-nostr]: https://www.w3.org/community/nostr/
+[mailto-w3]: mailto:public-nostr@w3.org
+[nostr-google-group]: https://groups.google.com/g/nostr-protocol
+[mailto-google]: mailto:nostr-protocol@googlegroups.com
 
 ## License
 
