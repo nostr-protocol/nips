@@ -81,7 +81,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `6`     | Repost                     | [18](18.md) |
 | `7`     | Reaction                   | [25](25.md) |
 | `8`     | Badge Award                | [58](58.md) |
-| `18`    | Generic Repost             | [18](18.md) |
+| `16`    | Generic Repost             | [18](18.md) |
 | `40`    | Channel Creation           | [28](28.md) |
 | `41`    | Channel Metadata           | [28](28.md) |
 | `42`    | Channel Message            | [28](28.md) |
