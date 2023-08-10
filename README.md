@@ -74,7 +74,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | ------- | -------------------------- | ----------- |
 | `0`     | Metadata                   | [1](01.md)  |
 | `1`     | Short Text Note            | [1](01.md)  |
-| `2`     | Recommend Relay            | [1](01.md)  |
+| `2`     | Recommend Relay            |             |
 | `3`     | Contacts                   | [2](02.md)  |
 | `4`     | Encrypted Direct Messages  | [4](04.md)  |
 | `5`     | Event Deletion             | [9](09.md)  |
