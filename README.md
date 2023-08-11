@@ -22,7 +22,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-01: Basic protocol flow description](01.md)
 - [NIP-02: Contact List and Petnames](02.md)
 - [NIP-03: OpenTimestamps Attestations for Events](03.md)
-- [NIP-04: Encrypted Direct Message](04.md)
+- [NIP-04: Encrypted Direct Message](04.md) --- **unrecommended**: deprecated in favor of [NIP-44](44.md)
 - [NIP-05: Mapping Nostr keys to DNS-based internet identifiers](05.md)
 - [NIP-06: Basic key derivation from mnemonic seed phrase](06.md)
 - [NIP-07: `window.nostr` capability for web browsers](07.md)
