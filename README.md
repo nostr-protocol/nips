@@ -67,6 +67,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-78: Application-specific data](78.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-94: File Metadata](94.md)
+- [NIP-97: Files hosted on relay](97.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
 
@@ -142,6 +143,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `CLOSE` | used to stop previous subscriptions                 | [1](01.md)  |
 | `COUNT` | used to request event counts                        | [45](45.md) |
 | `EVENT` | used to publish events                              | [1](01.md)  |
+| `FILE`  | used to publish events with binary content (file)   | [97](97.md)  |
+| `RETRIEVE` | used to retrieve a binary content  (file)        | [97](97.md)  |
 | `REQ`   | used to request events and subscribe to new updates | [1](01.md)  |
 
 ### Relay to Client
@@ -167,14 +170,17 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `alt`             | Alt tag                              | --                   | [31](31.md)              |
 | `d`               | identifier                           | --                   | [33](33.md)              |
 | `e`               | event id (hex)                       | relay URL, marker    | [1](01.md), [10](10.md)  |
+| `f`               | indexed flag value                   | ---                  | [97](97.md)              |
 | `g`               | geohash                              | --                   | [12](12.md), [52](52.md) |
 | `i`               | identity                             | proof                | [39](39.md)              |
 | `k`               | kind number (string)                 | --                   | [18](18.md)              |
 | `l`               | label, label namespace               | annotations          | [32](32.md)              |
+| `m`               | content type of a file (mime)        | --                   | [94](94.md), [97](97.md) |
 | `L`               | label namespace                      | --                   | [32](32.md)              |
 | `p`               | pubkey (hex)                         | relay URL            | [1](01.md)               |
 | `r`               | a reference (URL, etc)               | --                   | [12](12.md)              |
 | `t`               | hashtag                              | --                   | [12](12.md)              |
+| `x`               | SHA256 hash of a file                | --                   | [94](94.md), [97](97.md) |
 | `amount`          | millisats                            | --                   | [57](57.md)              |
 | `bolt11`          | `bolt11` invoice                     | --                   | [57](57.md)              |
 | `challenge`       | challenge string                     | --                   | [42](42.md)              |
@@ -196,6 +202,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `relays`          | relay list                           | --                   | [57](57.md)              |
 | `subject`         | subject                              | --                   | [14](14.md)              |
 | `summary`         | article summary                      | --                   | [23](23.md)              |
+| `size`            | size of  a file in bytes             | --                   | [94](94.md), [97](97.md) |
 | `thumb`           | badge thumbnail                      | dimensions in pixels | [58](58.md)              |
 | `title`           | article title                        | --                   | [23](23.md)              |
 | `zap`             | profile name                         | type of value        | [57](57.md)              |
