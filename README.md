@@ -174,6 +174,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `L`               | label namespace                      | --                   | [32](32.md)              |
 | `p`               | pubkey (hex)                         | relay URL            | [1](01.md)               |
 | `r`               | a reference (URL, etc)               | --                   | [12](12.md)              |
+| `r`               | relay url                            | marker               | [65](65.md)              |
 | `t`               | hashtag                              | --                   | [12](12.md)              |
 | `amount`          | millisats                            | --                   | [57](57.md)              |
 | `bolt11`          | `bolt11` invoice                     | --                   | [57](57.md)              |
