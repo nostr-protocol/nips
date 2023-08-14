@@ -30,14 +30,11 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-09: Event Deletion](09.md)
 - [NIP-10: Conventions for clients' use of `e` and `p` tags in text events](10.md)
 - [NIP-11: Relay Information Document](11.md)
-- [NIP-12: Generic Tag Queries](12.md)
 - [NIP-13: Proof of Work](13.md)
 - [NIP-14: Subject tag in text events](14.md)
 - [NIP-15: Nostr Marketplace (for resilient marketplaces)](15.md)
-- [NIP-16: Event Treatment](16.md)
 - [NIP-18: Reposts](18.md)
 - [NIP-19: bech32-encoded entities](19.md)
-- [NIP-20: Command Results](20.md)
 - [NIP-21: `nostr:` URI scheme](21.md)
 - [NIP-22: Event `created_at` Limits](22.md)
 - [NIP-23: Long-form Content](23.md)
@@ -48,7 +45,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-30: Custom Emoji](30.md)
 - [NIP-31: Dealing with Unknown Events](31.md)
 - [NIP-32: Labeling](32.md)
-- [NIP-33: Parameterized Replaceable Events](33.md)
 - [NIP-36: Sensitive Content](36.md)
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
@@ -56,6 +52,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-45: Counting results](45.md)
 - [NIP-46: Nostr Connect](46.md)
 - [NIP-47: Wallet Connect](47.md)
+- [NIP-48: Proxy Tags](48.md)
 - [NIP-50: Keywords filter](50.md)
 - [NIP-51: Lists](51.md)
 - [NIP-52: Calendar Events](52.md)
@@ -64,6 +61,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
 - [NIP-65: Relay List Metadata](65.md)
+- [NIP-72: Moderated Communities](72.md)
 - [NIP-78: Application-specific data](78.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-94: File Metadata](94.md)
@@ -77,7 +75,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | ------- | -------------------------- | ----------- |
 | `0`     | Metadata                   | [1](01.md)  |
 | `1`     | Short Text Note            | [1](01.md)  |
-| `2`     | Recommend Relay            | [1](01.md)  |
+| `2`     | Recommend Relay            |             |
 | `3`     | Contacts                   | [2](02.md)  |
 | `4`     | Encrypted Direct Messages  | [4](04.md)  |
 | `5`     | Event Deletion             | [9](09.md)  |
@@ -94,6 +92,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1311`  | Live Chat Message          | [53](53.md) |
 | `1984`  | Reporting                  | [56](56.md) |
 | `1985`  | Label                      | [32](32.md) |
+| `4550`  | Community Post Approval    | [72](72.md) |
 | `9734`  | Zap Request                | [57](57.md) |
 | `9735`  | Zap                        | [57](57.md) |
 | `10000` | Mute List                  | [51](51.md) |
@@ -123,15 +122,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31925` | Calendar Event RSVP        | [52](52.md) |
 | `31989` | Handler recommendation     | [89](89.md) |
 | `31990` | Handler information        | [89](89.md) |
+| `34550` | Community Definition       | [72](72.md) |
 
-### Event Kind Ranges
-
-| range            | description                      | NIP         |
-| ---------------- | -------------------------------- | ----------- |
-| `1000`--`9999`   | Regular Events                   | [16](16.md) |
-| `10000`--`19999` | Replaceable Events               | [16](16.md) |
-| `20000`--`29999` | Ephemeral Events                 | [16](16.md) |
-| `30000`--`39999` | Parameterized Replaceable Events | [33](33.md) |
 
 ## Message types
 
@@ -139,49 +131,46 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 
 | type    | description                                         | NIP         |
 | ------- | --------------------------------------------------- | ----------- |
+| `EVENT` | used to publish events                              | [01](01.md) |
+| `REQ`   | used to request events and subscribe to new updates | [01](01.md) |
+| `CLOSE` | used to stop previous subscriptions                 | [01](01.md) |
 | `AUTH`  | used to send authentication events                  | [42](42.md) |
-| `CLOSE` | used to stop previous subscriptions                 | [1](01.md)  |
 | `COUNT` | used to request event counts                        | [45](45.md) |
-| `EVENT` | used to publish events                              | [1](01.md)  |
 | `FILE`  | used to publish events with binary content (file)   | [97](97.md)  |
 | `RETRIEVE` | used to retrieve a binary content  (file)        | [97](97.md)  |
-| `REQ`   | used to request events and subscribe to new updates | [1](01.md)  |
 
 ### Relay to Client
 
 | type     | description                                             | NIP         |
 | -------- | ------------------------------------------------------- | ----------- |
+| `EOSE`   | used to notify clients all stored events have been sent | [01](01.md) |
+| `EVENT`  | used to send events requested to clients                | [01](01.md) |
+| `NOTICE` | used to send human-readable messages to clients         | [01](01.md) |
+| `OK`     | used to notify clients if an EVENT was successful       | [01](01.md) |
 | `AUTH`   | used to send authentication challenges                  | [42](42.md) |
 | `COUNT`  | used to send requested event counts to clients          | [45](45.md) |
-| `EOSE`   | used to notify clients all stored events have been sent | [1](01.md)  |
-| `EVENT`  | used to send events requested to clients                | [1](01.md)  |
-| `NOTICE` | used to send human-readable messages to clients         | [1](01.md)  |
-| `OK`     | used to notify clients if an EVENT was successful       | [20](20.md) |
 
 Please update these lists when proposing NIPs introducing new event kinds.
-
-When experimenting with kinds, keep in mind the classification introduced by [NIP-16](16.md) and [NIP-33](33.md).
 
 ## Standardized Tags
 
 | name              | value                                | other parameters     | NIP                      |
 | ----------------- | ------------------------------------ | -------------------- | ------------------------ |
-| `a`               | coordinates to an event              | relay URL            | [33](33.md), [23](23.md) |
+| `e`               | event id (hex)                       | relay URL, marker    | [01](01.md), [10](10.md) |
+| `p`               | pubkey (hex)                         | relay URL, petname   | [01](01.md), [02](02.md) |
+| `a`               | coordinates to an event              | relay URL            | [01](01.md)              |
+| `d`               | identifier                           | --                   | [01](01.md)              |
 | `alt`             | Alt tag                              | --                   | [31](31.md)              |
-| `d`               | identifier                           | --                   | [33](33.md)              |
-| `e`               | event id (hex)                       | relay URL, marker    | [1](01.md), [10](10.md)  |
-| `f`               | indexed flag value                   | ---                  | [97](97.md)              |
-| `g`               | geohash                              | --                   | [12](12.md), [52](52.md) |
+| `g`               | geohash                              | --                   | [52](52.md)              |
 | `i`               | identity                             | proof                | [39](39.md)              |
-| `k`               | kind number (string)                 | --                   | [18](18.md)              |
+| `k`               | kind number (string)                 | --                   | [18](18.md), [72](72.md) |
 | `l`               | label, label namespace               | annotations          | [32](32.md)              |
 | `m`               | content type of a file (mime)        | --                   | [94](94.md), [97](97.md) |
 | `L`               | label namespace                      | --                   | [32](32.md)              |
-| `p`               | pubkey (hex)                         | relay URL            | [1](01.md)               |
-| `r`               | a reference (URL, etc)               | --                   | [12](12.md)              |
-| `t`               | hashtag                              | --                   | [12](12.md)              |
 | `x`               | SHA256 hash of a file                | --                   | [94](94.md), [97](97.md) |
-| `amount`          | millisats                            | --                   | [57](57.md)              |
+| `r`               | a reference (URL, etc)               | --                   |                          |
+| `t`               | hashtag                              | --                   |                          |
+| `amount`          | millisatoshis, stringified           | --                   | [57](57.md)              |
 | `bolt11`          | `bolt11` invoice                     | --                   | [57](57.md)              |
 | `challenge`       | challenge string                     | --                   | [42](42.md)              |
 | `content-warning` | reason                               | --                   | [36](36.md)              |
@@ -197,6 +186,7 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 | `nonce`           | random                               | --                   | [13](13.md)              |
 | `preimage`        | hash of `bolt11` invoice             | --                   | [57](57.md)              |
 | `price`           | price                                | currency, frequency  | [99](99.md)              |
+| `proxy`           | external ID                          | protocol             | [48](48.md)              |
 | `published_at`    | unix timestamp (string)              | --                   | [23](23.md)              |
 | `relay`           | relay url                            | --                   | [42](42.md)              |
 | `relays`          | relay list                           | --                   | [57](57.md)              |
