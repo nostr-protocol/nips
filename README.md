@@ -164,6 +164,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `l`               | label, label namespace               | annotations          | [32](32.md)              |
 | `L`               | label namespace                      | --                   | [32](32.md)              |
 | `r`               | a reference (URL, etc)               | --                   |                          |
+| `r`               | relay url                            | marker               | [65](65.md)              |
 | `t`               | hashtag                              | --                   |                          |
 | `amount`          | millisatoshis, stringified           | --                   | [57](57.md)              |
 | `bolt11`          | `bolt11` invoice                     | --                   | [57](57.md)              |
@@ -189,7 +190,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `summary`         | article summary                      | --                   | [23](23.md)              |
 | `thumb`           | badge thumbnail                      | dimensions in pixels | [58](58.md)              |
 | `title`           | article title                        | --                   | [23](23.md)              |
-| `zap`             | profile name                         | type of value        | [57](57.md)              |
+| `zap`             | pubkey (hex), relay URL              | weight               | [57](57.md)              |
 
 ## Criteria for acceptance of NIPs
 
