@@ -1,0 +1,83 @@
+# NIP-99
+
+## Classified Listings
+
+`draft` `optional` `author:erskingardner`
+
+This NIP defines `kind:30402`: a parameterized replaceable event to describe classified listings that list any arbitrary product, service, or other thing for sale or offer and includes enough structured metadata to make them useful.
+
+The category of classifieds includes a very broad range of physical goods, services, work opportunities, rentals, free giveaways, personals, etc. and is distinct from the more strictly structured marketplaces defined in [NIP-15](https://github.com/nostr-protocol/nips/blob/master/15.md) that often sell many units of specific products through very specific channels.
+
+The structure of these events is very similar to [NIP-23](https://github.com/nostr-protocol/nips/blob/master/23.md) long-form content events.
+
+### Draft / Inactive Listings
+
+`kind:30403` has the same structure as `kind:30402` and is used to save draft or inactive classified listings.
+
+### Content
+
+The `.content` field should be a description of what is being offered and by whom. These events should be a string in Markdown syntax.
+
+### Author
+
+The `.pubkey` field of these events are treated as the party creating the listing.
+
+### Metadata
+
+- For "tags"/"hashtags" (i.e. categories or keywords of relevance for the listing) the `"t"` event tag should be used, as per [NIP-12](https://github.com/nostr-protocol/nips/blob/master/12.md).
+- For images, whether included in the markdown content or not, clients SHOULD use `image` tags as described in [NIP-58](https://github.com/nostr-protocol/nips/blob/master/58.md). This allows clients to display images in carousel format more easily.
+
+The following tags, used for structured metadata, are standardized and SHOULD be included. Other tags may be added as necessary.
+
+- `"title"`, a title for the listing
+- `"summary"`, for short tagline or summary for the listing
+- `"published_at"`, for the timestamp (in unix seconds – converted to string) of the first time the listing was published.
+- `"location"`, for the location.
+- `"price"`, for the price of the thing being listed. This is an array in the format `[ "price", "<number>", "<currency>", "<frequency>" ]`.
+  - `"price"` is the name of the tag
+  - `"<number>"` is the amount in numeric format (but included in the tag as a string)
+  - `"<currency>"` is the currency unit in 3-character ISO 4217 format or ISO 4217-like currency code (e.g. `"btc"`, `"eth"`).
+  - `"<frequency>"` is optional and can be used to describe recurring payments. SHOULD be in noun format (hour, day, week, month, year, etc.)
+
+#### `price` examples
+
+- $50 one-time payment `["price", "50", "USD"]`
+- €15 per month `["price", "15", "EUR", "month"]`
+- £50,000 per year `["price", "50000", "GBP", "year"]`
+
+Other standard tags that might be useful.
+
+- `"g"`, a geohash for more precise location
+
+## Example Event
+
+```json
+{
+  "kind": 30402,
+  "created_at": 1675642635,
+  // Markdown content
+  "content": "Lorem [ipsum][nostr:nevent1qqst8cujky046negxgwwm5ynqwn53t8aqjr6afd8g59nfqwxpdhylpcpzamhxue69uhhyetvv9ujuetcv9khqmr99e3k7mg8arnc9] dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nRead more at nostr:naddr1qqzkjurnw4ksz9thwden5te0wfjkccte9ehx7um5wghx7un8qgs2d90kkcq3nk2jry62dyf50k0h36rhpdtd594my40w9pkal876jxgrqsqqqa28pccpzu.",
+  "tags": [
+    ["d", "lorem-ipsum"],
+    ["title", "Lorem Ipsum"],
+    ["published_at", "1296962229"],
+    ["t", "electronics"],
+    ["image", "https://url.to.img", "256x256"],
+    ["summary", "More lorem ipsum that is a little more than the title"],
+    ["location", "NYC"],
+    ["price", "100", "USD"],
+    [
+      "e",
+      "b3e392b11f5d4f28321cedd09303a748acfd0487aea5a7450b3481c60b6e4f87",
+      "wss://relay.example.com"
+    ],
+    [
+      "a",
+      "30023:a695f6b60119d9521934a691347d9f78e8770b56da16bb255ee286ddf9fda919:ipsum",
+      "wss://relay.nostr.org"
+    ]
+  ],
+  "pubkey": "...",
+  "id": "..."
+}
+```
