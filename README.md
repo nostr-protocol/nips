@@ -5,15 +5,16 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 
 ---
 
-- [List](#list)
-- [Event Kinds](#event-kinds)
-  - [Event Kind Ranges](#event-kind-ranges)
-- [Message Types](#message-types)
-  - [Client to Relay](#client-to-relay)
-  - [Relay to Client](#relay-to-client)
-- [Standardized Tags](#standardized-tags)
-- [Criteria for acceptance of NIPs](#criteria-for-acceptance-of-nips)
-- [License](#license)
+- [NIPs](#nips)
+  - [List](#list)
+  - [Event Kinds](#event-kinds)
+  - [Message types](#message-types)
+    - [Client to Relay](#client-to-relay)
+    - [Relay to Client](#relay-to-client)
+  - [Standardized Tags](#standardized-tags)
+  - [Criteria for acceptance of NIPs](#criteria-for-acceptance-of-nips)
+  - [Mailing Lists](#mailing-lists)
+  - [License](#license)
 
 ---
 
@@ -67,6 +68,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-94: File Metadata](94.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-107: Wrapper Event](107.md)
 
 ## Event Kinds
 
@@ -88,6 +90,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `43`    | Channel Hide Message       | [28](28.md) |
 | `44`    | Channel Mute User          | [28](28.md) |
 | `1063`  | File Metadata              | [94](94.md) |
+| `1107`  | Wrapper Event              | [107](107.md) |
 | `1311`  | Live Chat Message          | [53](53.md) |
 | `1984`  | Reporting                  | [56](56.md) |
 | `1985`  | Label                      | [32](32.md) |
