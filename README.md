@@ -41,6 +41,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-21: `nostr:` URI scheme](21.md)
 - [NIP-22: Event `created_at` Limits](22.md)
 - [NIP-23: Long-form Content](23.md)
+- [NIP-24: Private Direct Messages and Small Group Chats](24.md)
 - [NIP-25: Reactions](25.md)
 - [NIP-26: Delegated Event Signing](26.md)
 - [NIP-27: Text Note References](27.md)
@@ -82,6 +83,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `6`     | Repost                     | [18](18.md) |
 | `7`     | Reaction                   | [25](25.md) |
 | `8`     | Badge Award                | [58](58.md) |
+| `14`    | Direct Message             | [24](24.md) |
 | `16`    | Generic Repost             | [18](18.md) |
 | `40`    | Channel Creation           | [28](28.md) |
 | `41`    | Channel Metadata           | [28](28.md) |
