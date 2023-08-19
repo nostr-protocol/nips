@@ -63,6 +63,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-72: Moderated Communities](72.md)
 - [NIP-78: Application-specific data](78.md)
+- [NIP-79: Offline message signature & verificiation](79.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-94: File Metadata](94.md)
 - [NIP-98: HTTP Auth](98.md)
