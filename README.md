@@ -53,7 +53,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-46: Nostr Connect](46.md)
 - [NIP-47: Wallet Connect](47.md)
 - [NIP-48: Proxy Tags](48.md)
-- [NIP-50: Keywords filter](50.md)
+- [NIP-50: Search Capability](50.md)
 - [NIP-51: Lists](51.md)
 - [NIP-52: Calendar Events](52.md)
 - [NIP-53: Live Activities](53.md)
