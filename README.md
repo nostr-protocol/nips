@@ -65,6 +65,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-78: Application-specific data](78.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-94: File Metadata](94.md)
+- [NIP-97: Files hosted on relay](97.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
 
@@ -135,6 +136,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `CLOSE` | used to stop previous subscriptions                 | [01](01.md) |
 | `AUTH`  | used to send authentication events                  | [42](42.md) |
 | `COUNT` | used to request event counts                        | [45](45.md) |
+| `FILE`  | used to publish events with binary content (file)   | [97](97.md)  |
+| `RETRIEVE` | used to retrieve a binary content  (file)        | [97](97.md)  |
 
 ### Relay to Client
 
@@ -162,7 +165,9 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `i`               | identity                             | proof                | [39](39.md)              |
 | `k`               | kind number (string)                 | --                   | [18](18.md), [72](72.md) |
 | `l`               | label, label namespace               | annotations          | [32](32.md)              |
+| `m`               | content type of a file (mime)        | --                   | [94](94.md), [97](97.md) |
 | `L`               | label namespace                      | --                   | [32](32.md)              |
+| `x`               | SHA256 hash of a file                | --                   | [94](94.md), [97](97.md) |
 | `r`               | a reference (URL, etc)               | --                   |                          |
 | `r`               | relay url                            | marker               | [65](65.md)              |
 | `t`               | hashtag                              | --                   |                          |
@@ -188,6 +193,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `relays`          | relay list                           | --                   | [57](57.md)              |
 | `subject`         | subject                              | --                   | [14](14.md)              |
 | `summary`         | article summary                      | --                   | [23](23.md)              |
+| `size`            | size of  a file in bytes             | --                   | [94](94.md), [97](97.md) |
 | `thumb`           | badge thumbnail                      | dimensions in pixels | [58](58.md)              |
 | `title`           | article title                        | --                   | [23](23.md)              |
 | `zap`             | pubkey (hex), relay URL              | weight               | [57](57.md)              |
