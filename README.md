@@ -67,6 +67,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-94: File Metadata](94.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-315: User Statuses](315.md)
 
 ## Event Kinds
 
@@ -113,6 +114,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30024` | Draft Long-form Content    | [23](23.md) |
 | `30078` | Application-specific Data  | [78](78.md) |
 | `30311` | Live Event                 | [53](53.md) |
+| `30315` | User Statuses              | [315](315.md) |
 | `30402` | Classified Listing         | [99](99.md) |
 | `30403` | Draft Classified Listing   | [99](99.md) |
 | `31922` | Date-Based Calendar Event  | [52](52.md) |
