@@ -46,6 +46,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-31: Dealing with Unknown Events](31.md)
 - [NIP-32: Labeling](32.md)
 - [NIP-36: Sensitive Content](36.md)
+- [NIP-38: User Statuses](38.md)
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
 - [NIP-42: Authentication of clients to relays](42.md)
@@ -113,6 +114,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30024` | Draft Long-form Content    | [23](23.md) |
 | `30078` | Application-specific Data  | [78](78.md) |
 | `30311` | Live Event                 | [53](53.md) |
+| `30315` | User Statuses              | [38](38.md) |
 | `30402` | Classified Listing         | [99](99.md) |
 | `30403` | Draft Classified Listing   | [99](99.md) |
 | `31922` | Date-Based Calendar Event  | [52](52.md) |
@@ -163,7 +165,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `k`               | kind number (string)                 | --                   | [18](18.md), [72](72.md) |
 | `l`               | label, label namespace               | annotations          | [32](32.md)              |
 | `L`               | label namespace                      | --                   | [32](32.md)              |
-| `r`               | a reference (URL, etc)               | --                   |                          |
+| `r`               | a reference (URL, etc)               | petname              |                          |
 | `r`               | relay url                            | marker               | [65](65.md)              |
 | `t`               | hashtag                              | --                   |                          |
 | `amount`          | millisatoshis, stringified           | --                   | [57](57.md)              |
