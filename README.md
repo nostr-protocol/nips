@@ -197,6 +197,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `r`               | a reference (URL, etc)               | petname              |                                       |
 | `r`               | relay url                            | marker               | [65](65.md)                           |
 | `t`               | hashtag                              | --                   |                                       |
+| `z`               | authorized deletion pubkey (hex)     | --                   | [09](09.md)                           |
 | `alt`             | summary                              | --                   | [31](31.md)                           |
 | `amount`          | millisatoshis, stringified           | --                   | [57](57.md)                           |
 | `bolt11`          | `bolt11` invoice                     | --                   | [57](57.md)                           |
