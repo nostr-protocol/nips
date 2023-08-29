@@ -45,6 +45,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-30: Custom Emoji](30.md)
 - [NIP-31: Dealing with Unknown Events](31.md)
 - [NIP-32: Labeling](32.md)
+- [NIP-34: Media Attachments](34.md)
 - [NIP-36: Sensitive Content](36.md)
 - [NIP-38: User Statuses](38.md)
 - [NIP-39: External Identities in Profiles](39.md)
@@ -180,6 +181,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `image`           | image URL                            | dimensions in pixels | [23](23.md), [58](58.md) |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                   | [57](57.md)              |
 | `location`        | location string                      | --                   | [52](52.md), [99](99.md) |
+| `media`           | media URL                            | media metadata       | [34](34.md)              |
 | `name`            | badge name                           | --                   | [58](58.md)              |
 | `nonce`           | random                               | --                   | [13](13.md)              |
 | `preimage`        | hash of `bolt11` invoice             | --                   | [57](57.md)              |
