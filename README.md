@@ -92,6 +92,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1311`  | Live Chat Message          | [53](53.md) |
 | `1984`  | Reporting                  | [56](56.md) |
 | `1985`  | Label                      | [32](32.md) |
+| `4549`  | Community Exclusive Post   | [72](72.md) |
 | `4550`  | Community Post Approval    | [72](72.md) |
 | `9734`  | Zap Request                | [57](57.md) |
 | `9735`  | Zap                        | [57](57.md) |
