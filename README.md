@@ -63,6 +63,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-58: Badges](58.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-72: Moderated Communities](72.md)
+- [NIP-75: Zap Goals](75.md)
 - [NIP-78: Application-specific data](78.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-94: File Metadata](94.md)
@@ -93,6 +94,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1984`  | Reporting                  | [56](56.md) |
 | `1985`  | Label                      | [32](32.md) |
 | `4550`  | Community Post Approval    | [72](72.md) |
+| `9041`  | Zap Goal                   | [75](75.md) |
 | `9734`  | Zap Request                | [57](57.md) |
 | `9735`  | Zap                        | [57](57.md) |
 | `10000` | Mute List                  | [51](51.md) |
@@ -177,6 +179,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `description`     | invoice description                  | --                   | [57](57.md)              |
 | `emoji`           | shortcode, image URL                 | --                   | [30](30.md)              |
 | `expiration`      | unix timestamp (string)              | --                   | [40](40.md)              |
+| `goal`            | event id (hex)                       | relay URL            | [75](75.md)              |
 | `image`           | image URL                            | dimensions in pixels | [23](23.md), [58](58.md) |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                   | [57](57.md)              |
 | `location`        | location string                      | --                   | [52](52.md), [99](99.md) |
