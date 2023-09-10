@@ -138,7 +138,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `20000`--`29999` | Ephemeral Events                 | [16](16.md) |
 | `30000`--`39999` | Parameterized Replaceable Events | [33](33.md) |
 | `65001`--`66000` | Job Requests                     | [90](90.md) |
-| `66001`--`67000` | Job Requests                     | [90](90.md) |
+| `66001`--`67000` | Job Results                      | [90](90.md) |
 
 ## Message types
 
