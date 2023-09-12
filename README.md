@@ -175,8 +175,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `challenge`       | challenge string                     | --                   | [42](42.md)              |
 | `content-warning` | reason                               | --                   | [36](36.md)              |
 | `delegation`      | pubkey, conditions, delegation token | --                   | [26](26.md)              |
-| `description`     | badge description                    | --                   | [58](58.md)              |
-| `description`     | invoice description                  | --                   | [57](57.md)              |
+| `description`     | invoice/badge description            | --                   | [57](57.md), [58](58.md) |
 | `emoji`           | shortcode, image URL                 | --                   | [30](30.md)              |
 | `expiration`      | unix timestamp (string)              | --                   | [40](40.md)              |
 | `goal`            | event id (hex)                       | relay URL            | [75](75.md)              |
