@@ -161,7 +161,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `p`               | pubkey (hex)                         | relay URL, petname   | [01](01.md), [02](02.md) |
 | `a`               | coordinates to an event              | relay URL            | [01](01.md)              |
 | `d`               | identifier                           | --                   | [01](01.md)              |
-| `alt`             | Alt tag                              | --                   | [31](31.md)              |
+| `alt`             | summary                              | --                   | [31](31.md)              |
 | `g`               | geohash                              | --                   | [52](52.md)              |
 | `i`               | identity                             | proof                | [39](39.md)              |
 | `k`               | kind number (string)                 | --                   | [18](18.md), [72](72.md) |
