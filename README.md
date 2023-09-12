@@ -167,6 +167,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `k`               | kind number (string)                 | --                   | [18](18.md), [72](72.md) |
 | `l`               | label, label namespace               | annotations          | [32](32.md)              |
 | `L`               | label namespace                      | --                   | [32](32.md)              |
+| `m`               | MIME type                            | --                   | [94](94.md)              |
 | `r`               | a reference (URL, etc)               | petname              |                          |
 | `r`               | relay url                            | marker               | [65](65.md)              |
 | `t`               | hashtag                              | --                   |                          |
