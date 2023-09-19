@@ -91,6 +91,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `44`    | Channel Mute User          | [28](28.md) |
 | `1063`  | File Metadata              | [94](94.md) |
 | `1311`  | Live Chat Message          | [53](53.md) |
+| `1040`  | OpenTimestamps             | [03](03.md) |
 | `1984`  | Reporting                  | [56](56.md) |
 | `1985`  | Label                      | [32](32.md) |
 | `4550`  | Community Post Approval    | [72](72.md) |
