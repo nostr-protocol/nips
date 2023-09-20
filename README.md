@@ -161,12 +161,13 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `p`               | pubkey (hex)                         | relay URL, petname   | [01](01.md), [02](02.md) |
 | `a`               | coordinates to an event              | relay URL            | [01](01.md)              |
 | `d`               | identifier                           | --                   | [01](01.md)              |
-| `alt`             | Alt tag                              | --                   | [31](31.md)              |
+| `alt`             | summary                              | --                   | [31](31.md)              |
 | `g`               | geohash                              | --                   | [52](52.md)              |
 | `i`               | identity                             | proof                | [39](39.md)              |
 | `k`               | kind number (string)                 | --                   | [18](18.md), [72](72.md) |
 | `l`               | label, label namespace               | annotations          | [32](32.md)              |
 | `L`               | label namespace                      | --                   | [32](32.md)              |
+| `m`               | MIME type                            | --                   | [94](94.md)              |
 | `r`               | a reference (URL, etc)               | petname              |                          |
 | `r`               | relay url                            | marker               | [65](65.md)              |
 | `t`               | hashtag                              | --                   |                          |
@@ -175,8 +176,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `challenge`       | challenge string                     | --                   | [42](42.md)              |
 | `content-warning` | reason                               | --                   | [36](36.md)              |
 | `delegation`      | pubkey, conditions, delegation token | --                   | [26](26.md)              |
-| `description`     | badge description                    | --                   | [58](58.md)              |
-| `description`     | invoice description                  | --                   | [57](57.md)              |
+| `description`     | invoice/badge description            | --                   | [57](57.md), [58](58.md) |
 | `emoji`           | shortcode, image URL                 | --                   | [30](30.md)              |
 | `expiration`      | unix timestamp (string)              | --                   | [40](40.md)              |
 | `goal`            | event id (hex)                       | relay URL            | [75](75.md)              |
