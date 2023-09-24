@@ -26,9 +26,11 @@ private key until the configured duration expires.
 ## Recommended NIP-26 Setup
 
 It is advisable to give all but kind `5` (deletion) rights, require inserting
-`z` tags with both pubkeys (from delegatee and delegator) on events and
-limit `created_at` range between the current moment and 15h ahead.
+`z` tags (deletable by) with both pubkeys (from delegatee and delegator) on events and
+limit `created_at` range between the current moment and 15h ahead at most.
+
+It is highly recommended to use nostr tokens with revocable NIP-26 delegations (`rr` parameter).
 
 Example delegation condition string:
 
-`kind=-5&created_at>1695516361&created_at<1695570361&#z=<delegatee_pubkey>&#z=<delegator_pubkey>`
+`kind=-5&created_at>1695516361&created_at<1695570361&#z=<delegatee_pubkey>&#z=<delegator_pubkey>&rr=<percent_enconded_relay_url>`
