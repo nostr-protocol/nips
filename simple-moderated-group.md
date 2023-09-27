@@ -46,7 +46,7 @@ Group Metadata Example:
   "name": "Demo Channel", 
   "about": "A test channel.", 
   "picture": "image.jpg",
-  "pin": ["<pin messageId1>", "<pin messageId2>", ...],
+  "pin": ["<pin message1>", "<pin message2>", ...],
   "...otherfields"
 }
 ```
@@ -92,7 +92,7 @@ When a user leaves the group, they send a message to the group (clients should f
 {
 	"kind": 482,
 	"pubkey": "<user's pubkey>",
-	"content": "Hello, I've left the group",
+	"content": "Bye, I've left the group",
 	"tags": [
 	    ["p", "<group_pubkey>"]
    ]
