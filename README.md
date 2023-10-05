@@ -38,6 +38,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-21: `nostr:` URI scheme](21.md)
 - [NIP-22: Event `created_at` Limits](22.md)
 - [NIP-23: Long-form Content](23.md)
+- [NIP-24: Extra metadata fields and tags](24.md)
 - [NIP-25: Reactions](25.md)
 - [NIP-26: Delegated Event Signing](26.md)
 - [NIP-27: Text Note References](27.md)
