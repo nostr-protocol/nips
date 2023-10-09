@@ -1,110 +1,125 @@
-## NIP-102: Moderated Group Chat Protocol
+## **NIP-102: Moderated Group Chat**
 
-This document introduces the "Moderated Group Chat" protocol, based on the [Sealed DM](https://github.com/vitorpamplona/nips/blob/sealed-dms/24.md).
+Introducing the "Moderated Group Chat" protocol, inspired by [Sealed DM](https://github.com/vitorpamplona/nips/blob/sealed-dms/24.md).
 
-### **Main Features**:
-- **Anonymity**: Group members remain anonymous to outsiders but identifiable among the group.
-- **Size Recommendations**: This protocol is ideal for groups with less than 1000 members.
+### **Key Features**:
+- **Anonymity**: Members are anonymous externally but identifiable within the group.
+- **Privacy**: Messages are sealed, gift-wrapped, and individually delivered to each group member.
+- **Optimal Size**: Best suited for groups with fewer than 1000 members.
 
-### **Event Kind**:
-- `480`: Group Chat Metadata (Details of members' pubkeys & roles)
-- `14`: Group Message (Implemented using sealed DM)
+### **Event Types**:
+- `480`: Group Chat Metadata (Member pubkeys & roles)
+- `482`: Group Message 
   
   **Optional**:
-- `481`: Group Actions (Request to join, join announcement, leave notification)
-
-> **Note**: Each event type will be sealed, gift-wrapped, and sent individually to every group member.
+- `481`: Group Notifications (Invite, Request, Join, Leave)
 
 ### **1. Group Metadata (Kind 480)**
 
-This is managed by the group owner. Any changes in metadata or membership requires the owner to broadcast a fresh "kind 480" event. Clients must always consider the most recent "kind 480" event as the updated state.
+Controlled by the group owner. Modifications in metadata or membership necessitate the owner to send an updated "kind 480" event. The most recent "kind 480" event always reflects the current group state.
 
 ```json
 {
   "pubkey": "<Owner's public key>",
   "kind": 480,
-  "content": "<Metadata of the group>",
+  "content": "<Group metadata>",
   "tags": [
      ["p", "<Group public key>"],
      ["m", "<Member A public key>", "owner"],
      ["m", "<Member B public key>"],
+     ["r", "wss://example.relay.com"]
      ...
   ]
 }
 ```
 
-**Metadata Sample**:
+**Metadata Example**:
 
 ```json
 {  
   "name": "Sample Channel", 
-  "description": "This is a sample channel for testing.", 
+  "description": "A test channel.", 
   "image": "sample_image.jpg",
   "pinned": ["<Message 1>", "<Message 2>", ...],
-  "...additionalAttributes"
+  "...moreAttributes"
 }
 ```
 
-### **2. Sending Group Message (Kind 14)**
+### **2. Group Message (Kind 482)**
 
-Messages are tagged with the group's public key, and then sent to all members.
+Messages, identified with the group's public key, are dispatched to all members.
 
 ```json
 {
   "pubkey": "<Sender's public key>",
-  "content": "This is a sample group message",
-  "kind": 14,
+  "content": "Sample group message",
+  "kind": 482,
   "tags": [
      ["p", "<Group public key>"],
-     ["e", "<Event ID>", "reply"],
+     ["e", "<Event ID>", 'wss://example.com', "reply"],
      ...
   ]
 }
 ```
 
-### **3. Group Membership Actions**:
+### **3. Group Notifications (Kind 481)**:
 
-**a. Request to Join**: 
-Users interested in joining send a direct request only to the group owner.
+**a. Invite**: 
+Directly invite users to the group.
+
+```json
+{
+  "kind": 481,
+  "pubkey": "<Invoker's public key>",
+  "content": "I invite you to join our group.",
+  "tags": [
+    ["p", "<Group public key>"],
+    ["type", "invite"]
+  ]
+}
+```
+
+**b. Request**: 
+Express interest to join by sending a request to the group owner.
 
 ```json
 {
   "kind": 481,
   "pubkey": "<Requester's public key>",
-  "content": "Hello, I'd like to join the group.",
+  "content": "I'm interested in joining the group.",
   "tags": [
     ["p", "<Group public key>"],
-    ["action", "request"]
+    ["type", "request"]
   ]
 }
 ```
 
-**b. Join Announcement**: 
-On joining, users announce their presence. Clients should validate the sender against the member list.
+**c. Join**: 
+Announce joining the group. Clients validate the sender against the member list.
 
 ```json
 {
   "kind": 481,
   "pubkey": "<New member's public key>",
-  "content": "Hello everyone, I'm now part of the group.",
+  "content": "Glad to join the group.",
   "tags": [
     ["p", "<Group public key>"],
-    ["action", "join"]
+    ["type", "join"]
   ]
 }
 ```
 
-**c. Leaving Notification**: 
-Members send a farewell message on leaving. Clients should update their local list and may choose not to forward future messages to departed members.
+**d. Leave**: 
+Notify the group upon leaving. Clients update their member list accordingly.
 
 ```json
 {
   "kind": 481,
-  "pubkey": "<Exiting member's public key>",
-  "content": "Goodbye, I'm leaving the group.",
+  "pubkey": "<Departing member's public key>",
+  "content": "I'm exiting the group.",
   "tags": [
     ["p", "<Group public key>"],
-    ["action", "leave"]
+    ["type", "leave"]
   ]
 }
 ```
