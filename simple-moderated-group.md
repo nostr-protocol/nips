@@ -9,7 +9,7 @@ Introducing the "Simple Moderated Group", inspired by [NIP-24](https://github.co
 
 ### **Event Types**:
 - `480`: Group Chat Metadata (Member public keys & roles)
-- `482`: Group Message 
+- `14`: Group Message 
   
   **Optional**:
 - `481`: Group Actions (Invite, Request, Join, Add, Leave, Remove)
@@ -45,7 +45,7 @@ The group is controlled by the group owner. Modifications in metadata or members
 }
 ```
 
-### **2. Group Message (Kind 482)**
+### **2. Group Message (Kind 14)**
 
 Messages are sent to all group members.
 
@@ -53,7 +53,7 @@ Messages are sent to all group members.
 {
   "public key": "<Sender's public key>",
   "content": "Sample group message",
-  "kind": 482,
+  "kind": 14,
   "tags": [
      ["g", "<Group public key>"],
      ["e", "<kind_482_event_id>", 'wss://example.com', "reply"],
