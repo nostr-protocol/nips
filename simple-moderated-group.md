@@ -62,7 +62,7 @@ Messages are sent to all group members.
 }
 ```
 
-### **3. Group Actions (Kind 481, Optional)**:
+### **3. Group Actions/Notifications (Kind 481, Optional)**:
 
 **a. Invite/Share**: 
 Group members can share group information with users or invite users to the group.
