@@ -1,31 +1,31 @@
-## **NIP-102: Moderated Group Chat**
+## **NIP-102: Simple Moderated Group**
 
-Introducing the "Moderated Group Chat" protocol, inspired by [Sealed DM](https://github.com/vitorpamplona/nips/blob/sealed-dms/24.md).
+Introducing the "Simple Moderated Group" protocol, inspired by [NIP-24](https://github.com/vitorpamplona/nips/blob/sealed-dms/24.md).
 
 ### **Key Features**:
 - **Anonymity**: Members are anonymous externally but identifiable within the group.
 - **Privacy**: Messages are sealed, gift-wrapped, and individually delivered to each group member.
-- **Optimal Size**: Best suited for groups with fewer than 1000 members.
+- **Optimal Size**: Best suited for groups with fewer than 1,000 members.
 
 ### **Event Types**:
 - `480`: Group Chat Metadata (Member pubkeys & roles)
 - `482`: Group Message 
   
   **Optional**:
-- `481`: Group Notifications (Invite, Request, Join, Leave)
+- `481`: Group Notifications (Invite, Request, Join, Welcome, Leave)
 
 ### **1. Group Metadata (Kind 480)**
 
-Controlled by the group owner. Modifications in metadata or membership necessitate the owner to send an updated "kind 480" event. The most recent "kind 480" event always reflects the current group state.
+Group key is controlled by the group owner. Modifications in metadata or membership necessitate the owner to send an updated "kind 480" event. The most recent "kind 480" event always reflects the current group state.
 
 ```json
 {
-  "pubkey": "<Owner's public key>",
+  "pubkey": "<owner's public key>",
   "kind": 480,
   "content": "<Group metadata>",
   "tags": [
-     ["p", "<Group public key>"],
-     ["m", "<Member A public key>", "owner"],
+     ["g", "<group public key>"],
+     ["m", "<Owner's public key>", "owner"],
      ["m", "<Member B public key>"],
      ["r", "wss://example.relay.com"]
      ...
@@ -55,8 +55,8 @@ Messages, identified with the group's public key, are dispatched to all members.
   "content": "Sample group message",
   "kind": 482,
   "tags": [
-     ["p", "<Group public key>"],
-     ["e", "<Event ID>", 'wss://example.com', "reply"],
+     ["g", "<Group public key>"],
+     ["e", "<kind_482_event_id>", 'wss://example.com', "reply"],
      ...
   ]
 }
@@ -64,16 +64,16 @@ Messages, identified with the group's public key, are dispatched to all members.
 
 ### **3. Group Notifications (Kind 481)**:
 
-**a. Invite**: 
-Directly invite users to the group.
+**a. Invite/Share**: 
+Group members share group infos to users, or invite users to the group.
 
 ```json
 {
   "kind": 481,
   "pubkey": "<Invoker's public key>",
-  "content": "I invite you to join our group.",
+  "content": "<Group metadata: name, description, image, owner etc.>",
   "tags": [
-    ["p", "<Group public key>"],
+    ["g", "<Group public key>"],
     ["type", "invite"]
   ]
 }
@@ -88,7 +88,7 @@ Express interest to join by sending a request to the group owner.
   "pubkey": "<Requester's public key>",
   "content": "I'm interested in joining the group.",
   "tags": [
-    ["p", "<Group public key>"],
+    ["g", "<Group public key>"],
     ["type", "request"]
   ]
 }
@@ -100,16 +100,31 @@ Announce joining the group. Clients validate the sender against the member list.
 ```json
 {
   "kind": 481,
-  "pubkey": "<New member's public key>",
-  "content": "Glad to join the group.",
+  "pubkey": "<New user's public key>",
+  "content": "I'm glad to join the group.",
   "tags": [
-    ["p", "<Group public key>"],
+    ["g", "<Group public key>"],
     ["type", "join"]
   ]
 }
 ```
 
-**d. Leave**: 
+**d. Welcome**: 
+Welcome to join the group.
+
+```json
+{
+  "kind": 481,
+  "pubkey": "<Group owner's public key>",
+  "content": "Welcome ** to join the group.",
+  "tags": [
+    ["g", "<Group public key>"],
+    ["type", "welcome"]
+  ]
+}
+```
+
+**e. Leave**: 
 Notify the group upon leaving. Clients update their member list accordingly.
 
 ```json
@@ -118,7 +133,7 @@ Notify the group upon leaving. Clients update their member list accordingly.
   "pubkey": "<Departing member's public key>",
   "content": "I'm exiting the group.",
   "tags": [
-    ["p", "<Group public key>"],
+    ["g", "<Group public key>"],
     ["type", "leave"]
   ]
 }
