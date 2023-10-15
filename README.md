@@ -97,6 +97,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1984`  | Reporting                  | [56](56.md) |
 | `1985`  | Label                      | [32](32.md) |
 | `4550`  | Community Post Approval    | [72](72.md) |
+| `7000`  | Job Feedback               | [90](90.md) |
 | `9734`  | Zap Request                | [57](57.md) |
 | `9735`  | Zap                        | [57](57.md) |
 | `10000` | Mute List                  | [51](51.md) |
@@ -127,18 +128,17 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31989` | Handler recommendation     | [89](89.md) |
 | `31990` | Handler information        | [89](89.md) |
 | `34550` | Community Definition       | [72](72.md) |
-| `65000` | Job Feedback               | [90](90.md) |
-| `65001` | Job Result                 | [90](90.md) |
 
 ### Event Kind Ranges
 
 | range            | description                      | NIP         |
 | ---------------- | -------------------------------- | ----------- |
 | `1000`--`9999`   | Regular Events                   | [16](16.md) |
+| `5000`--`5999`   | Job Requests                     | [90](90.md) |
+| `6000`--`6999`   | Job Results                      | [90](90.md) |
 | `10000`--`19999` | Replaceable Events               | [16](16.md) |
 | `20000`--`29999` | Ephemeral Events                 | [16](16.md) |
 | `30000`--`39999` | Parameterized Replaceable Events | [33](33.md) |
-| `65002`--`66000` | Job Requests                     | [90](90.md) |
 
 ## Message types
 
