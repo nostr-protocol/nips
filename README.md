@@ -64,6 +64,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-58: Badges](58.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-72: Moderated Communities](72.md)
+- [NIP-73: Meetup Communities](73.md)
 - [NIP-75: Zap Goals](75.md)
 - [NIP-78: Application-specific data](78.md)
 - [NIP-89: Recommended Application Handlers](89.md)
@@ -90,6 +91,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `42`    | Channel Message            | [28](28.md) |
 | `43`    | Channel Hide Message       | [28](28.md) |
 | `44`    | Channel Mute User          | [28](28.md) |
+| `1037`  | Meetup Community Creation  | [73](73.md) |
 | `1063`  | File Metadata              | [94](94.md) |
 | `1311`  | Live Chat Message          | [53](53.md) |
 | `1040`  | OpenTimestamps             | [03](03.md) |
@@ -102,6 +104,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10000` | Mute List                  | [51](51.md) |
 | `10001` | Pin List                   | [51](51.md) |
 | `10002` | Relay List Metadata        | [65](65.md) |
+| `10037` | Meetup Community Metadata  | [73](73.md) |
 | `13194` | Wallet Info                | [47](47.md) |
 | `22242` | Client Authentication      | [42](42.md) |
 | `23194` | Wallet Request             | [47](47.md) |
@@ -116,6 +119,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30018` | Create or update a product | [15](15.md) |
 | `30023` | Long-form Content          | [23](23.md) |
 | `30024` | Draft Long-form Content    | [23](23.md) |
+| `30037` | Meetup Follow List         | [73](73.md) |
 | `30078` | Application-specific Data  | [78](78.md) |
 | `30311` | Live Event                 | [53](53.md) |
 | `30315` | User Statuses              | [38](38.md) |
