@@ -50,7 +50,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-38: User Statuses](38.md)
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
-- [NIP-41: Identity rotation](41.md)
+- [NIP-41: Identity recovery](41.md)
 - [NIP-42: Authentication of clients to relays](42.md)
 - [NIP-45: Counting results](45.md)
 - [NIP-46: Nostr Connect](46.md)
