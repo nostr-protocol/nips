@@ -66,6 +66,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
 - [NIP-65: Relay List Metadata](65.md)
+- [NIP-67: Wallet Auth](67.md)
 - [NIP-72: Moderated Communities](72.md)
 - [NIP-75: Zap Goals](75.md)
 - [NIP-78: Application-specific data](78.md)
@@ -155,6 +156,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31925`       | Calendar Event RSVP        | [52](52.md)              |
 | `31989`       | Handler recommendation     | [89](89.md)              |
 | `31990`       | Handler information        | [89](89.md)              |
+| `33194`       | Nostr Wallet Auth          | [49](49.md)              |
 | `34550`       | Community Definition       | [72](72.md)              |
 
 [nostrocket]: https://github.com/nostrocket/NIPS/blob/main/Problems.md
