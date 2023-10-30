@@ -130,8 +130,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31989` | Handler recommendation     | [89](89.md) |
 | `31990` | Handler information        | [89](89.md) |
 | `34550` | Community Definition       | [72](72.md) |
-| `65000` | Job Feedback               | [90](90.md) |
-| `65001` | Job Result                 | [90](90.md) |
 
 ## Message types
 
