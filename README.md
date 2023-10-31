@@ -195,7 +195,6 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `published_at`    | unix timestamp (string)              | --                   | [23](23.md)                           |
 | `relay`           | relay url                            | --                   | [42](42.md)                           |
 | `relays`          | relay list                           | --                   | [57](57.md)                           |
-| `resource         | URL                                  | --                   | [54](54.md)                           |
 | `subject`         | subject                              | --                   | [14](14.md)                           |
 | `summary`         | article summary                      | --                   | [23](23.md)                           |
 | `thumb`           | badge thumbnail                      | dimensions in pixels | [58](58.md)                           |
