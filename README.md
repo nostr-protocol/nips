@@ -176,6 +176,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `t`               | hashtag                              | --                   |                                       |
 | `amount`          | millisatoshis, stringified           | --                   | [57](57.md)                           |
 | `bolt11`          | `bolt11` invoice                     | --                   | [57](57.md)                           |
+| `canonical`       | canonical url                        | --                   | [23](23.md), [52](52.md)              |
 | `challenge`       | challenge string                     | --                   | [42](42.md)                           |
 | `content-warning` | reason                               | --                   | [36](36.md)                           |
 | `delegation`      | pubkey, conditions, delegation token | --                   | [26](26.md)                           |
