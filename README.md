@@ -66,11 +66,13 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-72: Moderated Communities](72.md)
 - [NIP-75: Zap Goals](75.md)
 - [NIP-78: Application-specific data](78.md)
+- [NIP-79: Offline message signature & verificiation](79.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-90: Data Vending Machines](90.md)
 - [NIP-94: File Metadata](94.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-101: Enhancing Event Compression and Encoding Support](101.md)
 
 ## Event Kinds
 
@@ -142,6 +144,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `CLOSE` | used to stop previous subscriptions                 | [01](01.md) |
 | `AUTH`  | used to send authentication events                  | [42](42.md) |
 | `COUNT` | used to request event counts                        | [45](45.md) |
+| `CAP`   | used to select encoding capabilities                | [101](101.md) |
 
 ### Relay to Client
 
@@ -153,6 +156,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `OK`     | used to notify clients if an EVENT was successful       | [01](01.md) |
 | `AUTH`   | used to send authentication challenges                  | [42](42.md) |
 | `COUNT`  | used to send requested event counts to clients          | [45](45.md) |
+| `CAP`    | used to propose encoding capabilities                   | [101](101.md) |
 
 Please update these lists when proposing NIPs introducing new event kinds.
 
