@@ -66,6 +66,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-72: Moderated Communities](72.md)
 - [NIP-75: Zap Goals](75.md)
 - [NIP-78: Application-specific data](78.md)
+- [NIP-84: Highlights](84.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-90: Data Vending Machines](90.md)
 - [NIP-94: File Metadata](94.md)
@@ -101,6 +102,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `9041`  | Zap Goal                   | [75](75.md) |
 | `9734`  | Zap Request                | [57](57.md) |
 | `9735`  | Zap                        | [57](57.md) |
+| `9802`  | Highlights                 | [84](84.md) |
 | `10000` | Mute List                  | [51](51.md) |
 | `10001` | Pin List                   | [51](51.md) |
 | `10002` | Relay List Metadata        | [65](65.md) |
