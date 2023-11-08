@@ -1,0 +1,171 @@
+NIP-90
+======
+
+Data Vending Machine
+--------------------
+
+`draft` `optional` `author:pablof7z` `author:dontbelievethehype`
+
+This NIP defines the interaction between customers and Service Providers for performing on-demand computation.
+
+Money in, data out.
+
+## Kinds
+This NIP reserves the range `5000-7000` for data vending machine use.
+
+| Kind | Description |
+| ---- | ----------- |
+| 5000-5999 | Job request kinds |
+| 6000-6999 | Job result |
+| 7000 | Job feedback |
+
+Job results always use a kind number that is `1000` higher than the job request kind. (e.g. request: `kind:5001` gets a result: `kind:6001`).
+
+Job request types are defined [separately](https://github.com/nostr-protocol/data-vending-machines/tree/master/kinds).
+
+## Rationale
+Nostr can act as a marketplace for data processing, where users request jobs to be processed in certain ways (e.g., "speech-to-text", "summarization", etc.), but they don't necessarily care about "who" processes the data.
+
+This NIP is not to be confused with a 1:1 marketplace; instead, it describes a flow where a user announces a desired output, willingness to pay, and service providers compete to fulfill the job requirement in the best way possible.
+
+### Actors
+There are two actors in the workflow described in this NIP:
+* Customers (npubs who request a job)
+* Service providers (npubs who fulfill jobs)
+
+## Job request (`kind:5000-5999`)
+A request to process data, published by a customer. This event signals that an customer is interested in receiving the result of some kind of compute.
+
+```json
+{
+    "kind": 5xxx, // kind in 5000-5999 range
+    "content": "",
+    "tags": [
+        [ "i", "<data>", "<input-type>", "<relay>", "<marker>" ],
+        [ "output", "<mime-type>" ],
+        [ "relays", "wss://..." ],
+        [ "bid", "<msat-amount>" ],
+        [ "t", "bitcoin" ]
+    ]
+}
+```
+
+All tags are optional.
+
+* `i` tag: Input data for the job (zero or more inputs)
+    * `<data>`: The argument for the input
+    * `<input-type>`: The way this argument should be interpreted. MUST be one of:
+        * `url`: A URL to be fetched of the data that should be processed.
+        * `event`: A Nostr event ID.
+        * `job`: The output of a previous job with the specified event ID. The dermination of which output to build upon is up to the service provider to decide (e.g. waiting for a signaling from the customer, waiting for a payment, etc.)
+        * `text`: `<data>` is the value of the input, no resolution is needed
+    * `<relay>`: If `event` or `job` input-type, the relay where the event/job was published, otherwise optional or empty string
+    * `<marker>`: An optional field indicating how this input should be used within the context of the job
+* `output`: Expected output format. Different job request `kind` defines this more precisely.
+* `param`: Optional parameters for the job as key (first argument)/value (second argument). Different job request `kind` defines this more precisely. (e.g. `[ "param", "lang", "es" ]`)
+* `bid`: Customer MAY specify a maximum amount (in millisats) they are willing to pay
+* `relays`: List of relays where Service Providers SHOULD publish responses to
+* `p`: Service Providers the customer is interested in. Other SPs MIGHT still choose to process the job
+
+## Job result (`kind:6000-6999`)
+
+Service providers publish job results, providing the output of the job result. They should tag the original job request event id as well as the customer's pubkey.
+
+```json
+{
+    "pubkey": "<service-provider pubkey>",
+    "content": "<payload>",
+    "kind": 6xxx,
+    "tags": [
+        [ "request", "<job-request>" ],
+        [ "e", "<job-request-id>", "<relay-hint>" ],
+        [ "i", "<input-data>" ],
+        [ "p", "<customer's-pubkey>" ],
+        [ "amount", "requested-payment-amount", "<optional-bolt11>" ]
+    ]
+}
+```
+
+* `request`: The job request event stringified-JSON.
+* `amount`: millisats that the Service Provider is requesting to be paid. An optional third value can be a bolt11 invoice.
+* `i`: The original input(s) specified in the request.
+
+## Job feedback
+Service providers can give feedback about a job back to the customer.
+
+```json
+{
+    "kind": 7000,
+    "content": "<empty-or-payload>",
+    "tags": [
+        [ "status", "<status>", "<extra-info>" ],
+        [ "amount", "requested-payment-amount", "<bolt11>" ],
+        [ "e", "<job-request-id>", "<relay-hint>" ],
+        [ "p", "<customer's-pubkey>" ],
+    ]
+}
+```
+
+* `content`: Either empty or a job-result (e.g. for partial-result samples)
+* `amount` tag: as defined in the [Job Result](#job-result) section.
+* `status` tag: Service Providers SHOULD indicate what this feedback status refers to. [Appendix 1](#appendix-1-job-feedback-status) defines status. Extra human-readable information can be added as an extra argument.
+
+### Job feedback status
+
+| status | description |
+|--------|-------------|
+| `payment-required` | Service Provider requires payment before continuing. |
+| `processing` | Service Provider is processing the job. |
+| `error` | Service Provider was unable to process the job. |
+| `success` | Service Provider successfully processed the job. |
+| `partial` | Service Provider partially processed the job. The `.content` might include a sample of the partial results. |
+
+Any job feedback event MIGHT include results in the `.content` field, as described in the [Job Result](#job-result) section. This is useful for service providers to provide a sample of the results that have been processed so far.
+
+
+# Protocol Flow
+* Customer publishes a job request (e.g. `kind:5000` speech-to-text).
+* Service Providers MAY submit `kind:7000` job-feedback events (e.g. `payment-required`, `processing`, `error`, etc.).
+* Upon completion, the service provider publishes the result of the job with a `kind:6000` job-result event.
+* At any point, if there is an `amount` pending to be paid as instructed by the service provider, the user can pay the included `bolt11` or zap the job result event the service provider has sent to the user
+
+Job feedback (`kind:7000`) and Job Results (`kind:6000-6999`) events MAY include an `amount` tag, this can be interpreted as a suggestion to pay. Service Providers MUST use the `payment-required` feedback event to signal that a payment is required and no further actions will be performed until the payment is sent.
+
+Customers can always either pay the included `bolt11` invoice or zap the event requesting the payment and service providers should monitor for both if they choose to include a bolt11 invoice.
+
+## Notes about the protocol flow
+The flow is deliberately ambiguous, allowing vast flexibility for the interaction between customers and service providers so that service providers can model their behavior based on their own decisions/perceptions of risk.
+
+Some service providers might choose to submit a `payment-required` as the first reaction before sending a `processing` or before delivering results, some might choose to serve partial results for the job (e.g. a sample), send a `payment-required` to deliver the rest of the results, and some service providers might choose to assess likelihood of payment based on an npub's past behavior and thus serve the job results before requesting payment for the best possible UX.
+
+It's not up to this NIP to define how individual vending machines should choose to run their business.
+
+# Cancellation
+A job request might be cancelled by publishing a `kind:5` delete request event tagging the job request event.
+
+# Appendix 1: Job chaining
+A Customer MAY request multiple jobs to be processed as a chain, where the output of a job is the input of another job. (e.g. podcast transcription -> summarization of the transcription). This is done by specifying as input an event id of a different job with the `job` type.
+
+Service Providers MAY begin processing a subsequent job the moment they see the prior job's result, but they will likely wait for a zap to be published first. This introduces a risk that Service Provider of job #1 might delay publishing the zap event in order to have an advantage. This risk is up to Service Providers to mitigate or to decide whether the service provider of job #1 tends to have good-enough results so as to not wait for an explicit zap to assume the job was accepted.
+
+This gives a higher level of flexibility to service providers (which sophisticated service providers would take anyway).
+
+# Appendix 2: Service provider discoverability
+Service Providers MAY use NIP-89 announcements to advertise their support for job kinds:
+
+```json
+{
+    "kind": 31990,
+    "pubkey": "<pubkey>",
+    "content": "{
+        \"name\": \"Translating DVM\",
+        \"about\": \"I'm a DVM specialized in translating Bitcoin content.\"
+    }",
+    "tags": [
+        [ "k", "5005" ], // e.g. translation
+        [ "t", "bitcoin" ] // e.g. optionally advertises it specializes in bitcoin audio transcription that won't confuse "Drivechains" with "Ridechains"
+    ]
+}
+```
+
+Customers can use NIP-89 to see what service providers their follows use.
