@@ -50,6 +50,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-38: User Statuses](38.md)
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
+- [NIP-41: Key migration](41.md)
 - [NIP-42: Authentication of clients to relays](42.md)
 - [NIP-45: Counting results](45.md)
 - [NIP-46: Nostr Connect](46.md)
@@ -95,6 +96,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1063`  | File Metadata              | [94](94.md) |
 | `1311`  | Live Chat Message          | [53](53.md) |
 | `1040`  | OpenTimestamps             | [03](03.md) |
+| `1776`  | Key Migration Whitelist    | [41](41.md) |
+| `1777`  | Key Migration              | [41](41.md) |
 | `1984`  | Reporting                  | [56](56.md) |
 | `1985`  | Label                      | [32](32.md) |
 | `4550`  | Community Post Approval    | [72](72.md) |
