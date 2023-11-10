@@ -98,6 +98,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1984`  | Reporting                  | [56](56.md) |
 | `1985`  | Label                      | [32](32.md) |
 | `4550`  | Community Post Approval    | [72](72.md) |
+| `5000`-`5999` | Job Request | [90](90.md) |
+| `6000`-`6999` | Job Result | [90](90.md) |
 | `7000`  | Job Feedback               | [90](90.md) |
 | `9041`  | Zap Goal                   | [75](75.md) |
 | `9734`  | Zap Request                | [57](57.md) |
