@@ -72,6 +72,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-94: File Metadata](94.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-100: WebRTC Signaling](100.md)
 
 ## Event Kinds
 
@@ -111,6 +112,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `23194` | Wallet Request             | [47](47.md) |
 | `23195` | Wallet Response            | [47](47.md) |
 | `24133` | Nostr Connect              | [46](46.md) |
+| `25050` | WebRTC Signaling           | [100](100.md) |
 | `27235` | HTTP Auth                  | [98](98.md) |
 | `30000` | Categorized People List    | [51](51.md) |
 | `30001` | Categorized Bookmark List  | [51](51.md) |
