@@ -74,7 +74,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-99: Classified Listings](99.md)
 
 ## Event Kinds
-
 | kind          | description                | NIP         |
 | ------------- | -------------------------- | ----------- |
 | `0`           | Metadata                   | [1](01.md)  |
@@ -95,6 +94,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1063`        | File Metadata              | [94](94.md) |
 | `1311`        | Live Chat Message          | [53](53.md) |
 | `1040`        | OpenTimestamps             | [03](03.md) |
+| `1971`        | Problem Tracker            | [1971](https://github.com/nostrocket/NIPS/blob/main/Problems.md) |
 | `1984`        | Reporting                  | [56](56.md) |
 | `1985`        | Label                      | [32](32.md) |
 | `4550`        | Community Post Approval    | [72](72.md) |
