@@ -116,10 +116,10 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `23195`       | Wallet Response            | [47](47.md)                        |
 | `24133`       | Nostr Connect              | [46](46.md)                        |
 | `27235`       | HTTP Auth                  | [98](98.md)                        |
+| `30000`       | Follow sets                | [51](51.md)                        |
 | `30001`       | Generic lists              | [51](51.md)                        |
 | `30002`       | Relay sets                 | [51](51.md)                        |
 | `30004`       | Curation sets              | [51](51.md)                        |
-| `30005`       | Follow sets                | [51](51.md)                        |
 | `30008`       | Profile Badges             | [58](58.md)                        |
 | `30009`       | Badge Definition           | [58](58.md)                        |
 | `30017`       | Create or update a stall   | [15](15.md)                        |
