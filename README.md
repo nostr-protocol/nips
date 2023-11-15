@@ -105,8 +105,11 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `9734`        | Zap Request                | [57](57.md)                        |
 | `9735`        | Zap                        | [57](57.md)                        |
 | `9802`        | Highlights                 | [84](84.md)                        |
-| `10000`       | Mute list                  | [65](65.md)                        |
+| `10000`       | Mute list                  | [51](51.md)                        |
+| `10001`       | Pin list                   | [51](51.md)                        |
 | `10002`       | Relay List Metadata        | [65](65.md)                        |
+| `10003`       | Bookmark list              | [51](51.md)                        |
+| `10004`       | Communities list           | [51](51.md)                        |
 | `13194`       | Wallet Info                | [47](47.md)                        |
 | `22242`       | Client Authentication      | [42](42.md)                        |
 | `23194`       | Wallet Request             | [47](47.md)                        |
