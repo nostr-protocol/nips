@@ -1,6 +1,7 @@
 # NIPs
 
 NIPs stand for **Nostr Implementation Possibilities**.
+
 They exist to document what may be implemented by [Nostr](https://github.com/nostr-protocol/nostr)-compatible _relay_ and _client_ software.
 
 ---
@@ -12,7 +13,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
   - [Relay to Client](#relay-to-client)
 - [Standardized Tags](#standardized-tags)
 - [Criteria for acceptance of NIPs](#criteria-for-acceptance-of-nips)
-- [Mailing Lists](#mailing-lists)
+- [Is this repository a centralizing factor?](#is-this-repository-a-centralizing-factor)
+- [How this repository works](#how-this-repository-works)
 - [License](#license)
 
 ---
@@ -212,20 +214,19 @@ Please update these lists when proposing NIPs introducing new event kinds.
 4. There should be no more than one way of doing the same thing.
 5. Other rules will be made up when necessary.
 
-## Mailing Lists
+## Is this repository a centralizing factor?
 
-The nostr ecosystem is getting large with many different organizations, relays
-and clients. Following the nips repo on github is becoming more difficult and
-noisy. To coordinate on protocol development outside of github, there are
-mailing lists where you can work on NIPs before submitting them here:
+To promote interoperability, we standards that everybody can follow, and we need them to define a **single way of doing each thing** without ever hurting **backwards-compatibility**, and for that purpose there is no way around getting everybody to agree on the same thing and keep a centralized index of these standards. However the fact that such index exists doesn't hurt the decentralization of Nostr. _At any point the central index can be challenged if it is failing to fulfill the needs of the protocol_ and it can migrate to other places and be maintained by other people.
 
-* [w3c nostr community group][w3-nostr] - [public-nostr@w3.org][mailto-w3] - requires signup
-* [nostr-protocol google group][nostr-google-group] - [nostr-protocol@googlegroups.com][mailto-google] - no signup required
+It can even fork into multiple and then some clients would go one way, others would go another way, and some clients would adhere to both competing standards. This would hurt the simplicity, openness and interoperability of Nostr a little, but everything would still work in the short term.
 
-[w3-nostr]: https://www.w3.org/community/nostr/
-[mailto-w3]: mailto:public-nostr@w3.org
-[nostr-google-group]: https://groups.google.com/g/nostr-protocol
-[mailto-google]: mailto:nostr-protocol@googlegroups.com
+There is a list of notable Nostr software developers who have commit access to this repository, but that exists mostly for practical reasons, as by the nature of the thing we're dealing with the repository owner can revoke membership and rewrite history as they want -- and if these actions are unjustified or perceived as bad or evil the community must react.
+
+## How this repository works
+
+Standards may emerge in two ways: the first way is that someone starts doing something, then others copy it; the second way is that someone has an idea of a new standard that could benefit multiple clients and the protocol in general without breaking **backwards-compatibility** and the principle of having **a single way of doing things**, then they write that idea and submit it to this repository, other interested parties read it and give their feedback, then once most people reasonably agree we codify that in a NIP which client and relay developers that are interested in the feature can proceed to implement.
+
+These two ways of standardizing things are supported by this repository. Although the second is preferred, an effort will be made to codify standards emerged outside this repository into NIPs that can be later referenced and easily understood and implemented by others -- but obviously as in any human system discretion may be applied when standards are considered harmful.
 
 ## License
 
