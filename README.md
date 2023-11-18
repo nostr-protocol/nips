@@ -78,7 +78,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 ## Event Kinds
 | kind          | description                | NIP         |
 | ------------- | -------------------------- | ----------- |
-| `0`           | Metadata                   | [1](01.md)  |
+| `0`           | Metadata                   | [1](01.md), [24](24.md)  |
 | `1`           | Short Text Note            | [1](01.md)  |
 | `2`           | Recommend Relay            |             |
 | `3`           | Contacts                   | [2](02.md)  |
@@ -177,7 +177,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `l`               | label, label namespace               | annotations          | [32](32.md)                           |
 | `L`               | label namespace                      | --                   | [32](32.md)                           |
 | `m`               | MIME type                            | --                   | [94](94.md)                           |
-| `r`               | a reference (URL, etc)               | petname              |                                       |
+| `r`               | a reference (URL, etc)               | petname              | [24](24.md)                           |
 | `r`               | relay url                            | marker               | [65](65.md)                           |
 | `t`               | hashtag                              | --                   |                                       |
 | `amount`          | millisatoshis, stringified           | --                   | [57](57.md)                           |
