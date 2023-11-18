@@ -230,3 +230,9 @@ mailing lists where you can work on NIPs before submitting them here:
 ## License
 
 All NIPs are public domain.
+
+## Contributors
+
+<a align="center" href="https://github.com/nostr-protocol/nips/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=nostr-protocol/nips" />
+</a>
