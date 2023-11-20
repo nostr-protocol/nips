@@ -1,0 +1,15 @@
+@alexgleason 
+@atdixon
+@BrightonBTC
+@Cameri
+@eskema
+@fiatjaf
+@Giszmo
+@jb55
+@KoalaSat
+@mmalmi
+@monlovesmango
+@ottman
+@pablof7z
+@Semisol
+@verbiricha 
