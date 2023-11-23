@@ -99,6 +99,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1971`        | Problem Tracker            | [nostrocket-1971][nostrocket-1971] |
 | `1984`        | Reporting                  | [56](56.md)                        |
 | `1985`        | Label                      | [32](32.md)                        |
+| `4001`        | URL Alternative            | [93](93.md)                        |
 | `4550`        | Community Post Approval    | [72](72.md)                        |
 | `5000`-`5999` | Job Request                | [90](90.md)                        |
 | `6000`-`6999` | Job Result                 | [90](90.md)                        |
