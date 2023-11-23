@@ -98,8 +98,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1985`  | Label                      | [32](32.md) |
 | `4550`  | Community Post Approval    | [72](72.md) |
 | `7000`  | Job Feedback               | [90](90.md) |
-| `7001`  | Recurring Subscription     | [88](88.md) |
-| `7002`  | Recurring Subscription Tier| [88](88.md) |
+| `7001`  | Subscription Start         | [88](88.md) |
+| `7002`  | Subscription Stop          | [88](88.md) |
 | `9041`  | Zap Goal                   | [75](75.md) |
 | `9734`  | Zap Request                | [57](57.md) |
 | `9735`  | Zap                        | [57](57.md) |
@@ -132,6 +132,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31989` | Handler recommendation     | [89](89.md) |
 | `31990` | Handler information        | [89](89.md) |
 | `34550` | Community Definition       | [72](72.md) |
+| `37001` | Subscription Tier          | [88](88.md) |
 
 ## Message types
 
