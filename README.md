@@ -117,6 +117,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10015`       | Interests list             | [51](51.md)                        |
 | `10030`       | User emoji list            | [51](51.md)                        |
 | `13194`       | Wallet Info                | [47](47.md)                        |
+| `21000`       | Lightning Pub RPC          | N/A                                |
 | `22242`       | Client Authentication      | [42](42.md)                        |
 | `23194`       | Wallet Request             | [47](47.md)                        |
 | `23195`       | Wallet Response            | [47](47.md)                        |
