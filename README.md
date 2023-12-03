@@ -92,9 +92,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `42`          | Channel Message            | [28](28.md)              |
 | `43`          | Channel Hide Message       | [28](28.md)              |
 | `44`          | Channel Mute User          | [28](28.md)              |
+| `1040`        | OpenTimestamps             | [03](03.md)              |
 | `1063`        | File Metadata              | [94](94.md)              |
 | `1311`        | Live Chat Message          | [53](53.md)              |
-| `1040`        | OpenTimestamps             | [03](03.md)              |
 | `1971`        | Problem Tracker            | [nostrocket][nostrocket] |
 | `1984`        | Reporting                  | [56](56.md)              |
 | `1985`        | Label                      | [32](32.md)              |
@@ -131,11 +131,11 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30008`       | Profile Badges             | [58](58.md)              |
 | `30009`       | Badge Definition           | [58](58.md)              |
 | `30015`       | Interest sets              | [51](51.md)              |
-| `30030`       | Emoji sets                 | [51](51.md)              |
 | `30017`       | Create or update a stall   | [15](15.md)              |
 | `30018`       | Create or update a product | [15](15.md)              |
 | `30023`       | Long-form Content          | [23](23.md)              |
 | `30024`       | Draft Long-form Content    | [23](23.md)              |
+| `30030`       | Emoji sets                 | [51](51.md)              |
 | `30078`       | Application-specific Data  | [78](78.md)              |
 | `30311`       | Live Event                 | [53](53.md)              |
 | `30315`       | User Statuses              | [38](38.md)              |
