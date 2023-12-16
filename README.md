@@ -87,6 +87,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-92: Media Attachments](92.md)
 - [NIP-94: File Metadata](94.md)
 - [NIP-96: HTTP File Storage Integration](96.md)
+- [NIP-97: Read Status](97.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
 
