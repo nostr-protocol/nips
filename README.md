@@ -76,79 +76,79 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-99: Classified Listings](99.md)
 
 ## Event Kinds
-| kind          | description                | NIP                      |
-| ------------- | -------------------------- | -----------              |
-| `0`           | Metadata                   | [1](01.md)               |
-| `1`           | Short Text Note            | [1](01.md)               |
-| `2`           | Recommend Relay            | 1 (before 2023-08-13)    |
-| `3`           | Follows                    | [2](02.md)               |
-| `4`           | Encrypted Direct Messages  | [4](04.md)               |
-| `5`           | Event Deletion             | [9](09.md)               |
-| `6`           | Repost                     | [18](18.md)              |
-| `7`           | Reaction                   | [25](25.md)              |
-| `8`           | Badge Award                | [58](58.md)              |
-| `16`          | Generic Repost             | [18](18.md)              |
-| `40`          | Channel Creation           | [28](28.md)              |
-| `41`          | Channel Metadata           | [28](28.md)              |
-| `42`          | Channel Message            | [28](28.md)              |
-| `43`          | Channel Hide Message       | [28](28.md)              |
-| `44`          | Channel Mute User          | [28](28.md)              |
-| `1040`        | OpenTimestamps             | [03](03.md)              |
-| `1063`        | File Metadata              | [94](94.md)              |
-| `1311`        | Live Chat Message          | [53](53.md)              |
-| `1971`        | Problem Tracker            | [nostrocket][nostrocket] |
-| `1984`        | Reporting                  | [56](56.md)              |
-| `1985`        | Label                      | [32](32.md)              |
-| `4550`        | Community Post Approval    | [72](72.md)              |
-| `5000`-`5999` | Job Request                | [90](90.md)              |
-| `6000`-`6999` | Job Result                 | [90](90.md)              |
-| `7000`        | Job Feedback               | [90](90.md)              |
-| `9041`        | Zap Goal                   | [75](75.md)              |
-| `9734`        | Zap Request                | [57](57.md)              |
-| `9735`        | Zap                        | [57](57.md)              |
-| `9802`        | Highlights                 | [84](84.md)              |
-| `10000`       | Mute list                  | [51](51.md)              |
-| `10001`       | Pin list                   | [51](51.md)              |
-| `10002`       | Relay List Metadata        | [65](65.md)              |
-| `10003`       | Bookmark list              | [51](51.md)              |
-| `10004`       | Communities list           | [51](51.md)              |
-| `10005`       | Public chats list          | [51](51.md)              |
-| `10006`       | Blocked relays list        | [51](51.md)              |
-| `10007`       | Search relays list         | [51](51.md)              |
-| `10015`       | Interests list             | [51](51.md)              |
-| `10030`       | User emoji list            | [51](51.md)              |
-| `13194`       | Wallet Info                | [47](47.md)              |
-| `21000`       | Lightning Pub RPC          | [Lightning.Pub][lnpub]   |
-| `22242`       | Client Authentication      | [42](42.md)              |
-| `23194`       | Wallet Request             | [47](47.md)              |
-| `23195`       | Wallet Response            | [47](47.md)              |
-| `24133`       | Nostr Connect              | [46](46.md)              |
-| `27235`       | HTTP Auth                  | [98](98.md)              |
-| `30000`       | Follow sets                | [51](51.md)              |
-| `30001`       | Generic lists              | [51](51.md)              |
-| `30002`       | Relay sets                 | [51](51.md)              |
-| `30003`       | Bookmark sets              | [51](51.md)              |
-| `30004`       | Curation sets              | [51](51.md)              |
-| `30008`       | Profile Badges             | [58](58.md)              |
-| `30009`       | Badge Definition           | [58](58.md)              |
-| `30015`       | Interest sets              | [51](51.md)              |
-| `30017`       | Create or update a stall   | [15](15.md)              |
-| `30018`       | Create or update a product | [15](15.md)              |
-| `30023`       | Long-form Content          | [23](23.md)              |
-| `30024`       | Draft Long-form Content    | [23](23.md)              |
-| `30030`       | Emoji sets                 | [51](51.md)              |
-| `30078`       | Application-specific Data  | [78](78.md)              |
-| `30311`       | Live Event                 | [53](53.md)              |
-| `30315`       | User Statuses              | [38](38.md)              |
-| `30402`       | Classified Listing         | [99](99.md)              |
-| `30403`       | Draft Classified Listing   | [99](99.md)              |
-| `31922`       | Date-Based Calendar Event  | [52](52.md)              |
-| `31923`       | Time-Based Calendar Event  | [52](52.md)              |
-| `31924`       | Calendar                   | [52](52.md)              |
-| `31925`       | Calendar Event RSVP        | [52](52.md)              |
-| `31989`       | Handler recommendation     | [89](89.md)              |
-| `31990`       | Handler information        | [89](89.md)              |
-| `34550`       | Community Definition       | [72](72.md)              |
+| kind          | description                | NIP                               |
+| ------------- | -------------------------- | --------------------------------- |
+| `0`           | Metadata                   | [1](01.md)                        |
+| `1`           | Short Text Note            | [1](01.md)                        |
+| `2`           | Recommend Relay            | 1 (deprecated since 2023-08-13)   |
+| `3`           | Follows                    | [2](02.md)                        |
+| `4`           | Encrypted Direct Messages  | [4](04.md)                        |
+| `5`           | Event Deletion             | [9](09.md)                        |
+| `6`           | Repost                     | [18](18.md)                       |
+| `7`           | Reaction                   | [25](25.md)                       |
+| `8`           | Badge Award                | [58](58.md)                       |
+| `16`          | Generic Repost             | [18](18.md)                       |
+| `40`          | Channel Creation           | [28](28.md)                       |
+| `41`          | Channel Metadata           | [28](28.md)                       |
+| `42`          | Channel Message            | [28](28.md)                       |
+| `43`          | Channel Hide Message       | [28](28.md)                       |
+| `44`          | Channel Mute User          | [28](28.md)                       |
+| `1040`        | OpenTimestamps             | [03](03.md)                       |
+| `1063`        | File Metadata              | [94](94.md)                       |
+| `1311`        | Live Chat Message          | [53](53.md)                       |
+| `1971`        | Problem Tracker            | [nostrocket][nostrocket]          |
+| `1984`        | Reporting                  | [56](56.md)                       |
+| `1985`        | Label                      | [32](32.md)                       |
+| `4550`        | Community Post Approval    | [72](72.md)                       |
+| `5000`-`5999` | Job Request                | [90](90.md)                       |
+| `6000`-`6999` | Job Result                 | [90](90.md)                       |
+| `7000`        | Job Feedback               | [90](90.md)                       |
+| `9041`        | Zap Goal                   | [75](75.md)                       |
+| `9734`        | Zap Request                | [57](57.md)                       |
+| `9735`        | Zap                        | [57](57.md)                       |
+| `9802`        | Highlights                 | [84](84.md)                       |
+| `10000`       | Mute list                  | [51](51.md)                       |
+| `10001`       | Pin list                   | [51](51.md)                       |
+| `10002`       | Relay List Metadata        | [65](65.md)                       |
+| `10003`       | Bookmark list              | [51](51.md)                       |
+| `10004`       | Communities list           | [51](51.md)                       |
+| `10005`       | Public chats list          | [51](51.md)                       |
+| `10006`       | Blocked relays list        | [51](51.md)                       |
+| `10007`       | Search relays list         | [51](51.md)                       |
+| `10015`       | Interests list             | [51](51.md)                       |
+| `10030`       | User emoji list            | [51](51.md)                       |
+| `13194`       | Wallet Info                | [47](47.md)                       |
+| `21000`       | Lightning Pub RPC          | [Lightning.Pub][lnpub]            |
+| `22242`       | Client Authentication      | [42](42.md)                       |
+| `23194`       | Wallet Request             | [47](47.md)                       |
+| `23195`       | Wallet Response            | [47](47.md)                       |
+| `24133`       | Nostr Connect              | [46](46.md)                       |
+| `27235`       | HTTP Auth                  | [98](98.md)                       |
+| `30000`       | Follow sets                | [51](51.md)                       |
+| `30001`       | Generic lists              | [51](51.md)                       |
+| `30002`       | Relay sets                 | [51](51.md)                       |
+| `30003`       | Bookmark sets              | [51](51.md)                       |
+| `30004`       | Curation sets              | [51](51.md)                       |
+| `30008`       | Profile Badges             | [58](58.md)                       |
+| `30009`       | Badge Definition           | [58](58.md)                       |
+| `30015`       | Interest sets              | [51](51.md)                       |
+| `30017`       | Create or update a stall   | [15](15.md)                       |
+| `30018`       | Create or update a product | [15](15.md)                       |
+| `30023`       | Long-form Content          | [23](23.md)                       |
+| `30024`       | Draft Long-form Content    | [23](23.md)                       |
+| `30030`       | Emoji sets                 | [51](51.md)                       |
+| `30078`       | Application-specific Data  | [78](78.md)                       |
+| `30311`       | Live Event                 | [53](53.md)                       |
+| `30315`       | User Statuses              | [38](38.md)                       |
+| `30402`       | Classified Listing         | [99](99.md)                       |
+| `30403`       | Draft Classified Listing   | [99](99.md)                       |
+| `31922`       | Date-Based Calendar Event  | [52](52.md)                       |
+| `31923`       | Time-Based Calendar Event  | [52](52.md)                       |
+| `31924`       | Calendar                   | [52](52.md)                       |
+| `31925`       | Calendar Event RSVP        | [52](52.md)                       |
+| `31989`       | Handler recommendation     | [89](89.md)                       |
+| `31990`       | Handler information        | [89](89.md)                       |
+| `34550`       | Community Definition       | [72](72.md)                       |
 
 [nostrocket]: https://github.com/nostrocket/NIPS/blob/main/Problems.md
 [lnpub]: https://github.com/shocknet/Lightning.Pub/blob/master/proto/autogenerated/client.md
