@@ -77,10 +77,10 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 
 ## Event Kinds
 | kind          | description                | NIP                      |
-| ------------- | -------------------------- | -----------              |
+| ------------- | -------------------------- | ------------------------ |
 | `0`           | Metadata                   | [01](01.md)              |
 | `1`           | Short Text Note            | [01](01.md)              |
-| `2`           | Recommend Relay            | 01 (before 2023-08-13)   |
+| `2`           | Recommend Relay            | 01 (deprecated)          |
 | `3`           | Follows                    | [02](02.md)              |
 | `4`           | Encrypted Direct Messages  | [04](04.md)              |
 | `5`           | Event Deletion             | [09](09.md)              |
