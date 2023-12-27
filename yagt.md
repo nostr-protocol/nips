@@ -2,10 +2,10 @@
 
 `draft` `optional`
 
-This NIP defines a tagging pattern for use in adding geodata to events. This NIP uses a similar pattern as `NIP-32` but specifically for geographical data. 
+This NIP extends an existing indexable tag `g` annd a new indexable tag `G`. 
 
 ## Motivation
-The core aim of this NIP is to establish a unified and efficient method for geotagging within the Nostr network. During the development of the [nostr-geotags](https://github.com/sandwichfarm/nostr-geotags) library, which utilizes NIP-32, it became evident that more specific guidelines were needed for geotagging. This NIP is designed to provide a clear and standardized format for geotagging, ensuring uniformity and effectiveness across the Nostr platform.
+The core aim of this NIP is to establish a unified and efficient method for geotagging within events. During the development of the [nostr-geotags](https://github.com/sandwichfarm/nostr-geotags) library which utilizes NIP-32, it became evident that more specific guidelines were needed for geotagging. This NIP is designed to provide a clear and standardized format for geotagging, promoting uniformity and effectiveness of geodata across nostr.
 
 ## Rationale
 Developing a dedicated geotagging NIP offers several advantages over the general application of NIP-32 for geographical data:
@@ -16,12 +16,16 @@ Developing a dedicated geotagging NIP offers several advantages over the general
 - **Extends Existing GeoTag** `NIP-52` defined the `g` geotag, which this NIP extends and is compatible with.
 
 ## Schema 
+This NIP uses a similar pattern as `NIP-32` (`G` and `g` instead of `L` and `l`) but with an additional key as position `3` and catered geographical data.
+
 ```
-["G", key] //optional
-["g", value, key, label<optional>]
+["G", label] //optional
+["g", value, label, meta]
 ```
 
 ## Keys
+Standards are assigned to human readable labels instead of labeling content with standards, which complicates both publishing and filtering. 
+
 - `geohash` - A geohash of any precision.
 - `continentCode` - `UN M49` continent code.
 - `continentName` - Capitalized, formally cased name of the Continent. 
