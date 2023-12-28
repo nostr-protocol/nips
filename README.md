@@ -105,6 +105,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `13`          | Seal                       | [59](59.md)              |
 | `14`          | Direct Message             | [17](17.md)              |
 | `16`          | Generic Repost             | [18](18.md)              |
+| `30`          | Portable Game Notation     | [64](64.md)              |
 | `40`          | Channel Creation           | [28](28.md)              |
 | `41`          | Channel Metadata           | [28](28.md)              |
 | `42`          | Channel Message            | [28](28.md)              |
