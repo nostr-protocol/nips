@@ -27,8 +27,6 @@ This NIP uses a similar pattern as `NIP-32` (`G` and `g` instead of `L` and `l`)
 Standards are assigned to human readable labels instead of labeling content with standards, which complicates both publishing and filtering. 
 
 - `geohash` - A geohash of any precision.
-- `continentCode` - `UN M49` continent code.
-- `continentName` - Capitalized, formally cased name of the Continent. 
 - `countryCode` - `ISO-3166-1/3` country code. 
 - `countryName` - `ISO-3166-1/3` compatible country name. 
 - `regionCode` - `ISO-3166-2` region code. 
@@ -81,10 +79,6 @@ When `g` tag has no `tag[2]` it is assumed to be of type (key) `geohash`
     [ "g", "Anguilla", "countryName" ],
     [ "G", "cityName" ],
     [ "g", "Mount Fortune", "cityName" ],
-    [ "G", "continentName" ],
-    [ "g", "South America", "continentName" ],
-    [ "G", "continentCode" ],
-    [ "g", "NA", "continentCode" ]
   ] 
 }
 ```
