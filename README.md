@@ -30,7 +30,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-07: `window.nostr` capability for web browsers](07.md)
 - [NIP-08: Handling Mentions](08.md) --- **unrecommended**: deprecated in favor of [NIP-27](27.md)
 - [NIP-09: Event Deletion](09.md)
-- [NIP-10: Conventions for clients' use of `e` and `p` tags in text events](10.md)
+- [NIP-10: Text Notes](10.md)
 - [NIP-11: Relay Information Document](11.md)
 - [NIP-13: Proof of Work](13.md)
 - [NIP-14: Subject tag in text events](14.md)
