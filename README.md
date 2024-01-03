@@ -21,7 +21,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 
 ## List
 
-- [NIP-01: Basic protocol flow description](01.md)
+- [NIP-01: Nostr Protocol](01.md)
 - [NIP-02: Follow List](02.md)
 - [NIP-03: OpenTimestamps Attestations for Events](03.md)
 - [NIP-04: Encrypted Direct Message](04.md) --- **unrecommended**: deprecated in favor of [NIP-44](44.md)
@@ -79,7 +79,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | kind          | description                | NIP                      |
 | ------------- | -------------------------- | ------------------------ |
 | `0`           | Metadata                   | [01](01.md)              |
-| `1`           | Short Text Note            | [01](01.md)              |
+| `1`           | Short Text Note            | [10](10.md)              |
 | `2`           | Recommend Relay            | 01 (deprecated)          |
 | `3`           | Follows                    | [02](02.md)              |
 | `4`           | Encrypted Direct Messages  | [04](04.md)              |
