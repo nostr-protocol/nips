@@ -24,7 +24,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-01: Basic protocol flow description](01.md)
 - [NIP-02: Follow List](02.md)
 - [NIP-03: OpenTimestamps Attestations for Events](03.md)
-- [NIP-04: Encrypted Direct Message](04.md)
+- [NIP-04: Encrypted Direct Message](04.md) --- **unrecommended**: deprecated in favor of [NIP-44](44.md)
 - [NIP-05: Mapping Nostr keys to DNS-based internet identifiers](05.md)
 - [NIP-06: Basic key derivation from mnemonic seed phrase](06.md)
 - [NIP-07: `window.nostr` capability for web browsers](07.md)
@@ -53,6 +53,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
 - [NIP-42: Authentication of clients to relays](42.md)
+- [NIP-44: Versioned Encryption](44.md)
 - [NIP-45: Counting results](45.md)
 - [NIP-46: Nostr Connect](46.md)
 - [NIP-47: Wallet Connect](47.md)
@@ -72,18 +73,19 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-90: Data Vending Machines](90.md)
 - [NIP-94: File Metadata](94.md)
+- [NIP-96: HTTP File Storage Integration](96.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
 
 ## Event Kinds
 | kind          | description                | NIP                      |
-| ------------- | -------------------------- | -----------              |
-| `0`           | Metadata                   | [1](01.md)               |
-| `1`           | Short Text Note            | [1](01.md)               |
-| `2`           | Recommend Relay            |                          |
-| `3`           | Follows                    | [2](02.md)               |
-| `4`           | Encrypted Direct Messages  | [4](04.md)               |
-| `5`           | Event Deletion             | [9](09.md)               |
+| ------------- | -------------------------- | ------------------------ |
+| `0`           | Metadata                   | [01](01.md)              |
+| `1`           | Short Text Note            | [01](01.md)              |
+| `2`           | Recommend Relay            | 01 (deprecated)          |
+| `3`           | Follows                    | [02](02.md)              |
+| `4`           | Encrypted Direct Messages  | [04](04.md)              |
+| `5`           | Event Deletion             | [09](09.md)              |
 | `6`           | Repost                     | [18](18.md)              |
 | `7`           | Reaction                   | [25](25.md)              |
 | `8`           | Badge Award                | [58](58.md)              |
