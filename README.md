@@ -35,7 +35,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-13: Proof of Work](13.md)
 - [NIP-14: Subject tag in text events](14.md)
 - [NIP-15: Nostr Marketplace (for resilient marketplaces)](15.md)
-- [NIP-17: Private Direct Messages and Small Group Chats](17.md)
+- [NIP-17: Private Direct Messages and Group DMs](17.md)
 - [NIP-18: Reposts](18.md)
 - [NIP-19: bech32-encoded entities](19.md)
 - [NIP-21: `nostr:` URI scheme](21.md)
