@@ -118,6 +118,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10007`       | Search relays list         | [51](51.md)              |
 | `10015`       | Interests list             | [51](51.md)              |
 | `10030`       | User emoji list            | [51](51.md)              |
+| `10096`       | File storage server list   | [96](96.md)              |
 | `13194`       | Wallet Info                | [47](47.md)              |
 | `21000`       | Lightning Pub RPC          | [Lightning.Pub][lnpub]   |
 | `22242`       | Client Authentication      | [42](42.md)              |
@@ -220,6 +221,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `published_at`    | unix timestamp (string)              | --                   | [23](23.md)                           |
 | `relay`           | relay url                            | --                   | [42](42.md)                           |
 | `relays`          | relay list                           | --                   | [57](57.md)                           |
+| `server`          | file storage server url              | --                   | [96](96.md)                           |
 | `subject`         | subject                              | --                   | [14](14.md)                           |
 | `summary`         | article summary                      | --                   | [23](23.md)                           |
 | `thumb`           | badge thumbnail                      | dimensions in pixels | [58](58.md)                           |
