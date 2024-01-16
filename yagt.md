@@ -20,7 +20,7 @@ This NIP uses a similar pattern as `NIP-32` (`G` and `g` instead of `L` and `l`)
 
 ```
 ["G", label] //optional
-["g", value, label, meta]
+["g", value, label, format]
 ```
 
 ## Keys
