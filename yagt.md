@@ -2,7 +2,7 @@
 
 `draft` `optional`
 
-This NIP extends an existing indexable tag `g` annd a new indexable tag `G`. 
+This NIP extends an existing indexable tag `g` and a new indexable tag `G`. 
 
 ## Motivation
 The core aim of this NIP is to establish a unified and efficient method for geotagging within events. During the development of the [nostr-geotags](https://github.com/sandwichfarm/nostr-geotags) library which utilizes NIP-32, it became evident that more specific guidelines were needed for geotagging. This NIP is designed to provide a clear and standardized format for geotagging, promoting uniformity and effectiveness of geodata across nostr.
@@ -11,7 +11,7 @@ The core aim of this NIP is to establish a unified and efficient method for geot
 Developing a dedicated geotagging NIP offers several advantages over the general application of NIP-32 for geographical data:
 
 - **Simplicity and Clarity:** Using NIP-32 for geodata can lead to verbose and complex labels, making them challenging to understand. This NIP simplifies expression.
-- **Handling ISO Standards:** The complexity added by ISO-3166-3 country code changes when using NIP-32 is streamlined in this NIP by simply labeling the channge as countryCode, thus making both publishing and filtering more straightforward.
+- **Handling ISO Standards:** The complexity added by ISO-3166-3 country code changes when using NIP-32 is streamlined in this NIP by simply labeling the change as countryCode, thus making both publishing and filtering more straightforward.
 - **Significance of Geodata:** Given its ubiquity, importance and diversity, geodata warrants its own specific letter designations and detailed specifications within nostr.
 - **Extends Existing GeoTag** `NIP-52` defined the `g` geotag, which this NIP extends and is compatible with.
 
