@@ -94,6 +94,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `42`          | Channel Message            | [28](28.md)              |
 | `43`          | Channel Hide Message       | [28](28.md)              |
 | `44`          | Channel Mute User          | [28](28.md)              |
+| `1021`        | Bid                        | [15](15.md)              |
+| `1022`        | Bid confirmation           | [15](15.md)              |
 | `1040`        | OpenTimestamps             | [03](03.md)              |
 | `1063`        | File Metadata              | [94](94.md)              |
 | `1311`        | Live Chat Message          | [53](53.md)              |
@@ -136,6 +138,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30015`       | Interest sets              | [51](51.md)              |
 | `30017`       | Create or update a stall   | [15](15.md)              |
 | `30018`       | Create or update a product | [15](15.md)              |
+| `30019`       | Marketplace UI/UX          | [15](15.md)              |
+| `30020`       | Product sold as an auction | [15](15.md)              |
 | `30023`       | Long-form Content          | [23](23.md)              |
 | `30024`       | Draft Long-form Content    | [23](23.md)              |
 | `30030`       | Emoji sets                 | [51](51.md)              |
