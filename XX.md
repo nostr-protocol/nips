@@ -13,6 +13,8 @@ This NIP is a specification for benchmarking relay servers online. The specifica
 "client": "nostr-benchmark-v0.0.2", "31990:app1-pubkey:<d-identifier>", "wss://relay1"]
 ```
 
+This NIP number SHOULD be provided from the NIP-11 relay information and the benchmarking software SHOULD see this information and cancel the benchmark.
+
 # Relay server
 
 Normally, the benchmarking software SHOULD delete the posted event after the benchmark has completed. Relay server CAN delete them automatically or one's own thinking.
