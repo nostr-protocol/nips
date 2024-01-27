@@ -28,7 +28,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-36: Sensitive Content](36.md)
 - [NIP-40: Expiration Timestamp](40.md)
 - [NIP-42: Authentication of clients to relays](42.md)
-- [NIP-49: Private Key Transfer](49.md)
+- [NIP-49: Private Key Encryption](49.md)
 
 ## Event Kinds
 
