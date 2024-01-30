@@ -65,6 +65,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-56: Reporting](56.md)
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
+- [NIP-59: Gift Wrap](59.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-72: Moderated Communities](72.md)
 - [NIP-75: Zap Goals](75.md)
