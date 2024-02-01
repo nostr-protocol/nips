@@ -44,7 +44,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-26: Delegated Event Signing](26.md)
 - [NIP-27: Text Note References](27.md)
 - [NIP-28: Public Chat](28.md)
-- [NIP-29: Media Attachments](29.md)
 - [NIP-30: Custom Emoji](30.md)
 - [NIP-31: Dealing with Unknown Events](31.md)
 - [NIP-32: Labeling](32.md)
@@ -74,6 +73,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-84: Highlights](84.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-90: Data Vending Machines](90.md)
+- [NIP-92: Media Attachments](92.md)
 - [NIP-94: File Metadata](94.md)
 - [NIP-96: HTTP File Storage Integration](96.md)
 - [NIP-98: HTTP Auth](98.md)
@@ -218,6 +218,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `expiration`      | unix timestamp (string)              | --                   | [40](40.md)                           |
 | `goal`            | event id (hex)                       | relay URL            | [75](75.md)                           |
 | `image`           | image URL                            | dimensions in pixels | [23](23.md), [58](58.md)              |
+| `imeta`           | inline metadata                      | --                   | [92](92.md)                           |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                   | [57](57.md)                           |
 | `location`        | location string                      | --                   | [52](52.md), [99](99.md)              |
 | `name`            | badge name                           | --                   | [58](58.md)                           |
