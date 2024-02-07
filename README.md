@@ -21,7 +21,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 
 ## List
 
-- [NIP-01: Basic protocol flow description](01.md)
+- [NIP-01: Nostr Protocol](01.md)
 - [NIP-02: Follow List](02.md)
 - [NIP-03: OpenTimestamps Attestations for Events](03.md)
 - [NIP-04: Encrypted Direct Message](04.md) --- **unrecommended**: deprecated in favor of [NIP-44](44.md)
@@ -30,7 +30,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-07: `window.nostr` capability for web browsers](07.md)
 - [NIP-08: Handling Mentions](08.md) --- **unrecommended**: deprecated in favor of [NIP-27](27.md)
 - [NIP-09: Event Deletion](09.md)
-- [NIP-10: Conventions for clients' use of `e` and `p` tags in text events](10.md)
+- [NIP-10: Text Notes](10.md)
 - [NIP-11: Relay Information Document](11.md)
 - [NIP-13: Proof of Work](13.md)
 - [NIP-14: Subject tag in text events](14.md)
@@ -83,7 +83,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | kind          | description                | NIP                      |
 | ------------- | -------------------------- | ------------------------ |
 | `0`           | Metadata                   | [01](01.md)              |
-| `1`           | Short Text Note            | [01](01.md)              |
+| `1`           | Short Text Note            | [10](10.md)              |
 | `2`           | Recommend Relay            | 01 (deprecated)          |
 | `3`           | Follows                    | [02](02.md)              |
 | `4`           | Encrypted Direct Messages  | [04](04.md)              |
