@@ -26,8 +26,8 @@ This NIP uses a similar pattern as `NIP-32` (`G` and `g` instead of `L` and `l`)
 ## Keys
 Standards are assigned to human readable labels instead of labeling content with standards, which complicates both publishing and filtering. 
 
-- `geohash` - A geohash of any precision.
-- `countryCode` - A `ISO-3166-1/3` country code. 
+- `gh` - A geohash of any precision.
+- `countryCode` - A `ISO-3166-1/3` country code (`alpha-2` or `alpha-3` only, as `numeric` has collisions with geohashes (`gh`))
 - `countryName` - A `ISO-3166-1/3` compatible country name. 
 - `regionCode` - A `ISO-3166-2` region code. 
 - `regionName` - A `ISO-3166-2` compatible region name.
@@ -35,7 +35,7 @@ Standards are assigned to human readable labels instead of labeling content with
 - `cityCode` - _Placeholder, there is no city code standard_ 
 
 ## Defaults
-When `g` tag has no `tag[2]` it is assumed to be of type (key) `geohash` 
+When `g` tag has no `tag[2]` it is assumed to be of type (key) `gh` 
 
 ```json
 { tags:
@@ -60,20 +60,19 @@ When `g` tag has no `tag[2]` it is assumed to be of type (key) `geohash`
 ```json
 { tags:
   [
-    [ "G", "geohash" ],
-    [ "g", "u2mwdd8q4", "geohash"  ],
-    [ "g", "u2mwdd8q", "geohash"  ],
-    [ "g", "u2mwdd8", "geohash"  ],
-    [ "g", "u2mwdd", "geohash"  ],
-    [ "g", "u2mwd", "geohash"  ],
-    [ "g", "u2mw", "geohash"  ],
-    [ "g", "u2m", "geohash"  ],
-    [ "g", "u2", "geohash"  ],
-    [ "g", "u", "geohash"  ],
+    [ "G", "gh" ],
+    [ "g", "u2mwdd8q4", "gh"  ],
+    [ "g", "u2mwdd8q", "gh"  ],
+    [ "g", "u2mwdd8", "gh"  ],
+    [ "g", "u2mwdd", "gh"  ],
+    [ "g", "u2mwd", "gh"  ],
+    [ "g", "u2mw", "gh"  ],
+    [ "g", "u2m", "gh"  ],
+    [ "g", "u2", "gh"  ],
+    [ "g", "u", "gh"  ],
     [ "G", "countryCode" ],
     [ "g", "AI", "countryCode"],
     [ "g", "AIA", "countryCode" ],
-    [ "g", "660", "countryCode" ],
     [ "g", "DJ", "countryCode" ], //ISO-3166-3 "change"
     [ "G", "countryName" ],
     [ "g", "Anguilla", "countryName" ],
