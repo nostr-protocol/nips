@@ -78,6 +78,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-302: Relay Pools](302.md)
 
 ## Event Kinds
 | kind          | description                | NIP                      |
@@ -109,6 +110,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `5000`-`5999` | Job Request                | [90](90.md)              |
 | `6000`-`6999` | Job Result                 | [90](90.md)              |
 | `7000`        | Job Feedback               | [90](90.md)              |
+| `8000`        | Relay Pool Join Request    | [302](302.md)            |
 | `9041`        | Zap Goal                   | [75](75.md)              |
 | `9734`        | Zap Request                | [57](57.md)              |
 | `9735`        | Zap                        | [57](57.md)              |
@@ -138,6 +140,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30004`       | Curation sets              | [51](51.md)              |
 | `30008`       | Profile Badges             | [58](58.md)              |
 | `30009`       | Badge Definition           | [58](58.md)              |
+| `30010`       | Relay Pool                 | [302](302.md)            |
 | `30015`       | Interest sets              | [51](51.md)              |
 | `30017`       | Create or update a stall   | [15](15.md)              |
 | `30018`       | Create or update a product | [15](15.md)              |
@@ -207,6 +210,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `t`               | hashtag                              | --                   |                                       |
 | `alt`             | summary                              | --                   | [31](31.md)                           |
 | `amount`          | millisatoshis, stringified           | --                   | [57](57.md)                           |
+| `auth-required`   | either nip-42 or nip-98              | --                   | [302](302.md)                         |
 | `bolt11`          | `bolt11` invoice                     | --                   | [57](57.md)                           |
 | `challenge`       | challenge string                     | --                   | [42](42.md)                           |
 | `client`          | name, address                        | relay URL            | [89](89.md)                           |
