@@ -91,6 +91,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `6`           | Repost                     | [18](18.md)              |
 | `7`           | Reaction                   | [25](25.md)              |
 | `8`           | Badge Award                | [58](58.md)              |
+| `13`          | Seal                       | [59](59.md)              |
 | `16`          | Generic Repost             | [18](18.md)              |
 | `40`          | Channel Creation           | [28](28.md)              |
 | `41`          | Channel Metadata           | [28](28.md)              |
@@ -100,6 +101,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1021`        | Bid                        | [15](15.md)              |
 | `1022`        | Bid confirmation           | [15](15.md)              |
 | `1040`        | OpenTimestamps             | [03](03.md)              |
+| `1059`        | Gift Wrap                  | [59](59.md)              |
 | `1063`        | File Metadata              | [94](94.md)              |
 | `1311`        | Live Chat Message          | [53](53.md)              |
 | `1971`        | Problem Tracker            | [nostrocket][nostrocket] |
