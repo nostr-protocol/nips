@@ -148,6 +148,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30023`       | Long-form Content          | [23](23.md)              |
 | `30024`       | Draft Long-form Content    | [23](23.md)              |
 | `30030`       | Emoji sets                 | [51](51.md)              |
+| `30063`       | File metadata sets         | [51](51.md)              |
 | `30078`       | Application-specific Data  | [78](78.md)              |
 | `30311`       | Live Event                 | [53](53.md)              |
 | `30315`       | User Statuses              | [38](38.md)              |
