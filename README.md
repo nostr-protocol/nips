@@ -31,6 +31,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-07: `window.nostr` capability for web browsers](07.md)
 - ~~[NIP-08: Handling Mentions](08.md) --- **unrecommended**: deprecated in favor of [NIP-27](27.md)~~
 - [NIP-09: Event Deletion Request](09.md)
+- [NIP-0a: Audio Tracks](0a.md)
 - [NIP-10: Text Notes and Threads](10.md)
 - [NIP-11: Relay Information Document](11.md)
 - [NIP-13: Proof of Work](13.md)
@@ -276,6 +277,8 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `30818`       | Wiki article                    | [54](54.md)                            |
 | `30819`       | Redirects                       | [54](54.md)                            |
 | `31234`       | Draft Event                     | [37](37.md)                            |
+| `31337`       | Music Track                     | [0a](0a.md)                            |
+| `31338`       | Podcast Episode                 | [0a](0a.md)                            |
 | `31922`       | Date-Based Calendar Event       | [52](52.md)                            |
 | `31923`       | Time-Based Calendar Event       | [52](52.md)                            |
 | `31924`       | Calendar                        | [52](52.md)                            |
