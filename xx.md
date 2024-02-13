@@ -6,13 +6,13 @@ Audio Events
 
 `draft` `optional`
 
-This NIP defines a new event kind `34161` representing an audio track. These events are _parameterized replaceable_
+This NIP defines a new event kind `31337` representing an audio track. These events are _parameterized replaceable_
 and deletable per [NIP-09](09.md).
 
 Unlike a `kind 1` event with audio attached, audio events are intended to be surfaced in an audio-specific context
 rather than in a general micro-blogging context.
 
-A kind `34161` event's `content` should be summary or description of the audio content.
+A kind `31337` event's `content` should be summary or description of the audio content.
 
 The following tags are required:
 
@@ -21,10 +21,12 @@ The following tags are required:
 - `imeta` is as described in NIP 92. Multiple `imeta` tags MAY be included to provide for different use cases
   (e.g. streaming vs download).
 - `title` is the title of the audio track
+- `subject` is the title of the audio track (deprecated, but required for compatibility)
 
 The following tags are optional:
 
 - `i` is an external GUID.
+- `c` is the name of a category.
 - `creator` is the pubkey or plain text name of the track creator. This tag MAY have a mark denoting the creator's role.
 - `website` is an external url to a website related to the track.
 - `duration` is the duration of the audio track, in seconds.
@@ -37,12 +39,14 @@ Any `creator` tags containing a pubkey MUST have an accompanying `p` tag so that
   "id": <event_id>,
   "pubkey": <author_pubkey>,
   "created_at": <created_at>,
-  "kind": 34161,
+  "kind": 31337,
   "content": "Chill beats",
   "tags": [
     ["d", "<UUID>"],
+    ["c", "Chill Beats"],
     ["creator", "<pubkey>"],
     ["creator", "<plain text>", "feat"],
+    ["title", "Platinum Robots on the Moon"],
     ["subject", "Platinum Robots on the Moon"],
     ["published_at", "<published_at>"],
     ["imeta", "url https://example.com/my-track.m3u8 x <hash> ..."],
