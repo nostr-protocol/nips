@@ -41,7 +41,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-23: Long-form Content](23.md)
 - [NIP-24: Extra metadata fields and tags](24.md)
 - [NIP-25: Reactions](25.md)
-- [NIP-26: Delegated Event Signing](26.md)
+- [NIP-26: Delegated Event Signing](26.md) --- **unrecommended**: adds unecessary burden for little gain
 - [NIP-27: Text Note References](27.md)
 - [NIP-28: Public Chat](28.md)
 - [NIP-30: Custom Emoji](30.md)
