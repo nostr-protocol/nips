@@ -15,4 +15,7 @@ reverse chronological order.
 
 Breaking changes prior to 2024-01-01 are not yet documented.
 
-NOTE: the date is the date it was merged, not necessarily the date of the commit.
+## NOTES
+
+- If it isn't clear that a change is breaking or not, we list it.
+- The date is the date it was merged, not necessarily the date of the commit.
