@@ -7,7 +7,7 @@ Audio Events
 `draft` `optional`
 
 This NIP defines a new event kind `31337` representing an audio track. These events are _parameterized replaceable_
-and deletable per [NIP-09](09.md).
+as defined in [NIP-01](./01.md) and deletable per [NIP-09](09.md).
 
 Unlike a `kind 1` event with audio attached, audio events are intended to be surfaced in an audio-specific context
 rather than in a general micro-blogging context.
