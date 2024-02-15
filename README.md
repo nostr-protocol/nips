@@ -15,7 +15,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [Criteria for acceptance of NIPs](#criteria-for-acceptance-of-nips)
 - [Is this repository a centralizing factor?](#is-this-repository-a-centralizing-factor)
 - [How this repository works](#how-this-repository-works)
-- [Breaking Changes](BREAKING.md)
+- [Breaking Changes](#breaking-changes)
 - [License](#license)
 
 ---
@@ -262,7 +262,9 @@ Standards may emerge in two ways: the first way is that someone starts doing som
 
 These two ways of standardizing things are supported by this repository. Although the second is preferred, an effort will be made to codify standards emerged outside this repository into NIPs that can be later referenced and easily understood and implemented by others -- but obviously as in any human system discretion may be applied when standards are considered harmful.
 
-## [Breaking Changes](BREAKING.md)
+## Breaking Changes
+
+[Breaking Changes](BREAKING.md)
 
 ## License
 

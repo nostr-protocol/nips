@@ -13,6 +13,6 @@ reverse chronological order.
 | 2024-01-10  | 3d8652ea  | NIP-51   | list entries should be chronological |
 | 2024-01-01  | 27fef638  | NIP-57   | optional P tag added |
 
-
+Breaking changes prior to 2024-01-01 are not yet documented.
 
 NOTE: the date is the date it was merged, not necessarily the date of the commit.
