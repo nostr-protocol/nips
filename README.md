@@ -15,6 +15,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [Criteria for acceptance of NIPs](#criteria-for-acceptance-of-nips)
 - [Is this repository a centralizing factor?](#is-this-repository-a-centralizing-factor)
 - [How this repository works](#how-this-repository-works)
+- [Breaking Changes](#breaking-changes)
 - [License](#license)
 
 ---
@@ -260,6 +261,10 @@ There is a list of notable Nostr software developers who have commit access to t
 Standards may emerge in two ways: the first way is that someone starts doing something, then others copy it; the second way is that someone has an idea of a new standard that could benefit multiple clients and the protocol in general without breaking **backwards-compatibility** and the principle of having **a single way of doing things**, then they write that idea and submit it to this repository, other interested parties read it and give their feedback, then once most people reasonably agree we codify that in a NIP which client and relay developers that are interested in the feature can proceed to implement.
 
 These two ways of standardizing things are supported by this repository. Although the second is preferred, an effort will be made to codify standards emerged outside this repository into NIPs that can be later referenced and easily understood and implemented by others -- but obviously as in any human system discretion may be applied when standards are considered harmful.
+
+## Breaking Changes
+
+[Breaking Changes](BREAKING.md)
 
 ## License
 
