@@ -5,6 +5,7 @@ reverse chronological order.
 
 | Date        | Commit    | NIP      | Change |
 | ----------- | --------- | -------- | ------ |
+| 2024-02-16  | [cbec02ab](https://github.com/nostr-protocol/nips/commit/cbec02ab) | [NIP-49](49.md) | Password first normalized to NFKC |
 | 2024-02-15  | [afbb8dd0](https://github.com/nostr-protocol/nips/commit/afbb8dd0) | [NIP-39](39.md) | PGP identity was removed |
 | 2024-02-07  | [d3dad114](https://github.com/nostr-protocol/nips/commit/d3dad114)  | [NIP-46](46.md) | Connection token format was changed |
 | 2024-01-30  | [1a2b21b6](https://github.com/nostr-protocol/nips/commit/1a2b21b6)  | [NIP-59](59.md) | 'p' tag became optional |
