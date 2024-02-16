@@ -12,6 +12,10 @@ reverse chronological order.
 | 2023-01-27  | [c2f34817](https://github.com/nostr-protocol/nips/commit/c2f34817)  | [NIP-47](47.md) | optional expiration tag should be honored |
 | 2024-01-10  | [3d8652ea](https://github.com/nostr-protocol/nips/commit/3d8652ea)  | [NIP-02](02.md) | list entries should be chronological |
 | 2024-01-10  | [3d8652ea](https://github.com/nostr-protocol/nips/commit/3d8652ea)  | [NIP-51](51.md) | list entries should be chronological |
+| 2023-12-30  | [29869821](https://github.com/nostr-protocol/nips/commit/29869821)  | [NIP-52](52.md) | 'name' tag was removed (use 'title' tag instead) |
+| 2023-12-27  | [17c67ef5](https://github.com/nostr-protocol/nips/commit/17c67ef5)  | [NIP-94](94.md) | 'aes-256-gcm' tag was removed |
+| 2023-12-03  | [0ba45895](https://github.com/nostr-protocol/nips/commit/0ba45895)  | [NIP-01](01.md) | WebSocket status code `4000` was replaced by 'CLOSED' message |
+| 2023-12-02  | [d67988e6](https://github.com/nostr-protocol/nips/commit/d67988e6)  | NIP-22 | NIP-22 was deleted |
 
 Breaking changes prior to 2024-01-01 are not yet documented.
 
