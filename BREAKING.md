@@ -19,8 +19,15 @@ reverse chronological order.
 | 2023-11-20  | [7822a8b1](https://github.com/nostr-protocol/nips/commit/7822a8b1)  | [NIP-51](51.md) | `kind: 30000` and `kind: 30001` were deprecated |
 | 2023-11-11  | [cbdca1e9](https://github.com/nostr-protocol/nips/commit/cbdca1e9)  | [NIP-84](84.md) | 'range' tag was removed |
 | 2023-11-07  | [108b7f16](https://github.com/nostr-protocol/nips/commit/108b7f16)  | [NIP-01](01.md) | 'OK' message must have 4 items |
+| 2023-10-17  | [cf672b76](https://github.com/nostr-protocol/nips/commit/cf672b76)  | [NIP-03](03.md) | 'block' tag was removed |
+| 2023-09-29  | [7dc6385f](https://github.com/nostr-protocol/nips/commit/7dc6385f)  | [NIP-57](57.md) | optional 'a' tag was included in `zap receipt` |
+| 2023-08-21  | [89915e02](https://github.com/nostr-protocol/nips/commit/89915e02)  | [NIP-11](11.md) | 'min_prefix' was removed |
+| 2023-08-20  | [37c4375e](https://github.com/nostr-protocol/nips/commit/37c4375e)  | [NIP-01](01.md) | replaceable events with same timestamp should be retained event with lowest id |
+| 2023-08-15  | [88ee873c](https://github.com/nostr-protocol/nips/commit/88ee873c)  | [NIP-15](15.md) | 'countries' tag was renamed to 'regions' |
+| 2023-08-11  | [d87f8617](https://github.com/nostr-protocol/nips/commit/d87f8617)  | [NIP-25](25.md) | empty `content` should be considered as "+" |
+| 2023-08-01  | [5d63b157](https://github.com/nostr-protocol/nips/commit/5d63b157)  | [NIP-57](57.md) | 'zap' tag was changed |
 
-Breaking changes prior to 2023-11-01 are not yet documented.
+Breaking changes prior to 2023-08-01 are not yet documented.
 
 ## NOTES
 
