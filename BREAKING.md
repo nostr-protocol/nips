@@ -17,7 +17,7 @@ reverse chronological order.
 | 2023-12-03  | [0ba45895](https://github.com/nostr-protocol/nips/commit/0ba45895)  | [NIP-01](01.md) | WebSocket status code `4000` was replaced by 'CLOSED' message |
 | 2023-12-02  | [d67988e6](https://github.com/nostr-protocol/nips/commit/d67988e6)  | NIP-22 | NIP-22 was deleted |
 
-Breaking changes prior to 2024-01-01 are not yet documented.
+Breaking changes prior to 2023-12-01 are not yet documented.
 
 ## NOTES
 
