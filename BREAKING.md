@@ -30,8 +30,9 @@ reverse chronological order.
 | 2023-07-12  | [a1cd2bd8](https://github.com/nostr-protocol/nips/commit/a1cd2bd8)  | [NIP-25](25.md) | custom emoji was supported |
 | 2023-06-18  | [83cbd3e1](https://github.com/nostr-protocol/nips/commit/83cbd3e1)  | [NIP-11](11.md) | 'image' was renamed to 'icon' |
 | 2023-04-13  | [bf0a0da6](https://github.com/nostr-protocol/nips/commit/bf0a0da6)  | [NIP-15](15.md) | different NIP was re-added as NIP-15 |
+| 2023-03-15  | [e1004d3d](https://github.com/nostr-protocol/nips/commit/e1004d3d)  | [NIP-19](19.md) | `1: relay` was changed to optionally |
 
-Breaking changes prior to 2023-04-01 are not yet documented.
+Breaking changes prior to 2023-03-01 are not yet documented.
 
 ## NOTES
 
