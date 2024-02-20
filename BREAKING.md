@@ -26,8 +26,12 @@ reverse chronological order.
 | 2023-08-15  | [88ee873c](https://github.com/nostr-protocol/nips/commit/88ee873c)  | [NIP-15](15.md) | 'countries' tag was renamed to 'regions' |
 | 2023-08-11  | [d87f8617](https://github.com/nostr-protocol/nips/commit/d87f8617)  | [NIP-25](25.md) | empty `content` should be considered as "+" |
 | 2023-08-01  | [5d63b157](https://github.com/nostr-protocol/nips/commit/5d63b157)  | [NIP-57](57.md) | 'zap' tag was changed |
+| 2023-07-15  | [d1814405](https://github.com/nostr-protocol/nips/commit/d1814405)  | [NIP-01](01.md) | `since` and `until` filters should be `since <= created_at <= until` |
+| 2023-07-12  | [a1cd2bd8](https://github.com/nostr-protocol/nips/commit/a1cd2bd8)  | [NIP-25](25.md) | custom emoji was supported |
+| 2023-06-18  | [83cbd3e1](https://github.com/nostr-protocol/nips/commit/83cbd3e1)  | [NIP-11](11.md) | 'image' was renamed to 'icon' |
+| 2023-04-13  | [bf0a0da6](https://github.com/nostr-protocol/nips/commit/bf0a0da6)  | [NIP-15](15.md) | different NIP was re-added as NIP-15 |
 
-Breaking changes prior to 2023-08-01 are not yet documented.
+Breaking changes prior to 2023-04-01 are not yet documented.
 
 ## NOTES
 
