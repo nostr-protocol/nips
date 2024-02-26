@@ -94,6 +94,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `7`           | Reaction                   | [25](25.md)              |
 | `8`           | Badge Award                | [58](58.md)              |
 | `9`           | Group Chat Message         | [29](29.md)              |
+| `10`          | Group Chat Threaded Reply  | [29](29.md)              |
 | `11`          | Group Thread               | [29](29.md)              |
 | `12`          | Group Thread Reply         | [29](29.md)              |
 | `13`          | Seal                       | [59](59.md)              |
