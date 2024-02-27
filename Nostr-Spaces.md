@@ -8,7 +8,7 @@ The Nostr Spaces Protocol (NIP) is designed to extend the capabilities of the No
 
 ### Background
 
-protocol that enables decentralized, censorship-resistant social networking and communication. It uses cryptographic keys for identities, relays for data transmission, and client applications for user interfaces, fostering a user-owned and operated network. Nostr's simplicity and adaptability have led to its application in various domains, including social media and messaging.
+The protocol enables decentralized, censorship-resistant social networking and communication. It uses cryptographic keys for identities, relays for data transmission, and client applications for user interfaces, fostering a user-owned and operated network. Nostr's simplicity and adaptability have led to its application in various domains, including social media and messaging.
 
 Building upon Nostr's foundational principles, the Nostr Spaces Protocol introduces the concept of "spaces" — virtual environments where individuals can engage in live audio broadcasting and listening sessions. These spaces operate within a decentralized framework, ensuring user control over content and interactions without central oversight. This specification aims to equip developers with the necessary information to create applications that utilize decentralized spaces for live audio experiences, promoting innovation, interoperability, and a rich ecosystem of Nostr-based applications that prioritize user autonomy and privacy.
 
