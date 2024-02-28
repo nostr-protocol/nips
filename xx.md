@@ -42,7 +42,7 @@ Any `creator` tags containing a pubkey MUST have an accompanying `p` tag so that
   "kind": 31337,
   "content": "Chill beats",
   "tags": [
-    ["d", "<UUID>"],
+    ["d", "<id>"],
     ["c", "Chill Beats"],
     ["creator", "<pubkey>"],
     ["creator", "<plain text>", "feat"],
