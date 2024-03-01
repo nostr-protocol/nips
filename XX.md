@@ -1,4 +1,4 @@
-NIP-44 Places 
+NIP-XX Places 
 ======
 
 `draft` `optional`
