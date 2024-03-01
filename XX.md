@@ -79,13 +79,13 @@ The `coordinates` property of the GeoJSON object will provide the [longitude, la
 
 A subset of OpenStreeMaps tags have been seleceted to create a standard list of properties that kind 37515 clients can expect to handle.
 
-#### Required Tags
+#### Required Properties
 
 | Tag Key          | Tag Value              | Example                |
 |------------------|------------------------|------------------------|
 | `"name"`         | The name for the Place |                        |
 
-#### Optional Tags
+#### Optional Properties
 
 | Tag Key          | Tag Value              | Example                |
 |------------------|------------------------|------------------------|
@@ -103,9 +103,7 @@ A subset of OpenStreeMaps tags have been seleceted to create a standard list of 
 | `"amenity"`      | https://wiki.openstreetmap.org/wiki/Key:amenity |                        |
 | `"wheelchair"`   | https://wiki.openstreetmap.org/wiki/Key:wheelchair | "yes" for accessible, "no" for non-accessible |
 
-
-
-
+#### Example
 A Place creator can describe the properties of their Place using these tags like this:
 
 ```json
@@ -119,14 +117,14 @@ A Place creator can describe the properties of their Place using these tags like
 #### Requirements
 
 - Only one of each Property tag MAY be used in a single event.
-- The 0th element of a Property tag, such as `"name"`, is the key. The next element is the value, such as `"Jitter's Coffee Shop"`. If the value is an empty string, it denotes the complete removal of the property from the Place. This is NOT the same as using something like `false` as the value.
+- The 0th element of a Property tag, such as `"name"`, is the key. The next element is the value, such as `"Jitter's Coffee Shop"`. The value should not be an empty string in a kind 37515. However, in a kind 1754, if the value is an empty string it denotes the complete removal of the property from the Place. This is NOT the same as using something like `"false"` as the value.
 
 Property tags are __not__ indexed by relays. They can be used for client-side filtering and interpretation of Places after they are queried from the relays; the `g` tag is the preferred method to query for Places in an area.
 
 
 ### Contributor Tags
 
-The Place creator can designate other pubkeys via `contributor` tags. If these `contributor` pubkeys publish kind `1754` events to apply properties to the Place, clients SHOULD give their properties higher consideration than properties applied by non-contributor pubkeys.
+The Place creator can designate other pubkeys via `"contributor"` tags. If these `"contributor"` pubkeys publish kind `1754` events to apply properties to the Place, clients SHOULD give their properties higher consideration than properties applied by non-contributor pubkeys.
 
 ### Other Tags
 
@@ -137,9 +135,7 @@ The Place creator can designate other pubkeys via `contributor` tags. If these `
 Property Application Kind 1754
 --------
 
-A kind `1754` event MAY be used to apply properties to other Places. This enables crowdsourcing of useful Place information, but clients ultimately decide how this information is used. A client may request kind `1754` and filter by `a` tag to get all of the Property Application events for a particular place.
-
-If a pubkey is listed in a Place's `"contributor"` tag, clients SHOULD consider its `1754` events authoritative, but still subordinate to the Place's own property tags.
+A kind `1754` event MAY be used to apply properties to other Places. This enables crowdsourcing of useful Place information, but clients ultimately decide how this information is used. A client may request kind `1754` and filter by `a` tag to get all of the Property Application events for a particular Place.
 
 ### Content
 
@@ -147,16 +143,17 @@ The `content` field MAY include a human-readable explanation or note for the eve
 
 ### Property Target
 
-The Property Application event MUST include one or more `"a"` tags indicating
-the target Places the props should be applied to.
+The Property Application event MUST include one or more `"a"` tags indicating the target Place(s) the props should be applied to.
 
 ### Property Interpretation
 
 The properties applied to the target Place by publishing a kind 1754 are to be interpreted at the client's discretion. The following is a recommendation for how the precedence of properties can be determined:
 
 1. A Place's own property tags take precedence in absence of applicable kind 1754 events.
-2. Properties applied by a pubkey who is listed in a `contributor` tag on the Place should take precedence over the Place's original properties.
-3. Properties applied by any other pubkey should only take precedence if that pubkey has a high Web of Trust score to the current user.
+2. Properties applied by a pubkey who is listed in a `"contributor"` tag on the Place should take precedence over the Place's original properties.
+3. Properties applied by any other pubkey should only take precedence over the original Place and `"contributor"` properties if that pubkey has a high Web of Trust score to the current user.
+
+Kind 37515 clients could provide a convenient UI for Place owners to copy-in kind 1754 properties they agree with; this would enable kind 1754 events to function as recommendations even if they are outside of the Place owner's Web of Trust.
 
 ### Kind 1754 Examples
 
