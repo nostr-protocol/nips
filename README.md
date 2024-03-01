@@ -15,6 +15,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [Criteria for acceptance of NIPs](#criteria-for-acceptance-of-nips)
 - [Is this repository a centralizing factor?](#is-this-repository-a-centralizing-factor)
 - [How this repository works](#how-this-repository-works)
+- [Breaking Changes](#breaking-changes)
 - [License](#license)
 
 ---
@@ -22,9 +23,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 ## List
 
 - [NIP-01: Basic protocol flow description](01.md)
-- [NIP-02: Contact List and Petnames](02.md)
+- [NIP-02: Follow List](02.md)
 - [NIP-03: OpenTimestamps Attestations for Events](03.md)
-- [NIP-04: Encrypted Direct Message](04.md)
+- [NIP-04: Encrypted Direct Message](04.md) --- **unrecommended**: deprecated in favor of [NIP-44](44.md)
 - [NIP-05: Mapping Nostr keys to DNS-based internet identifiers](05.md)
 - [NIP-06: Basic key derivation from mnemonic seed phrase](06.md)
 - [NIP-07: `window.nostr` capability for web browsers](07.md)
@@ -44,6 +45,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-26: Delegated Event Signing](26.md)
 - [NIP-27: Text Note References](27.md)
 - [NIP-28: Public Chat](28.md)
+- [NIP-29: Relay-based Groups](29.md)
 - [NIP-30: Custom Emoji](30.md)
 - [NIP-31: Dealing with Unknown Events](31.md)
 - [NIP-32: Labeling](32.md)
@@ -52,10 +54,12 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
 - [NIP-42: Authentication of clients to relays](42.md)
+- [NIP-44: Versioned Encryption](44.md)
 - [NIP-45: Counting results](45.md)
 - [NIP-46: Nostr Connect](46.md)
 - [NIP-47: Wallet Connect](47.md)
 - [NIP-48: Proxy Tags](48.md)
+- [NIP-49: Private Key Encryption](49.md)
 - [NIP-50: Search Capability](50.md)
 - [NIP-51: Lists](51.md)
 - [NIP-52: Calendar Events](52.md)
@@ -63,6 +67,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-56: Reporting](56.md)
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
+- [NIP-59: Gift Wrap](59.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-72: Moderated Communities](72.md)
 - [NIP-75: Zap Goals](75.md)
@@ -70,29 +75,39 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-84: Highlights](84.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-90: Data Vending Machines](90.md)
+- [NIP-92: Media Attachments](92.md)
 - [NIP-94: File Metadata](94.md)
+- [NIP-96: HTTP File Storage Integration](96.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
 
 ## Event Kinds
 | kind          | description                | NIP                      |
-| ------------- | -------------------------- | -----------              |
-| `0`           | Metadata                   | [1](01.md)               |
-| `1`           | Short Text Note            | [1](01.md)               |
-| `2`           | Recommend Relay            |                          |
-| `3`           | Contacts                   | [2](02.md)               |
-| `4`           | Encrypted Direct Messages  | [4](04.md)               |
-| `5`           | Event Deletion             | [9](09.md)               |
+| ------------- | -------------------------- | ------------------------ |
+| `0`           | Metadata                   | [01](01.md)              |
+| `1`           | Short Text Note            | [01](01.md)              |
+| `2`           | Recommend Relay            | 01 (deprecated)          |
+| `3`           | Follows                    | [02](02.md)              |
+| `4`           | Encrypted Direct Messages  | [04](04.md)              |
+| `5`           | Event Deletion             | [09](09.md)              |
 | `6`           | Repost                     | [18](18.md)              |
 | `7`           | Reaction                   | [25](25.md)              |
 | `8`           | Badge Award                | [58](58.md)              |
+| `9`           | Group Chat Message         | [29](29.md)              |
+| `10`          | Group Chat Threaded Reply  | [29](29.md)              |
+| `11`          | Group Thread               | [29](29.md)              |
+| `12`          | Group Thread Reply         | [29](29.md)              |
+| `13`          | Seal                       | [59](59.md)              |
 | `16`          | Generic Repost             | [18](18.md)              |
 | `40`          | Channel Creation           | [28](28.md)              |
 | `41`          | Channel Metadata           | [28](28.md)              |
 | `42`          | Channel Message            | [28](28.md)              |
 | `43`          | Channel Hide Message       | [28](28.md)              |
 | `44`          | Channel Mute User          | [28](28.md)              |
+| `1021`        | Bid                        | [15](15.md)              |
+| `1022`        | Bid confirmation           | [15](15.md)              |
 | `1040`        | OpenTimestamps             | [03](03.md)              |
+| `1059`        | Gift Wrap                  | [59](59.md)              |
 | `1063`        | File Metadata              | [94](94.md)              |
 | `1311`        | Live Chat Message          | [53](53.md)              |
 | `1754`        | Prop Application           | [44](/44.md)             |
@@ -103,6 +118,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `5000`-`5999` | Job Request                | [90](90.md)              |
 | `6000`-`6999` | Job Result                 | [90](90.md)              |
 | `7000`        | Job Feedback               | [90](90.md)              |
+| `9000`-`9030` | Group Control Events       | [29](29.md)              |
 | `9041`        | Zap Goal                   | [75](75.md)              |
 | `9734`        | Zap Request                | [57](57.md)              |
 | `9735`        | Zap                        | [57](57.md)              |
@@ -115,8 +131,10 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10005`       | Public chats list          | [51](51.md)              |
 | `10006`       | Blocked relays list        | [51](51.md)              |
 | `10007`       | Search relays list         | [51](51.md)              |
+| `10009`       | User groups                | [51](51.md), [29](29.md) |
 | `10015`       | Interests list             | [51](51.md)              |
 | `10030`       | User emoji list            | [51](51.md)              |
+| `10096`       | File storage server list   | [96](96.md)              |
 | `13194`       | Wallet Info                | [47](47.md)              |
 | `21000`       | Lightning Pub RPC          | [Lightning.Pub][lnpub]   |
 | `22242`       | Client Authentication      | [42](42.md)              |
@@ -134,9 +152,12 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30015`       | Interest sets              | [51](51.md)              |
 | `30017`       | Create or update a stall   | [15](15.md)              |
 | `30018`       | Create or update a product | [15](15.md)              |
+| `30019`       | Marketplace UI/UX          | [15](15.md)              |
+| `30020`       | Product sold as an auction | [15](15.md)              |
 | `30023`       | Long-form Content          | [23](23.md)              |
 | `30024`       | Draft Long-form Content    | [23](23.md)              |
 | `30030`       | Emoji sets                 | [51](51.md)              |
+| `30063`       | Release artifact sets      | [51](51.md)              |
 | `30078`       | Application-specific Data  | [78](78.md)              |
 | `30311`       | Live Event                 | [53](53.md)              |
 | `30315`       | User Statuses              | [38](38.md)              |
@@ -148,6 +169,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31925`       | Calendar Event RSVP        | [52](52.md)              |
 | `31989`       | Handler recommendation     | [89](89.md)              |
 | `31990`       | Handler information        | [89](89.md)              |
+| `39000-9`     | Group metadata events      | [29](29.md)              |
 | `34550`       | Community Definition       | [72](72.md)              |
 | `37515`       | Place                      | [44](44.md)              |
 
@@ -194,6 +216,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `l`               | label, label namespace               | annotations          | [32](32.md)                           |
 | `L`               | label namespace                      | --                   | [32](32.md)                           |
 | `m`               | MIME type                            | --                   | [94](94.md)                           |
+| `q`               | event id (hex)                       | relay URL    | [18](18.md)                           |
 | `r`               | a reference (URL, etc)               | petname              |                                       |
 | `r`               | relay url                            | marker               | [65](65.md)                           |
 | `t`               | hashtag                              | --                   |                                       |
@@ -210,6 +233,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `expiration`      | unix timestamp (string)              | --                   | [40](40.md)                           |
 | `goal`            | event id (hex)                       | relay URL            | [75](75.md)                           |
 | `image`           | image URL                            | dimensions in pixels | [23](23.md), [58](58.md)              |
+| `imeta`           | inline metadata                      | --                   | [92](92.md)                           |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                   | [57](57.md)                           |
 | `location`        | location string                      | --                   | [52](52.md), [99](99.md)              |
 | `name`            | badge name                           | --                   | [58](58.md)                           |
@@ -221,6 +245,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `published_at`    | unix timestamp (string)              | --                   | [23](23.md)                           |
 | `relay`           | relay url                            | --                   | [42](42.md)                           |
 | `relays`          | relay list                           | --                   | [57](57.md)                           |
+| `server`          | file storage server url              | --                   | [96](96.md)                           |
 | `subject`         | subject                              | --                   | [14](14.md)                           |
 | `summary`         | article summary                      | --                   | [23](23.md)                           |
 | `thumb`           | badge thumbnail                      | dimensions in pixels | [58](58.md)                           |
@@ -248,6 +273,10 @@ There is a list of notable Nostr software developers who have commit access to t
 Standards may emerge in two ways: the first way is that someone starts doing something, then others copy it; the second way is that someone has an idea of a new standard that could benefit multiple clients and the protocol in general without breaking **backwards-compatibility** and the principle of having **a single way of doing things**, then they write that idea and submit it to this repository, other interested parties read it and give their feedback, then once most people reasonably agree we codify that in a NIP which client and relay developers that are interested in the feature can proceed to implement.
 
 These two ways of standardizing things are supported by this repository. Although the second is preferred, an effort will be made to codify standards emerged outside this repository into NIPs that can be later referenced and easily understood and implemented by others -- but obviously as in any human system discretion may be applied when standards are considered harmful.
+
+## Breaking Changes
+
+[Breaking Changes](BREAKING.md)
 
 ## License
 
