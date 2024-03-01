@@ -10,13 +10,13 @@ Rationale
 
 This NIP provides a decentralized mechanism for people to publish places that matter to them on a map without any governing intermediaries such as Google Maps or OpenStreetMaps.
 
-A Place event is cryptographically owned by its creator who has the sole ability to edit it. 
+A Place event is cryptographically owned by its creator who has the sole ability to edit it (replaceable event). 
 
-Places can be zapped, reviewed, labeled, commented on, or shared like any other nostr event.
+Places can be zapped, reviewed, labeled, commented on, reacted to, or shared like any other nostr event.
 
-High quality places can be found by following pubkeys who publish them, reviews, [NIP-51 lists](/51.md), or even attached [NIP-13 proof-of-work](/13.md).
+High quality places can be found by following pubkeys who publish them, reviews, [NIP-51 lists called Worlds](/51.md), or even attached [NIP-13 proof-of-work](/13.md).
 
-Properties of a Place may be defined by its creator, but may also be crowdsourced as discussed below, enabling a balance between ownership and open-source contribution.
+This NIP defines standardized properties that may be applied to Places as tags. These properties may also be crowdsourced as discussed below, enabling a balance between ownership and open-source contribution.
 
 > [!TIP]
 > The 7515 in 37515 is alphanumeric code for GEO
@@ -38,7 +38,7 @@ Properties of a Place may be defined by its creator, but may also be crowdsource
 Place Event Structure
 -----
 
-A Place is comprised of two main parts: GeoJSON defines the geospatial structure of the Place in a standard format that can be displayed on a map, and `prop` tags enable the definition of properties for the Place that adhere to existing mapping standards while also enabling crowdsourcing of properties.
+A Place is comprised of two main parts: GeoJSON defines the geospatial structure of the Place in a standard format that can be displayed on a map, and tags containing properties for the Place.
 
 ```javascript
 {
@@ -46,15 +46,12 @@ A Place is comprised of two main parts: GeoJSON defines the geospatial structure
   content: '{"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"coordinates":[-63.704031143965054,27.04213619251243],"type":"Point"}}]}' // stringified JSON. Use https://geojson.io to easily create GeoJSON objects for testing.
   tags: [
     ["d", "something unique"], // unique identifier for replaceable event
-    ["L", "osm"], // specify usage of OpenStreetMaps namespace
-    ["prop", "name", "Jitter's Coffee Shop", "osm"],
-    ["prop", "opening_hours", "Mo-Fr_6:00-20:00,Sa-Su_6:00-17:00", "osm"],
-    ["L", "schema/Place"], // specify usage of schema.org/Place namespace
-    ["prop", "logo", "https://nostr.build/logo.png", "schema/Place"],
-    ["L", "schema/PostalAddress"], // specify usage of schema.org/PostalAddress namespace, even though this is technically also underneath schema/Place's `address` property:
-    ["prop", "addressCountry", "USA", "schema/PostalAddress"],
-    ["admin", "5c83da77af1dec6d7289834998ad7aafbd9e2191396d75ec3cc27f5a77226f36"]
-    ["admin", "f7234bd4c1394dda46d09f35bd384dd30cc552ad5541990f98844fb06676e9ca"]
+    ["name", "Jitter's Coffee Shop"], // name property
+    ["opening_hours", "Mo-Fr_6:00-20:00,Sa-Su_6:00-17:00"], // opening_hours property
+    ["logo_url", "https://nostr.build/logo.png"], // logo_url property
+    ["country", "USA"], // country property
+    ["contributor", "5c83da77af1dec6d7289834998ad7aafbd9e2191396d75ec3cc27f5a77226f36"]
+    ["contributor", "f7234bd4c1394dda46d09f35bd384dd30cc552ad5541990f98844fb06676e9ca"]
     ["g", "dtee7"], // geohash of place; should be as accurate as possible
     ["g", "dtee"], // all less-precise geohashes must be defined to allow for searching -- see https://github.com/nostr-protocol/nips/pull/136#issuecomment-1788549584
     ["g", "dte"], 
@@ -78,74 +75,57 @@ The `coordinates` property of the GeoJSON object will provide the [longitude, la
 > GeoJSON can contain multiple features, which means your Place may be a feature collection made up of multiple points or lines or polygons. Each feature can have its own `properties` object which may not be empty if the data is copied from somewhere else. However, the `properties` of a feature don't necessarily apply to the overall Place. Therefore, clients SHOULD NOT use the `properties` object as properties for the Place. See below for how to define properties that apply to the Place.
 > If you have multiple features rich in properties, consider splitting them into separate Places.
 
-### Prop Tags
+### Property Tags
 
-A Place creator can describe the properties of their Place using `prop` tags which represent `key = value` pairs. Prop tags take the following form:
+A subset of OpenStreeMaps tags have been seleceted to create a standard list of properties that kind 37515 clients can expect to handle.
+
+#### Required Tags
+
+| Tag Key          | Tag Value              | Example                |
+|------------------|------------------------|------------------------|
+| `"name"`         | The name for the Place |                        |
+
+#### Optional Tags
+
+| Tag Key          | Tag Value              | Example                |
+|------------------|------------------------|------------------------|
+| `"phone"`        | +CC XXX XXX XXX format, where CC is a country code. |                        | 
+| `"website"`      | URL beginning with https://                       |                        |
+| `"addr:state"`   |                        |                        |
+| `"addr:province"`|                        |                        |
+| `"addr:street"`  |                        |                        |
+| `"addr:housenumber"`|                      |                        |
+| `"addr:city"`    |                        |                        |
+| `"addr:postcode"`|                        |                        |
+| `"addr:country"` |                        |                        |
+| `"opening_hours"`| https://wiki.openstreetmap.org/wiki/Key:opening_hours/specification  | "Mo-Fr 06:00-20:00,Sa 08:00-16:00" |
+| `"amenity"`      | https://wiki.openstreetmap.org/wiki/Key:amenity |                        |
+| `"wheelchair"`   | https://wiki.openstreetmap.org/wiki/Key:wheelchair | "yes" for accessible, "no" for non-accessible |
+
+
+
+
+A Place creator can describe the properties of their Place using these tags like this:
 
 ```json
 "tags": [
-  ["L", <namespace>]
-  ["prop", <key>, <value>, <namespace>]
+  ["name", "Jitter's Coffee Shop"],
+  ["website", "https://example.com"],
+  ["opening_hours", "Mo-Fr 06:00-20:00, Sa 08:00-16:00"]
 ]
 ```
-
-The `osm` [(Open Street Maps)](https://taginfo.openstreetmap.org/) and `schema/Place` [(schema.org/Place)](https://schema.org/Place) namespaces both provide extensive property lists that can be utilized in the prop tag for a Place. Other namespaces may be used as well. Clients can choose which keys/namespaces they support and provide auto-complete or property selection when creating a Place; they may also use the namespace as contextual information for how to interpret/display the prop.
 
 #### Requirements
 
-- The `"L"` tag MUST be present as specified in [NIP-32](https://github.com/nostr-protocol/nips/blob/master/32.md).
-- The `key` and `value` SHOULD be defined in the referenced namespace.
-- The last element in the prop tag MUST be a `namespace` defined in the `"L"` tag.
-- Multiple `"prop"` tags MAY be used in a single event. 
-- Multiple `"L"` tags MAY be used in a single event, but each namespace MUST be referenced by at least 1 prop tag.
-- `key` MUST not be empty. 
-- If `value` is empty, it denotes the complete removal of the property from the Place. This is NOT the same as using something like `false` as the value.
+- Only one of each Property tag MAY be used in a single event.
+- The 0th element of a Property tag, such as `"name"`, is the key. The next element is the value, such as `"Jitter's Coffee Shop"`. If the value is an empty string, it denotes the complete removal of the property from the Place. This is NOT the same as using something like `false` as the value.
 
-#### Using Props
-
-Prop tags are __not__ indexed by relays. Props can be used for client-side filtering and interpretation of Places after they are queried from the relays; the `g` tag is the preferred method to query for Places in an area.
+Property tags are __not__ indexed by relays. They can be used for client-side filtering and interpretation of Places after they are queried from the relays; the `g` tag is the preferred method to query for Places in an area.
 
 
-#### How to Translate Props from Various Namespaces
+### Contributor Tags
 
-Some namespaces are hierarchical (including Schema) where a property may contain another collection of properties instead of a simple text value. An example of this is the `address` property of `schema/Place` which may be either text or a `schema/PostalAddress` object. If you wanted to specify individual properties of `PostalAddress`, you would do so like this:
-
-```javascript
-"tags": [
-  ["L", "schema/PostalAddress"],
-  ["prop", "addressCountry", "USA", "schema/PostalAddress"],
-  ["prop", "postalCode", "90743", "schema/PostalAddress"]
-]
-```
-
-As you can see, these properties don't actually belong to `schema/Place`, even though `addressCountry` and `postalCode` can technically be considered a subproperty of the `address` property of `schema/Place`. Essentially, by specifying the _specific_ namespace, all properties can be represented in a flat key=value structure. This prevents the need to store anything but strict key=value strings in a `"prop"` tag.
-
-If a namespace has multiple levels of keys and you want to specify a lower one, you can do so like this.
-
-Imagine a fictional namespace called `kitchen`:
-> - kitchen
->   - blender - brand name of blender
->   - fridge
->     - status - true for on, false for off
->     - freezer
->       - __temperature - in degrees F__
->       - spaceAvailable - as a percentage of space left unused
->   - toaster
->     - status - true for on, false for off
->     - cookTime - how long to cook in seconds
->
-This is how we would specify a prop for the __temperature__ of the freezer:
-> ```javascript
-> "tags": [
->   ["L", "kitchen/fridge/freezer"],
->   ["prop", "temperature", "34", "kitchen/fridge/freezer"]
-> ]
-> ```
-Because the `kitchen` namespace is not flat, we can traverse it with a `/` so that our prop only contains a simple key=value pair.
-
-### Admin Tags
-
-The Place creator can designate other pubkeys via `admin` tags. If these `admin` pubkeys publish kind `1754` events to apply properties to the Place, clients SHOULD give their props higher consideration than props applied by non-admin pubkeys.
+The Place creator can designate other pubkeys via `contributor` tags. If these `contributor` pubkeys publish kind `1754` events to apply properties to the Place, clients SHOULD give their properties higher consideration than properties applied by non-contributor pubkeys.
 
 ### Other Tags
 
@@ -153,31 +133,40 @@ The Place creator can designate other pubkeys via `admin` tags. If these `admin`
 - `"g"` tag MUST be present and as accurate to the GeoJSON geometry as possible. This allows for indexed relay queries to retrieve Places in an area. Retrieving Places based on the geohash closest to the screen's viewport will be the primary method of retrieving Places from relays.
 - `"expiration"` may be used for temporary Places such as marking a speed trap.
 
-Prop Application Kind 1754
+Property Application Kind 1754
 --------
 
-A kind `1754` event MAY be used to apply props to other Places. This enables crowdsourcing of useful Place information, but clients ultimately decide how this information is used.
+A kind `1754` event MAY be used to apply properties to other Places. This enables crowdsourcing of useful Place information, but clients ultimately decide how this information is used. A client may request kind `1754` and filter by `a` tag to get all of the Property Application events for a particular place.
 
-If a pubkey is listed in a Place's `"admin"` tag, clients SHOULD consider its `1754` events authoritative, but still subordinate to the Place's own prop tags.
+If a pubkey is listed in a Place's `"contributor"` tag, clients SHOULD consider its `1754` events authoritative, but still subordinate to the Place's own property tags.
 
 ### Content
+
 The `content` field MAY include a human-readable explanation or note for the event.
 
-### Prop Target
-The prop event MUST include one or more `"a"` tags indicating
-the target Places the props should be applied to. 
+### Property Target
 
-### Examples
+The Property Application event MUST include one or more `"a"` tags indicating
+the target Places the props should be applied to.
 
-Crowdsourcing a prop for wheelchair accessibility to an existing Place using an OpenStreetMap (`osm`) tag:
+### Property Interpretation
+
+The properties applied to the target Place by publishing a kind 1754 are to be interpreted at the client's discretion. The following is a recommendation for how the precedence of properties can be determined:
+
+1. A Place's own property tags take precedence in absence of applicable kind 1754 events.
+2. Properties applied by a pubkey who is listed in a `contributor` tag on the Place should take precedence over the Place's original properties.
+3. Properties applied by any other pubkey should only take precedence if that pubkey has a high Web of Trust score to the current user.
+
+### Kind 1754 Examples
+
+Crowdsourcing a property for wheelchair accessibility to an existing Place:
 
 ```json
 {
   "kind": 1754,
   "content": "Adding local observations regarding wheelchair accessibility at Jitter's Coffee Shop.",
   "tags": [
-    ["L", "osm"],
-    ["prop", "access:wheelchair", "yes", "osm"]
+    ["wheelchair", "yes"]
     ["a", "37515:0af3b...:something unique"]
   ],
 }
@@ -192,8 +181,7 @@ Resources
 ---------
 
 - https://geojson.io - useful playground for creating GeoJSON
-- https://taginfo.openstreetmap.org - find Place props used in OpenStreetMaps
-- https://schema.org/Place - find Place props defined in Schema
+- https://taginfo.openstreetmap.org - find info about properties used in OpenStreetMaps
 
 References
 ---------
