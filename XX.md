@@ -91,6 +91,7 @@ A subset of OpenStreeMaps tags have been seleceted to create a standard list of 
 |------------------|------------------------|------------------------|
 | `"phone"`        | +CC XXX XXX XXX format, where CC is a country code. |                        | 
 | `"website"`      | URL beginning with https://                       |                        |
+| `"logo_url"`      | URL beginning with https://                       |                        |
 | `"addr:state"`   |                        |                        |
 | `"addr:province"`|                        |                        |
 | `"addr:street"`  |                        |                        |
