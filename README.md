@@ -240,7 +240,6 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `nonce`           | random                               | --                   | [13](13.md)                           |
 | `preimage`        | hash of `bolt11` invoice             | --                   | [57](57.md)                           |
 | `price`           | price                                | currency, frequency  | [99](99.md)                           |
-| `prop`            | key                                  | value, namespace     | [44](/44.md)                          |
 | `proxy`           | external ID                          | protocol             | [48](48.md)                           |
 | `published_at`    | unix timestamp (string)              | --                   | [23](23.md)                           |
 | `relay`           | relay url                            | --                   | [42](42.md)                           |
