@@ -243,10 +243,10 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `price`           | price                                | currency, frequency  | [99](99.md)                           |
 | `proxy`           | external ID                          | protocol             | [48](48.md)                           |
 | `published_at`    | unix timestamp (string)              | --                   | [23](23.md)                           |
-| `relay`           | relay url                            | --                   | [42](42.md)                           |
+| `relay`           | relay url                            | --                   | [42](42.md), [17](17.md)              |
 | `relays`          | relay list                           | --                   | [57](57.md)                           |
 | `server`          | file storage server url              | --                   | [96](96.md)                           |
-| `subject`         | subject                              | --                   | [14](14.md)                           |
+| `subject`         | subject                              | --                   | [14](14.md), [17](17.md)              |
 | `summary`         | article summary                      | --                   | [23](23.md)                           |
 | `thumb`           | badge thumbnail                      | dimensions in pixels | [58](58.md)                           |
 | `title`           | article title                        | --                   | [23](23.md)                           |
