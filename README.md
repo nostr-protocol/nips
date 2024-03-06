@@ -111,6 +111,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1059`        | Gift Wrap                  | [59](59.md)              |
 | `1063`        | File Metadata              | [94](94.md)              |
 | `1311`        | Live Chat Message          | [53](53.md)              |
+| `1617`        | Patches                    | [34](34.md)              |
+| `1621`        | Issues                     | [34](34.md)              |
+| `1622`        | Replies                    | [34](34.md)              |
 | `1971`        | Problem Tracker            | [nostrocket][nostrocket] |
 | `1984`        | Reporting                  | [56](56.md)              |
 | `1985`        | Label                      | [32](32.md)              |
@@ -163,6 +166,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30315`       | User Statuses              | [38](38.md)              |
 | `30402`       | Classified Listing         | [99](99.md)              |
 | `30403`       | Draft Classified Listing   | [99](99.md)              |
+| `30617`       | Repository announcements   | [34](34.md)              |
 | `31922`       | Date-Based Calendar Event  | [52](52.md)              |
 | `31923`       | Time-Based Calendar Event  | [52](52.md)              |
 | `31924`       | Calendar                   | [52](52.md)              |
@@ -224,9 +228,10 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `bolt11`          | `bolt11` invoice                     | --                   | [57](57.md)                           |
 | `challenge`       | challenge string                     | --                   | [42](42.md)                           |
 | `client`          | name, address                        | relay URL            | [89](89.md)                           |
+| `clone`           | git clone URL                        | --                   | [34](34.md)                           |
 | `content-warning` | reason                               | --                   | [36](36.md)                           |
 | `delegation`      | pubkey, conditions, delegation token | --                   | [26](26.md)                           |
-| `description`     | invoice/badge description            | --                   | [57](57.md), [58](58.md)              |
+| `description`     | description                          | --                   | [34](34.md), [57](57.md), [58](58.md) |
 | `emoji`           | shortcode, image URL                 | --                   | [30](30.md)                           |
 | `encrypted`       | --                                   | --                   | [90](90.md)                           |
 | `expiration`      | unix timestamp (string)              | --                   | [40](40.md)                           |
@@ -235,7 +240,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `imeta`           | inline metadata                      | --                   | [92](92.md)                           |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                   | [57](57.md)                           |
 | `location`        | location string                      | --                   | [52](52.md), [99](99.md)              |
-| `name`            | badge name                           | --                   | [58](58.md)                           |
+| `name`            | name                                 | --                   | [34](34.md), [58](58.md)              |
 | `nonce`           | random                               | --                   | [13](13.md)                           |
 | `preimage`        | hash of `bolt11` invoice             | --                   | [57](57.md)                           |
 | `price`           | price                                | currency, frequency  | [99](99.md)                           |
@@ -248,6 +253,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `summary`         | article summary                      | --                   | [23](23.md)                           |
 | `thumb`           | badge thumbnail                      | dimensions in pixels | [58](58.md)                           |
 | `title`           | article title                        | --                   | [23](23.md)                           |
+| `web`             | webpage URL                          | --                   | [34](34.md)                           |
 | `zap`             | pubkey (hex), relay URL              | weight               | [57](57.md)                           |
 
 ## Criteria for acceptance of NIPs
