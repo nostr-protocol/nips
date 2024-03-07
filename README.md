@@ -74,6 +74,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-75: Zap Goals](75.md)
 - [NIP-78: Application-specific data](78.md)
 - [NIP-84: Highlights](84.md)
+- [NIP-87: Ecash Mint Discoverability](87.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-90: Data Vending Machines](90.md)
 - [NIP-92: Media Attachments](92.md)
@@ -139,6 +140,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10030`       | User emoji list            | [51](51.md)              |
 | `10096`       | File storage server list   | [96](96.md)              |
 | `13194`       | Wallet Info                | [47](47.md)              |
+| `18173`       | Ecash Mint Recommendation  | [87](87.md)              |
 | `21000`       | Lightning Pub RPC          | [Lightning.Pub][lnpub]   |
 | `22242`       | Client Authentication      | [42](42.md)              |
 | `23194`       | Wallet Request             | [47](47.md)              |
@@ -173,6 +175,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31925`       | Calendar Event RSVP        | [52](52.md)              |
 | `31989`       | Handler recommendation     | [89](89.md)              |
 | `31990`       | Handler information        | [89](89.md)              |
+| `38172`       | Cashu Mint Announcement    | [87](87.md)              |
+| `38173`       | Fedimint Announcement      | [87](87.md)              |
 | `34550`       | Community Definition       | [72](72.md)              |
 | `39000-9`     | Group metadata events      | [29](29.md)              |
 
