@@ -94,12 +94,12 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `8`           | Badge Award                | [58](58.md)              |
 | `13`          | Seal                       | [59](59.md)              |
 | `16`          | Generic Repost             | [18](18.md)              |
-| `30`          | Portable Game Notation     | [64](64.md)              |
 | `40`          | Channel Creation           | [28](28.md)              |
 | `41`          | Channel Metadata           | [28](28.md)              |
 | `42`          | Channel Message            | [28](28.md)              |
 | `43`          | Channel Hide Message       | [28](28.md)              |
 | `44`          | Channel Mute User          | [28](28.md)              |
+| `64`          | Chess (PGN)                | [64](64.md)              |
 | `1021`        | Bid                        | [15](15.md)              |
 | `1022`        | Bid confirmation           | [15](15.md)              |
 | `1040`        | OpenTimestamps             | [03](03.md)              |
