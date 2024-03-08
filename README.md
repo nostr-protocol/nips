@@ -105,6 +105,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `42`          | Channel Message            | [28](28.md)              |
 | `43`          | Channel Hide Message       | [28](28.md)              |
 | `44`          | Channel Mute User          | [28](28.md)              |
+| `78`          | Versatile Event            | [78](78.md)              |
 | `1021`        | Bid                        | [15](15.md)              |
 | `1022`        | Bid confirmation           | [15](15.md)              |
 | `1040`        | OpenTimestamps             | [03](03.md)              |
