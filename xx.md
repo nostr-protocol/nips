@@ -12,7 +12,7 @@ This NIP introduces the `~` tag, used to recommend durable indexes which can be 
 ["~", "b0635d6a9851", "gundb"]
 ```
 
-# Indexes
+# Index data file
 
 Indexes may directly provide events published by a given pubkey, or references to other indexes. An index's content is a JSON-encoded object with the following properties optionally defined:
 
@@ -41,7 +41,21 @@ Example:
 }
 ```
 
+Unless specified otherwise below, indexes should adhere to this data format.
+
 # Index types
+
+## `relay`
+
+This is an alternative to inline relay hints, and simply refer to a relay url where related events may be found. Relays need not adhere to the data format above, since they already provide events using a standard interface.
+
+Note: these are not generally recommended, as they're currently less-well supported than regular relay hints, and are redundant with them.
+
+Example:
+
+```json
+["~", "wss://relay.example.com", "relay"]
+```
 
 ## `nip05`
 
