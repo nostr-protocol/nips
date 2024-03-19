@@ -1,39 +1,32 @@
-NIP-01
+NIP-xx
 ======
 
-Pubkey-based routing hints
---------------------------
+Indexes
+-------
 
 `draft` `optional`
 
-This NIP introduces the `~` tag, used to indicate authors of related data, and where to find their notes. The first argument is a hex pubkey, the second argument is an index type, and the third a an index address, for example:
+This NIP introduces the `~` tag, used to recommend durable indexes which can be used to find relevant notes. The first argument is an index address (dependent on index type, described below), and the second argument is an index type.
 
 ```json
-["~", "b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9", "gundb", "b0635d6a985"]
+["~", "b0635d6a9851", "gundb"]
 ```
 
 # Indexes
 
-Indexes may directly provide events published by a given pubkey, or references to other indexes. In any case, an index value is a JSON-encoded object, each value of which is an object mapping pubkeys to values as defined below. The following keys are defined (all keys are optional):
+Indexes may directly provide events published by a given pubkey, or references to other indexes. An index's content is a JSON-encoded object with the following properties optionally defined:
 
-- `relays`: an object mapping pubkeys to arrays of relay urls. This SHOULD match the user's `write` relays as defined by [NIP 65](./65.md).
-- `events`: an object mapping pubkeys to arrays of events signed by that pubkey.
-- `indexes`: an object referring to additional indexes, keys of which are index types, and values are objects mapping pubkeys to an array of index addresses.
+- `events`: an object mapping pubkeys to arrays of events signed by that pubkey. Indexes MAY include as many events as desired, but SHOULD prioritize kind 0 and kind 3.
+- `indexes`: an object referring to additional indexes, keys of which are index types, and values are arrays of index addresses.
 
 Example:
 
 ```
 {
-  "relays": {
-    "b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9": [
-      "wss://example.com",
-      "wss://example2.com"
-    ]
-  },
   "events": {
     "b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9": [
       {
-        "kind": 1,
+        "kind": 3,
         "content": "Hello",
         "tags": [],
         "created_at": 1710607821,
@@ -44,18 +37,8 @@ Example:
     ]
   },
   "indexes": {
-    "nip05": {
-      "b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9": [
-        "https://example.com/.well-known/nostr.json?name=username",
-        "https://example2.com/.well-known/nostr.json?name=othername"
-      ]
-    },
-    "gundb": {
-      "b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9": [
-        "b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9",
-        "b0635d6a"
-      ]
-    }
+    "nip05": ["username@example.com", "othername@example2.com"],
+    "gundb": ["b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9", "b0635d6a"]
   }
 }
 ```
@@ -64,8 +47,24 @@ Example:
 
 ## `nip05`
 
-[NIP 05](./05.md) is the original indexing scheme, and may be used as described in this NIP if supported, or used as described in NIP 05 as a fallback. Index addresses should use the following pattern: `https://example.com/.well-known/nostr.json?name=username`
+[NIP 05](./05.md) is the original indexing scheme, and may be used as described in this NIP if supported, or used as described in NIP 05 as a fallback.
+
+Example:
+
+```json
+["~", "user@example.com", "nip05"]
+```
 
 ## `gundb`
 
 [GunDB](https://gun.eco/) is an implementation of a DHT, and can be used to provide an index. A gundb index address may be any string.
+
+Example:
+
+```json
+["~", "b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9", "gundb"]
+```
+
+# Additional considerations
+
+In general, indexes are not built by the users referred to, so care should be taken to consult multiple indexes if needed, and to validate event signatures to avoid forgery and censorship. Certain index types (e.g. `gundb`) can be written to by anyone, so care should be taken to defend against overly large index files, malformed data, or other malicious indexes.
