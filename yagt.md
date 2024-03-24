@@ -32,7 +32,17 @@ Standards are assigned to human readable labels instead of labeling content with
 - `regionCode` - A `ISO-3166-2` region code. 
 - `regionName` - A `ISO-3166-2` compatible region name.
 - `cityName` - The the internationally recognized name of the city, formally cased. Use multiple `cityName` tags if a city has multiple spellings. 
-- `cityCode` - _Placeholder, there is no city code standard_ 
+- `cityCode` - _Placeholder, there is no city code standard_
+
+## `ISO-3166` omissions
+- `countryCode:numeric` has been ommitted due to potential, though rare, collisions with `gh` (geohashes) 
+
+## Collisions 
+There should be no filter collisions as specified
+- `ISO-3166` codes (`countryCode`, `regionCode`) are always uppercase
+- `ISO-3166` names are always proper-case (`countryName`, `regionName`)
+- `gh` (geohash) are `base32` and therefor always lowercase. 
+- `cityName` has the highest potential for collision since it is not standardized. If a client or user adds a city name that is not proper-cased (first letter capitalized), it could theoretically collide with geohashes. However, as specified, there are no collisions
 
 ## Defaults
 When `g` tag has no `tag[2]` it is assumed to be of type (key) `gh` 
@@ -62,14 +72,6 @@ When `g` tag has no `tag[2]` it is assumed to be of type (key) `gh`
   [
     [ "G", "gh" ],
     [ "g", "u2mwdd8q4", "gh"  ],
-    [ "g", "u2mwdd8q", "gh"  ],
-    [ "g", "u2mwdd8", "gh"  ],
-    [ "g", "u2mwdd", "gh"  ],
-    [ "g", "u2mwd", "gh"  ],
-    [ "g", "u2mw", "gh"  ],
-    [ "g", "u2m", "gh"  ],
-    [ "g", "u2", "gh"  ],
-    [ "g", "u", "gh"  ],
     [ "G", "countryCode" ],
     [ "g", "AI", "countryCode"],
     [ "g", "AIA", "countryCode" ],
