@@ -74,6 +74,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-94: File Metadata](94.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-115: ISO-3166 Geotags](99.md)
 
 ## Event Kinds
 | kind          | description                | NIP                      |
@@ -187,7 +188,8 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `p`               | pubkey (hex)                         | relay URL, petname   | [01](01.md), [02](02.md)              |
 | `a`               | coordinates to an event              | relay URL            | [01](01.md)                           |
 | `d`               | identifier                           | --                   | [01](01.md)                           |
-| `g`               | geohash                              | --                   | [52](52.md)                           |
+| `g`               | geotags: geohash, ISO-3166           | --                   | [52](52.md), [115](115.md)            |
+| `G`               | geotag namespace                     | --                   | [115](115.md)                         |
 | `i`               | identity                             | proof                | [39](39.md)                           |
 | `k`               | kind number (string)                 | --                   | [18](18.md), [25](25.md), [72](72.md) |
 | `l`               | label, label namespace               | annotations          | [32](32.md)                           |
