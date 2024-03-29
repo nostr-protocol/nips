@@ -49,6 +49,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-31: Dealing with Unknown Events](31.md)
 - [NIP-32: Labeling](32.md)
 - [NIP-36: Sensitive Content](36.md)
+- [NIP-37: Editable Short Notes](37.md)
 - [NIP-38: User Statuses](38.md)
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
@@ -99,6 +100,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `42`          | Channel Message            | [28](28.md)              |
 | `43`          | Channel Hide Message       | [28](28.md)              |
 | `44`          | Channel Mute User          | [28](28.md)              |
+| `1010`        | Content Edits              | [37](37.md)              |
 | `1021`        | Bid                        | [15](15.md)              |
 | `1022`        | Bid confirmation           | [15](15.md)              |
 | `1040`        | OpenTimestamps             | [03](03.md)              |
