@@ -26,13 +26,11 @@ The following tags are required:
 The following tags are optional:
 
 - `i` is an external GUID.
-- `c` is the name of a category.
+- `c` is the name of a category or genre.
+- `creator` is the pubkey of a person involved in creating the track. Pubkey MAY be blank. Second argument should be a plaintext representation of the person, and the third argument their role.
 - `website` is an external url to a website related to the track.
 - `duration` is the duration of the audio track, in seconds.
 - `published_at` is a timestamp representing the track's original publish date.
-- `genre` and `subgenre` are the names of the genre and subgenre respectively.
-
-Events may also include one or more [NIP 32](./32.md) `l` tags for denoting people involved in the creation of the track. The value of these tags SHOULD be pubkeys, but MAY be plain text values if a pubkey is not available. If a pubkey is available, an alternative plain text value SHOULD NOT be included.
 
 Example:
 
@@ -45,13 +43,10 @@ Example:
   "content": "Chill beats",
   "tags": [
     ["d", "<id>"],
-    ["c", "Chill Beats"],
-    ["L", "record_label"],
-    ["l", "Columbia Records", "record_label"],
-    ["L", "artist"],
-    ["l", "2a07724d42fd8004b5c97b62ba03b6baf3919f9e8211667039987866997e97ad", "artist"],
-    ["genre", "Pop"],
-    ["subgenre", "EDM"],
+    ["c", "Pop EDM"],
+    ["p", "2a07724d42fd8004b5c97b62ba03b6baf3919f9e8211667039987866997e97ad", "wss://my-relay.com"],
+    ["creator", "", "Columbia Records", "record_label"],
+    ["creator", "2a07724d42fd8004b5c97b62ba03b6baf3919f9e8211667039987866997e97ad", "AC/DC", "artist"],
     ["title", "Platinum Robots on the Moon"],
     ["subject", "Platinum Robots on the Moon"],
     ["published_at", "<published_at>"],
