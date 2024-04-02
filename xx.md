@@ -30,6 +30,7 @@ The following tags are optional:
 - `website` is an external url to a website related to the track.
 - `duration` is the duration of the audio track, in seconds.
 - `published_at` is a timestamp representing the track's original publish date.
+- `genre` and `subgenre` are the names of the genre and subgenre respectively.
 
 Events may also include one or more [NIP 32](./32.md) `l` tags for denoting people involved in the creation of the track. The value of these tags SHOULD be pubkeys, but MAY be plain text values if a pubkey is not available. If a pubkey is available, an alternative plain text value SHOULD NOT be included.
 
@@ -49,6 +50,8 @@ Example:
     ["l", "Columbia Records", "record_label"],
     ["L", "artist"],
     ["l", "2a07724d42fd8004b5c97b62ba03b6baf3919f9e8211667039987866997e97ad", "artist"],
+    ["genre", "Pop"],
+    ["subgenre", "EDM"],
     ["title", "Platinum Robots on the Moon"],
     ["subject", "Platinum Robots on the Moon"],
     ["published_at", "<published_at>"],
