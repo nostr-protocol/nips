@@ -26,11 +26,12 @@ The following tags are required:
 The following tags are optional:
 
 - `i` is an external GUID.
-- `c` is the name of a category or genre.
-- `creator` is the pubkey of a person involved in creating the track. Pubkey MAY be blank. Second argument should be a plaintext representation of the person, and the third argument their role.
+- `c` is the track's value as defined by a given category.
 - `website` is an external url to a website related to the track.
 - `duration` is the duration of the audio track, in seconds.
 - `published_at` is a timestamp representing the track's original publish date.
+
+Note that artists, producers, SHOULD be referred to using both a plaintext `c` tag AND a conventional `p` tag when pubkey is available. When doing so, the `p` tag's petname MUST be the same as the `c` tag's value. In this way `c` tags can be used to indicate genre, as well as artist, producer, etc.
 
 Example:
 
@@ -43,10 +44,11 @@ Example:
   "content": "Chill beats",
   "tags": [
     ["d", "<id>"],
-    ["c", "Pop EDM"],
-    ["p", "2a07724d42fd8004b5c97b62ba03b6baf3919f9e8211667039987866997e97ad", "wss://my-relay.com"],
-    ["creator", "", "Columbia Records", "record_label"],
-    ["creator", "2a07724d42fd8004b5c97b62ba03b6baf3919f9e8211667039987866997e97ad", "AC/DC", "artist"],
+    ["c", "Pop", "genre"],
+    ["c", "EDM", "subgenre"],
+    ["c", "Columbia Records", "record_label"],
+    ["c", "AC/DC", "artist"],
+    ["p", "2a07724d42fd8004b5c97b62ba03b6baf3919f9e8211667039987866997e97ad", "wss://my-relay.com", "AC/DC"],
     ["title", "Platinum Robots on the Moon"],
     ["subject", "Platinum Robots on the Moon"],
     ["published_at", "<published_at>"],
