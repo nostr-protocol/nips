@@ -6,13 +6,16 @@ Audio Events
 
 `draft` `optional`
 
-This NIP defines a new event kind `31337` representing an audio track. These events are _parameterized replaceable_
-as defined in [NIP-01](./01.md) and deletable per [NIP-09](09.md).
+This NIP defines several new event kinds representing different types of audio track. These events
+are _parameterized replaceable_ as defined in [NIP-01](./01.md) and deletable per [NIP-09](09.md).
 
 Unlike a `kind 1` event with audio attached, audio events are intended to be surfaced in an audio-specific context
 rather than in a general micro-blogging context.
 
-A kind `31337` event's `content` should be summary or description of the audio content.
+The following kinds are defined by this NIP:
+
+- `31337` represents a music track
+- `31338` represents a podcast episode
 
 The following tags are required:
 
@@ -32,6 +35,8 @@ The following tags are optional:
 - `published_at` is a timestamp representing the track's original publish date.
 
 Note that artists, producers, SHOULD be referred to using both a plaintext `c` tag AND a conventional `p` tag when pubkey is available. When doing so, the `p` tag's petname MUST be the same as the `c` tag's value. In this way `c` tags can be used to indicate genre, as well as artist, producer, etc.
+
+`content` SHOULD be summary or description of the audio content.
 
 Example:
 
