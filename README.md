@@ -15,6 +15,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [Criteria for acceptance of NIPs](#criteria-for-acceptance-of-nips)
 - [Is this repository a centralizing factor?](#is-this-repository-a-centralizing-factor)
 - [How this repository works](#how-this-repository-works)
+- [Breaking Changes](#breaking-changes)
 - [License](#license)
 
 ---
@@ -44,9 +45,11 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-26: Delegated Event Signing](26.md)
 - [NIP-27: Text Note References](27.md)
 - [NIP-28: Public Chat](28.md)
+- [NIP-29: Relay-based Groups](29.md)
 - [NIP-30: Custom Emoji](30.md)
 - [NIP-31: Dealing with Unknown Events](31.md)
 - [NIP-32: Labeling](32.md)
+- [NIP-34: `git` stuff](34.md)
 - [NIP-36: Sensitive Content](36.md)
 - [NIP-38: User Statuses](38.md)
 - [NIP-39: External Identities in Profiles](39.md)
@@ -91,6 +94,11 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `6`           | Repost                     | [18](18.md)              |
 | `7`           | Reaction                   | [25](25.md)              |
 | `8`           | Badge Award                | [58](58.md)              |
+| `9`           | Group Chat Message         | [29](29.md)              |
+| `10`          | Group Chat Threaded Reply  | [29](29.md)              |
+| `11`          | Group Thread               | [29](29.md)              |
+| `12`          | Group Thread Reply         | [29](29.md)              |
+| `13`          | Seal                       | [59](59.md)              |
 | `16`          | Generic Repost             | [18](18.md)              |
 | `40`          | Channel Creation           | [28](28.md)              |
 | `41`          | Channel Metadata           | [28](28.md)              |
@@ -100,8 +108,12 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1021`        | Bid                        | [15](15.md)              |
 | `1022`        | Bid confirmation           | [15](15.md)              |
 | `1040`        | OpenTimestamps             | [03](03.md)              |
+| `1059`        | Gift Wrap                  | [59](59.md)              |
 | `1063`        | File Metadata              | [94](94.md)              |
 | `1311`        | Live Chat Message          | [53](53.md)              |
+| `1617`        | Patches                    | [34](34.md)              |
+| `1621`        | Issues                     | [34](34.md)              |
+| `1622`        | Replies                    | [34](34.md)              |
 | `1971`        | Problem Tracker            | [nostrocket][nostrocket] |
 | `1984`        | Reporting                  | [56](56.md)              |
 | `1985`        | Label                      | [32](32.md)              |
@@ -109,6 +121,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `5000`-`5999` | Job Request                | [90](90.md)              |
 | `6000`-`6999` | Job Result                 | [90](90.md)              |
 | `7000`        | Job Feedback               | [90](90.md)              |
+| `9000`-`9030` | Group Control Events       | [29](29.md)              |
 | `9041`        | Zap Goal                   | [75](75.md)              |
 | `9734`        | Zap Request                | [57](57.md)              |
 | `9735`        | Zap                        | [57](57.md)              |
@@ -121,6 +134,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10005`       | Public chats list          | [51](51.md)              |
 | `10006`       | Blocked relays list        | [51](51.md)              |
 | `10007`       | Search relays list         | [51](51.md)              |
+| `10009`       | User groups                | [51](51.md), [29](29.md) |
 | `10015`       | Interests list             | [51](51.md)              |
 | `10030`       | User emoji list            | [51](51.md)              |
 | `10096`       | File storage server list   | [96](96.md)              |
@@ -146,11 +160,13 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30023`       | Long-form Content          | [23](23.md)              |
 | `30024`       | Draft Long-form Content    | [23](23.md)              |
 | `30030`       | Emoji sets                 | [51](51.md)              |
+| `30063`       | Release artifact sets      | [51](51.md)              |
 | `30078`       | Application-specific Data  | [78](78.md)              |
 | `30311`       | Live Event                 | [53](53.md)              |
 | `30315`       | User Statuses              | [38](38.md)              |
 | `30402`       | Classified Listing         | [99](99.md)              |
 | `30403`       | Draft Classified Listing   | [99](99.md)              |
+| `30617`       | Repository announcements   | [34](34.md)              |
 | `31922`       | Date-Based Calendar Event  | [52](52.md)              |
 | `31923`       | Time-Based Calendar Event  | [52](52.md)              |
 | `31924`       | Calendar                   | [52](52.md)              |
@@ -158,6 +174,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31989`       | Handler recommendation     | [89](89.md)              |
 | `31990`       | Handler information        | [89](89.md)              |
 | `34550`       | Community Definition       | [72](72.md)              |
+| `39000-9`     | Group metadata events      | [29](29.md)              |
 
 [nostrocket]: https://github.com/nostrocket/NIPS/blob/main/Problems.md
 [lnpub]: https://github.com/shocknet/Lightning.Pub/blob/master/proto/autogenerated/client.md
@@ -202,6 +219,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `l`               | label, label namespace               | annotations          | [32](32.md)                           |
 | `L`               | label namespace                      | --                   | [32](32.md)                           |
 | `m`               | MIME type                            | --                   | [94](94.md)                           |
+| `q`               | event id (hex)                       | relay URL    | [18](18.md)                           |
 | `r`               | a reference (URL, etc)               | petname              |                                       |
 | `r`               | relay url                            | marker               | [65](65.md)                           |
 | `t`               | hashtag                              | --                   |                                       |
@@ -210,9 +228,10 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `bolt11`          | `bolt11` invoice                     | --                   | [57](57.md)                           |
 | `challenge`       | challenge string                     | --                   | [42](42.md)                           |
 | `client`          | name, address                        | relay URL            | [89](89.md)                           |
+| `clone`           | git clone URL                        | --                   | [34](34.md)                           |
 | `content-warning` | reason                               | --                   | [36](36.md)                           |
 | `delegation`      | pubkey, conditions, delegation token | --                   | [26](26.md)                           |
-| `description`     | invoice/badge description            | --                   | [57](57.md), [58](58.md)              |
+| `description`     | description                          | --                   | [34](34.md), [57](57.md), [58](58.md) |
 | `emoji`           | shortcode, image URL                 | --                   | [30](30.md)                           |
 | `encrypted`       | --                                   | --                   | [90](90.md)                           |
 | `expiration`      | unix timestamp (string)              | --                   | [40](40.md)                           |
@@ -221,7 +240,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `imeta`           | inline metadata                      | --                   | [92](92.md)                           |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                   | [57](57.md)                           |
 | `location`        | location string                      | --                   | [52](52.md), [99](99.md)              |
-| `name`            | badge name                           | --                   | [58](58.md)                           |
+| `name`            | name                                 | --                   | [34](34.md), [58](58.md)              |
 | `nonce`           | random                               | --                   | [13](13.md)                           |
 | `preimage`        | hash of `bolt11` invoice             | --                   | [57](57.md)                           |
 | `price`           | price                                | currency, frequency  | [99](99.md)                           |
@@ -234,6 +253,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `summary`         | article summary                      | --                   | [23](23.md)                           |
 | `thumb`           | badge thumbnail                      | dimensions in pixels | [58](58.md)                           |
 | `title`           | article title                        | --                   | [23](23.md)                           |
+| `web`             | webpage URL                          | --                   | [34](34.md)                           |
 | `zap`             | pubkey (hex), relay URL              | weight               | [57](57.md)                           |
 
 ## Criteria for acceptance of NIPs
@@ -257,6 +277,10 @@ There is a list of notable Nostr software developers who have commit access to t
 Standards may emerge in two ways: the first way is that someone starts doing something, then others copy it; the second way is that someone has an idea of a new standard that could benefit multiple clients and the protocol in general without breaking **backwards-compatibility** and the principle of having **a single way of doing things**, then they write that idea and submit it to this repository, other interested parties read it and give their feedback, then once most people reasonably agree we codify that in a NIP which client and relay developers that are interested in the feature can proceed to implement.
 
 These two ways of standardizing things are supported by this repository. Although the second is preferred, an effort will be made to codify standards emerged outside this repository into NIPs that can be later referenced and easily understood and implemented by others -- but obviously as in any human system discretion may be applied when standards are considered harmful.
+
+## Breaking Changes
+
+[Breaking Changes](BREAKING.md)
 
 ## License
 
