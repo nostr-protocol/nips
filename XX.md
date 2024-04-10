@@ -30,6 +30,8 @@ This NIP defines no rules for the format of the `REMOVED` message field.
 
 Relays that support this NIP should signal this in their NIP-11 relay information document.
 
+NIP-42 AUTH SHOULD be used to authenticate the client user. The means of determining if a client user is authorized to remove events is outside the scope of this NIP.
+
 Motivation
 ----------
 
