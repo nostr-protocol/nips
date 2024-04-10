@@ -26,6 +26,8 @@ Relays not supporting this NIP will not comprehend the `REMOVE` message and will
 
 This NIP defines no rules for the format of the `REMOVED` message field.
 
+Relays that support this NIP should signal this in their NIP-11 relay information document.
+
 Motivation
 ----------
 
