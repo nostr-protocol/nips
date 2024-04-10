@@ -22,6 +22,8 @@ The relay should respond with a `REMOVED` message in the following format:
 
 If the client is AUTHenticated and authorized to remove the specified events from the relay, the relay should remove them and respond with true.
 
+If the relay does not remove all the matching events for some reason, it should ideally remove none of them and send `false` in its `REMOVED` response.
+
 Relays not supporting this NIP will not comprehend the `REMOVE` message and will not send back a `REMOVED` response. Therefore clients supporting this NIP must tolerate situations where no response is obtained.
 
 This NIP defines no rules for the format of the `REMOVED` message field.
