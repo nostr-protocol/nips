@@ -36,6 +36,8 @@ The following tags are optional:
 
 Note that artists, producers, SHOULD be referred to using both a plaintext `c` tag AND a conventional `p` tag when pubkey is available. When doing so, the `p` tag's petname MUST be the same as the `c` tag's value. In this way `c` tags can be used to indicate genre, as well as artist, producer, etc.
 
+If included, `genre` and `subgenre` SHOULD be based on [this list](https://github.com/wavlake/genre-list).
+
 `content` SHOULD be summary or description of the audio content.
 
 Example:
