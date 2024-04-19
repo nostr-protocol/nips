@@ -28,7 +28,7 @@ The following tags are required:
 
 The following tags are optional:
 
-- `i` is an external GUID.
+- `i` is an external GUID in the format defined [here](https://github.com/MerryOscar/nips/commit/280eb498e0ac56b8f9356c1b7a88cc8b31579801).
 - `c` is the track's value as defined by a given category.
 - `website` is an external url to a website related to the track.
 - `duration` is the duration of the audio track, in seconds.
@@ -55,6 +55,7 @@ Example:
     ["c", "EDM", "subgenre"],
     ["c", "Columbia Records", "record_label"],
     ["c", "AC/DC", "artist"],
+    ["i", "podcast:item:guid:123"],
     ["p", "2a07724d42fd8004b5c97b62ba03b6baf3919f9e8211667039987866997e97ad", "wss://my-relay.com", "AC/DC"],
     ["title", "Platinum Robots on the Moon"],
     ["subject", "Platinum Robots on the Moon"],
