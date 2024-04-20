@@ -69,6 +69,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
 - [NIP-59: Gift Wrap](59.md)
+- [NIP-61: Danmaku](61.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-72: Moderated Communities](72.md)
 - [NIP-75: Zap Goals](75.md)
@@ -117,6 +118,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1971`        | Problem Tracker            | [nostrocket][nostrocket] |
 | `1984`        | Reporting                  | [56](56.md)              |
 | `1985`        | Label                      | [32](32.md)              |
+| `2333`        | Danmaku                    | [61](61.md)              |
 | `4550`        | Community Post Approval    | [72](72.md)              |
 | `5000`-`5999` | Job Request                | [90](90.md)              |
 | `6000`-`6999` | Job Result                 | [90](90.md)              |
@@ -214,7 +216,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `a`               | coordinates to an event              | relay URL            | [01](01.md)                           |
 | `d`               | identifier                           | --                   | [01](01.md)                           |
 | `g`               | geohash                              | --                   | [52](52.md)                           |
-| `i`               | identity                             | proof                | [39](39.md)                           |
+| `i`               | identity                             | proof                | [39](39.md), [61](61.md)              |
 | `k`               | kind number (string)                 | --                   | [18](18.md), [25](25.md), [72](72.md) |
 | `l`               | label, label namespace               | annotations          | [32](32.md)                           |
 | `L`               | label namespace                      | --                   | [32](32.md)                           |
