@@ -214,14 +214,14 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `p`               | pubkey (hex)                         | relay URL, petname   | [01](01.md), [02](02.md)              |
 | `a`               | coordinates to an event              | relay URL            | [01](01.md)                           |
 | `d`               | identifier                           | --                   | [01](01.md)                           |
-| `g`               | geotags: geohash, ISO-3166           | --                   | [52](52.md), [115](115.md)            |
-| `G`               | geotag namespace                     | --                   | [115](115.md)                         |
+| `g`               | geohash                              | --                   | [52](52.md)                           |
+| `G`               | ISO-3166 (alpha-2/3/4, numeric)      | --                   | [115](115.md)                         |
 | `i`               | identity                             | proof                | [39](39.md)                           |
 | `k`               | kind number (string)                 | --                   | [18](18.md), [25](25.md), [72](72.md) |
 | `l`               | label, label namespace               | annotations          | [32](32.md)                           |
 | `L`               | label namespace                      | --                   | [32](32.md)                           |
 | `m`               | MIME type                            | --                   | [94](94.md)                           |
-| `q`               | event id (hex)                       | relay URL    | [18](18.md)                           |
+| `q`               | event id (hex)                       | relay URL            | [18](18.md)                           |
 | `r`               | a reference (URL, etc)               | petname              |                                       |
 | `r`               | relay url                            | marker               | [65](65.md)                           |
 | `t`               | hashtag                              | --                   |                                       |
