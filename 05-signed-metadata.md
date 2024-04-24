@@ -12,13 +12,13 @@ This NIP proposes the addtion of ```"metadata"``` to the nip-05 response to prov
 
 ## Rationale
 
-The value of this NIP is that it extends the capability of a NIP-05 identifier to present unsigned or signed (verifiable) credentials about itself, or about the controller of the identifier. For example, a NIP-05 identifier such as ```bob@example.com``` can express a signed statement that Bob is indeed a professional engineer. This capability enables a NIP-05 identifier to express trusted (signed) statements that can be presented as such in a client, where indication is required.
+The value of this NIP is that it extends the capability of a NIP-05 identifier to present unsigned or signed (verifiable) credentials about itself, or about the controller of the identifier. For example, a NIP-05 identifier such as ```bob@example.com``` can express a signed statement that Bob is indeed a professional engineer. This capability enables a NIP-05 identifier to express trusted (signed) statements that can be presented as such in a client, where an indication is required.
 
 ## Theory and Approach
 
 Metadata is any information about an identifier or the controller of the identifier. Depending on the context, metadata can be provided as unsigned information or as signed information akin to a ```verifiable credential``` 
 
-This proposal is a extends the NIP-05 capability to provide associated ```metadata``` that can be provided as is or be signed to ensure integrity. The same as NIP-05, a client can make a GET request to `https://example.com/.well-known/nostr.json?name=bob` and get back a response that has an additional key-value pair of ```"metadata"``` that maps a ```pubkey``` to an array of metadata elements. For backward compatibilty, this new key-value pair can be ignored by clients not wishing to use this capability.
+This proposal is extends the NIP-05 capability to provide associated ```metadata``` that can be provided as is or be signed to ensure integrity. The same as NIP-05, a client can make a GET request to `https://example.com/.well-known/nostr.json?name=bob` and get back a response that has an additional key-value pair of ```"metadata"``` that maps a ```pubkey``` to an array of metadata elements. For backward compatibilty, this new key-value pair can be ignored by clients not wishing to use this capability.
 
 The metadata value is structured as a nested array of elements that contain elements of metadata havng at least one MANDATORY element and two OPTIONAL elements. 
 
