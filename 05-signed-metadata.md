@@ -34,8 +34,8 @@ The metadata element array format is depicted below:
 The three combinations above enable three possible scenarios:
 
 * The first scenario (just the MANDATORY element) is the simplest case where a NIP-05 provider can emit additional unsigned data about a named user, with little additional assurance other than the provider providing this information related to the user
-* The second scenario is the case where the named user needs to sign or attest to the information. Depending on the immplementation, the NIP-05 provider might have access to the user's ```nsec``` to sign the data on the user's behalf or the the user has provided pre-signed metadata to the NIP-05 provider, who stores and emits this signed information as metadata responding to a NIP-05 request.
-* The third scenario, the most complex case, where the additionally specified pubkey has signed the metadata instead of the named user. This could be any relevant signing authority with a pubkey (and any metadata), which then can be resolved through the nostr network.
+* The second scenario is the case where the named user needs to sign or attest to the information. Depending on the implementation, the NIP-05 provider may have access to the user's ```nsec``` to sign the data on the user's behalf or the user has provided pre-signed metadata to the NIP-05 provider, who then stores this signed metadata and adds to the response to a NIP-05 request.
+* The third scenario - most complex case - where the signer is a third party. An additional pubkey is specified, which has signed the metadata instead of the named user. This scenario account for the possibility of adding in third party signed metadata that could come from any relevant signing authority with a pubkey.
 
 The NIP-05 example, below has been extended to illustrate the metadata for the three cases discussed above.
 
