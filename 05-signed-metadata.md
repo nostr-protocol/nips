@@ -18,7 +18,7 @@ The value of this NIP is that it extends the capability of a NIP-05 identifier t
 
 Metadata is any information about an identifier or the controller of the identifier. Depending on the context, metadata can be provided as unsigned information or as signed information akin to a ```verifiable credential``` 
 
-This proposal is extends the NIP-05 capability to provide associated ```metadata``` that can be provided as is or be signed to ensure integrity. The same as NIP-05, a client can make a GET request to `https://example.com/.well-known/nostr.json?name=bob` and get back a response that has an additional key-value pair of ```"metadata"``` that maps a ```pubkey``` to an array of metadata elements. For backward compatibilty, this new key-value pair can be ignored by clients not wishing to use this capability.
+This proposal is extends the NIP-05 capability to provide associated ```metadata``` that can be provided as is or be signed to ensure integrity and provenance of the information. The same as NIP-05, a client can make a GET request to `https://example.com/.well-known/nostr.json?name=bob` and get back a response that has an additional key-value pair of ```"metadata"``` that maps a ```pubkey``` to an array of metadata elements. For backward compatibilty, this new key-value pair can be ignored by clients not wishing to use this capability.
 
 The metadata value is structured as a nested array of elements that contain elements of metadata havng at least one MANDATORY element and two OPTIONAL elements. 
 
