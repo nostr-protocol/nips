@@ -8,11 +8,11 @@ Adding Signed Metadata to DNS-based internet identifiers
 
 ## Proposal
 
-This NIP proposes the addtion of ```"metadata``` to the nip-05 response to provide optionally signed metadata about the identifier.
+This NIP proposes the addtion of ```"metadata"``` to the nip-05 response to provide optionally signed metadata about the identifier.
 
 ## Rationale
 
-The value of this NIP is that it extends the capability of a NIP-05 identifier to present unsigned or signed (verifiable) credential about itself, or about the controller of the identifier. For example, a NIP-05 identifier such as ```bob@example.com``` can express a signed statement that Bob is indeed a professional engineer. This capability enables a NIP-05 identifier express trusted (signed) statements that can be presented as such in a client, where indication is required.
+The value of this NIP is that it extends the capability of a NIP-05 identifier to present unsigned or signed (verifiable) credentials about itself, or about the controller of the identifier. For example, a NIP-05 identifier such as ```bob@example.com``` can express a signed statement that Bob is indeed a professional engineer. This capability enables a NIP-05 identifier express trusted (signed) statements that can be presented as such in a client, where indication is required.
 
 ## Theory and Approach
 
