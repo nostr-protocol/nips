@@ -27,7 +27,7 @@ The metadata element array format is depicted below:
 ["MANDATORY kind 0 metadata format", "OPTIONAL signature", "OPTIONAL pubkey"]
 ```
 
-* A MANDATORY first array element is MANDATORY and consists of a JSON stringified metadata consistent with ```kind 0```.  `0`: **metadata**: the JSON stringified metadata content  `{name: <username>, about: <string>, picture: <url, string>}` consisting of the desired information.
+* A MANDATORY first array element consists of a JSON stringified metadata consistent with ```kind 0```.  `0`: **metadata**: the JSON stringified metadata content  `{name: <username>, about: <string>, picture: <url, string>}` consisting of the desired information.
 * An OPTIONAL second array element which is a JSON signature of the first array element. By default, the ```pubkey``` used to verify this signature is the pubkey that corresponds to value related to the ```name``` key. 
 * An OPTIONAL third array element can be specified, if the pubkey used to verify the signature is other than the ```name```. This is for the use case where the metadata by signed by a party other than the named user - such as the NIP-05 provider, or another relevant authority.
 
