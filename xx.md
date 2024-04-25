@@ -47,18 +47,6 @@ become `ids`, and `t` tags become `#t` entries. `a` tags should be used to infor
 ["list", "10001:4d7600c1da0b69185fcbcb6b86cbaa010c9ea137fa83a3f4be4c713e1f217dad:"]
 ```
 
-## List of Lists
-
-A `lol` feed includes one or more list addresses. These lists should be fetched, and each `a`
-entry should in turn be fetched and parsed to build a standard nostr filter as described in the
-`list` type above.
-
-Example:
-
-```json
-["lol", "30085:4d7600c1da0b69185fcbcb6b86cbaa010c9ea137fa83a3f4be4c713e1f217dad:12983740"]
-```
-
 ## DVM
 
 A `dvm` feed includes one or more DVM request objects. Each request MUST have a `kind`, and
@@ -119,7 +107,7 @@ Example:
 [
   "intersection",
   ["list", "10001:4d7600c1da0b69185fcbcb6b86cbaa010c9ea137fa83a3f4be4c713e1f217dad:"],
-  ["lol", "30084:039f4899c97734bb1503ce437784ac2131d552e1ef909e8f9775df7c843d0df8:983243"],
+  ["filter", {"#t": ["nostr"], "since_ago": 86400}]
 ]
 ```
 
