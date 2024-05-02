@@ -66,6 +66,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-51: Lists](51.md)
 - [NIP-52: Calendar Events](52.md)
 - [NIP-53: Live Activities](53.md)
+- [NIP-54: Wiki](54.md)
 - [NIP-56: Reporting](56.md)
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
@@ -171,6 +172,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30402`       | Classified Listing         | [99](99.md)              |
 | `30403`       | Draft Classified Listing   | [99](99.md)              |
 | `30617`       | Repository announcements   | [34](34.md)              |
+| `30818`       | Wiki article               | [54](54.md)              |
 | `31922`       | Date-Based Calendar Event  | [52](52.md)              |
 | `31923`       | Time-Based Calendar Event  | [52](52.md)              |
 | `31924`       | Calendar                   | [52](52.md)              |
