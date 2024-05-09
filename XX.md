@@ -10,7 +10,7 @@ There are certain established global content identifiers that would be useful to
 
 - Book [ISBNs](https://en.wikipedia.org/wiki/ISBN)
 - Podcast [GUIDs](https://podcastnamespace.org/tag/guid)
-- Movie [EIDRs](https://www.eidr.org)
+- Movie [ISANs](https://en.wikipedia.org/wiki/International_Standard_Audiovisual_Number)
 
 Since the `i` tag is already used for similar references in kind-0 metadata events it makes sense to use it for these content ids as well.
 
@@ -19,13 +19,17 @@ Since the `i` tag is already used for similar references in kind-0 metadata even
 
 ### Books:
 
-- Book ISBN: `["i", "book:isbn:123"]`
+- Book ISBN: `["i", "book:isbn:9780765382030"]` - https://isbnsearch.org/isbn/9780765382030
+
+Book ISBNs MUST be referenced _**without hyphens**_ as many book search APIs return the ISBNs without hyphens. Removing hypens from ISBNs is trivial, whereas adding the hyphens back in is non-trivial requiring a library.
 
 ### Podcasts:
 
-- Podcast Feed GUID: `["i", "podcast:guid:123"]`
-- Podcast Item GUID: `["i", "podcast:item:guid:123"]`
+- Podcast RSS Feed GUID: `["i", "podcast:guid:c90e609a-df1e-596a-bd5e-57bcc8aad6cc"]` - https://podcastindex.org/podcast/c90e609a-df1e-596a-bd5e-57bcc8aad6cc
+- Podcast RSS Item GUID: `["i", "podcast:item:guid:d98d189b-dc7b-45b1-8720-d4b98690f31f"]`
 
 ### Movies:
 
-- Movie EIDR: `["i", "movie:eidr:123"]`
+- Movie ISAN: `["i", "movie:isan:0000-0000-401A-0000-7"]` - https://web.isan.org/public/en/isan/0000-0000-401A-0000-7
+
+Movie ISANs SHOULD be referenced  _**without the version part**_ as the versions / edits of movies are not relevant. More info on ISAN parts here -  https://support.isan.org/hc/en-us/articles/360002783131-Records-relations-and-hierarchies-in-the-ISAN-Registry
