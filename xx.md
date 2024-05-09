@@ -14,85 +14,144 @@ used in the context of an user's session to fetch a list of matching events.
 Custom feeds are represented using lists of lists. The first parameter of every list is a `type`,
 which determines the content of subsequent arguments to the feed.
 
-## Filter
+## Address
 
-A `filter` feed includes one or more `dynamic filter` objects. These are normal `filter` objects
-with the following additional fields:
-
-- `scopes` - a list of scopes to be translated by an application to a filter's `authors` field. May be one of:
-  - `followers` - pubkeys who follow the current user
-  - `follows` - pubkeys the current user follows
-  - `global` - no selection
-  - `network` - pubkeys who the current user does not follow, but which are followed by pubkeys the current user follows.
-  - `self` - the user's own pubkey
-- `min_wot` - a number between 0 and 1 corresponding to pubkeys with a web of trust score greater than `min_wot`% of known pubkeys.
-- `max_wot` - a number between 0 and 1 corresponding to pubkeys with a web of trust score less than `min_wot`% of known pubkeys.
-- `until_ago` - a number of seconds to subtract from the current time to be used in an `until` filter.
-- `since_ago` - a number of seconds to subtract from the current time to be used in a `since` filter.
-
-Example:
+A `address` feed includes one or more addresses of events to fetch.
 
 ```json
-["filter", {"kinds": [1], "scopes": "follows"}, {"kinds": [1], "min_wot": 0.5}]
+[
+  "address",
+  "30023:d97a7541e4603d393c61eaad810c2e2e72684fb5672bde962c75c023d70e763f:98127054",
+  "30023:d97a7541e4603d393c61eaad810c2e2e72684fb5672bde962c75c023d70e763f:12877394"
+]
 ```
 
-## List
+## Author
 
-A `list` feed includes one or more list addresses. These lists should be fetched and parsed
-to build a standard nostr filter. `p` tags from the target lists become `authors`, `e` tags
-become `ids`, and `t` tags become `#t` entries. `a` tags should be used to inform the `authors`,
-`kinds`, and `#d` fields.
+A `author` feed includes one or more pubkeys to use in an `authors` filter.
 
 ```json
-["list", "10001:4d7600c1da0b69185fcbcb6b86cbaa010c9ea137fa83a3f4be4c713e1f217dad:"]
+["author", "d97a7541e4603d393c61eaad810c2e2e72684fb5672bde962c75c023d70e763f"]
+```
+
+## CreatedAt
+
+A `created_at` feed includes one or more objects describing date ranges for events to fetch.
+These MAY include values `since`, `until`, and `relative`, which may be a list containing
+`since` and `until` as strings.
+
+If included in the `relative` list, `since` and `until` values MUST be interpreted as
+`seconds before now`. Negative numbers MUST be interpreted as `seconds after now`.
+
+```json
+["created_at", {"since": 1715293673, "until": 86400, "relative": ["since"]}]
 ```
 
 ## DVM
 
-A `dvm` feed includes one or more DVM request objects. Each request MUST have a `kind`, and
-MAY include an `input` and `pubkey`. Tags returned by the DVM should be used as described for
-[#List](lists).
-
-Example:
+A `dvm` feed includes one or more objects describing a DVM request. Each object MUST
+have a request `kind`, and MAY have a list of request `tags`, `relays` to send the
+request to, and a list of `mappings` mapping response tags to feeds. If omitted,
+applications SHOULD provide a resonable set of default `mappings`.
 
 ```json
 [
   "dvm",
   {
     "kind": 5300,
-    "pubkey": "e64323c026f751c6851cb00c902646ef5f81464d272c62f36569e5d489b749e9"
+    "tags": [["i", "philosophy", "text"]],
+    "mappings": [["e", ["tag", "#e"]]]
   }
 ]
 ```
 
-## Relay
+## ID
 
-A `relay` feed includes a list of normalized relay urls, and one or more other feeds. These
-feeds should be handled recursively as described above, but the application should only fetch
-events from the specified relays.
+A `id` feed
 
-Example:
+## Kind
+
+A `kind` feed
+
+## List
+
+A `dvm` feed includes one or more objects defining one or more `addresses` and a set of
+`mappings` for how to translate list tags into feeds. If omitted,
+applications SHOULD provide a resonable set of default `mappings`.
 
 ```json
 [
-  "relay",
-  ["wss://relay.example.com/", "wss://relay2.example.com/"],
-  ["list", "10001:4d7600c1da0b69185fcbcb6b86cbaa010c9ea137fa83a3f4be4c713e1f217dad:"],
-  ["list", "10001:b97111618cef001d2a74cf5f7f62fcdaa51167691a6b338f2aa6a5f4bc847180:"]
+  "list",
+  {
+    "addresses": ["3:4d7600c1da0b69185fcbcb6b86cbaa010c9ea137fa83a3f4be4c713e1f217dad:"],
+    "mappings": [["p", ["authors"]]]
+  }
 ]
+```
+
+## WOT
+
+A `wot` feed includes one or more objects with optional `min` and `max` properties. These
+MUST be between 0 and 1 (inclusive) so that the interpeting application can scale the filter
+to their own web of trust's score range. If empty, `min` MUST be interpreted as `0`, and
+`max` as 1.
+
+```json
+["wot", {"min": 0.3}]
+```
+
+## Relay
+
+A `relay` feed includes one or more relay urls to request notes from. These can be composed
+with other feeds using `intersection` to limit those feeds to the given relays.
+
+```json
+["relay", "wss://relay.example.com", "wss://relay.example.org"]
+```
+
+## Scope
+
+A `scope` feed includes one or more strings representing groups of people relative to the
+current user. Valid strings are:
+
+- `followers` - Pubkeys who follow the current user
+- `follows` - Pubkeys the current user follows
+- `network` - Pubkeys followed by pubkeys the current user follows
+- `self` - The current user's pubkey
+
+```json
+["scope", "follows", "self"]
+```
+
+## Search
+
+A `search` feed includes one or more search terms. These should be acceptable based on NIP-50,
+but can be interpreted as the application sees fit.
+
+```json
+["search", "tomato"]
+```
+
+## Tag
+
+A `tag` feed includes a tag key and one or more values. These should be interpreted the same
+as standard tag filters.
+
+```json
+["tag", "#t", "asknostr"]
 ```
 
 ## Union
 
-A `union` feed includes two or more other feeds to combine using logical OR.
+A `union` feed includes two or more feeds. An event may match any feed to match the parent feed.
 
 Example:
 
 ```json
 [
   "union",
-  ["list", "10001:4d7600c1da0b69185fcbcb6b86cbaa010c9ea137fa83a3f4be4c713e1f217dad:"],
-  ["filter", {"#t": ["nostr"], "since_ago": 86400}]
+  ["scope", "followers"],
+  ["tag", "#t", "asknostr"]
 ]
 ```
 
@@ -106,8 +165,8 @@ Example:
 ```json
 [
   "intersection",
-  ["list", "10001:4d7600c1da0b69185fcbcb6b86cbaa010c9ea137fa83a3f4be4c713e1f217dad:"],
-  ["filter", {"#t": ["nostr"], "since_ago": 86400}]
+  ["wot", {"max": 0.2}],
+  ["tag", "#t", "introductions"]
 ]
 ```
 
@@ -121,14 +180,21 @@ Example:
 ```json
 [
   "difference",
-  ["list", "10001:4d7600c1da0b69185fcbcb6b86cbaa010c9ea137fa83a3f4be4c713e1f217dad:"],
-  ["filter", {"max_wot": 0.1}],
+  [
+    "list",
+    {
+      "addresses": [
+        "10001:4d7600c1da0b69185fcbcb6b86cbaa010c9ea137fa83a3f4be4c713e1f217dad:"
+      ]
+    }
+  ],
+  ["wot", {"max": 0.1}]
 ]
 ```
 
 ## Symmetric Difference
 
-A `symdiff` feed includes two or more feeds. An event must match only one feed to match
+A `symmetric_difference` feed includes two or more feeds. An event must match only one feed to match
 the parent feed.
 
 Example:
@@ -136,8 +202,22 @@ Example:
 ```json
 [
   "symdiff",
-  ["list", "10001:4d7600c1da0b69185fcbcb6b86cbaa010c9ea137fa83a3f4be4c713e1f217dad:"],
-  ["list", "10003:4d7600c1da0b69185fcbcb6b86cbaa010c9ea137fa83a3f4be4c713e1f217dad:"],
+  [
+    "list",
+    {
+      "addresses": [
+        "10001:4d7600c1da0b69185fcbcb6b86cbaa010c9ea137fa83a3f4be4c713e1f217dad:"
+      ]
+    }
+  ],
+  [
+    "list",
+    {
+      "addresses": [
+        "10001:3375d9fe514d19bca737ba1ca2e7a43e19884385f0275a17999e05500bc177c6:"
+      ]
+    }
+  ]
 ]
 ```
 
@@ -147,5 +227,9 @@ Any event MAY use a `feed` tag with a JSON-encoded feed as the value.
 
 # Feed Event
 
-A `kind:31890` event defined a feed in an addressable way. The `content` MUST be a JSON-encoded
-feed.
+A `kind:31890` event defines a feed in an addressable way. The `content` SHOULD be a human-
+readable description of the feed. The following tags SHOULD be included:
+
+- A `d` tag
+- A `name` tag indicating the feed's name
+- A `feed` tag whose value is a JSON-encoded feed
