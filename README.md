@@ -171,7 +171,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30078`       | Application-specific Data  | [78](78.md)              |
 | `30311`       | Live Event                 | [53](53.md)              |
 | `30315`       | User Statuses              | [38](38.md)              |
-| `30382`       | Relationship Status        | [81](81.md)              |
+| `30382`       | Public Relationship Status | [81](81.md)              |
+| `30383`       | Private Relationship Status| [81](81.md)              |
 | `30402`       | Classified Listing         | [99](99.md)              |
 | `30403`       | Draft Classified Listing   | [99](99.md)              |
 | `30617`       | Repository announcements   | [34](34.md)              |
