@@ -231,5 +231,5 @@ A `kind:31890` event defines a feed in an addressable way. The `content` SHOULD 
 readable description of the feed. The following tags SHOULD be included:
 
 - A `d` tag
-- A `name` tag indicating the feed's name
+- A `title` tag indicating the feed's name
 - A `feed` tag whose value is a JSON-encoded feed
