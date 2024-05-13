@@ -7,7 +7,7 @@ reverse chronological order.
 | ----------- | --------- | -------- | ------ |
 | 2024-04-30  | [bad88262](https://github.com/nostr-protocol/nips/commit/bad88262) | [NIP-34](34.md) | 'earliest-unique-commit' tag was removed (use 'r' tag instead) |
 | 2024-02-25  | [4a171cb0](https://github.com/nostr-protocol/nips/commit/4a171cb0) | [NIP-18](18.md) | quote repost should use `q` tag |
-| 2024-02-10  | [c6cd655c](https://github.com/nostr-protocol/nips/commit/c6cd655c) | [NIP-46](46.md) | Params were stringified |
+| 2024-02-21  | [c6cd655c](https://github.com/nostr-protocol/nips/commit/c6cd655c) | [NIP-46](46.md) | Params were stringified |
 | 2024-02-16  | [cbec02ab](https://github.com/nostr-protocol/nips/commit/cbec02ab) | [NIP-49](49.md) | Password first normalized to NFKC |
 | 2024-02-15  | [afbb8dd0](https://github.com/nostr-protocol/nips/commit/afbb8dd0) | [NIP-39](39.md) | PGP identity was removed |
 | 2024-02-07  | [d3dad114](https://github.com/nostr-protocol/nips/commit/d3dad114) | [NIP-46](46.md) | Connection token format was changed |
