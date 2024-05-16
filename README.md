@@ -121,6 +121,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1971`        | Problem Tracker            | [nostrocket][nostrocket] |
 | `1984`        | Reporting                  | [56](56.md)              |
 | `1985`        | Label                      | [32](32.md)              |
+| `2003`        | Torrent                    | [35](35.md)              |
+| `2004`        | Torrent Comment            | [35](35.md)              |
 | `4550`        | Community Post Approval    | [72](72.md)              |
 | `5000`-`5999` | Job Request                | [90](90.md)              |
 | `6000`-`6999` | Job Result                 | [90](90.md)              |
