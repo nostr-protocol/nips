@@ -19,7 +19,7 @@ Since the `i` tag is already used for similar references in kind-0 metadata even
 
 ### Books:
 
-- Book ISBN: `["i", "book:isbn:9780765382030"]` - https://isbnsearch.org/isbn/9780765382030
+- Book ISBN: `["i", "isbn:9780765382030"]` - https://isbnsearch.org/isbn/9780765382030
 
 Book ISBNs MUST be referenced _**without hyphens**_ as many book search APIs return the ISBNs without hyphens. Removing hypens from ISBNs is trivial, whereas adding the hyphens back in is non-trivial requiring a library.
 
@@ -30,6 +30,6 @@ Book ISBNs MUST be referenced _**without hyphens**_ as many book search APIs ret
 
 ### Movies:
 
-- Movie ISAN: `["i", "movie:isan:0000-0000-401A-0000-7"]` - https://web.isan.org/public/en/isan/0000-0000-401A-0000-7
+- Movie ISAN: `["i", "isan:0000-0000-401A-0000-7"]` - https://web.isan.org/public/en/isan/0000-0000-401A-0000-7
 
 Movie ISANs SHOULD be referenced  _**without the version part**_ as the versions / edits of movies are not relevant. More info on ISAN parts here -  https://support.isan.org/hc/en-us/articles/360002783131-Records-relations-and-hierarchies-in-the-ISAN-Registry
