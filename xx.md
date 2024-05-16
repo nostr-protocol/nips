@@ -221,10 +221,6 @@ Example:
 ]
 ```
 
-# Feed Tag
-
-Any event MAY use a `feed` tag with a JSON-encoded feed as the value.
-
 # Feed Event
 
 A `kind:31890` event defines a feed in an addressable way. The `content` SHOULD be a human-
