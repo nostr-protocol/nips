@@ -34,7 +34,7 @@ A `author` feed includes one or more pubkeys to use in an `authors` filter.
 ["author", "d97a7541e4603d393c61eaad810c2e2e72684fb5672bde962c75c023d70e763f"]
 ```
 
-## CreatedAt
+## Created At
 
 A `created_at` feed includes one or more objects describing date ranges for events to fetch.
 These MAY include values `since`, `until`, and `relative`, which may be a list containing
@@ -44,7 +44,7 @@ If included in the `relative` list, `since` and `until` values MUST be interpret
 `seconds before now`. Negative numbers MUST be interpreted as `seconds after now`.
 
 ```json
-["created_at", {"since": 1715293673, "until": 86400, "relative": ["since"]}]
+["created_at", {"since": 1715293673, "until": 86400, "relative": ["until"]}]
 ```
 
 ## DVM
@@ -52,7 +52,7 @@ If included in the `relative` list, `since` and `until` values MUST be interpret
 A `dvm` feed includes one or more objects describing a DVM request. Each object MUST
 have a request `kind`, and MAY have a list of request `tags`, `relays` to send the
 request to, and a list of `mappings` mapping response tags to feeds. If omitted,
-applications SHOULD provide a resonable set of default `mappings`.
+applications SHOULD provide a reasonable set of default `mappings`.
 
 ```json
 [
@@ -67,17 +67,25 @@ applications SHOULD provide a resonable set of default `mappings`.
 
 ## ID
 
-A `id` feed
+A `id` feed includes one or more ids of events to fetch.
+
+```json
+["id", "b1ee83587c4ebab697719fd5bad22319741134e49933b0528b8cca426cafd59e"]
+```
 
 ## Kind
 
-A `kind` feed
+A `kind` feed includes one or more kinds of events to fetch.
+
+```json
+["kind", 1, 30023]
+```
 
 ## List
 
-A `dvm` feed includes one or more objects defining one or more `addresses` and a set of
-`mappings` for how to translate list tags into feeds. If omitted,
-applications SHOULD provide a resonable set of default `mappings`.
+A `list` feed includes one or more objects defining one or more `addresses` and optional
+`mappings` for how to translate list tags into feeds. If omitted, applications SHOULD
+provide a reasonable set of default `mappings`.
 
 ```json
 [
@@ -94,7 +102,7 @@ applications SHOULD provide a resonable set of default `mappings`.
 A `wot` feed includes one or more objects with optional `min` and `max` properties. These
 MUST be between 0 and 1 (inclusive) so that the interpeting application can scale the filter
 to their own web of trust's score range. If empty, `min` MUST be interpreted as `0`, and
-`max` as 1.
+`max` as `1`.
 
 ```json
 ["wot", {"min": 0.3}]
@@ -143,7 +151,7 @@ as standard tag filters.
 
 ## Union
 
-A `union` feed includes two or more feeds. An event may match any feed to match the parent feed.
+A `union` feed includes zero or more feeds. An event may match any feed to match the parent feed.
 
 Example:
 
@@ -157,7 +165,7 @@ Example:
 
 ## Intersection
 
-An `intersection` feed includes two or more feeds. An event must match all given feeds to
+An `intersection` feed includes zero or more feeds. An event must match all given feeds to
 match the parent feed.
 
 Example:
@@ -172,7 +180,7 @@ Example:
 
 ## Difference
 
-A `difference` feed includes a base feed to fetch, and one or more feeds used to exclude
+A `difference` feed MAY include a base feed to fetch, and zero or more feeds used to exclude
 events from the base feed.
 
 Example:
@@ -194,8 +202,8 @@ Example:
 
 ## Symmetric Difference
 
-A `symmetric_difference` feed includes two or more feeds. An event must match only one feed to match
-the parent feed.
+A `symmetric_difference` feed includes zero or more feeds. An event must match only one feed to match
+the base feed.
 
 Example:
 
@@ -220,6 +228,12 @@ Example:
   ]
 ]
 ```
+
+# Implementation notes
+
+If a `union`, `difference`, `intersection`, or `symmetric_difference` feed has no entries, it should
+be treated as an empty feed. Likewise with other feed types that have no arguments; for example
+`["authors"]` should be interprete the same way as a `{"authors": []}` filter.
 
 # Feed Event
 
