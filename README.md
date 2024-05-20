@@ -25,7 +25,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-01: Basic protocol flow description](01.md)
 - [NIP-02: Follow List](02.md)
 - [NIP-03: OpenTimestamps Attestations for Events](03.md)
-- [NIP-04: Encrypted Direct Message](04.md) --- **unrecommended**: deprecated in favor of [NIP-44](44.md)
+- [NIP-04: Encrypted Direct Message](04.md) --- **unrecommended**: deprecated in favor of [NIP-17](17.md)
 - [NIP-05: Mapping Nostr keys to DNS-based internet identifiers](05.md)
 - [NIP-06: Basic key derivation from mnemonic seed phrase](06.md)
 - [NIP-07: `window.nostr` capability for web browsers](07.md)
@@ -36,6 +36,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-13: Proof of Work](13.md)
 - [NIP-14: Subject tag in text events](14.md)
 - [NIP-15: Nostr Marketplace (for resilient marketplaces)](15.md)
+- [NIP-17: Private Direct Messages](17.md)
 - [NIP-18: Reposts](18.md)
 - [NIP-19: bech32-encoded entities](19.md)
 - [NIP-21: `nostr:` URI scheme](21.md)
@@ -65,6 +66,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-51: Lists](51.md)
 - [NIP-52: Calendar Events](52.md)
 - [NIP-53: Live Activities](53.md)
+- [NIP-54: Wiki](54.md)
 - [NIP-56: Reporting](56.md)
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
@@ -99,12 +101,14 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `11`          | Group Thread               | [29](29.md)              |
 | `12`          | Group Thread Reply         | [29](29.md)              |
 | `13`          | Seal                       | [59](59.md)              |
+| `14`          | Direct Message             | [17](17.md)              |
 | `16`          | Generic Repost             | [18](18.md)              |
 | `40`          | Channel Creation           | [28](28.md)              |
 | `41`          | Channel Metadata           | [28](28.md)              |
 | `42`          | Channel Message            | [28](28.md)              |
 | `43`          | Channel Hide Message       | [28](28.md)              |
 | `44`          | Channel Mute User          | [28](28.md)              |
+| `818`         | Merge Requests             | [54](54.md)              |
 | `1021`        | Bid                        | [15](15.md)              |
 | `1022`        | Bid confirmation           | [15](15.md)              |
 | `1040`        | OpenTimestamps             | [03](03.md)              |
@@ -114,6 +118,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1617`        | Patches                    | [34](34.md)              |
 | `1621`        | Issues                     | [34](34.md)              |
 | `1622`        | Replies                    | [34](34.md)              |
+| `1630`-`1633` | Status                     | [34](34.md)              |
 | `1971`        | Problem Tracker            | [nostrocket][nostrocket] |
 | `1984`        | Reporting                  | [56](56.md)              |
 | `1985`        | Label                      | [32](32.md)              |
@@ -137,6 +142,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10009`       | User groups                | [51](51.md), [29](29.md) |
 | `10015`       | Interests list             | [51](51.md)              |
 | `10030`       | User emoji list            | [51](51.md)              |
+| `10050`       | Relay list to receive DMs  | [17](17.md)              |
 | `10096`       | File storage server list   | [96](96.md)              |
 | `13194`       | Wallet Info                | [47](47.md)              |
 | `21000`       | Lightning Pub RPC          | [Lightning.Pub][lnpub]   |
@@ -167,6 +173,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30402`       | Classified Listing         | [99](99.md)              |
 | `30403`       | Draft Classified Listing   | [99](99.md)              |
 | `30617`       | Repository announcements   | [34](34.md)              |
+| `30818`       | Wiki article               | [54](54.md)              |
+| `30819`       | Redirects                  | [54](54.md)              |
 | `31922`       | Date-Based Calendar Event  | [52](52.md)              |
 | `31923`       | Time-Based Calendar Event  | [52](52.md)              |
 | `31924`       | Calendar                   | [52](52.md)              |
@@ -246,10 +254,10 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `price`           | price                                | currency, frequency  | [99](99.md)                           |
 | `proxy`           | external ID                          | protocol             | [48](48.md)                           |
 | `published_at`    | unix timestamp (string)              | --                   | [23](23.md)                           |
-| `relay`           | relay url                            | --                   | [42](42.md)                           |
+| `relay`           | relay url                            | --                   | [42](42.md), [17](17.md)              |
 | `relays`          | relay list                           | --                   | [57](57.md)                           |
 | `server`          | file storage server url              | --                   | [96](96.md)                           |
-| `subject`         | subject                              | --                   | [14](14.md)                           |
+| `subject`         | subject                              | --                   | [14](14.md), [17](17.md)              |
 | `summary`         | article summary                      | --                   | [23](23.md)                           |
 | `thumb`           | badge thumbnail                      | dimensions in pixels | [58](58.md)                           |
 | `title`           | article title                        | --                   | [23](23.md)                           |
