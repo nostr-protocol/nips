@@ -72,6 +72,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-58: Badges](58.md)
 - [NIP-59: Gift Wrap](59.md)
 - [NIP-65: Relay List Metadata](65.md)
+- [NIP-71: Video Events](71.md)
 - [NIP-72: Moderated Communities](72.md)
 - [NIP-75: Zap Goals](75.md)
 - [NIP-78: Application-specific data](78.md)
@@ -156,6 +157,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30002`       | Relay sets                 | [51](51.md)              |
 | `30003`       | Bookmark sets              | [51](51.md)              |
 | `30004`       | Curation sets              | [51](51.md)              |
+| `30005`       | Video sets              | [51](51.md)              |
 | `30008`       | Profile Badges             | [58](58.md)              |
 | `30009`       | Badge Definition           | [58](58.md)              |
 | `30015`       | Interest sets              | [51](51.md)              |
@@ -181,6 +183,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31925`       | Calendar Event RSVP        | [52](52.md)              |
 | `31989`       | Handler recommendation     | [89](89.md)              |
 | `31990`       | Handler information        | [89](89.md)              |
+| `34235`       | Video Event                | [71](71.md)              |
+| `34236`       | Short-form Portrait Video Event    | [71](71.md)      |
+| `34237`       | Video View Event           | [71](71.md)              |
 | `34550`       | Community Definition       | [72](72.md)              |
 | `39000-9`     | Group metadata events      | [29](29.md)              |
 
