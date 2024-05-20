@@ -53,7 +53,7 @@ Example:
     ["p", "2a07724d42fd8004b5c97b62ba03b6baf3919f9e8211667039987866997e97ad", "wss://my-relay.com", "Jcubw"],
     ["title", "75 FOOT CLIFF DIVE 😨"],
     ["published_at", "<published_at>"],
-    ["imeta", "url https://example.com/my-track.mp4 x <hash> ..."]
+    ["imeta", "url https://example.com/my-track.mp4", "x <hash>", ...]
   ]
 }
 ```
