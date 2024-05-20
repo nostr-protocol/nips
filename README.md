@@ -84,6 +84,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-115: ISO-3166 Geotags](115.md)
 
 ## Event Kinds
 | kind          | description                | NIP                      |
@@ -227,12 +228,13 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `a`               | coordinates to an event              | relay URL            | [01](01.md)                           |
 | `d`               | identifier                           | --                   | [01](01.md)                           |
 | `g`               | geohash                              | --                   | [52](52.md)                           |
+| `G`               | ISO-3166 (alpha-2/3/4, numeric)      | --                   | [115](115.md)                         |
 | `i`               | identity                             | proof                | [39](39.md)                           |
 | `k`               | kind number (string)                 | --                   | [18](18.md), [25](25.md), [72](72.md) |
 | `l`               | label, label namespace               | annotations          | [32](32.md)                           |
 | `L`               | label namespace                      | --                   | [32](32.md)                           |
 | `m`               | MIME type                            | --                   | [94](94.md)                           |
-| `q`               | event id (hex)                       | relay URL    | [18](18.md)                           |
+| `q`               | event id (hex)                       | relay URL            | [18](18.md)                           |
 | `r`               | a reference (URL, etc)               | petname              |                                       |
 | `r`               | relay url                            | marker               | [65](65.md)                           |
 | `t`               | hashtag                              | --                   |                                       |
