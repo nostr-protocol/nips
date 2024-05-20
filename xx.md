@@ -60,7 +60,7 @@ Example:
     ["title", "Platinum Robots on the Moon"],
     ["subject", "Platinum Robots on the Moon"],
     ["published_at", "<published_at>"],
-    ["imeta", "url https://example.com/my-track.m3u8 x <hash> ..."]
+    ["imeta", "url https://example.com/my-track.m3u8", "x <hash>", ...]
   ]
 }
 ```
