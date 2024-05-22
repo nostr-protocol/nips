@@ -51,6 +51,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-31: Dealing with Unknown Events](31.md)
 - [NIP-32: Labeling](32.md)
 - [NIP-34: `git` stuff](34.md)
+- [NIP-35: Torrents](35.md)
 - [NIP-36: Sensitive Content](36.md)
 - [NIP-38: User Statuses](38.md)
 - [NIP-39: External Identities in Profiles](39.md)
@@ -224,7 +225,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 
 | name              | value                                | other parameters     | NIP                                   |
 | ----------------- | ------------------------------------ | -------------------- | ------------------------------------- |
-| `e`               | event id (hex)                       | relay URL, marker    | [01](01.md), [10](10.md)              |
+| `e`               | event id (hex)                       | relay URL, marker, pubkey (hex)    | [01](01.md), [10](10.md)              |
 | `p`               | pubkey (hex)                         | relay URL, petname   | [01](01.md), [02](02.md)              |
 | `a`               | coordinates to an event              | relay URL            | [01](01.md)                           |
 | `d`               | identifier                           | --                   | [01](01.md)                           |
