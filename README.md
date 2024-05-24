@@ -72,6 +72,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
 - [NIP-59: Gift Wrap](59.md)
+- [NIP-62: Right to Vanish](62.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-71: Video Events](71.md)
 - [NIP-72: Moderated Communities](72.md)
@@ -110,6 +111,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `42`          | Channel Message            | [28](28.md)              |
 | `43`          | Channel Hide Message       | [28](28.md)              |
 | `44`          | Channel Mute User          | [28](28.md)              |
+| `62`          | Delete Account             | [62](62.md)              |
+| `63`          | Right to Vanish            | [62](62.md)              |
 | `818`         | Merge Requests             | [54](54.md)              |
 | `1021`        | Bid                        | [15](15.md)              |
 | `1022`        | Bid confirmation           | [15](15.md)              |
