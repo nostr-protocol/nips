@@ -126,6 +126,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1985`        | Label                      | [32](32.md)              |
 | `2003`        | Torrent                    | [35](35.md)              |
 | `2004`        | Torrent Comment            | [35](35.md)              |
+| `2022`       | Coinjoin Pool              | [joinstr][joinstr]       |
 | `4550`        | Community Post Approval    | [72](72.md)              |
 | `5000`-`5999` | Job Request                | [90](90.md)              |
 | `6000`-`6999` | Job Result                 | [90](90.md)              |
@@ -192,7 +193,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `34237`       | Video View Event           | [71](71.md)              |
 | `34550`       | Community Definition       | [72](72.md)              |
 | `39000-9`     | Group metadata events      | [29](29.md)              |
-| `2022`       | Coinjoin Pool              | [joinstr][joinstr]       |
 
 [NUD: Custom Feeds]: https://wikifreedia.xyz/cip-01/97c70a44366a6535c1
 [nostrocket]: https://github.com/nostrocket/NIPS/blob/main/Problems.md
