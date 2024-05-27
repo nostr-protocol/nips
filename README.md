@@ -261,7 +261,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `lnurl`           | `bech32` encoded `lnurl`             | --                              | [57](57.md)                           |
 | `location`        | location string                      | --                              | [52](52.md), [99](99.md)              |
 | `name`            | name                                 | --                              | [34](34.md), [58](58.md)              |
-| `nonce`           | random                               | --                              | [13](13.md)                           |
+| `nonce`           | random                               | difficulty                      | [13](13.md)                           |
 | `preimage`        | hash of `bolt11` invoice             | --                              | [57](57.md)                           |
 | `price`           | price                                | currency, frequency             | [99](99.md)                           |
 | `proxy`           | external ID                          | protocol                        | [48](48.md)                           |
