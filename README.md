@@ -278,7 +278,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 
 ## Criteria for acceptance of NIPs
 
-1. They should be implemented in at least two clients and one relay -- when applicable.
+1. They should be fully implemented in at least two clients and one relay -- when applicable.
 2. They should make sense.
 3. They should be optional and backwards-compatible: care must be taken such that clients and relays that choose to not implement them do not stop working when interacting with the ones that choose to.
 4. There should be no more than one way of doing the same thing.
