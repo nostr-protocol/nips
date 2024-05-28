@@ -111,8 +111,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `42`          | Channel Message            | [28](28.md)              |
 | `43`          | Channel Hide Message       | [28](28.md)              |
 | `44`          | Channel Mute User          | [28](28.md)              |
-| `62`          | Delete Account             | [62](62.md)              |
-| `63`          | Right to Vanish            | [62](62.md)              |
+| `62`          | Right to Vanish            | [62](62.md)              |
 | `818`         | Merge Requests             | [54](54.md)              |
 | `1021`        | Bid                        | [15](15.md)              |
 | `1022`        | Bid confirmation           | [15](15.md)              |
