@@ -50,8 +50,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-31: Dealing with Unknown Events](31.md)
 - [NIP-32: Labeling](32.md)
 - [NIP-34: `git` stuff](34.md)
-- [NIP-35: Draft Events](35.md)
 - [NIP-36: Sensitive Content](36.md)
+- [NIP-37: Draft Events](37.md)
 - [NIP-38: User Statuses](38.md)
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
@@ -136,7 +136,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10006`       | Blocked relays list        | [51](51.md)              |
 | `10007`       | Search relays list         | [51](51.md)              |
 | `10009`       | User groups                | [51](51.md), [29](29.md) |
-| `10013`       | Private Relays             | [35](35.md)
+| `10013`       | Private Relays             | [35](37.md)              |
 | `10015`       | Interests list             | [51](51.md)              |
 | `10030`       | User emoji list            | [51](51.md)              |
 | `10096`       | File storage server list   | [96](96.md)              |
@@ -169,7 +169,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30402`       | Classified Listing         | [99](99.md)              |
 | `30403`       | Draft Classified Listing   | [99](99.md)              |
 | `30617`       | Repository announcements   | [34](34.md)              |
-| `31234`       | Draft Event                | [35](35.md)              |
+| `31234`       | Draft Event                | [35](37.md)              |
 | `31922`       | Date-Based Calendar Event  | [52](52.md)              |
 | `31923`       | Time-Based Calendar Event  | [52](52.md)              |
 | `31924`       | Calendar                   | [52](52.md)              |
