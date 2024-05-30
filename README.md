@@ -275,6 +275,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `title`           | article title                        | --                              | [23](23.md)                           |
 | `web`             | webpage URL                          | --                              | [34](34.md)                           |
 | `zap`             | pubkey (hex), relay URL              | weight                          | [57](57.md)                           |
+| `anon`            | empty string                         | --                              | [57](57.md)                           |
 
 ## Criteria for acceptance of NIPs
 
