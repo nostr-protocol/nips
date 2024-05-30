@@ -8,7 +8,7 @@ Moderated channels with membership invite links
 
 This NIP defines a way to create channels that have restricted membership, where members may invite other members and only members can send messages.  This depends on #1242
 
-For getting new messages, clients should subscribe to kind 69 and kind 70.  They should only show messages once approved, but should cache all kind 69 messages in case of later approval.  For paginating old messages, clients can use since and until to query for kinds 69 and 70.  
+For getting new messages, clients should subscribe to kind 42 and kind 70.  They should only show messages once approved, but should cache all kind 42 messages in case of later approval.  For paginating old messages, clients can use since and until to query for kinds 42 and 70.  
 
 
 ## Kind 30069: externally computed channel
