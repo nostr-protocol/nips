@@ -136,6 +136,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10006`       | Blocked relays list        | [51](51.md)              |
 | `10007`       | Search relays list         | [51](51.md)              |
 | `10009`       | User groups                | [51](51.md), [29](29.md) |
+| `10013`       | Private Relays             | [35](35.md)
 | `10015`       | Interests list             | [51](51.md)              |
 | `10030`       | User emoji list            | [51](51.md)              |
 | `10096`       | File storage server list   | [96](96.md)              |
