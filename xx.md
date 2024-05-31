@@ -6,12 +6,13 @@ Moderated channels with membership invite links
 
 `draft` `optional`
 
-This NIP defines a way to create channels that have restricted membership, where members may invite other members and only members can send messages.  This depends on #1242
+This NIP defines a way to create channels that have restricted membership, where members may invite other members and only members can send messages.  This depends on #1242 - this nip requires a *mandatory* bot for managing the channel computation.
+
+It is intended that end users do not run their own infrastructure, but instead a variety of providers implementing this nip will be available for public use as part of the ecosystem.  This requires a measure of trust in the provider, but the intention is that the decentralization and transparent computation will make any undesirable behavior by the computer obvious.  See #1242 for more information about the trust model.
 
 For getting new messages, clients should subscribe to kind 42 and kind 70.  They should only show messages once approved, but should cache all kind 42 messages in case of later approval.  For paginating old messages, clients can use since and until to query for kinds 42 and 70.  
 
-
-## Kind 30069: externally computed channel
+## Kind 30069: Externally computed channel
 ```
 tags:
 d: channelId
@@ -28,6 +29,14 @@ Invite_tokens: [
   }
 ]
 metadata: JSON metadata for the channel, including the name, topic, subject, picture, etc.
+```
+
+## Kind 69: Create channel
+Request a computer implementing this nip to create a channel, and assign the sender as admin.  If the computer is accepting new channels, it will send a kind 30069 event with the sender of this kind 69 event set as the admin.
+```
+a: Kind 10400 event of the computer that will manage the channel.
+
+content: the channel id of the channel to create.
 ```
 
 ## Kind 42: channel message
