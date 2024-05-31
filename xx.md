@@ -55,7 +55,7 @@ Example:
     ["c", "EDM", "subgenre"],
     ["c", "Columbia Records", "record_label"],
     ["c", "AC/DC", "artist"],
-    ["i", "podcast:item:guid:123"],
+    ["i", "podcast:item:guid:123", "https://fountain.fm/episode/30uEXC25615Ze2ELjY2p"],
     ["p", "2a07724d42fd8004b5c97b62ba03b6baf3919f9e8211667039987866997e97ad", "wss://my-relay.com", "AC/DC"],
     ["title", "Platinum Robots on the Moon"],
     ["subject", "Platinum Robots on the Moon"],
