@@ -5,6 +5,7 @@ reverse chronological order.
 
 | Date        | Commit    | NIP      | Change |
 | ----------- | --------- | -------- | ------ |
+| 2024-05-25  | [5d1d1c17](https://github.com/nostr-protocol/nips/commit/5d1d1c17) | [NIP-71](71.md) | 'aes-256-gcm' tag was removed |
 | 2024-04-30  | [bad88262](https://github.com/nostr-protocol/nips/commit/bad88262) | [NIP-34](34.md) | 'earliest-unique-commit' tag was removed (use 'r' tag instead) |
 | 2024-02-25  | [4a171cb0](https://github.com/nostr-protocol/nips/commit/4a171cb0) | [NIP-18](18.md) | quote repost should use `q` tag |
 | 2024-02-21  | [c6cd655c](https://github.com/nostr-protocol/nips/commit/c6cd655c) | [NIP-46](46.md) | Params were stringified |
