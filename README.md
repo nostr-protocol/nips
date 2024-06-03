@@ -240,7 +240,7 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `L`               | label namespace                      | --                              | [32](32.md)                           |
 | `m`               | MIME type                            | --                              | [94](94.md)                           |
 | `q`               | event id (hex)                       | relay URL                       | [18](18.md)                           |
-| `r`               | a reference (URL, etc)               | petname                         |                                       |
+| `r`               | a reference (URL, etc)               | petname                         | [24](24.md)                           |
 | `r`               | relay url                            | marker                          | [65](65.md)                           |
 | `t`               | hashtag                              | --                              |                                       |
 | `alt`             | summary                              | --                              | [31](31.md)                           |
