@@ -85,6 +85,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-100: Android Signer Application](100.md)
 
 ## Event Kinds
 | kind          | description                | NIP                      |
