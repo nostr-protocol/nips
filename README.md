@@ -68,6 +68,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-52: Calendar Events](52.md)
 - [NIP-53: Live Activities](53.md)
 - [NIP-54: Wiki](54.md)
+- [NIP-55: Android Signer Application](100.md)
 - [NIP-56: Reporting](56.md)
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
@@ -85,7 +86,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
-- [NIP-100: Android Signer Application](100.md)
 
 ## Event Kinds
 | kind          | description                | NIP                      |
