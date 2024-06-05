@@ -97,6 +97,31 @@ provide a reasonable set of default `mappings`.
 ]
 ```
 
+## Label
+
+A `label` feed includes one or more objects defining filters for fetching `kind 1985 label` events
+and optional `mappings` for how to translate label tags into feeds. If omitted, applications SHOULD
+provide a reasonable set of default `mappings`.
+
+Label items may have the following keys:
+
+- `mappings` - a list of lists mapping tag names to filter keys
+- `authors` - a list of authors
+- `relays` - a list of relays to request events from
+- Any single-letter tag filter (beginning with `#`)
+
+```json
+[
+  "label",
+  {
+    "#l": ["#p"],
+    "#L": ["pub.ditto.trends"],
+    "authors": ["db0e60d10b9555a39050c258d460c5c461f6d18f467aa9f62de1a728b8a891a4"],
+    "mappings": [["p", ["authors"]]]
+  }
+]
+```
+
 ## WOT
 
 A `wot` feed includes one or more objects with optional `min` and `max` properties. These
@@ -197,35 +222,6 @@ Example:
     }
   ],
   ["wot", {"max": 0.1}]
-]
-```
-
-## Symmetric Difference
-
-A `symmetric_difference` feed includes zero or more feeds. An event must match only one feed to match
-the base feed.
-
-Example:
-
-```json
-[
-  "symdiff",
-  [
-    "list",
-    {
-      "addresses": [
-        "10001:4d7600c1da0b69185fcbcb6b86cbaa010c9ea137fa83a3f4be4c713e1f217dad:"
-      ]
-    }
-  ],
-  [
-    "list",
-    {
-      "addresses": [
-        "10001:3375d9fe514d19bca737ba1ca2e7a43e19884385f0275a17999e05500bc177c6:"
-      ]
-    }
-  ]
 ]
 ```
 
