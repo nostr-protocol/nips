@@ -68,7 +68,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-52: Calendar Events](52.md)
 - [NIP-53: Live Activities](53.md)
 - [NIP-54: Wiki](54.md)
-- [NIP-55: Android Signer Application](100.md)
+- [NIP-55: Android Signer Application](55.md)
 - [NIP-56: Reporting](56.md)
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
