@@ -224,8 +224,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `AUTH`   | used to send authentication challenges                  | [42](42.md) |
 | `COUNT`  | used to send requested event counts to clients          | [45](45.md) |
 
-Please update these lists when proposing NIPs introducing new event kinds.
-
 ## Standardized Tags
 
 | name              | value                                | other parameters                | NIP                                   |
@@ -276,6 +274,8 @@ Please update these lists when proposing NIPs introducing new event kinds.
 | `title`           | article title                        | --                              | [23](23.md)                           |
 | `web`             | webpage URL                          | --                              | [34](34.md)                           |
 | `zap`             | pubkey (hex), relay URL              | weight                          | [57](57.md)                           |
+
+Please update these lists when proposing new NIPs.
 
 ## Criteria for acceptance of NIPs
 
