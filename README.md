@@ -235,7 +235,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `g`               | geohash                              | --                              | [52](52.md)                           |
 | `i`               | identity                             | proof                           | [39](39.md)                           |
 | `k`               | kind number (string)                 | --                              | [18](18.md), [25](25.md), [72](72.md) |
-| `l`               | label, label namespace               | annotations                     | [32](32.md)                           |
+| `l`               | label, label namespace               | --                              | [32](32.md)                           |
 | `L`               | label namespace                      | --                              | [32](32.md)                           |
 | `m`               | MIME type                            | --                              | [94](94.md)                           |
 | `q`               | event id (hex)                       | relay URL                       | [18](18.md)                           |
