@@ -239,6 +239,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 
 ### Conventional Tags
 
+These tags are defined by at least one NIP and may vary between different kinds.
+
 | name              | value                                | other parameters                | NIP                                   |
 | ----------------- | ------------------------------------ | ------------------------------- | ------------------------------------- |
 | `g`               | geohash                              | --                              | [52](52.md)                           |
