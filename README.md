@@ -11,7 +11,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [Message Types](#message-types)
   - [Client to Relay](#client-to-relay)
   - [Relay to Client](#relay-to-client)
-- [Standardized Tags](#standardized-tags)
+- [Tags](#tags)
+  - [Standardized Tags](#standardized-tags)
+  - [Conventional Tags](#conventional-tags)
 - [Criteria for acceptance of NIPs](#criteria-for-acceptance-of-nips)
 - [Is this repository a centralizing factor?](#is-this-repository-a-centralizing-factor)
 - [How this repository works](#how-this-repository-works)
@@ -224,14 +226,21 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `AUTH`   | used to send authentication challenges                  | [42](42.md) |
 | `COUNT`  | used to send requested event counts to clients          | [45](45.md) |
 
-## Standardized Tags
+## Tags
+
+### Standardized Tags
+
+| name | value                   | other parameters                | NIP                      |
+|------|-------------------------|---------------------------------|--------------------------|
+| `e`  | event id (hex)          | relay URL, marker, pubkey (hex) | [01](01.md), [10](10.md) |
+| `p`  | pubkey (hex)            | relay URL, petname              | [01](01.md), [02](02.md) |
+| `a`  | coordinates to an event | relay URL                       | [01](01.md)              |
+| `d`  | identifier              | --                              | [01](01.md)              |
+
+### Conventional Tags
 
 | name              | value                                | other parameters                | NIP                                   |
 | ----------------- | ------------------------------------ | ------------------------------- | ------------------------------------- |
-| `e`               | event id (hex)                       | relay URL, marker, pubkey (hex) | [01](01.md), [10](10.md)              |
-| `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md)              |
-| `a`               | coordinates to an event              | relay URL                       | [01](01.md)                           |
-| `d`               | identifier                           | --                              | [01](01.md)                           |
 | `g`               | geohash                              | --                              | [52](52.md)                           |
 | `i`               | identity                             | proof                           | [39](39.md)                           |
 | `k`               | kind number (string)                 | --                              | [18](18.md), [25](25.md), [72](72.md) |
