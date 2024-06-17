@@ -33,3 +33,15 @@ Book ISBNs MUST be referenced _**without hyphens**_ as many book search APIs ret
 - Movie ISAN: `["i", "isan:0000-0000-401A-0000-7"]` - https://web.isan.org/public/en/isan/0000-0000-401A-0000-7
 
 Movie ISANs SHOULD be referenced  _**without the version part**_ as the versions / edits of movies are not relevant. More info on ISAN parts here -  https://support.isan.org/hc/en-us/articles/360002783131-Records-relations-and-hierarchies-in-the-ISAN-Registry
+
+---
+
+### Optional URL Hints
+
+Each `i` tag MAY have a url hint as the second argument to redirect people to a website if the client isn't opinionated about how to interpret the id:
+
+`["i", "podcast:item:guid:d98d189b-dc7b-45b1-8720-d4b98690f31f", https://fountain.fm/episode/z1y9TMQRuqXl2awyrQxg]`
+
+`["i", "isan:0000-0000-401A-0000-7", https://www.imdb.com/title/tt0120737]`
+
+
