@@ -172,11 +172,11 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30311`       | Live Event                 | [53](53.md)              |
 | `30315`       | User Statuses              | [38](38.md)              |
 | `30382`       | Public Relationship Status | [81](81.md)              |
-| `30383`       | Private Relationship Status| [81](81.md)              |
 | `30402`       | Classified Listing         | [99](99.md)              |
 | `30403`       | Draft Classified Listing   | [99](99.md)              |
 | `30617`       | Repository announcements   | [34](34.md)              |
 | `30818`       | Wiki article               | [54](54.md)              |
+| `31382`       | Private Relationship Status| [81](81.md)              |
 | `31922`       | Date-Based Calendar Event  | [52](52.md)              |
 | `31923`       | Time-Based Calendar Event  | [52](52.md)              |
 | `31924`       | Calendar                   | [52](52.md)              |
