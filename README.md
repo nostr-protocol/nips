@@ -78,6 +78,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-72: Moderated Communities](72.md)
 - [NIP-75: Zap Goals](75.md)
 - [NIP-78: Application-specific data](78.md)
+- [NIP-81: Relationship Status](81.md)
 - [NIP-84: Highlights](84.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-90: Data Vending Machines](90.md)
@@ -145,6 +146,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10005`       | Public chats list          | [51](51.md)              |
 | `10006`       | Blocked relays list        | [51](51.md)              |
 | `10007`       | Search relays list         | [51](51.md)              |
+| `10008`       | Event Set Names            | [81](81.md)              |
 | `10009`       | User groups                | [51](51.md), [29](29.md) |
 | `10015`       | Interests list             | [51](51.md)              |
 | `10030`       | User emoji list            | [51](51.md)              |
@@ -177,6 +179,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30078`       | Application-specific Data  | [78](78.md)              |
 | `30311`       | Live Event                 | [53](53.md)              |
 | `30315`       | User Statuses              | [38](38.md)              |
+| `30382`       | Public Relationship Status | [81](81.md)              |
+| `30383`       | Private Relationship Status| [81](81.md)              |
 | `30402`       | Classified Listing         | [99](99.md)              |
 | `30403`       | Draft Classified Listing   | [99](99.md)              |
 | `30617`       | Repository announcements   | [34](34.md)              |
