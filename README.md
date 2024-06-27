@@ -12,7 +12,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
   - [Client to Relay](#client-to-relay)
   - [Relay to Client](#relay-to-client)
 - [Tags](#tags)
-  - [Standardized Tags](#standardized-tags)
+  - [Standard Tags](#standard-tags)
   - [Conventional Tags](#conventional-tags)
 - [Criteria for acceptance of NIPs](#criteria-for-acceptance-of-nips)
 - [Is this repository a centralizing factor?](#is-this-repository-a-centralizing-factor)
@@ -228,7 +228,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 
 ## Tags
 
-### Standardized Tags
+### Standard Tags
 
 | name | value                   | other parameters                | NIP                      |
 |------|-------------------------|---------------------------------|--------------------------|
