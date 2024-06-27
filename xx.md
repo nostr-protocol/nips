@@ -1,0 +1,77 @@
+# NIP-XX
+
+## Peer-to-peer messages
+
+`draft` `optional`
+
+## Abstract
+
+Peer-to-peer (P2P) platforms have seen an upturn in recent years, while having more and more options is positive, in the specific case of p2p, having several options contributes to the liquidity split, meaning sometimes there's not enough assets available for trading. If we combine all these individual solutions into one big pool of orders, it will make them much more competitive compared to centralized systems, where a single authority controls the liquidity.
+
+This NIP defines a simple standard for peer-to-peer messages, which enables the creation of a big liquidity pool for all p2p platforms participating.
+
+## The event
+
+Events are [Parameterized Replaceable Events](https://github.com/nostr-protocol/nips/blob/master/01.md#kinds) and use `38383` as event kind, a p2p event look like this:
+
+```json
+[
+  "EVENT",
+  "RAND",
+  {
+    "id": "84fad0d29cb3529d789faeff2033e88fe157a48e071c6a5d1619928289420e31",
+    "pubkey": "dbe0b1be7aafd3cfba92d7463edbd4e33b2969f61bd554d37ac56f032e13355a",
+    "created_at": 1702548701,
+    "kind": 38383,
+    "tags": [
+      ["d", "ede61c96-4c13-4519-bf3a-dcf7f1e9d842"],
+      ["k", "sell"],
+      ["f", "VES"],
+      ["s", "pending"],
+      ["amt", "0"],
+      ["fa", "100"],
+      ["pm", "face to face"],
+      ["premium", "1"],
+      [
+        "rating",
+        "{\"total_reviews\":1,\"total_rating\":3.0,\"last_rating\":3,\"max_rate\":5,\"min_rate\":1}"
+      ],
+      ["network", "lightning"],
+      ["expiration", "1719391096"],
+      ["y", "mostrop2p"],
+      ["z", "order"]
+    ],
+    "content": "",
+    "sig": "7e8fe1eb644f33ff51d8805c02a0e1a6d034e6234eac50ef7a7e0dac68a0414f7910366204fa8217086f90eddaa37ded71e61f736d1838e37c0b73f6a16c4af2"
+  }
+]
+```
+
+## Tags
+
+- `d` Order ID: A unique identifier for the order.
+- `k` Order type: `sell` or `buy`.
+- `f` Currency: The asset being traded, using the [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) standard.
+- `s` Status: `pending`, `canceled`, `in-progress`, `success`.
+- `amt` Amount: The amount of Bitcoin to be traded, the amount is defined in satoshis, if `0` means that the amount of satoshis will be obtained from a public API after the taker accepts the order.
+- `fa` Fiat amount: The fiat amount being traded, for range orders two values are expected, the minimum and maximum amount.
+- `pm` Payment method: The payment method used for the trade.
+- `premium` Premium: The percentage of the premium the maker is willing to pay.
+- `rating` Rating: The rating of the maker, this document does not define how the rating is calculated, it's up to the platform to define it.
+- `n` Network: The network used for the trade, it can be `lightning`, `liquid`, `onchain`, etc.
+- `expiration` Expiration: The expiration date of the order ([NIP-40](https://github.com/nostr-protocol/nips/blob/master/40.md)).
+- `y` Platform: The platform that created the order.
+- `z` Order type: `order`.
+
+## Implementations
+
+Currently implemented on the following platforms:
+
+- [Mostro](https://github.com/MostroP2P/mostro)
+- [@lnp2pBot](https://github.com/lnp2pBot/bot)
+
+## References
+
+- [Mostro messages specification](https://mostro.network/messages/)
+- [Messages specification for peer 2 peer NIP proposal](https://github.com/nostr-protocol/nips/blob/8250274a22f4882f621510df0054fd6167c10c9e/31001.md)
+- [n3xB](https://github.com/nobu-maeda/n3xb)
