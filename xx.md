@@ -36,9 +36,10 @@ Events are [Parameterized Replaceable Events](https://github.com/nostr-protocol/
         "rating",
         "{\"total_reviews\":1,\"total_rating\":3.0,\"last_rating\":3,\"max_rate\":5,\"min_rate\":1}"
       ],
+      ["source", "https://t.me/p2plightning/xxxxxxx"],
       ["network", "lightning"],
       ["expiration", "1719391096"],
-      ["y", "mostrop2p"],
+      ["y", "lnp2pbot"],
       ["z", "order"]
     ],
     "content": "",
@@ -57,6 +58,7 @@ Events are [Parameterized Replaceable Events](https://github.com/nostr-protocol/
 - `fa` Fiat amount: The fiat amount being traded, for range orders two values are expected, the minimum and maximum amount.
 - `pm` Payment method: The payment method used for the trade.
 - `premium` Premium: The percentage of the premium the maker is willing to pay.
+- `source` Source: The source of the order, it can be a URL that redirects to the order.
 - `rating` Rating: The rating of the maker, this document does not define how the rating is calculated, it's up to the platform to define it.
 - `n` Network: The network used for the trade, it can be `lightning`, `liquid`, `onchain`, etc.
 - `expiration` Expiration: The expiration date of the order ([NIP-40](https://github.com/nostr-protocol/nips/blob/master/40.md)).
