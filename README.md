@@ -233,6 +233,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `a`               | coordinates to an event              | relay URL                       | [01](01.md)                           |
 | `d`               | identifier                           | --                              | [01](01.md)                           |
 | `g`               | geohash                              | --                              | [52](52.md)                           |
+| `h`               | group id                             | --                              | [29](29.md)                           |
 | `i`               | identity                             | proof                           | [39](39.md)                           |
 | `k`               | kind number (string)                 | --                              | [18](18.md), [25](25.md), [72](72.md) |
 | `l`               | label, label namespace               | --                              | [32](32.md)                           |
