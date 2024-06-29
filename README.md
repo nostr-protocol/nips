@@ -53,6 +53,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-34: `git` stuff](34.md)
 - [NIP-35: Torrents](35.md)
 - [NIP-36: Sensitive Content](36.md)
+- [NIP-37: Draft Events](37.md)
 - [NIP-38: User Statuses](38.md)
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
@@ -146,6 +147,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10006`       | Blocked relays list        | [51](51.md)              |
 | `10007`       | Search relays list         | [51](51.md)              |
 | `10009`       | User groups                | [51](51.md), [29](29.md) |
+| `10013`       | Private Relays             | [35](37.md)              |
 | `10015`       | Interests list             | [51](51.md)              |
 | `10030`       | User emoji list            | [51](51.md)              |
 | `10050`       | Relay list to receive DMs  | [17](17.md)              |
@@ -183,6 +185,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30818`       | Wiki article               | [54](54.md)              |
 | `30819`       | Redirects                  | [54](54.md)              |
 | `31890`       | Feed                       | [NUD: Custom Feeds](https://wikifreedia.xyz/cip-01/97c70a44366a6535c1)              |
+| `31234`       | Draft Event                | [37](37.md)              |
 | `31922`       | Date-Based Calendar Event  | [52](52.md)              |
 | `31923`       | Time-Based Calendar Event  | [52](52.md)              |
 | `31924`       | Calendar                   | [52](52.md)              |
