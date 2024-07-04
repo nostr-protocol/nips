@@ -232,6 +232,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md)              |
 | `a`               | coordinates to an event              | relay URL                       | [01](01.md)                           |
 | `d`               | identifier                           | --                              | [01](01.md)                           |
+| `c`               | category                             | --                              | [54](54.md)                           |
 | `g`               | geohash                              | --                              | [52](52.md)                           |
 | `h`               | group id                             | --                              | [29](29.md)                           |
 | `i`               | identity                             | proof                           | [39](39.md)                           |
