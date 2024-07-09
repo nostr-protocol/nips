@@ -133,7 +133,7 @@ The Place creator can designate other pubkeys via `"contributor"` tags. If these
 
 - `"d"` tag is necessary for a replaceable event if you desire to make more than one of them.
 - `"g"` tag MUST be present and as accurate to the GeoJSON geometry as possible. This allows for indexed relay queries to retrieve Places in an area. Retrieving Places based on the geohash closest to the screen's viewport will be the primary method of retrieving Places from relays.
-- `"r"` tab MUST be present and is used to include the OSM ID and OSM Type which are concatenated like this: `"R4469371"`. The second value should be "`osm_ref`".
+- `"r"` tab may be present and is used to include the OSM ID and OSM Type which are concatenated like this: `"R4469371"`. The second value should be "`osm_ref`".
 - `"expiration"` may be used for temporary Places such as marking a speed trap.
 
 ## Property Application Kind 1754
