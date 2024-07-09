@@ -1,16 +1,14 @@
-NIP-XX Places 
-======
+# NIP-XX Places
 
 `draft` `optional`
 
 A kind `37515` Place event represents a place on Earth.
 
-Rationale
------
+## Rationale
 
 This NIP provides a decentralized mechanism for people to publish places that matter to them on a map without any governing intermediaries such as Google Maps or OpenStreetMaps.
 
-A Place event is cryptographically owned by its creator who has the sole ability to edit it (replaceable event). 
+A Place event is cryptographically owned by its creator who has the sole ability to edit it (replaceable event).
 
 Places can be zapped, reviewed, labeled, commented on, reacted to, or shared like any other nostr event.
 
@@ -35,28 +33,30 @@ This NIP defines standardized properties that may be applied to Places as tags. 
 - Replicating OpenStreetMaps data for every tree, river, road and municipality. This is background noise and should be handled in your client by tile services like Mapbox or OpenMapTiles.
 - Publicizing your house. Don't publish places that put anyone's privacy at risk.
 
-Place Event Structure
------
+## Place Event Structure
 
 A Place is comprised of two main parts: GeoJSON defines the geospatial structure of the Place in a standard format that can be displayed on a map, and tags containing properties for the Place.
 
 ```javascript
 {
   kind: 37515,
-  content: '{"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"coordinates":[-63.704031143965054,27.04213619251243],"type":"Point"}}]}' // stringified JSON. Use https://geojson.io to easily create GeoJSON objects for testing.
+  content: '{"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"coordinates":[14.425692, 50.095986],"type":"Point"}}]}' // stringified JSON. Use https://geojson.io to easily create GeoJSON objects for testing.
   tags: [
-    ["d", "something unique"], // unique identifier for replaceable event
-    ["name", "Jitter's Coffee Shop"], // name property
+    ["d", "zahradní-restaurace-letenský-zámeček-u2fkbr"], // unique identifier for replaceable event
+    ["name", "Zahradní Restaurace Letenský Zámeček"], // name property
     ["opening_hours", "Mo-Fr_6:00-20:00,Sa-Su_6:00-17:00"], // opening_hours property
     ["logo_url", "https://nostr.build/logo.png"], // logo_url property
-    ["country", "USA"], // country property
+    ["r", "R4469371", "osm_ref"], // osm_ref is a combination of the OSM type (the letter at the front of the string) and OSM ID (which is the numerical value following the letter
+    ["amenity", "biergarten"], // OSM amenity tag
+    ["country", "Czech"], // country property
     ["contributor", "5c83da77af1dec6d7289834998ad7aafbd9e2191396d75ec3cc27f5a77226f36"]
     ["contributor", "f7234bd4c1394dda46d09f35bd384dd30cc552ad5541990f98844fb06676e9ca"]
-    ["g", "dtee7"], // geohash of place; should be as accurate as possible
-    ["g", "dtee"], // all less-precise geohashes must be defined to allow for searching -- see https://github.com/nostr-protocol/nips/pull/136#issuecomment-1788549584
-    ["g", "dte"], 
-    ["g", "dt"], 
-    ["g", "d"], 
+    ["g", "u2fkbr"], // geohash of place; should be as accurate as possible
+    ["g", "u2fkb"], // all less-precise geohashes must be defined to allow for searching -- see https://github.com/nostr-protocol/nips/pull/136#issuecomment-1788549584
+    ["g", "u2fk"],
+    ["g", "u2f"],
+    ["g", "u2"],
+    ["g", "u"],
   ],
   pubkey: ...
   created_at: ...
@@ -81,29 +81,33 @@ A subset of OpenStreeMaps tags have been seleceted to create a standard list of 
 
 #### Required Properties
 
-| Tag Key          | Tag Value              | Example                |
-|------------------|------------------------|------------------------|
-| `"name"`         | The name for the Place |                        |
+| Tag Key  | Tag Value                        | Example    | Other Values |
+| -------- | -------------------------------- | ---------- | ------------ |
+| `"name"` | The name for the Place           |            |              |
+| `"r"`    | OSM Type and OSM ID concatenated | "R4469371" | "osm_ref"    |
 
 #### Optional Properties
 
-| Tag Key          | Tag Value              | Example                |
-|------------------|------------------------|------------------------|
-| `"phone"`        | +CC XXX XXX XXX format, where CC is a country code. |                        | 
-| `"website"`      | URL beginning with https://                       |                        |
-| `"logo_url"`      | URL beginning with https://                       |                        |
-| `"addr:state"`   |                        |                        |
-| `"addr:province"`|                        |                        |
-| `"addr:street"`  |                        |                        |
-| `"addr:housenumber"`|                      |                        |
-| `"addr:city"`    |                        |                        |
-| `"addr:postcode"`|                        |                        |
-| `"addr:country"` |                        |                        |
-| `"opening_hours"`| https://wiki.openstreetmap.org/wiki/Key:opening_hours/specification  | "Mo-Fr 06:00-20:00,Sa 08:00-16:00" |
-| `"amenity"`      | https://wiki.openstreetmap.org/wiki/Key:amenity |                        |
-| `"wheelchair"`   | https://wiki.openstreetmap.org/wiki/Key:wheelchair | "yes" for accessible, "no" for non-accessible |
+| Tag Key              | Tag Value                                                           | Example                                       |
+| -------------------- | ------------------------------------------------------------------- | --------------------------------------------- |
+| `"phone"`            | +CC XXX XXX XXX format, where CC is a country code.                 |                                               |
+| `"website"`          | URL beginning with https://                                         |                                               |
+| `"logo_url"`         | URL beginning with https://                                         |                                               |
+| `"addr:state"`       |                                                                     |                                               |
+| `"addr:province"`    |                                                                     |                                               |
+| `"addr:street"`      |                                                                     |                                               |
+| `"addr:housenumber"` |                                                                     |                                               |
+| `"addr:city"`        |                                                                     |                                               |
+| `"addr:postcode"`    |                                                                     |                                               |
+| `"addr:country"`     |                                                                     |                                               |
+| `"opening_hours"`    | https://wiki.openstreetmap.org/wiki/Key:opening_hours/specification | "Mo-Fr 06:00-20:00,Sa 08:00-16:00"            |
+| `"amenity"`          | https://wiki.openstreetmap.org/wiki/Key:amenity                     |                                               |
+| `"wheelchair"`       | https://wiki.openstreetmap.org/wiki/Key:wheelchair                  | "yes" for accessible, "no" for non-accessible |
+
+|
 
 #### Example
+
 A Place creator can describe the properties of their Place using these tags like this:
 
 ```json
@@ -119,8 +123,7 @@ A Place creator can describe the properties of their Place using these tags like
 - Only one of each Property tag MAY be used in a single event.
 - The 0th element of a Property tag, such as `"name"`, is the key. The next element is the value, such as `"Jitter's Coffee Shop"`. The value should not be an empty string in a kind 37515. However, in a kind 1754, if the value is an empty string it denotes the complete removal of the property from the Place. This is NOT the same as using something like `"false"` as the value.
 
-Property tags are __not__ indexed by relays. They can be used for client-side filtering and interpretation of Places after they are queried from the relays; the `g` tag is the preferred method to query for Places in an area.
-
+Property tags are **not** indexed by relays. They can be used for client-side filtering and interpretation of Places after they are queried from the relays; the `g` tag is the preferred method to query for Places in an area.
 
 ### Contributor Tags
 
@@ -130,10 +133,10 @@ The Place creator can designate other pubkeys via `"contributor"` tags. If these
 
 - `"d"` tag is necessary for a replaceable event if you desire to make more than one of them.
 - `"g"` tag MUST be present and as accurate to the GeoJSON geometry as possible. This allows for indexed relay queries to retrieve Places in an area. Retrieving Places based on the geohash closest to the screen's viewport will be the primary method of retrieving Places from relays.
+- `"r"` tab MUST be present and is used to include the OSM ID and OSM Type which are concatenated like this: `"R4469371"`. The second value should be "`osm_ref`".
 - `"expiration"` may be used for temporary Places such as marking a speed trap.
 
-Property Application Kind 1754
---------
+## Property Application Kind 1754
 
 A kind `1754` event MAY be used to apply properties to other Places. This enables crowdsourcing of useful Place information, but clients ultimately decide how this information is used. A client may request kind `1754` and filter by `a` tag to get all of the Property Application events for a particular Place.
 
@@ -170,19 +173,17 @@ Crowdsourcing a property for wheelchair accessibility to an existing Place:
 }
 ```
 
-Implementations
---------
+## Implementations
 
 - https://go.yondar.me (work in progress)
+- https://satlantis.io
 
-Resources
----------
+## Resources
 
 - https://geojson.io - useful playground for creating GeoJSON
 - https://taginfo.openstreetmap.org - find info about properties used in OpenStreetMaps
 
-References
----------
+## References
 
 - [NIP-32](/32.md)
 - [NIP-51](/51.md)
