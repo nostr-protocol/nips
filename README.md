@@ -74,6 +74,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-58: Badges](58.md)
 - [NIP-59: Gift Wrap](59.md)
 - [NIP-65: Relay List Metadata](65.md)
+- [NIP-70: Protected Events](70.md)
 - [NIP-71: Video Events](71.md)
 - [NIP-72: Moderated Communities](72.md)
 - [NIP-75: Zap Goals](75.md)
@@ -232,6 +233,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md)              |
 | `a`               | coordinates to an event              | relay URL                       | [01](01.md)                           |
 | `d`               | identifier                           | --                              | [01](01.md)                           |
+| `-`               | --                                   | --                              | [70](70.md)                           |
 | `g`               | geohash                              | --                              | [52](52.md)                           |
 | `h`               | group id                             | --                              | [29](29.md)                           |
 | `i`               | identity                             | proof                           | [39](39.md)                           |
