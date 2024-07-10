@@ -135,6 +135,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `7000`        | Job Feedback               | [90](90.md)              |
 | `9000`-`9030` | Group Control Events       | [29](29.md)              |
 | `9041`        | Zap Goal                   | [75](75.md)              |
+| `9733`        | Private Zap Request        | [57](57.md)              |
 | `9734`        | Zap Request                | [57](57.md)              |
 | `9735`        | Zap                        | [57](57.md)              |
 | `9802`        | Highlights                 | [84](84.md)              |
