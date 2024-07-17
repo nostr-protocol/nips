@@ -76,6 +76,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-58: Badges](58.md)
 - [NIP-59: Gift Wrap](59.md)
 - [NIP-65: Relay List Metadata](65.md)
+- [NIP-70: Protected Events](70.md)
 - [NIP-71: Video Events](71.md)
 - [NIP-72: Moderated Communities](72.md)
 - [NIP-75: Zap Goals](75.md)
@@ -92,7 +93,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 ## Event Kinds
 | kind          | description                | NIP                      |
 | ------------- | -------------------------- | ------------------------ |
-| `0`           | Metadata                   | [01](01.md)              |
+| `0`           | User Metadata              | [01](01.md)              |
 | `1`           | Short Text Note            | [01](01.md)              |
 | `2`           | Recommend Relay            | 01 (deprecated)          |
 | `3`           | Follows                    | [02](02.md)              |
@@ -243,7 +244,9 @@ These tags are defined by at least one NIP and may vary between different kinds.
 
 | name              | value                                | other parameters                | NIP                                   |
 | ----------------- | ------------------------------------ | ------------------------------- | ------------------------------------- |
+| `-`               | --                                   | --                              | [70](70.md)                           |
 | `g`               | geohash                              | --                              | [52](52.md)                           |
+| `h`               | group id                             | --                              | [29](29.md)                           |
 | `i`               | identity                             | proof                           | [39](39.md)                           |
 | `k`               | kind number (string)                 | --                              | [18](18.md), [25](25.md), [72](72.md) |
 | `l`               | label, label namespace               | --                              | [32](32.md)                           |
