@@ -246,6 +246,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `r`               | relay url                            | marker                          | [65](65.md)                           |
 | `t`               | hashtag                              | --                              |                                       |
 | `alt`             | summary                              | --                              | [31](31.md)                           |
+| `attachment`      | attachment URL, file name            | --                              | [17](17.md)                           |
 | `amount`          | millisatoshis, stringified           | --                              | [57](57.md)                           |
 | `bolt11`          | `bolt11` invoice                     | --                              | [57](57.md)                           |
 | `challenge`       | challenge string                     | --                              | [42](42.md)                           |
