@@ -5,6 +5,7 @@ reverse chronological order.
 
 | Date        | Commit    | NIP      | Change |
 | ----------- | --------- | -------- | ------ |
+| 2024-07-23  | [0227a2cd](https://github.com/nostr-protocol/nips/commit/0227a2cd) | [NIP-01](01.md) | events should be sorted by id after created_at |
 | 2024-06-06  | [58e94b20](https://github.com/nostr-protocol/nips/commit/58e94b20) | [NIP-25](25.md) | [8073c848](https://github.com/nostr-protocol/nips/commit/8073c848) was reverted |
 | 2024-06-06  | [a6dfc7b5](https://github.com/nostr-protocol/nips/commit/a6dfc7b5) | [NIP-55](55.md) | NIP number was changed |
 | 2024-05-25  | [5d1d1c17](https://github.com/nostr-protocol/nips/commit/5d1d1c17) | [NIP-71](71.md) | 'aes-256-gcm' tag was removed |
