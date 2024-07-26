@@ -8,7 +8,7 @@ Nostr uses websockets but only utilizes websocket text messages, using JSON form
 
 This NIP proposes an optional additional websocket binary messaging to improve this situation, and also introduces a number of other protocol level improvements, given that the protocol is new and therefore additional changes wont break existing software.
 
-# Backwards Compatibility
+## Backwards Compatibility
 
 The use of binary messaging is added on top of the existing nostr text messaging. Impelementers of this NIP are expected to continue to support all the current nostr text messages, including the ones that have binary alternatives defined in this NIP.
 
@@ -136,7 +136,7 @@ This should reference the sequence number of the message that caused the error, 
 
 ## Feature Flags
 
-Feature flags are present in `RelayHello` and `ClientHello` messages.
+Feature flags are present in `RelayHello` messages.
 
 The following feature flags are defined:  None.
 
