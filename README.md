@@ -87,6 +87,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-122: Request for Events](122.md)
 
 ## Event Kinds
 | kind          | description                | NIP                      |
@@ -153,6 +154,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10096`       | File storage server list   | [96](96.md)              |
 | `13194`       | Wallet Info                | [47](47.md)              |
 | `21000`       | Lightning Pub RPC          | [Lightning.Pub][lnpub]   |
+| `21122`       | Request For Events         | [122](122.md)            |
 | `22242`       | Client Authentication      | [42](42.md)              |
 | `23194`       | Wallet Request             | [47](47.md)              |
 | `23195`       | Wallet Response            | [47](47.md)              |
