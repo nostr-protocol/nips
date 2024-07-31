@@ -58,7 +58,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-40: Expiration Timestamp](40.md)
 - [NIP-42: Authentication of clients to relays](42.md)
 - [NIP-44: Versioned Encryption](44.md)
-- [NIP-45: Counting results](45.md) --- **unrecommended**: deprecated
+- [NIP-45: Counting results](45.md)
 - [NIP-46: Nostr Connect](46.md)
 - [NIP-47: Wallet Connect](47.md)
 - [NIP-48: Proxy Tags](48.md)
