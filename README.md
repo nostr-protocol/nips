@@ -163,7 +163,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30002`       | Relay sets                 | [51](51.md)              |
 | `30003`       | Bookmark sets              | [51](51.md)              |
 | `30004`       | Curation sets              | [51](51.md)              |
-| `30005`       | Video sets              | [51](51.md)              |
+| `30005`       | Video sets                 | [51](51.md)              |
+| `30006`       | Local relay list           | [51](51.md)              |
 | `30008`       | Profile Badges             | [58](58.md)              |
 | `30009`       | Badge Definition           | [58](58.md)              |
 | `30015`       | Interest sets              | [51](51.md)              |
