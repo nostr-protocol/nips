@@ -195,6 +195,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `34237`       | Video View Event           | [71](71.md)              |
 | `34550`       | Community Definition       | [72](72.md)              |
 | `39000-9`     | Group metadata events      | [29](29.md)              |
+| `31337`       | Audio Track                | [72](72.md)              |
 
 [NUD: Custom Feeds]: https://wikifreedia.xyz/cip-01/97c70a44366a6535c1
 [nostrocket]: https://github.com/nostrocket/NIPS/blob/main/Problems.md
