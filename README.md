@@ -184,7 +184,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30618`       | Repository state announcements | [34](34.md)              |
 | `30818`       | Wiki article               | [54](54.md)              |
 | `30819`       | Redirects                  | [54](54.md)              |
-| `31890`       | Feed                       | [NUD: Custom Feeds](https://wikifreedia.xyz/cip-01/97c70a44366a6535c1)              |
+| `31890`       | Feed                       | [NUD: Custom Feeds][NUD: Custom Feeds] |
 | `31922`       | Date-Based Calendar Event  | [52](52.md)              |
 | `31923`       | Time-Based Calendar Event  | [52](52.md)              |
 | `31924`       | Calendar                   | [52](52.md)              |
