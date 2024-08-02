@@ -181,6 +181,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30402`       | Classified Listing         | [99](99.md)              |
 | `30403`       | Draft Classified Listing   | [99](99.md)              |
 | `30617`       | Repository announcements   | [34](34.md)              |
+| `30618`       | Repository state announcements | [34](34.md)              |
 | `30818`       | Wiki article               | [54](54.md)              |
 | `30819`       | Redirects                  | [54](54.md)              |
 | `31890`       | Feed                       | [NUD: Custom Feeds](https://wikifreedia.xyz/cip-01/97c70a44366a6535c1)              |
