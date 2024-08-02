@@ -263,7 +263,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `imeta`           | inline metadata                      | --                              | [92](92.md)                           |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                              | [57](57.md)                           |
 | `location`        | location string                      | --                              | [52](52.md), [99](99.md)              |
-| `name`            | name                                 | --                              | [34](34.md), [58](58.md)              |
+| `name`            | name                                 | --                              | [34](34.md), [58](58.md), [72](72.md) |
 | `nonce`           | random                               | difficulty                      | [13](13.md)                           |
 | `preimage`        | hash of `bolt11` invoice             | --                              | [57](57.md)                           |
 | `price`           | price                                | currency, frequency             | [99](99.md)                           |
