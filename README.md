@@ -73,6 +73,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
 - [NIP-59: Gift Wrap](59.md)
+- [NIP-60: Record Events](60.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-70: Protected Events](70.md)
 - [NIP-71: Video Events](71.md)
@@ -178,6 +179,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30078`       | Application-specific Data  | [78](78.md)              |
 | `30311`       | Live Event                 | [53](53.md)              |
 | `30315`       | User Statuses              | [38](38.md)              |
+| `30382`       | Pubkey Record              | [60](60.md)              |
+| `30383`       | Event Record               | [60](60.md)              |
 | `30402`       | Classified Listing         | [99](99.md)              |
 | `30403`       | Draft Classified Listing   | [99](99.md)              |
 | `30617`       | Repository announcements   | [34](34.md)              |
