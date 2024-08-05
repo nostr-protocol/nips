@@ -27,6 +27,7 @@ Book ISBNs MUST be referenced _**without hyphens**_ as many book search APIs ret
 
 - Podcast RSS Feed GUID: `["i", "podcast:guid:c90e609a-df1e-596a-bd5e-57bcc8aad6cc"]` - https://podcastindex.org/podcast/c90e609a-df1e-596a-bd5e-57bcc8aad6cc
 - Podcast RSS Item GUID: `["i", "podcast:item:guid:d98d189b-dc7b-45b1-8720-d4b98690f31f"]`
+- Podcast RSS Publisher GUID: `["i", "podcast:publisher:guid:18bcbf10-6701-4ffb-b255-bc057390d738"]`
 
 ### Movies:
 
