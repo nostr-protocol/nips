@@ -31,6 +31,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-07: `window.nostr` capability for web browsers](07.md)
 - [NIP-08: Handling Mentions](08.md) --- **unrecommended**: deprecated in favor of [NIP-27](27.md)
 - [NIP-09: Event Deletion](09.md)
+- [NIP-0a: Audio Tracks](0a.md)
 - [NIP-10: Conventions for clients' use of `e` and `p` tags in text events](10.md)
 - [NIP-11: Relay Information Document](11.md)
 - [NIP-13: Proof of Work](13.md)
@@ -195,7 +196,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `34237`       | Video View Event           | [71](71.md)              |
 | `34550`       | Community Definition       | [72](72.md)              |
 | `39000-9`     | Group metadata events      | [29](29.md)              |
-| `31337`       | Audio Track                | [72](72.md)              |
+| `31337`       | Music Track                | [xx](xx.md)              |
+| `31338`       | Podcast Episode            | [xx](xx.md)              |
 
 [NUD: Custom Feeds]: https://wikifreedia.xyz/cip-01/97c70a44366a6535c1
 [nostrocket]: https://github.com/nostrocket/NIPS/blob/main/Problems.md
