@@ -87,6 +87,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-100: Lock User](100.md)
 
 ## Event Kinds
 
@@ -114,6 +115,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `43`          | Channel Hide Message            | [28](28.md)                            |
 | `44`          | Channel Mute User               | [28](28.md)                            |
 | `818`         | Merge Requests                  | [54](54.md)                            |
+| `1000`        | Lock User                       | [100](100.md)                          |
 | `1021`        | Bid                             | [15](15.md)                            |
 | `1022`        | Bid confirmation                | [15](15.md)                            |
 | `1040`        | OpenTimestamps                  | [03](03.md)                            |
