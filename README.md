@@ -279,7 +279,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `thumb`           | badge thumbnail                      | dimensions in pixels            | [58](58.md)                           |
 | `title`           | article title                        | --                              | [23](23.md)                           |
 | `web`             | webpage URL                          | --                              | [34](34.md)                           |
-| `zap`             | pubkey (hex), relay URL              | weight                          | [57](57.md)                           |
+| `zap`             | pubkey (hex), relay URL              | weight, message                 | [57](57.md)                           |
 
 Please update these lists when proposing new NIPs.
 
