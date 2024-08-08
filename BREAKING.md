@@ -5,6 +5,10 @@ reverse chronological order.
 
 | Date        | Commit    | NIP      | Change |
 | ----------- | --------- | -------- | ------ |
+| 2024-07-31  | [3ea2f1a4](https://github.com/nostr-protocol/nips/commit/3ea2f1a4) | [NIP-45](45.md) | [444ad28d](https://github.com/nostr-protocol/nips/commit/444ad28d) was reverted |
+| 2024-07-30  | [444ad28d](https://github.com/nostr-protocol/nips/commit/444ad28d) | [NIP-45](45.md) | NIP-45 was deprecated |
+| 2024-07-26  | [ecee40df](https://github.com/nostr-protocol/nips/commit/ecee40df) | [NIP-19](19.md) | `nrelay` was deprecated |
+| 2024-07-23  | [0227a2cd](https://github.com/nostr-protocol/nips/commit/0227a2cd) | [NIP-01](01.md) | events should be sorted by id after created_at |
 | 2024-06-06  | [58e94b20](https://github.com/nostr-protocol/nips/commit/58e94b20) | [NIP-25](25.md) | [8073c848](https://github.com/nostr-protocol/nips/commit/8073c848) was reverted |
 | 2024-06-06  | [a6dfc7b5](https://github.com/nostr-protocol/nips/commit/a6dfc7b5) | [NIP-55](55.md) | NIP number was changed |
 | 2024-05-25  | [5d1d1c17](https://github.com/nostr-protocol/nips/commit/5d1d1c17) | [NIP-71](71.md) | 'aes-256-gcm' tag was removed |
