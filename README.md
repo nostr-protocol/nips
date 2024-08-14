@@ -264,7 +264,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `encrypted`       | --                                   | --                              | [90](90.md)                           |
 | `expiration`      | unix timestamp (string)              | --                              | [40](40.md)                           |
 | `goal`            | event id (hex)                       | relay URL                       | [75](75.md)                           |
-| `image`           | image URL                            | dimensions in pixels            | [23](23.md), [58](58.md)              |
+| `image`           | image URL                            | dimensions in pixels            | [23](23.md), [52](52.md), [58](58.md) |
 | `imeta`           | inline metadata                      | --                              | [92](92.md)                           |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                              | [57](57.md)                           |
 | `location`        | location string                      | --                              | [52](52.md), [99](99.md)              |
@@ -278,7 +278,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `relays`          | relay list                           | --                              | [57](57.md)                           |
 | `server`          | file storage server url              | --                              | [96](96.md)                           |
 | `subject`         | subject                              | --                              | [14](14.md), [17](17.md)              |
-| `summary`         | article summary                      | --                              | [23](23.md)                           |
+| `summary`         | summary                              | --                              | [23](23.md), [52](52.md)              |
 | `thumb`           | badge thumbnail                      | dimensions in pixels            | [58](58.md)                           |
 | `title`           | article title                        | --                              | [23](23.md)                           |
 | `web`             | webpage URL                          | --                              | [34](34.md)                           |
