@@ -22,7 +22,10 @@ This means that Nostr identities would have to be different than the ones used i
 
 ### References
 
+This proposal came together with inputs from many other proposals and discussions, but these are the main ones:
 
+[NIP-01: Basic protocol flow description](https://github.com/nostr-protocol/nips/blob/master/01.md)<br>
+[NIP-06: Basic key derivation from mnemonic seed phrase](https://github.com/nostr-protocol/nips/blob/master/06.md)
 
 ### Public Key Types and Signature Algorithms
 
