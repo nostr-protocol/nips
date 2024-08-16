@@ -1,21 +1,31 @@
 NIP-XXX
 =======
 
-On Behalf of - Delegation (and revocation) of responsibility to other accounts
+On-Behalf of - Simple Sub-Key Management
 -----
 
 `draft` `optional`
 
-This NIP defines how a publisher public key (a media manager, another device, a sub account) can create events on-behalf of an author public key (the content author). Unlike NIP-26, here the attestations live in a repository controlled by the author, which is the `kind 0` replaceable profile event.
+This NIP defines a simple way for an Identity Sub-Key management system, including active, inactive and revoked public keys, for publishing On-Behalf of a master identity.
 
-Another application of this proposal is to abstract away the use of the 'root' keypairs when interacting with clients on different devices, for example, a user could generate new keypairs for each client they wish to use and authorize those keypairs with their root `kind 0` event, to generate events on behalf of their root profile, where the root keypair is stored in cold storage. This allows also the revocation of those attestations if needed.
+### Motivation
+
+The state of art now has two methods for enabling sub-key management:
+- [NIP-26](https://github.com/nostr-protocol/nips/blob/master/26.md): Multiple key delegation and no revocation (just time bound)
+- [NIP-41](https://github.com/nostr-protocol/nips/blob/master/41.md): More complete single key delegation and revocation (complex)
+
+Each of these methods has their own pros and cons, but there's a very common use case that is not covered by any of these methods completely, which is having a master identity that is secure (possibly in cold storage), that can whitelist and blacklist multiple public keys (one for each device or app, for example), that can be used individually (less common but interesting for media management companies) and can publish on-behalf of one or several master identities.
+
+Using [NIP-26](https://github.com/nostr-protocol/nips/blob/master/26.md) for this purpose doesn't allow for blacklisting (revocation), or alternatively requires time bound delegation, with new delegation signing at every expiry. On the other hand [NIP-41](https://github.com/nostr-protocol/nips/blob/master/41.md) is a more complete and complex identity management solution, but only allows for one active sub-key at any point in time, and that sub-key's only purpose is bound to the main identity.
 
 ### References
 
 This proposal came together with inputs from many other proposals and discussions, but these are the main ones:
 
 [NIP-26: Delegated Event Signing](https://github.com/nostr-protocol/nips/blob/master/26.md)<br>
-[NIP-46: Nostr Connect](https://github.com/nostr-protocol/nips/blob/master/46.md)
+[NIP-41: Identity Management](https://github.com/nostr-protocol/nips/blob/master/41.md)<br>
+[NIP-06: Basic Key Derivation from Mnemonic Seed Phrase](https://github.com/nostr-protocol/nips/blob/master/06.md)<br>
+[NIP-51: Lists](https://github.com/nostr-protocol/nips/blob/master/51.md)
 
 [Why I don’t like NIP-26 as a solution for key management](https://fiatjaf.com/4c79fd7b.html)<br>
 [Thoughts on Nostr key management](https://fiatjaf.com/72f5d1e4.html)
@@ -25,122 +35,226 @@ This proposal came together with inputs from many other proposals and discussion
 [Key rotation verified through root key attestation](https://github.com/nostr-protocol/nips/issues/116)<br>
 [Trusted public-key-bundle attestations for key rotation and group definition](https://github.com/nostr-protocol/nips/issues/123)
 
-### Introducing the 'b' (on-Behalf) tag
+### Identity types
 
-This NIP introduces a new tag: `b`, which is indexable by relays, and can be present in publisher (delegatee) events, provided that the author (delegator) attests with a delegation for that event  `kind`, in its `kind 0` profile event, formatted as follows:
+For clarity in this NIP, we'll use the following identities to describe the actors that are involved in the examples and use cases:
+
+- **master**: the master account, the content owner or author
+- **active**: an active sub account, device account, media manager or publisher account 
+- **inactive**: a sub account that has been inactivated (but not compromised)
+- **revoked**: a sub account that has been revoked (it may have been compromised, and all events posted on-behalf of master need to be invalidated)
+
+### On-Behalf of Attestations List
+
+This NIP introduces a replaceable event with `kind 10100`, which is used to keep a [NIP-51](https://github.com/nostr-protocol/nips/blob/master/51.md) list of `active`, `inactive` or `revoked` public keys, for publishing events on-behalf of a master account. The only valid tag in this list is `attest` tag as defined below.
+
+`.content` fields is unused and can be ignored if present.
+
+This list is owned by the master account, and can only be updated by an event signed by the master account itself, so never using a `b` on-behalf tag (see below), neither by [NIP-41](https://github.com/nostr-protocol/nips/blob/master/41.md) `p` tag in `kind 0`, nor using a [NIP-26](https://github.com/nostr-protocol/nips/blob/master/26.md) `delegation` tag.
+
+This list is evergrowing, so each update has to include all previous attestations unchanged, and add one or more attestations to the list, otherwise they should be considered invalid and ignored by clients and relays.
+
+### Tag `b` (on-Behalf) for events
+
+This NIP introduces a new tag: `b`, which is indexable by relays, and can be present in active account events, if attested at the on-behalf list above, formatted as follows:
 
 ```json
-[ "b", <pubkey of the delegator> ]
+[ "b", <pubkey of the master account> ]
 ```
 
-### Introducing the 'attest' (attestation) tag
+To prevent spam, only one `b` tag can be present in an event.
 
-This NIP also introduces the new tag: `attest` which can be present multiple times in author's (delegator) `kind 0` event, formatted as follows:
+If present and valid, the `b` tag will represent that clients and relays should consider that event as published by the master account specified in the `b` tag, instead of the one in the event `.pubkey` field.
+
+If an invalid `b` tag is present, clients and relays should disregard the event, as if it had an invalid signature.
+
+### Tag `attest` (attestation) for `kind 10100` list
+
+This NIP also introduces a new tag: `attest` which can be present multiple times in master account's `kind 10100` On-Behalf Of attestations list, formatted as follows:
 
 ```json
 [
-  "attest",
-  <pubkey of the delegatee>,
-  <attestation string>
+  "attest", <timestamp>, <pubkey>, <attestation string>
 ]
 ```
 
-#### Delegation Attestation String
+#### Active Attestation String
 
-The **Delegation Attestation** should be a string in the following format:
-
-```
-del:<kinds list>:<timestamp>
-```
-
-#### Revocation Attestation String
-
-The **Revocation Attestation** should be a string in the following format:
+The **Active Attestation** should be a string in the following format:
 
 ```
-rev:<kinds list>:<timestamp>
+"active:<kinds comma separated list, optional>"
 ```
 
-> This way the author (delegator) can decide, depending on the use case, if it makes sense to keep the published content after delegation valid, by adding a `b` tag with a revocation attestation, or if is preferable to invalidate all content published by that keypair by simply removing the delegation attestation.
+`:` only required if an optional kinds list is present. Without a kinds list, the attestation is valid for all event kinds besides `kind 10100`.
 
-##### Attestation String Components
+#### Inactive and Revoked Attestation String
 
-- `<kinds list>` is a coma separated list of event `kind`s that this attestation refers to
-- `<timestamp>` is a UTC unix timestamp in seconds, after which that attestation produces effect
-
-##### Conflicting Attestations Resolution
-
-As the attestations are all timestamped, most conflicts should be resolved based on their timestamps, but in the rare event of the same timestamp in attestations for the same public key, the latest in the tags array should override the previous.
-
-#### Examples
+The **Inactive** or **Revoked Attestations** should be a string in the following format:
 
 ```
-# Delegator:
-pubkey:  8e0d3d3eb2881ec137a11debe736a9086715a8c8beeeda615780064d68bc25dd
-
-# Delegatee:
-pubkey:  477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396
+"inactive"
 ```
 
-Delegation tag to allow delegatee to publish `kind 1` and `kind 7` events on-behalf of the delegator, present in delegator `kind 0` replaceable event:
+or 
 
-```json
-"tags": [
-    [
-        "attest",
-        "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
-        "del:1,7:1674834236"
+```
+"revoked"
+```
+
+To purposely limit the creative use cases, so that it doesn't become very demanding to compute the final state of an account, `inactive` and `revoked` attestations invalidate all previous `active` attestations, and subsequent `active` attestations are considered invalid as well.
+
+> This way the master account can decide, depending on the use case and criticality, if it makes sense to keep the published content valid, by adding an `inactive` attestation, or if it's preferable to invalidate all content published by that account, on its behalf, by adding a `revoked` attestation.
+
+##### Subsequent Attestations Resolution
+
+As the attestations are all timestamped, it is convention that a subsequent attestation overrides a prior one, but in the rare event of the same timestamp in attestations for the same public key, the latest in the tags array order should override the previous.
+
+### Examples
+
+- Considering:
+  ```
+  master account:
+  8e0d3d3eb2881ec137a11debe736a9086715a8c8beeeda615780064d68bc25dd
+
+  active account:
+  477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396
+  ```
+
+- Allow active account to publish `kind 1` and `kind 7` events on-behalf of the master account:
+
+  ```json
+  {
+    "id": "567b41fc9060c758c4216fe5f8d3df7c57daad7ae757fa4606f0c39d4dd220ef",
+    "kind": "10100",
+    "pubkey": "8e0d3d3eb2881ec137a11debe736a9086715a8c8beeeda615780064d68bc25dd",
+    "tags": [
+        [
+            "attest", 1674834236,
+            "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
+            "active:1,7"
+        ]
     ],
+    "content": "",
     ...
-]
-```
+    "sig": "a9a4e2192eede77e6c9d24ddfab95ba3ff7c03fbd07ad011fff245abea431fb4d3787c2d04aad001cb039cb8de91d83ce30e9a94f82ac3c5a2372aa1294a96bd"
+  }
+  ```
 
-When delegator (8e0d3d3e) decides to revoke that delegation for `kind 7` only, can just add another tag to his `kind 0` profile:
+- The active account, while the master account has a valid active attestation at its `kind 10100` list, can publish on-behalf of the master account, using the `b` tag on the event:
 
-```json
-"tags": [
-    ["attest",
-    "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396", "del:1,7:1674834236"],
-    ["attest",
-    "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396", "rev:7:1721934607"],
+  ```json
+  {
+    "id": "e93c6095c3db1c31d15ac771f8fc5fb672f6e52cd25505099f62cd055523224f",
+    "pubkey": "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
+    "created_at": 1677426298,
+    "kind": 1,
+    "tags": [
+      [
+        "b",
+        "8e0d3d3eb2881ec137a11debe736a9086715a8c8beeeda615780064d68bc25dd"
+      ]
+    ],
+    "content": "Hello, world!",
+    "sig": "633db60e2e7082c13a47a6b19d663d45b2a2ebdeaf0b4c35ef83be2738030c54fc7fd56d139652937cdca875ee61b51904a1d0d0588a6acd6168d7be2909d693"
+  }
+  ```
+
+  The event should be considered as published on-behalf of the master account, if at the timestamp `1677426298` the master account had a valid active attestation on its `kind 10100` list. If the `b` tag is not validated by an active attestation, that content is considered invalid and relays and clients can ignore it.
+
+- When master account decides to allow on-behalf active for all kinds:
+
+  ```json
+  {
+    "id": "567b41fc9060c758c4216fe5f8d3df7c57daad7ae757fa4606f0c39d4dd220ef",
+    "kind": "10100",
+    "pubkey": "8e0d3d3eb2881ec137a11debe736a9086715a8c8beeeda615780064d68bc25dd",
+    "tags": [
+      ["attest", 1674834236,
+      "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
+      "active:1,7"],
+      ["attest", 1721934607,
+      "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
+      "active"]
+    ],
+    "content": "",
     ...
-]
-```
+    "sig": "a9a4e2192eede77e6c9d24ddfab95ba3ff7c03fbd07ad011fff245abea431fb4d3787c2d04aad001cb039cb8de91d83ce30e9a94f82ac3c5a2372aa1294a96bd"
+  }
+  ```
 
-Or in the case that the delegatee (477318cf) got compromised, and it is best to consider all content published from that key to be compromised, then the delegator simply removes the delegation attestation from his `kind 0` profile:
+- Or otherwise, when master account decides to not allow on-behalf for `kind 7`, but keep `kind 1` active:
 
-```json
-"tags": [
+  ```json
+  {
+    "id": "567b41fc9060c758c4216fe5f8d3df7c57daad7ae757fa4606f0c39d4dd220ef",
+    "kind": "10100",
+    "pubkey": "8e0d3d3eb2881ec137a11debe736a9086715a8c8beeeda615780064d68bc25dd",
+    "tags": [
+      ["attest", 1674834236,
+      "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
+      "active:1,7"],
+      ["attest", 1721934607,
+      "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
+      "active:1"]
+    ],
+    "content": "",
     ...
-]
-```
+    "sig": "a9a4e2192eede77e6c9d24ddfab95ba3ff7c03fbd07ad011fff245abea431fb4d3787c2d04aad001cb039cb8de91d83ce30e9a94f82ac3c5a2372aa1294a96bd"
+  }
+  ```
 
-The delegatee (477318cf), while the delegator (8e0d3d3e) has a valid delegation attestation at its `kind 0` profile event, can publish on-behalf of the delegator, using the `b` tag on the event:
+- In the case that master decides to not permit on-behalf publishing for that active account anymore, but keep the already published events, for instance if the device that was using that active account is being substituted, and that key safely destroyed:
 
-```json
-{
-  "id": "e93c6095c3db1c31d15ac771f8fc5fb672f6e52cd25505099f62cd055523224f",
-  "pubkey": "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
-  "created_at": 1677426298,
-  "kind": 1,
-  "tags": [
-    [
-      "b",
-      "8e0d3d3eb2881ec137a11debe736a9086715a8c8beeeda615780064d68bc25dd"
-    ]
-  ],
-  "content": "Hello, world!",
-  "sig": "633db60e2e7082c13a47a6b19d663d45b2a2ebdeaf0b4c35ef83be2738030c54fc7fd56d139652937cdca875ee61b51904a1d0d0588a6acd6168d7be2909d693"
-}
-```
+  ```json
+  {
+    "id": "567b41fc9060c758c4216fe5f8d3df7c57daad7ae757fa4606f0c39d4dd220ef",
+    "kind": "10100",
+    "pubkey": "8e0d3d3eb2881ec137a11debe736a9086715a8c8beeeda615780064d68bc25dd",
+    "tags": [
+      ["attest", 1674834236,
+      "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
+      "active:1,7"],
+      ["attest", 1721934607,
+      "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
+      "active:1"],
+      ["attest", 1722343578,
+      "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
+      "inactive"]
+    ],
+    "content": "",
+    ...
+    "sig": "a9a4e2192eede77e6c9d24ddfab95ba3ff7c03fbd07ad011fff245abea431fb4d3787c2d04aad001cb039cb8de91d83ce30e9a94f82ac3c5a2372aa1294a96bd"
+  }
+  ```
 
-The event should be considered as published on-behalf of the author (8e0d3d3e), if at the timestamp `1677426298` the author had a valid delegation attestation on the `attest` tags in its `kind 0` profile event. If the `b` tag is not validated by an active delegation attestation, that content is considered invalid and relays and clients can ignore it.
+- Or instead, if the active account got compromised, and it is best to consider all content published from that account,on-behalf of master account, to be compromised:
 
-Clients should display the on-behalf events as if they were published directly by the delegator (8e0d3d3e).
+  ```json
+  {
+    "id": "567b41fc9060c758c4216fe5f8d3df7c57daad7ae757fa4606f0c39d4dd220ef",
+    "kind": "10100",
+    "pubkey": "8e0d3d3eb2881ec137a11debe736a9086715a8c8beeeda615780064d68bc25dd",
+    "tags": [
+      ["attest", 1674834236,
+      "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
+      "active:1,7"],
+      ["attest", 1721934607,
+      "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
+      "active:1"],
+      ["attest", 1722343578,
+      "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
+      "revoked"]
+    ],
+    "content": "",
+    ...
+    "sig": "a9a4e2192eede77e6c9d24ddfab95ba3ff7c03fbd07ad011fff245abea431fb4d3787c2d04aad001cb039cb8de91d83ce30e9a94f82ac3c5a2372aa1294a96bd"
+  }
+  ```
 
 
-#### Relay & Client Support
+### Relay & Client Support
 
-Relays should answer requests such as `["REQ", "", {"authors": ["A"]}]` by querying both the `pubkey` and delegation `#b` tags `[1]` value.
+Relays should answer requests such as `["REQ", "", {"authors": ["A"]}]` by querying both the `pubkey` and on-behalf `#b` tags `[1]` value.
 
-Relays SHOULD allow the delegator (8e0d3d3e) to delete the events published by the delegatee (477318cf).
+Relays SHOULD allow the master account to delete the events published by the active, inactive or revoked accounts, whenever the events have the on-behalf `b` tag present.
