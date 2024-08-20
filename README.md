@@ -250,7 +250,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `q`               | event id (hex)                       | relay URL                       | [18](18.md)                           |
 | `r`               | a reference (URL, etc)               | --                              | [24](24.md), [25](25.md)              |
 | `r`               | relay url                            | marker                          | [65](65.md)                           |
-| `t`               | hashtag                              | --                              |                                       |
+| `t`               | hashtag                              | --                              | [24](24.md)                           |
 | `alt`             | summary                              | --                              | [31](31.md)                           |
 | `amount`          | millisatoshis, stringified           | --                              | [57](57.md)                           |
 | `bolt11`          | `bolt11` invoice                     | --                              | [57](57.md)                           |
