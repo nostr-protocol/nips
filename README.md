@@ -30,7 +30,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-06: Basic key derivation from mnemonic seed phrase](06.md)
 - [NIP-07: `window.nostr` capability for web browsers](07.md)
 - [NIP-08: Handling Mentions](08.md) --- **unrecommended**: deprecated in favor of [NIP-27](27.md)
-- [NIP-09: Event Deletion](09.md)
+- [NIP-09: Event Deletion Request](09.md)
 - [NIP-10: Conventions for clients' use of `e` and `p` tags in text events](10.md)
 - [NIP-11: Relay Information Document](11.md)
 - [NIP-13: Proof of Work](13.md)
@@ -73,10 +73,12 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
 - [NIP-59: Gift Wrap](59.md)
+- [NIP-64: Chess (PGN)](64.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-70: Protected Events](70.md)
 - [NIP-71: Video Events](71.md)
 - [NIP-72: Moderated Communities](72.md)
+- [NIP-73: External Content IDs](73.md)
 - [NIP-75: Zap Goals](75.md)
 - [NIP-78: Application-specific data](78.md)
 - [NIP-84: Highlights](84.md)
@@ -97,7 +99,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `2`           | Recommend Relay                 | 01 (deprecated)                        |
 | `3`           | Follows                         | [02](02.md)                            |
 | `4`           | Encrypted Direct Messages       | [04](04.md)                            |
-| `5`           | Event Deletion                  | [09](09.md)                            |
+| `5`           | Event Deletion Request          | [09](09.md)                            |
 | `6`           | Repost                          | [18](18.md)                            |
 | `7`           | Reaction                        | [25](25.md)                            |
 | `8`           | Badge Award                     | [58](58.md)                            |
@@ -108,11 +110,13 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `13`          | Seal                            | [59](59.md)                            |
 | `14`          | Direct Message                  | [17](17.md)                            |
 | `16`          | Generic Repost                  | [18](18.md)                            |
+| `17`          | Reaction to a website           | [25](25.md)                            |
 | `40`          | Channel Creation                | [28](28.md)                            |
 | `41`          | Channel Metadata                | [28](28.md)                            |
 | `42`          | Channel Message                 | [28](28.md)                            |
 | `43`          | Channel Hide Message            | [28](28.md)                            |
 | `44`          | Channel Mute User               | [28](28.md)                            |
+| `64`          | Chess (PGN)                     | [64](64.md)                            |
 | `818`         | Merge Requests                  | [54](54.md)                            |
 | `1021`        | Bid                             | [15](15.md)                            |
 | `1022`        | Bid confirmation                | [15](15.md)                            |
@@ -238,15 +242,15 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `-`               | --                                   | --                              | [70](70.md)                           |
 | `g`               | geohash                              | --                              | [52](52.md)                           |
 | `h`               | group id                             | --                              | [29](29.md)                           |
-| `i`               | identity                             | proof                           | [39](39.md)                           |
+| `i`               | external identity                    | proof, url hint                 | [39](39.md), [73](73.md)              |
 | `k`               | kind number (string)                 | --                              | [18](18.md), [25](25.md), [72](72.md) |
 | `l`               | label, label namespace               | --                              | [32](32.md)                           |
 | `L`               | label namespace                      | --                              | [32](32.md)                           |
 | `m`               | MIME type                            | --                              | [94](94.md)                           |
 | `q`               | event id (hex)                       | relay URL                       | [18](18.md)                           |
-| `r`               | a reference (URL, etc)               | petname                         | [24](24.md)                           |
+| `r`               | a reference (URL, etc)               | --                              | [24](24.md), [25](25.md)              |
 | `r`               | relay url                            | marker                          | [65](65.md)                           |
-| `t`               | hashtag                              | --                              |                                       |
+| `t`               | hashtag                              | --                              | [24](24.md)                           |
 | `alt`             | summary                              | --                              | [31](31.md)                           |
 | `amount`          | millisatoshis, stringified           | --                              | [57](57.md)                           |
 | `bolt11`          | `bolt11` invoice                     | --                              | [57](57.md)                           |
@@ -260,7 +264,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `encrypted`       | --                                   | --                              | [90](90.md)                           |
 | `expiration`      | unix timestamp (string)              | --                              | [40](40.md)                           |
 | `goal`            | event id (hex)                       | relay URL                       | [75](75.md)                           |
-| `image`           | image URL                            | dimensions in pixels            | [23](23.md), [58](58.md)              |
+| `image`           | image URL                            | dimensions in pixels            | [23](23.md), [52](52.md), [58](58.md) |
 | `imeta`           | inline metadata                      | --                              | [92](92.md)                           |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                              | [57](57.md)                           |
 | `location`        | location string                      | --                              | [52](52.md), [99](99.md)              |
@@ -274,7 +278,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `relays`          | relay list                           | --                              | [57](57.md)                           |
 | `server`          | file storage server url              | --                              | [96](96.md)                           |
 | `subject`         | subject                              | --                              | [14](14.md), [17](17.md)              |
-| `summary`         | article summary                      | --                              | [23](23.md)                           |
+| `summary`         | summary                              | --                              | [23](23.md), [52](52.md)              |
 | `thumb`           | badge thumbnail                      | dimensions in pixels            | [58](58.md)                           |
 | `title`           | article title                        | --                              | [23](23.md)                           |
 | `web`             | webpage URL                          | --                              | [34](34.md)                           |
