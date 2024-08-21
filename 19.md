@@ -1,0 +1,69 @@
+NIP-19
+======
+
+bech32-encoded entities
+-----------------------
+
+`draft` `optional`
+
+This NIP standardizes bech32-formatted strings that can be used to display keys, ids and other information in clients. These formats are not meant to be used anywhere in the core protocol, they are only meant for displaying to users, copy-pasting, sharing, rendering QR codes and inputting data.
+
+It is recommended that ids and keys are stored in either hex or binary format, since these formats are closer to what must actually be used the core protocol.
+
+## Bare keys and ids
+
+To prevent confusion and mixing between private keys, public keys and event ids, which are all 32 byte strings. bech32-(not-m) encoding with different prefixes can be used for each of these entities.
+
+These are the possible bech32 prefixes:
+
+  - `npub`: public keys
+  - `nsec`: private keys
+  - `note`: note ids
+
+Example: the hex public key `3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d` translates to `npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6`.
+
+The bech32 encodings of keys and ids are not meant to be used inside the standard NIP-01 event formats or inside the filters, they're meant for human-friendlier display and input only. Clients should still accept keys in both hex and npub format for now, and convert internally.
+
+## Shareable identifiers with extra metadata
+
+When sharing a profile or an event, an app may decide to include relay information and other metadata such that other apps can locate and display these entities more easily.
+
+For these events, the contents are a binary-encoded list of `TLV` (type-length-value), with `T` and `L` being 1 byte each (`uint8`, i.e. a number in the range of 0-255), and `V` being a sequence of bytes of the size indicated by `L`.
+
+These are the possible bech32 prefixes with `TLV`:
+
+  - `nprofile`: a nostr profile
+  - `nevent`: a nostr event
+  - `naddr`: a nostr _replaceable event_ coordinate
+  - `nrelay`: a nostr relay (deprecated)
+
+These possible standardized `TLV` types are indicated here:
+
+- `0`: `special`
+  - depends on the bech32 prefix:
+    - for `nprofile` it will be the 32 bytes of the profile public key
+    - for `nevent` it will be the 32 bytes of the event id
+    - for `naddr`, it is the identifier (the `"d"` tag) of the event being referenced. For normal replaceable events use an empty string.
+- `1`: `relay`
+  - for `nprofile`, `nevent` and `naddr`, _optionally_, a relay in which the entity (profile or event) is more likely to be found, encoded as ascii
+  - this may be included multiple times
+- `2`: `author`
+  - for `naddr`, the 32 bytes of the pubkey of the event
+  - for `nevent`, _optionally_, the 32 bytes of the pubkey of the event
+- `3`: `kind`
+  - for `naddr`, the 32-bit unsigned integer of the kind, big-endian
+  - for `nevent`, _optionally_, the 32-bit unsigned integer of the kind, big-endian
+
+## Examples
+
+- `npub10elfcs4fr0l0r8af98jlmgdh9c8tcxjvz9qkw038js35mp4dma8qzvjptg` should decode into the public key hex `7e7e9c42a91bfef19fa929e5fda1b72e0ebc1a4c1141673e2794234d86addf4e` and vice-versa
+- `nsec1vl029mgpspedva04g90vltkh6fvh240zqtv9k0t9af8935ke9laqsnlfe5` should decode into the private key hex `67dea2ed018072d675f5415ecfaed7d2597555e202d85b3d65ea4e58d2d92ffa` and vice-versa
+- `nprofile1qqsrhuxx8l9ex335q7he0f09aej04zpazpl0ne2cgukyawd24mayt8gpp4mhxue69uhhytnc9e3k7mgpz4mhxue69uhkg6nzv9ejuumpv34kytnrdaksjlyr9p` should decode into a profile with the following TLV items:
+  - pubkey: `3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d`
+  - relay: `wss://r.x.com`
+  - relay: `wss://djbas.sadkb.com`
+
+## Notes
+
+- `npub` keys MUST NOT be used in NIP-01 events or in NIP-05 JSON responses, only the hex format is supported there.
+- When decoding a bech32-formatted string, TLVs that are not recognized or supported should be ignored, rather than causing an error.
