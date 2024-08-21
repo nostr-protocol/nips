@@ -87,7 +87,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-92: Media Attachments](92.md)
 - [NIP-94: File Metadata](94.md)
 - [NIP-96: HTTP File Storage Integration](96.md)
-- [NIP-97: Read Status](97.md)
+- [NIP-97: Seen Status](97.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
 
@@ -161,6 +161,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
 | `10063`       | User server list                | [Blossom][blossom]                     |
 | `10096`       | File storage server list        | [96](96.md)                            |
+| `10115`       | Account level seen statuses     | [97](97.md)                            |
+| `10116`       | Context level seen statuses     | [97](97.md)                            |
+| `10117`       | Conversation level seen statuses| [97](97.md)                            |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
 | `22242`       | Client Authentication           | [42](42.md)                            |
