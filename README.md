@@ -156,6 +156,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10030`       | User emoji list                 | [51](51.md)                            |
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
 | `10096`       | File storage server list        | [96](96.md)                            |
+| `10102`       | Key management                  | [102](102.md)                            |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
 | `22242`       | Client Authentication           | [42](42.md)                            |
