@@ -277,8 +277,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `relay`           | relay url                            | --                              | [42](42.md), [17](17.md)              |
 | `relays`          | relay list                           | --                              | [57](57.md)                           |
 | `server`          | file storage server url              | --                              | [96](96.md)                           |
-| `subject`         | subject                              | --                              | [14](14.md), [17](17.md)              |
-| `summary`         | summary                              | --                              | [23](23.md), [34](34.md), [52](52.md) |
+| `subject`         | subject                              | --                              | [14](14.md), [17](17.md), [34](34.md) |
+| `summary`         | summary                              | --                              | [23](23.md), [52](52.md)              |
 | `thumb`           | badge thumbnail                      | dimensions in pixels            | [58](58.md)                           |
 | `title`           | article title                        | --                              | [23](23.md)                           |
 | `web`             | webpage URL                          | --                              | [34](34.md)                           |
