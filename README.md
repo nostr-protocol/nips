@@ -250,7 +250,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `q`               | event id (hex)                       | relay URL                       | [18](18.md)                           |
 | `r`               | a reference (URL, etc)               | --                              | [24](24.md), [25](25.md)              |
 | `r`               | relay url                            | marker                          | [65](65.md)                           |
-| `t`               | hashtag                              | --                              | [24](24.md)                           |
+| `t`               | hashtag                              | --                              | [24](24.md), [34](34.md)              |
 | `alt`             | summary                              | --                              | [31](31.md)                           |
 | `amount`          | millisatoshis, stringified           | --                              | [57](57.md)                           |
 | `bolt11`          | `bolt11` invoice                     | --                              | [57](57.md)                           |
@@ -278,7 +278,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `relays`          | relay list                           | --                              | [57](57.md)                           |
 | `server`          | file storage server url              | --                              | [96](96.md)                           |
 | `subject`         | subject                              | --                              | [14](14.md), [17](17.md)              |
-| `summary`         | summary                              | --                              | [23](23.md), [52](52.md)              |
+| `summary`         | summary                              | --                              | [23](23.md), [34](34.md), [52](52.md) |
 | `thumb`           | badge thumbnail                      | dimensions in pixels            | [58](58.md)                           |
 | `title`           | article title                        | --                              | [23](23.md)                           |
 | `web`             | webpage URL                          | --                              | [34](34.md)                           |
