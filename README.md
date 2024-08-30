@@ -74,7 +74,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-58: Badges](58.md)
 - [NIP-59: Gift Wrap](59.md)
 - [NIP-64: Chess (PGN)](64.md)
-- [NIP-65: Relay List Metadata](65.md)
+- [NIP-65: Outbox model](65.md)
 - [NIP-70: Protected Events](70.md)
 - [NIP-71: Video Events](71.md)
 - [NIP-72: Moderated Communities](72.md)
