@@ -29,7 +29,7 @@ A podcast owner can publish an announcement on Nostr to make their podcast disco
 
 Clients can request kind 1338 to discover RSS feeds without the need of an API like podcastindex. The RSS feed URI can be fetched directly to obtain the podcast's data. The podcast announcement event MUST specify the podcast guid ([NIP-73](https://github.com/nostr-protocol/nips/blob/master/73.md)) and MUST specify the direct feed URI.
 
-The `i` tag follows the External Content IDs format as defined in [NIP-XX](https://github.com/nostr-protocol/nips/pull/1185/files).
+The `i` tag follows the External Content IDs format as defined in [NIP-73](https://github.com/nostr-protocol/nips/blob/master/73.md).
 
 ## Nostr Podcast Verification
 
