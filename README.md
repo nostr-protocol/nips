@@ -131,7 +131,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1971`        | Problem Tracker                 | [nostrocket][nostrocket]               |
 | `1984`        | Reporting                       | [56](56.md)                            |
 | `1985`        | Label                           | [32](32.md)                            |
-| `1986`        | AI Embeddings / Vector lists    | [NKBIP-02]                             |
+| `1986`        | Relay reviews                   | [NIP-85]                               |
+| `1987`        | AI Embeddings / Vector lists    | [NKBIP-02]                             |
 | `2003`        | Torrent                         | [35](35.md)                            |
 | `2004`        | Torrent Comment                 | [35](35.md)                            |
 | `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
@@ -157,6 +158,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10015`       | Interests list                  | [51](51.md)                            |
 | `10030`       | User emoji list                 | [51](51.md)                            |
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
+| `10063`       | User server list                | [blossom]                              |
 | `10096`       | File storage server list        | [96](96.md)                            |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
@@ -214,6 +216,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 [NKBIP-01]: https://wikistr.com/nkbip-01
 [NKBIP-02]: https://wikistr.com/nkbip-02
 [Blossom]: https://wikistr.com/blossom
+[NIP-85]: https://wikistr.com/nip-85
 [Tidal-nostr]: https://wikistr.com/tidal-nostr
 
 ## Message types
