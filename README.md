@@ -131,8 +131,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1971`        | Problem Tracker                 | [nostrocket][nostrocket]               |
 | `1984`        | Reporting                       | [56](56.md)                            |
 | `1985`        | Label                           | [32](32.md)                            |
-| `1986`        | Relay reviews                   | [NIP-85]                               |
-| `1987`        | AI Embeddings / Vector lists    | [NKBIP-02]                             |
+| `1986`        | AI Embeddings / Vector lists | [NKBIP-02] |
 | `2003`        | Torrent                         | [35](35.md)                            |
 | `2004`        | Torrent Comment                 | [35](35.md)                            |
 | `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
@@ -143,7 +142,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `9000`-`9030` | Group Control Events            | [29](29.md)                            |
 | `9041`        | Zap Goal                        | [75](75.md)                            |
 | `9734`        | Zap Request                     | [57](57.md)                            |
-| `9467`        | Tidal login                     | [Tidal-nostr]                          |
+| `9467`        | Tidal login                     | [Tidal-nostr]        |
 | `9735`        | Zap                             | [57](57.md)                            |
 | `9802`        | Highlights                      | [84](84.md)                            |
 | `10000`       | Mute list                       | [51](51.md)                            |
@@ -158,7 +157,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10015`       | Interests list                  | [51](51.md)                            |
 | `10030`       | User emoji list                 | [51](51.md)                            |
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
-| `10063`       | User server list                | [blossom]                              |
 | `10096`       | File storage server list        | [96](96.md)                            |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
@@ -166,7 +164,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `23194`       | Wallet Request                  | [47](47.md)                            |
 | `23195`       | Wallet Response                 | [47](47.md)                            |
 | `24133`       | Nostr Connect                   | [46](46.md)                            |
-| `24242`       | Blobs stored on mediaservers    | [blossom]                              |
+| `24242`       | Blobs stored on mediaservers                   | [blossom]                            |
 | `27235`       | HTTP Auth                       | [98](98.md)                            |
 | `30000`       | Follow sets                     | [51](51.md)                            |
 | `30001`       | Generic lists                   | [51](51.md)                            |
@@ -184,8 +182,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30023`       | Long-form Content               | [23](23.md)                            |
 | `30024`       | Draft Long-form Content         | [23](23.md)                            |
 | `30030`       | Emoji sets                      | [51](51.md)                            |
-| `30040`       | Modular Article Header          | [NKBIP-01]                             |
-| `30041`       | Modular Article Content         | [NKBIP-01]                             |
+| `30040`       | Modular Article Header                      | [NKBIP-01]                            |
+| `30041`       | Modular Article Content                      | [NKBIP-01]                            |
 | `30063`       | Release artifact sets           | [51](51.md)                            |
 | `30078`       | Application-specific Data       | [78](78.md)                            |
 | `30311`       | Live Event                      | [53](53.md)                            |
@@ -216,7 +214,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 [NKBIP-01]: https://wikistr.com/nkbip-01
 [NKBIP-02]: https://wikistr.com/nkbip-02
 [Blossom]: https://wikistr.com/blossom
-[NIP-85]: https://wikistr.com/nip-85
 [Tidal-nostr]: https://wikistr.com/tidal-nostr
 
 ## Message types
