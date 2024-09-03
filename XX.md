@@ -21,7 +21,7 @@ Cashu Mints should use this event kind to publish batches of blind signatures an
 * `created_at`: unix timestamp in seconds, same as [NIP-01](01.md);
 * `tags`: 
   * `e`: event ID of the previous event kind 4919;
-* `content`: a cbor-serialized, base64 encoded string representation of the payload as described in [NUT-XX]();
+* `content`: base64-encoded string representing the payload described in [NUT-XX]();
 * `id`: same as [NIP-01](01.md);
 * `pubkey`: same as [NIP-01](01.md);
 * `sig`: same as [NIP-01](01.md);
@@ -43,7 +43,7 @@ Example:
 
 ### Replaceable Event Kind 11467: Mint Nostr Identity
 
-Cashu mints use this event kind to announce themselves to the network. The construction of this event is equivalent to kind 4919, except for `tags` that should be left empty and `content` should contain the cbor-serialized, base64 encoded identity payload described in [NUT-XX]().
+Cashu mints use this event kind to announce themselves to the network. The construction of this event is equivalent to kind 4919, except for `tags` that should be left empty and `content` should contain a base64-encoded string representing the identity payload described in [NUT-XX]().
 
 Example:
 ```json
@@ -60,4 +60,4 @@ Example:
 ### Event Kind 1337: Fin-Epoch
 
 Cashu mints should use this event kind to signal the end of the current epoch (keys rotation).
-The construction of this event is equivalent to kind 13467, except that `content` should contain the cbor-serialized, base64 encoded fin-epoch payload, containing unit and outstanding balance as described in [NUT-XX]().
+The construction of this event is equivalent to kind 13467, except that `content` should contain a base64-encoded string representing the fin-epoch payload, containing unit and outstanding balance as described in [NUT-XX]().
