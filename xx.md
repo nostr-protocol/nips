@@ -49,6 +49,8 @@ and specifies a style to be applied using the following syntax:
 - `ins`: Inserted text, such as after a git commit. Should remove leading `+` and spaces.
 - `sub`: Text should be displayed as subscript.
 - `sup`: Text should be displayed as superscript.
+- `link`: Alternative text to be displayed in place of a URL as a link. The alternative text can't itself be a URL.
+E.g.: `["st", "0:35", "link", "my previous post"]`
 - `mark` Text should be highlighted with a different background color.
 - `quote`: Quoted text. Should remove leading and trailing `"`.
 - `dsv` or `dsv:<delimiter-char-sequence>`: Delimiter separated value. The default delimiter is `|`.
