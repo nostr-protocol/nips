@@ -46,13 +46,13 @@ For clarity in this NIP, we'll use the following identities to describe the acto
 
 ### On-Behalf of Attestations List
 
-This NIP introduces a replaceable event with `kind 10100`, which is used to keep a [NIP-51](https://github.com/nostr-protocol/nips/blob/master/51.md) list of `active`, `inactive` or `revoked` public keys, for publishing events on-behalf of a master account. The only valid tag in this list is `attest` tag as defined below.
+This NIP introduces a replaceable event with `kind 10100`, which is used to keep a [NIP-51](https://github.com/nostr-protocol/nips/blob/master/51.md) list of `active`, `inactive` or `revoked` public keys, for publishing events on-behalf of a master account. The only valid tag in this list is the `p` tag as defined below.
 
 `.content` fields is unused and can be ignored if present.
 
 This list is owned by the master account, and can only be updated by an event signed by the master account itself, so never using a `b` on-behalf tag (see below), neither by [NIP-41](https://github.com/nostr-protocol/nips/blob/master/41.md) `p` tag in `kind 0`, nor using a [NIP-26](https://github.com/nostr-protocol/nips/blob/master/26.md) `delegation` tag.
 
-This list is evergrowing, so each update has to include all previous attestations unchanged, and add one or more attestations to the list, otherwise they should be considered invalid and ignored by clients and relays.
+This list is ever growing, so each update has to include all previous attestations unchanged, and add one or more attestations to the list, otherwise they should be considered invalid and ignored by clients and relays.
 
 ### Tag `b` (on-Behalf) for events
 
@@ -68,38 +68,40 @@ If present and valid, the `b` tag will represent that clients and relays should 
 
 If an invalid `b` tag is present, clients and relays should disregard the event, as if it had an invalid signature.
 
-### Tag `attest` (attestation) for `kind 10100` list
+### Tag `p` (with attestation string) for `kind 10100` list
 
-This NIP also introduces a new tag: `attest` which can be present multiple times in master account's `kind 10100` On-Behalf Of attestations list, formatted as follows:
+This NIP also introduces a new attestation string for `p` tag. The `p` tag can be present multiple times in master account's `kind 10100` On-Behalf Of attestations list, formatted as follows:
 
 ```json
 [
-  "attest", <timestamp>, <pubkey>, <attestation string>
+  "p", <pubkey>, <main relay URL>, <attestation string>
 ]
 ```
+
+Field `main relay URL` can be omitted if not required or needed for accessing the sub account events, and in this case an empty string should be used in the second field of the `p` tag.
 
 #### Active Attestation String
 
 The **Active Attestation** should be a string in the following format:
 
 ```
-"active:<kinds comma separated list, optional>"
+"active:<timestamp>:<kinds comma separated list, optional>"
 ```
 
-`:` only required if an optional kinds list is present. Without a kinds list, the attestation is valid for all event kinds besides `kind 10100`.
+Last `:` is only required if an optional kinds list is present. Without a kinds list, the attestation is valid for all event kinds besides `kind 10100`.
 
 #### Inactive and Revoked Attestation String
 
-The **Inactive** or **Revoked Attestations** should be a string in the following format:
+The **Inactive** or **Revoked Attestations** should be a string in the following formats:
 
 ```
-"inactive"
+"inactive:<timestamp>"
 ```
 
 or 
 
 ```
-"revoked"
+"revoked:<timestamp>"
 ```
 
 To purposely limit the creative use cases, so that it doesn't become very demanding to compute the final state of an account, `inactive` and `revoked` attestations invalidate all previous `active` attestations, and subsequent `active` attestations are considered invalid as well.
@@ -130,9 +132,10 @@ As the attestations are all timestamped, it is convention that a subsequent atte
     "pubkey": "8e0d3d3eb2881ec137a11debe736a9086715a8c8beeeda615780064d68bc25dd",
     "tags": [
         [
-            "attest", 1674834236,
+            "p",
             "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
-            "active:1,7"
+            "",
+            "active:1674834236:1,7"
         ]
     ],
     "content": "",
@@ -170,12 +173,14 @@ As the attestations are all timestamped, it is convention that a subsequent atte
     "kind": "10100",
     "pubkey": "8e0d3d3eb2881ec137a11debe736a9086715a8c8beeeda615780064d68bc25dd",
     "tags": [
-      ["attest", 1674834236,
+      ["p",
       "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
-      "active:1,7"],
-      ["attest", 1721934607,
+      "",
+      "active:1674834236:1,7"],
+      ["p",
       "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
-      "active"]
+      "",
+      "active:1721934607"]
     ],
     "content": "",
     ...
@@ -191,12 +196,14 @@ As the attestations are all timestamped, it is convention that a subsequent atte
     "kind": "10100",
     "pubkey": "8e0d3d3eb2881ec137a11debe736a9086715a8c8beeeda615780064d68bc25dd",
     "tags": [
-      ["attest", 1674834236,
+      ["p",
       "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
-      "active:1,7"],
-      ["attest", 1721934607,
+      "",
+      "active:1674834236:1,7"],
+      ["p",
       "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
-      "active:1"]
+      "",
+      "active:1721934607:1"]
     ],
     "content": "",
     ...
@@ -212,15 +219,18 @@ As the attestations are all timestamped, it is convention that a subsequent atte
     "kind": "10100",
     "pubkey": "8e0d3d3eb2881ec137a11debe736a9086715a8c8beeeda615780064d68bc25dd",
     "tags": [
-      ["attest", 1674834236,
+      ["p",
       "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
-      "active:1,7"],
-      ["attest", 1721934607,
+      "",
+      "active:1674834236:1,7"],
+      ["p",
       "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
-      "active:1"],
-      ["attest", 1722343578,
+      "",
+      "active:1721934607:1"],
+      ["p",
       "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
-      "inactive"]
+      "",
+      "inactive:1722343578"]
     ],
     "content": "",
     ...
@@ -228,7 +238,7 @@ As the attestations are all timestamped, it is convention that a subsequent atte
   }
   ```
 
-- Or instead, if the active account got compromised, and it is best to consider all content published from that account,on-behalf of master account, to be compromised:
+- Or instead, if the active account got compromised, and it is best to consider all content published from that account,on-behalf of master account, to be compromised as well:
 
   ```json
   {
@@ -236,15 +246,18 @@ As the attestations are all timestamped, it is convention that a subsequent atte
     "kind": "10100",
     "pubkey": "8e0d3d3eb2881ec137a11debe736a9086715a8c8beeeda615780064d68bc25dd",
     "tags": [
-      ["attest", 1674834236,
+      ["p",
       "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
-      "active:1,7"],
-      ["attest", 1721934607,
+      "",
+      "active:1674834236:1,7"],
+      ["p",
       "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
-      "active:1"],
-      ["attest", 1722343578,
+      "",
+      "active:1721934607:1"],
+      ["p",
       "477318cfb5427b9cfc66a9fa376150c1ddbc62115ae27cef72417eb959691396",
-      "revoked"]
+      "",
+      "revoked:1722343578"]
     ],
     "content": "",
     ...
