@@ -294,6 +294,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `title`           | article title                        | --                              | [23](23.md)                           |
 | `web`             | webpage URL                          | --                              | [34](34.md)                           |
 | `zap`             | pubkey (hex), relay URL              | weight                          | [57](57.md)                           |
+| `require-zap`     | amount is millisatoshis              | --                              | [??](??.md)                           |
 
 Please update these lists when proposing new NIPs.
 
