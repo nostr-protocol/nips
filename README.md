@@ -142,8 +142,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `7000`        | Job Feedback                    | [90](90.md)                            |
 | `9000`-`9030` | Group Control Events            | [29](29.md)                            |
 | `9041`        | Zap Goal                        | [75](75.md)                            |
-| `9734`        | Zap Request                     | [57](57.md)                            |
 | `9467`        | Tidal login                     | [Tidal-nostr]                          |
+| `9734`        | Zap Request                     | [57](57.md)                            |
 | `9735`        | Zap                             | [57](57.md)                            |
 | `9802`        | Highlights                      | [84](84.md)                            |
 | `10000`       | Mute list                       | [51](51.md)                            |
@@ -174,6 +174,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30003`       | Bookmark sets                   | [51](51.md)                            |
 | `30004`       | Curation sets                   | [51](51.md)                            |
 | `30005`       | Video sets                      | [51](51.md)                            |
+| `30007`       | Kind mute sets                  | [51](51.md)                            |
 | `30008`       | Profile Badges                  | [58](58.md)                            |
 | `30009`       | Badge Definition                | [58](58.md)                            |
 | `30015`       | Interest sets                   | [51](51.md)                            |
