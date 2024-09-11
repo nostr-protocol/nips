@@ -81,9 +81,13 @@ Public:
 	["d", "<pubkey-of-friend>"],
 	["p", "<pubkey-of-friend>"],
 	["p", "<optional-predecessor-pubkey-of-friend>"],
-	["attestations", JSONStringify({
-	  "<metadata-key>": "<metadata-value>",
-	  "<metadata-key>": "<metadata-value>"
+	["attestation", JSONStringify({
+	  "pubkey": "<pubkey-of-friend>"
+	  "tags": [<attested-to-tags>],
+	  "content": {
+		"<attested-key>": "<attested-value>",
+		"<attested-key>": "<attested-value>"
+	  }
 	})]
   ],
   "content": ""
@@ -99,9 +103,13 @@ Private:
   ],
   "content": Nip44Encrypt(JSONStringify([
 	["p", "<pubkey-of-friend>"],
-	["attestations", JSONStringify({
-	  "<metadata-key>": "<metadata-value>",
-	  "<metadata-key>": "<metadata-value>"
+	["attestation", JSONStringify({
+	  "pubkey": "<pubkey-of-friend>"
+	  "tags": [<attested-to-tags>],
+	  "content": {
+		"<attested-key>": "<attested-value>",
+		"<attested-key>": "<attested-value>"
+	  }
 	})]
   ]))
 ```
@@ -109,7 +117,7 @@ Private:
 * For a _public_ attestation:
   * The `d` tag and a `p` tag MUST include a public key for the attested to metadata.
   * Another `p` tag SHOULD be included if there was a predecessor public key. This helps to inform other users of a link between the predecessor public and a successor public key.
-  * The `attestations` tag MUST include JSON stringified copy of the attested to metadata keys and values.
+  * The `attestations` tag MUST include JSON stringified copy of the attested to event pubkey, tags and content of the `kind 0` event. It is a partial copy of the `kind 0` event.
 * For a _private_ attestation:
   * The `d` tag MUST be an encrypted and hashed version of the public key (hex encoding of a sha256 hash of an encrypted, with NIP-44, of the public key).
   * The `p`, `metadata` and `attestations` tags, as the same as the public attestation, MUST be JSON stringified and NIP-44 encrypted in the content field.
@@ -124,6 +132,7 @@ The value should be as follows:
 [<threshold>, <migration-pubkey-1>, <migration-pubkey-2>]
 ```
 
+* The array SHOULD be all strings, including the threshold.
 * Clients MAY present a user interface to make an attestation, if this field is available on the metadata.
 * Clients MAY use hardware devices and NIP-06 seed phrases to store the migration keys.
 
