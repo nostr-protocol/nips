@@ -5,6 +5,7 @@ reverse chronological order.
 
 | Date        | Commit    | NIP      | Change |
 | ----------- | --------- | -------- | ------ |
+| 2024-08-18  | [3aff37bd](https://github.com/nostr-protocol/nips/commit/3aff37bd) | [NIP-54](54.md) | content should be Asciidoc |
 | 2024-07-31  | [3ea2f1a4](https://github.com/nostr-protocol/nips/commit/3ea2f1a4) | [NIP-45](45.md) | [444ad28d](https://github.com/nostr-protocol/nips/commit/444ad28d) was reverted |
 | 2024-07-30  | [444ad28d](https://github.com/nostr-protocol/nips/commit/444ad28d) | [NIP-45](45.md) | NIP-45 was deprecated |
 | 2024-07-26  | [ecee40df](https://github.com/nostr-protocol/nips/commit/ecee40df) | [NIP-19](19.md) | `nrelay` was deprecated |
@@ -47,6 +48,7 @@ reverse chronological order.
 | 2023-06-18  | [83cbd3e1](https://github.com/nostr-protocol/nips/commit/83cbd3e1) | [NIP-11](11.md) | 'image' was renamed to 'icon' |
 | 2023-04-13  | [bf0a0da6](https://github.com/nostr-protocol/nips/commit/bf0a0da6) | [NIP-15](15.md) | different NIP was re-added as NIP-15 |
 | 2023-04-09  | [fb5b7c73](https://github.com/nostr-protocol/nips/commit/fb5b7c73) | [NIP-15](15.md) | NIP-15 was merged into NIP-01 |
+| 2023-03-29  | [599e1313](https://github.com/nostr-protocol/nips/commit/599e1313) | [NIP-18](18.md) | NIP-18 was bring back |
 | 2023-03-15  | [e1004d3d](https://github.com/nostr-protocol/nips/commit/e1004d3d) | [NIP-19](19.md) | `1: relay` was changed to optionally |
 
 Breaking changes prior to 2023-03-01 are not yet documented.
