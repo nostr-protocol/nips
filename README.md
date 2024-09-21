@@ -158,7 +158,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10015`       | Interests list                  | [51](51.md)                            |
 | `10030`       | User emoji list                 | [51](51.md)                            |
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
-| `10063`       | User server list                | [blossom]                              |
+| `10063`       | User server list                | [Blossom][blossom]                     |
 | `10096`       | File storage server list        | [96](96.md)                            |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
@@ -166,7 +166,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `23194`       | Wallet Request                  | [47](47.md)                            |
 | `23195`       | Wallet Response                 | [47](47.md)                            |
 | `24133`       | Nostr Connect                   | [46](46.md)                            |
-| `24242`       | Blobs stored on mediaservers    | [blossom]                              |
+| `24242`       | Blobs stored on mediaservers    | [Blossom][blossom]                     |
 | `27235`       | HTTP Auth                       | [98](98.md)                            |
 | `30000`       | Follow sets                     | [51](51.md)                            |
 | `30001`       | Generic lists                   | [51](51.md)                            |
@@ -216,7 +216,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 [joinstr]: https://gitlab.com/1440000bytes/joinstr/-/blob/main/NIP.md
 [NKBIP-01]: https://wikistr.com/nkbip-01
 [NKBIP-02]: https://wikistr.com/nkbip-02
-[Blossom]: https://wikistr.com/blossom
+[blossom]: https://github.com/hzrd149/blossom
 [Tidal-nostr]: https://wikistr.com/tidal-nostr
 
 ## Message types
