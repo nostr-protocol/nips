@@ -155,7 +155,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1971`        | Problem Tracker                 | [nostrocket][nostrocket]               |
 | `1984`        | Reporting                       | [56](56.md)                            |
 | `1985`        | Label                           | [32](32.md)                            |
-| `1986`        | Relay reviews                   |                                        |
 | `1987`        | AI Embeddings / Vector lists    | [NKBIP-02]                             |
 | `2003`        | Torrent                         | [35](35.md)                            |
 | `2004`        | Torrent Comment                 | [35](35.md)                            |
@@ -239,6 +238,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31923`       | Time-Based Calendar Event       | [52](52.md)                            |
 | `31924`       | Calendar                        | [52](52.md)                            |
 | `31925`       | Calendar Event RSVP             | [52](52.md)                            |
+| `31987`       | Relay Review                    | [85](85.md)                            |
 | `31989`       | Handler recommendation          | [89](89.md)                            |
 | `31990`       | Handler information             | [89](89.md)                            |                         |
 | `32267`       | Software Application            |                                        |                        |
