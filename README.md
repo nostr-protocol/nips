@@ -257,7 +257,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `h`               | group id                             | --                              | [29](29.md)                                        |
 | `i`               | external identity                    | proof, url hint                 | [39](39.md), [73](73.md)                           |
 | `k`               | kind number (string)                 | --                              | [18](18.md), [25](25.md), [72](72.md), [37](37.md) |
-| `l`               | label, label namespace               | --                              | [32](32.md)                                        |
+| `l`               | label, label namespace               | --                              | [32](32.md), [37](37.md)                           |
 | `L`               | label namespace                      | --                              | [32](32.md)                                        |
 | `m`               | MIME type                            | --                              | [94](94.md)                                        |
 | `q`               | event id (hex)                       | relay URL                       | [18](18.md)                                        |
@@ -282,7 +282,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `lnurl`           | `bech32` encoded `lnurl`             | --                              | [57](57.md)                                        |
 | `location`        | location string                      | --                              | [52](52.md), [99](99.md)                           |
 | `name`            | name                                 | --                              | [34](34.md), [58](58.md), [72](72.md)              |
-| `nip     `        | NIP identifier                       | --                              | [37](37.md)                                        |
 | `nonce`           | random                               | difficulty                      | [13](13.md)                                        |
 | `preimage`        | hash of `bolt11` invoice             | --                              | [57](57.md)                                        |
 | `price`           | price                                | currency, frequency             | [99](99.md)                                        |
