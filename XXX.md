@@ -53,7 +53,7 @@ We want to eliminate this problem, and it is quite simple...
 
 ### Signature Prefixes
 
-This NIP introduces a prefix mechanism for the `.sig` field of Nostr events, that by default (without any prefix) falls back to `Schnorr/secp256k1`, but when present defines the signature algorithm and public key derivation curve.
+This NIP introduces a prefix mechanism for the `.sig` field of Nostr events, that by default (without any prefix) falls back to `schnorr/secp256k1`, but when present defines the signature algorithm and public key derivation curve.
 
 #### Signature Algorithms
 
@@ -106,4 +106,8 @@ To use another Signature Algorithm and another ECC Curve, an event would look li
 
 ### Clients and Relays
 
-Clients and Relays are free to choose what combinations of Signatures Algorithms and ECC Curves they support, the only mandatory one is `Schnorr/secp256k1`, which is the default for Nostr, but highly encouraged to support more, at least `ecdsa` and `eddsa` with their default curves. This way Nostr network will be increasingly more compatible and possible to interoperate with other networks.
+Clients and Relays are free to choose what combinations of Signatures Algorithms and ECC Curves they support, the only mandatory one is `schnorr/secp256k1`, which is the default for Nostr, but highly encouraged to support more, at least `ecdsa` and `eddsa` with their default curves. This way Nostr network will be increasingly more compatible and possible to interoperate with other networks.
+
+### Integration into NIP-01
+
+We propose that this NIP, when discussed and approved, should be integrated into NIP-01, as it represents a global improvement for event signing. We decided to keep it separated in a different file to be more concise for discussion for now.
