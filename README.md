@@ -255,7 +255,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `g`               | geohash                              | --                              | [52](52.md)                           |
 | `h`               | group id                             | --                              | [29](29.md)                           |
 | `i`               | external identity                    | proof, url hint                 | [39](39.md), [73](73.md)              |
-| `k`               | kind number (string)                 | --                              | [18](18.md), [25](25.md), [72](72.md) |
+| `k`               | kind                 | --                              | [18](18.md), [25](25.md), [72](72.md), [73](73.md) |
 | `l`               | label, label namespace               | --                              | [32](32.md)                           |
 | `L`               | label namespace                      | --                              | [32](32.md)                           |
 | `m`               | MIME type                            | --                              | [94](94.md)                           |
