@@ -28,9 +28,11 @@ A relay chat message is a kind `209` event. A `~` tag MUST be included, indicati
 }
 ```
 
-Replies to kind `209` MUST use [NIP-73](https://github.com/nostr-protocol/nips/pull/1233) `kind 1111` comments. Clients MAY support arbitrarily nested replies, but SHOULD encourage flat reply hierarchies.
+Replies to kind `209` MUST use [NIP-73](https://github.com/nostr-protocol/nips/pull/1233) `kind 1111` comments. Clients MAY support arbitrarily nested replies, but SHOULD encourage flat reply hierarchies. These replies MUST also include a `~` tag.
 
-Other note kinds MAY be posted to rooms, but care should be taken that any non-`kind 209` events will make sense out of context either of the room or the host relay.
+Kind `209` events MUST NOT be considered valid unless they have a `~` tag matching the current relay, or a relay specified in a `kind 30209` migration event.
+
+Other note kinds MAY also be posted to rooms using the `~` tag.
 
 # Membership
 
@@ -61,5 +63,3 @@ If a conversation needs to be moved from one relay to another, the new host rela
   ],
 }
 ```
-
-Chat messages MUST NOT be considered valid unless they have a `~` tag matching the current relay, or a relay specified in a `kind 30209` migration event.
