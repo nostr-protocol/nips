@@ -59,5 +59,5 @@ Example:
 
 ### Event Kind 1337: `FIN_EPOCH`
 
-Cashu mints can use this event kind to signal the end of the current epoch (keyset rotation). An epoch change can also be implicitly signalled by publishing `CASHU_DATA` events referencing the next epoch.
+Cashu mints can use this event kind to signal the end of the current epoch (keyset rotation). An epoch change can also be implicitly signalled by the  publishing of `CASHU_DATA` events referencing the next epoch.
 The construction of this event is equivalent to kind 13467, except that `content` should be a base64-encoded string representing the `FIN_EPOCH` payload, containing unit and outstanding balance as described in [NUT-XX](https://github.com/cashubtc/nuts/pull/155).
