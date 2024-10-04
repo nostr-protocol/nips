@@ -5,7 +5,7 @@ NIP: XX - Cashu Data
 
 ## Abstract
 
-This NIP proposes the introduction of three new event kinds to the Nostr protocol to facilitate the announcement of cashu mint and burn events, cashu mints identities, and the end of an epoch along with the mints' outstanding balances.
+This NIP proposes the introduction of three new event kinds to the Nostr protocol to facilitate the announcement of cashu mint and burn events, cashu mints identities, and the mints' outstanding balance at the end of an epoch.
 
 ## Motivation
 
