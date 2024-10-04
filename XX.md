@@ -43,7 +43,7 @@ Example:
 
 ### Replaceable Event Kind 11467: `CASHU_MINT_IDENTITY`
 
-Cashu mints use this event kind to announce themselves to the network. The construction of this event is equivalent to kind 4919, except for `tags` that should be left empty and `content` should contain a base64-encoded string representing the identity payload described in [NUT-XX](https://github.com/cashubtc/nuts/pull/155).
+Cashu mints use this event kind to announce themselves to the network. The construction of this event is equivalent to `CASHU_DATA`, except for `tags` that should be left empty and `content` should contain a base64-encoded string representing the identity payload described in [NUT-XX](https://github.com/cashubtc/nuts/pull/155).
 
 Example:
 ```json
@@ -60,4 +60,4 @@ Example:
 ### Event Kind 1337: `FIN_EPOCH`
 
 Cashu mints can use this event kind to signal the end of the current epoch (keyset rotation). An epoch change can also be implicitly signalled by the  publishing of `CASHU_DATA` events referencing the next epoch.
-The construction of this event is equivalent to kind 13467, except that `content` should be a base64-encoded string representing the `FIN_EPOCH` payload, containing unit and outstanding balance as described in [NUT-XX](https://github.com/cashubtc/nuts/pull/155).
+The construction of this event is equivalent to `CASHU_DATA`, except that `content` should be a base64-encoded string representing the `FIN_EPOCH` payload, containing unit and outstanding balance as described in [NUT-XX](https://github.com/cashubtc/nuts/pull/155).
