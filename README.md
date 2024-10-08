@@ -75,6 +75,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-59: Gift Wrap](59.md)
 - [NIP-64: Chess (PGN)](64.md)
 - [NIP-65: Relay List Metadata](65.md)
+- [NIP-68: Debit Requests](68.md)
 - [NIP-70: Protected Events](70.md)
 - [NIP-71: Video Events](71.md)
 - [NIP-72: Moderated Communities](72.md)
@@ -162,6 +163,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10096`       | File storage server list        | [96](96.md)                            |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
+| `21002`       | Debit Request                   | [68](68.md)                            |
 | `22242`       | Client Authentication           | [42](42.md)                            |
 | `23194`       | Wallet Request                  | [47](47.md)                            |
 | `23195`       | Wallet Response                 | [47](47.md)                            |
