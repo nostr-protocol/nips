@@ -31,6 +31,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-07: `window.nostr` capability for web browsers](07.md)
 - [NIP-08: Handling Mentions](08.md) --- **unrecommended**: deprecated in favor of [NIP-27](27.md)
 - [NIP-09: Event Deletion Request](09.md)
+- [NIP-0a: Audio Tracks](0a.md)
 - [NIP-10: Conventions for clients' use of `e` and `p` tags in text events](10.md)
 - [NIP-11: Relay Information Document](11.md)
 - [NIP-13: Proof of Work](13.md)
@@ -198,6 +199,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30618`       | Repository state announcements  | [34](34.md)                            |
 | `30818`       | Wiki article                    | [54](54.md)                            |
 | `30819`       | Redirects                       | [54](54.md)                            |
+| `31337`       | Music Track                     | [0a](0a.md)                            |
+| `31338`       | Podcast Episode                 | [0a](0a.md)                            |
 | `31388`       | Link Set                        | [Corny Chat][cornychat-linkset]        |
 | `31890`       | Feed                            | [NUD: Custom Feeds][NUD: Custom Feeds] |
 | `31922`       | Date-Based Calendar Event       | [52](52.md)                            |
