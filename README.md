@@ -31,6 +31,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-07: `window.nostr` capability for web browsers](07.md)
 - [NIP-08: Handling Mentions](08.md) --- **unrecommended**: deprecated in favor of [NIP-27](27.md)
 - [NIP-09: Event Deletion Request](09.md)
+- [NIP-0b: On-Behalf of (Simple Sub-Key Management)](0b.md)
 - [NIP-10: Conventions for clients' use of `e` and `p` tags in text events](10.md)
 - [NIP-11: Relay Information Document](11.md)
 - [NIP-13: Proof of Work](13.md)
@@ -160,6 +161,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
 | `10063`       | User server list                | [Blossom][blossom]                     |
 | `10096`       | File storage server list        | [96](96.md)                            |
+| `10100`       | On-Behalf of Attestations List  | [0b](0b.md)                            |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
 | `22242`       | Client Authentication           | [42](42.md)                            |
@@ -252,10 +254,11 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | name              | value                                | other parameters                | NIP                                   |
 | ----------------- | ------------------------------------ | ------------------------------- | ------------------------------------- |
 | `e`               | event id (hex)                       | relay URL, marker, pubkey (hex) | [01](01.md), [10](10.md)              |
-| `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md)              |
+| `p`               | pubkey (hex)                         | relay URL, petname / attestation             | [01](01.md), [02](02.md), [0b](0b.md)              |
 | `a`               | coordinates to an event              | relay URL                       | [01](01.md)                           |
 | `d`               | identifier                           | --                              | [01](01.md)                           |
 | `-`               | --                                   | --                              | [70](70.md)                           |
+| `b`               | pubkey (hex)                         | --                              | [0b](0b.md)                           |
 | `g`               | geohash                              | --                              | [52](52.md)                           |
 | `h`               | group id                             | --                              | [29](29.md)                           |
 | `i`               | external identity                    | proof, url hint                 | [39](39.md), [73](73.md)              |
