@@ -1,8 +1,8 @@
 NIP-XX
 ======
 
-Static Websites (nsite)
------------------------
+Static Websites
+---------------
 
 `draft` `optional`
 
@@ -68,7 +68,7 @@ For example: `/` -> `/index.html` or `/blog/` -> `/blog/index.html`
 Once the host server has found the `34128` event for the pubkey and path it should use the sha256 hash defined in the `x` tag to retrieve the file
 
 If the pubkey has a `10063` [BUD-03 user servers](https://github.com/hzrd149/blossom/blob/master/buds/03.md) event the server MUST attempt to retrieve the file from the listed servers using the path defined in [BUD-01](https://github.com/hzrd149/blossom/blob/master/buds/01.md#get-sha256---get-blob)
-If a pubkey does not have a `10063` event the host server may choose to fallback to a predefined list of Blossom servers
+If a pubkey does not have a `10063` event the host server MUST respond with a status code 404
 
 The host server MUST forward the `Content-Type`, and `Content-Length` header from the Blossom server. If none are defined the host server MAY set `Content-Type` from the file extension in the requested path
 
