@@ -50,6 +50,9 @@ Room membership SHOULD be indicated using both an `r` tag for each relay the use
 }
 ```
 
+Room membership events SHOULD be sent both to the user's [NIP-65](./65.md) WRITE relays, and to
+each relay listed in the membership event (in order to allow clients to build room lists).
+
 # Migrations
 
 If a conversation needs to be moved from one relay to another, the new host relay may explicitly map this relation using a `kind 30209` event indicating valid relay urls for a given room. Multiple previous urls may be supported for a single room. This event MUST be signed by the `pubkey` indicated by the relay's NIP 11 document.
