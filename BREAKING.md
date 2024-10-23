@@ -5,6 +5,8 @@ reverse chronological order.
 
 | Date        | Commit    | NIP      | Change |
 | ----------- | --------- | -------- | ------ |
+| 2024-10-15  | [1cda2dcc](https://github.com/nostr-protocol/nips/commit/1cda2dcc) | [NIP-71](71.md) | some tags were replaced with `imeta` tag |
+| 2024-10-15  | [1cda2dcc](https://github.com/nostr-protocol/nips/commit/1cda2dcc) | [NIP-71](71.md) | `kind: 34237` was dropped |
 | 2024-10-07  | [7bb8997b](https://github.com/nostr-protocol/nips/commit/7bb8997b) | [NIP-55](55.md) | some fields and passing data were changed |
 | 2024-08-18  | [3aff37bd](https://github.com/nostr-protocol/nips/commit/3aff37bd) | [NIP-54](54.md) | content should be Asciidoc |
 | 2024-07-31  | [3ea2f1a4](https://github.com/nostr-protocol/nips/commit/3ea2f1a4) | [NIP-45](45.md) | [444ad28d](https://github.com/nostr-protocol/nips/commit/444ad28d) was reverted |
