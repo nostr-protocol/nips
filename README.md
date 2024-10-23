@@ -208,7 +208,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31990`       | Handler information             | [89](89.md)                            |
 | `34235`       | Video Event                     | [71](71.md)                            |
 | `34236`       | Short-form Portrait Video Event | [71](71.md)                            |
-| `34237`       | Video View Event                | [71](71.md)                            |
 | `34550`       | Community Definition            | [72](72.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
 
