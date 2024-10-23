@@ -91,7 +91,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-99: Classified Listings](99.md)
 
 ## Event Kinds
-
 | kind          | description                     | NIP                                    |
 | ------------- | ------------------------------- | -------------------------------------- |
 | `0`           | User Metadata                   | [01](01.md)                            |
@@ -128,6 +127,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1621`        | Issues                          | [34](34.md)                            |
 | `1622`        | Replies                         | [34](34.md)                            |
 | `1630`-`1633` | Status                          | [34](34.md)                            |
+| `1754`        | Place Attributes                | [XX](XX.md)                            |
 | `1971`        | Problem Tracker                 | [nostrocket][nostrocket]               |
 | `1984`        | Reporting                       | [56](56.md)                            |
 | `1985`        | Label                           | [32](32.md)                            |
@@ -209,6 +209,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `34235`       | Video Event                     | [71](71.md)                            |
 | `34236`       | Short-form Portrait Video Event | [71](71.md)                            |
 | `34550`       | Community Definition            | [72](72.md)                            |
+| `37515`       | Place                           | [XX](XX.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
 
 [NUD: Custom Feeds]: https://wikifreedia.xyz/cip-01/
