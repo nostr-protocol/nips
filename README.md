@@ -76,7 +76,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-60: Cashu Wallet](60.md)
 - [NIP-61: Nutzaps](61.md)
 - [NIP-64: Chess (PGN)](64.md)
-- [NIP-64: Chess (PGN)](64.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-70: Protected Events](70.md)
 - [NIP-71: Video Events](71.md)
