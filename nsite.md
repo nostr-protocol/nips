@@ -46,7 +46,7 @@ example
 Host: npub10phxfsms72rhafrklqdyhempujs9h67nye0p67qe424dyvcx0dkqgvap0e.nsite-host.com
 ```
 
-If the requests `Host` does not have a subdomain server MUST lookup any `CNAME` or `TXT` DNS records for the domain and attempt to resolve the pubkey from them
+If the requests `Host` does not contain an `npub` the server MUST lookup any `CNAME` or `TXT` DNS records for the `Host` and attempt to resolve the pubkey from them
 
 The host server MAY serve anything at its own root domain `nsite-host.com` ( a landing page for example )
 
@@ -70,7 +70,7 @@ Once the host server has found the `34128` event for the pubkey and path it shou
 If the pubkey has a `10063` [BUD-03 user servers](https://github.com/hzrd149/blossom/blob/master/buds/03.md) event the server MUST attempt to retrieve the file from the listed servers using the path defined in [BUD-01](https://github.com/hzrd149/blossom/blob/master/buds/01.md#get-sha256---get-blob)
 If a pubkey does not have a `10063` event the host server MUST respond with a status code 404
 
-The host server MUST forward the `Content-Type`, and `Content-Length` header from the Blossom server. If none are defined the host server MAY set `Content-Type` from the file extension in the requested path
+The host server MUST forward the `Content-Type`, and `Content-Length` headers from the Blossom server. If none are defined the host server MAY set `Content-Type` from the file extension in the requested path
 
 #### Handling Not Found
 
