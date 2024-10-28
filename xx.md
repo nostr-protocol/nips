@@ -1,22 +1,25 @@
 NIP-XX
 ======
 
-Relay Chat
-----------
+Rooms
+-----
 
 `draft` `optional`
 
-This NIP defines a standard for relay-local chat messages.
-
 # Rooms
 
-A `room` is identified by an arbitrary, human-readable string no longer than 30 characters and referred to using a `~` tag indicating the room id and a relay url.
+A `room` is identified by an arbitrary, human-readable string no longer than
+30 characters and referred to using a `~` tag indicating the room id and a
+relay url. Rooms on different relays with the same name ARE NOT the same room.
 
-Rooms on different relays with the same name SHOULD NOT be considered the same room.
+Any event MAY be posted to a `room` using a `~` tag. Events posted to a room
+MUST NOT be considered valid unless their `~` tag matches the current relay, or
+a relay specified in a `kind 30209` federation event.
 
-# Chat Message
+# Chat
 
-A relay chat message is a kind `209` event. A `~` tag MUST be included, indicating the name of the chat room and the relay url.
+A chat message is a kind `209` event with a `~` tag. Chat messages are intended
+to be used as a high-frequency, informal, context-aware communication medium.
 
 ```json
 {
@@ -28,11 +31,30 @@ A relay chat message is a kind `209` event. A `~` tag MUST be included, indicati
 }
 ```
 
-Replies to kind `209` MUST use [NIP-73](https://github.com/nostr-protocol/nips/pull/1233) `kind 1111` comments. Clients MAY support arbitrarily nested replies, but SHOULD encourage flat reply hierarchies. These replies MUST also include a `~` tag.
+Replies to kind `209` MUST use [NIP-73](https://github.com/nostr-protocol/nips/pull/1233)
+kind `1111` comments with a matching `~` tag. Clients SHOULD encourage flat reply
+hierarchies.
 
-Kind `209` events MUST NOT be considered valid unless they have a `~` tag matching the current relay, or a relay specified in a `kind 30209` migration event.
+# Threads
 
-Other note kinds MAY also be posted to rooms using the `~` tag.
+A thread is a kind `309` event with a `~` tag. Threads and their replies are
+intended to be used as a low-frequency, more formal, context-aware communication
+medium. Threads MUST include a `title` with a summary of the `content`.
+
+```json
+{
+  "kind": 309,
+  "content": "GM",
+  "tags": [
+    ["~", "Good Morning", "wss://relay.example.com/"],
+    ["title", "GM"]
+  ]
+}
+```
+
+Replies to kind `309` MUST use [NIP-73](https://github.com/nostr-protocol/nips/pull/1233)
+kind `1111` comments with a matching `~` tag. Clients SHOULD encourage flat reply
+hierarchies.
 
 # Membership
 
@@ -53,16 +75,25 @@ Room membership SHOULD be indicated using both an `r` tag for each relay the use
 Room membership events SHOULD be sent both to the user's [NIP-65](./65.md) WRITE relays, and to
 each relay listed in the membership event (in order to allow clients to build room lists).
 
-# Migrations
+# Federation
 
-If a conversation needs to be moved from one relay to another, the new host relay may explicitly map this relation using a `kind 30209` event indicating valid relay urls for a given room. Multiple previous urls may be supported for a single room. This event MUST be signed by the `pubkey` indicated by the relay's NIP 11 document.
+Relays hosting rooms MAY indicate federation with other relays for rooms
+by publishing a `kind 30209` event using the key indicated by the relay's
+NIP 11 document.
+
+A relay may indicate partial federation using one or more `~` tags, or complete
+federation using a `r` tag.
 
 ```json
 {
   "kind": "30209",
   "tags": [
-    ["~", "Good Morning", "wss://relay.other1.com/"],
-    ["~", "Good Morning", "wss://relay.other2.com/"]
+    ["r", "wss://other1.com"],
+    ["~", "Good Morning", "wss://other2.com/"],
+    ["~", "Good Morning", "wss://other3.com/"]
   ],
 }
 ```
+
+This can be useful if a conversation needs to be moved from one relay to another,
+or if multiple people want to host a conversation simultaneously.
