@@ -73,6 +73,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
 - [NIP-59: Gift Wrap](59.md)
+- [NIP-60: Cashu Wallet](60.md)
+- [NIP-61: Nutzaps](61.md)
 - [NIP-64: Chess (PGN)](64.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-70: Protected Events](70.md)
@@ -140,8 +142,12 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `5000`-`5999` | Job Request                     | [90](90.md)                            |
 | `6000`-`6999` | Job Result                      | [90](90.md)                            |
 | `7000`        | Job Feedback                    | [90](90.md)                            |
+| `7374`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
+| `7375`        | Cashu Wallet Tokens             | [60](60.md)                            |
+| `7376`        | Cashu Wallet History            | [60](60.md)                            |
 | `9000`-`9030` | Group Control Events            | [29](29.md)                            |
 | `9041`        | Zap Goal                        | [75](75.md)                            |
+| `9321`        | Nutzap                          | [61](61.md)                            |
 | `9467`        | Tidal login                     | [Tidal-nostr]                          |
 | `9734`        | Zap Request                     | [57](57.md)                            |
 | `9735`        | Zap                             | [57](57.md)                            |
@@ -156,6 +162,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10007`       | Search relays list              | [51](51.md)                            |
 | `10009`       | User groups                     | [51](51.md), [29](29.md)               |
 | `10015`       | Interests list                  | [51](51.md)                            |
+| `10019`       | Nutzap Mint Recommendation      | [61](61.md)                            |
 | `10030`       | User emoji list                 | [51](51.md)                            |
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
 | `10063`       | User server list                | [Blossom][blossom]                     |
@@ -209,6 +216,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `34235`       | Video Event                     | [71](71.md)                            |
 | `34236`       | Short-form Portrait Video Event | [71](71.md)                            |
 | `34550`       | Community Definition            | [72](72.md)                            |
+| `37375`       | Cashu Wallet Event              | [60](60.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
 
 [NUD: Custom Feeds]: https://wikifreedia.xyz/cip-01/
