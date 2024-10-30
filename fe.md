@@ -1,4 +1,4 @@
-NIP-32
+NIP-fe
 ======
 
 Custom Feeds
