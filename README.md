@@ -142,7 +142,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `5000`-`5999` | Job Request                     | [90](90.md)                            |
 | `6000`-`6999` | Job Result                      | [90](90.md)                            |
 | `7000`        | Job Feedback                    | [90](90.md)                            |
-| `7374`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
+| `7373`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
+| `7374`        | Pending minting quotes          | [60](60.md)                            |
 | `7375`        | Cashu Wallet Tokens             | [60](60.md)                            |
 | `7376`        | Cashu Wallet History            | [60](60.md)                            |
 | `9000`-`9030` | Group Control Events            | [29](29.md)                            |
