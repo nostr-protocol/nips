@@ -77,6 +77,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-61: Nutzaps](61.md)
 - [NIP-64: Chess (PGN)](64.md)
 - [NIP-65: Relay List Metadata](65.md)
+- [NIP-69: Peer-to-peer Order events](69.md)
 - [NIP-70: Protected Events](70.md)
 - [NIP-71: Video Events](71.md)
 - [NIP-72: Moderated Communities](72.md)
@@ -217,6 +218,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `34236`       | Short-form Portrait Video Event | [71](71.md)                            |
 | `34550`       | Community Definition            | [72](72.md)                            |
 | `37375`       | Cashu Wallet Event              | [60](60.md)                            |
+| `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
 
 [NUD: Custom Feeds]: https://wikifreedia.xyz/cip-01/
