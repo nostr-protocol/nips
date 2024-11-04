@@ -86,6 +86,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-100: Peer-to-peer Order events](100.md)
 
 ## Event Kinds
 | kind          | description                | NIP                      |
@@ -193,6 +194,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `34236`       | Short-form Portrait Video Event    | [71](71.md)      |
 | `34237`       | Video View Event           | [71](71.md)              |
 | `34550`       | Community Definition       | [72](72.md)              |
+| `38383`       | Peer-to-peer Order events  | [100](100.md)            |
 | `39000-9`     | Group metadata events      | [29](29.md)              |
 
 [NUD: Custom Feeds]: https://wikifreedia.xyz/cip-01/97c70a44366a6535c1
