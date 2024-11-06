@@ -267,7 +267,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `-`               | --                                   | --                              | [70](70.md)                                        |
 | `g`               | geohash                              | --                              | [52](52.md)                                        |
 | `h`               | group id                             | --                              | [29](29.md)                                        |
-| `i`               | external identity                    | proof, url hint                 | [39](39.md), [73](73.md)                           |
+| `i`               | external identity                    | proof, url hint                 | [35](35.md), [39](39.md), [73](73.md)              |
 | `k`               | kind                                 | --                              | [18](18.md), [25](25.md), [72](72.md), [73](73.md) |
 | `l`               | label, label namespace               | --                              | [32](32.md)                                        |
 | `L`               | label namespace                      | --                              | [32](32.md)                                        |
@@ -275,7 +275,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `q`               | event id (hex)                       | relay URL, pubkey (hex)         | [18](18.md)                                        |
 | `r`               | a reference (URL, etc)               | --                              | [24](24.md), [25](25.md)                           |
 | `r`               | relay url                            | marker                          | [65](65.md)                                        |
-| `t`               | hashtag                              | --                              | [24](24.md), [34](34.md)                           |
+| `t`               | hashtag                              | --                              | [24](24.md), [34](34.md), [35](35.md)              |
+| `x`               | infohash                             | --                              | [35](35.md)                                        |
 | `alt`             | summary                              | --                              | [31](31.md)                                        |
 | `amount`          | millisatoshis, stringified           | --                              | [57](57.md)                                        |
 | `bolt11`          | `bolt11` invoice                     | --                              | [57](57.md)                                        |
@@ -288,6 +289,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `emoji`           | shortcode, image URL                 | --                              | [30](30.md)                                        |
 | `encrypted`       | --                                   | --                              | [90](90.md)                                        |
 | `expiration`      | unix timestamp (string)              | --                              | [40](40.md)                                        |
+| `file`            | full path (string)                   | --                              | [35](35.md)                                        |
 | `goal`            | event id (hex)                       | relay URL                       | [75](75.md)                                        |
 | `image`           | image URL                            | dimensions in pixels            | [23](23.md), [52](52.md), [58](58.md)              |
 | `imeta`           | inline metadata                      | --                              | [92](92.md)                                        |
@@ -306,6 +308,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `summary`         | summary                              | --                              | [23](23.md), [52](52.md)                           |
 | `thumb`           | badge thumbnail                      | dimensions in pixels            | [58](58.md)                                        |
 | `title`           | article title                        | --                              | [23](23.md)                                        |
+| `tracker`         | torrent tracker URL                  | --                              | [35](35.md)                                        |
 | `web`             | webpage URL                          | --                              | [34](34.md)                                        |
 | `zap`             | pubkey (hex), relay URL              | weight                          | [57](57.md)                                        |
 
