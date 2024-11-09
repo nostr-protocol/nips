@@ -261,23 +261,32 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 
 | name              | value                                | other parameters                | NIP                                                |
 | ----------------- | ------------------------------------ | ------------------------------- | -------------------------------------------------- |
-| `e`               | event id (hex)                       | relay URL, marker, pubkey (hex) | [01](01.md), [10](10.md)                           |
-| `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md)                           |
 | `a`               | coordinates to an event              | relay URL                       | [01](01.md)                                        |
+| `A`               | root address                         | relay URL                       | [22](22.md)                                        |
 | `d`               | identifier                           | --                              | [01](01.md)                                        |
-| `-`               | --                                   | --                              | [70](70.md)                                        |
+| `e`               | event id (hex)                       | relay URL, marker, pubkey (hex) | [01](01.md), [10](10.md)                           |
+| `E`               | root event i                         | relay URL                       | [22](22.md)                                        |
+| `f`               | currency code                        | --                              | [69](69.md)                                        |
 | `g`               | geohash                              | --                              | [52](52.md)                                        |
 | `h`               | group id                             | --                              | [29](29.md)                                        |
 | `i`               | external identity                    | proof, url hint                 | [35](35.md), [39](39.md), [73](73.md)              |
+| `I`               | root external identity               | --                              | [22](22.md)                                        |
 | `k`               | kind                                 | --                              | [18](18.md), [25](25.md), [72](72.md), [73](73.md) |
+| `K`               | root scope                           | --                              | [22](22.md)                                        |
 | `l`               | label, label namespace               | --                              | [32](32.md)                                        |
 | `L`               | label namespace                      | --                              | [32](32.md)                                        |
 | `m`               | MIME type                            | --                              | [94](94.md)                                        |
+| `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md)                           |
 | `q`               | event id (hex)                       | relay URL, pubkey (hex)         | [18](18.md)                                        |
 | `r`               | a reference (URL, etc)               | --                              | [24](24.md), [25](25.md)                           |
 | `r`               | relay url                            | marker                          | [65](65.md)                                        |
+| `s`               | status                               | --                              | [69](69.md)                                        |
 | `t`               | hashtag                              | --                              | [24](24.md), [34](34.md), [35](35.md)              |
+| `u`               | url                                  | --                              | [61](61.md), [98](98.md)                           |
 | `x`               | infohash                             | --                              | [35](35.md)                                        |
+| `y`               | platform                             | --                              | [69](69.md)                                        |
+| `z`               | order number                         | --                              | [69](69.md)                                        |
+| `-`               | --                                   | --                              | [70](70.md)                                        |
 | `alt`             | summary                              | --                              | [31](31.md)                                        |
 | `amount`          | millisatoshis, stringified           | --                              | [57](57.md)                                        |
 | `bolt11`          | `bolt11` invoice                     | --                              | [57](57.md)                                        |
