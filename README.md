@@ -108,9 +108,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `7`           | Reaction                        | [25](25.md)                            |
 | `8`           | Badge Award                     | [58](58.md)                            |
 | `9`           | Group Chat Message              | [29](29.md)                            |
-| `10`          | Group Chat Threaded Reply       | [29](29.md)                            |
+| `10`          | Group Chat Threaded Reply       | 29 (deprecated)                        |
 | `11`          | Group Thread                    | [29](29.md)                            |
-| `12`          | Group Thread Reply              | [29](29.md)                            |
+| `12`          | Group Thread Reply              | 29 (deprecated)                        |
 | `13`          | Seal                            | [59](59.md)                            |
 | `14`          | Direct Message                  | [17](17.md)                            |
 | `16`          | Generic Repost                  | [18](18.md)                            |
@@ -127,6 +127,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1040`        | OpenTimestamps                  | [03](03.md)                            |
 | `1059`        | Gift Wrap                       | [59](59.md)                            |
 | `1063`        | File Metadata                   | [94](94.md)                            |
+| `1111`        | Comment                         | [22](22.md)                            |
 | `1311`        | Live Chat Message               | [53](53.md)                            |
 | `1617`        | Patches                         | [34](34.md)                            |
 | `1621`        | Issues                          | [34](34.md)                            |
