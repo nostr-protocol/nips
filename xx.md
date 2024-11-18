@@ -72,8 +72,11 @@ Room membership SHOULD be indicated using both an `r` tag for each relay the use
 }
 ```
 
-Room membership events SHOULD be sent both to the user's [NIP-65](./65.md) WRITE relays, and to
-each relay listed in the membership event (in order to allow clients to build room lists).
+Room membership events SHOULD be sent to:
+
+- The user's [NIP-65](./65.md) WRITE relays
+- Each relay listed in the membership event
+- Each relay being removed from the member list
 
 # Federation
 
