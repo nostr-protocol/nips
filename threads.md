@@ -1,0 +1,34 @@
+NIP-XX
+======
+
+Threads
+-------
+
+`draft` `optional`
+
+A thread is a `kind 11` event.  Threads SHOULD include a `title` with a summary
+of the thread's topic.
+
+```json
+{
+  "kind": 11,
+  "content": "Good morning",
+  "tags": [
+    ["title", "GM"]
+  ]
+}
+```
+
+Replies to `kind 11` MUST use [NIP-22](./22.md) `kind 1111` comments. Replies should
+always be to the root `kind 11` to avoid arbitrarily nested reply hierarchies.
+
+```json
+{
+  "kind": 1111,
+  "content": "Cool beans",
+  "tags": [
+    ["K", "11"],
+    ["E", <event-id>, <relay-url>, <pubkey>]
+  ]
+}
+```
