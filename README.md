@@ -78,7 +78,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-61: Nutzaps](61.md)
 - [NIP-64: Chess (PGN)](64.md)
 - [NIP-65: Relay List Metadata](65.md)
-- [NIP-69: Peer-to-peer Order events](69.md)
 - [NIP-70: Protected Events](70.md)
 - [NIP-71: Video Events](71.md)
 - [NIP-72: Moderated Communities](72.md)
@@ -86,6 +85,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-75: Zap Goals](75.md)
 - [NIP-78: Application-specific data](78.md)
 - [NIP-84: Highlights](84.md)
+- [NIP-88: Peer-to-peer Order events](88.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-90: Data Vending Machines](90.md)
 - [NIP-92: Media Attachments](92.md)
@@ -220,7 +220,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `34236`       | Short-form Portrait Video Event | [71](71.md)                            |
 | `34550`       | Community Definition            | [72](72.md)                            |
 | `37375`       | Cashu Wallet Event              | [60](60.md)                            |
-| `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
+| `38383`       | Peer-to-peer Order events       | [88](88.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
 
 [NUD: Custom Feeds]: https://wikifreedia.xyz/cip-01/
@@ -267,7 +267,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `d`               | identifier                           | --                              | [01](01.md)                                        |
 | `e`               | event id (hex)                       | relay URL, marker, pubkey (hex) | [01](01.md), [10](10.md)                           |
 | `E`               | root event id                        | relay URL                       | [22](22.md)                                        |
-| `f`               | currency code                        | --                              | [69](69.md)                                        |
+| `f`               | currency code                        | --                              | [88](88.md)                                        |
 | `g`               | geohash                              | --                              | [52](52.md)                                        |
 | `h`               | group id                             | --                              | [29](29.md)                                        |
 | `i`               | external identity                    | proof, url hint                 | [35](35.md), [39](39.md), [73](73.md)              |
@@ -281,12 +281,12 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `q`               | event id (hex)                       | relay URL, pubkey (hex)         | [18](18.md)                                        |
 | `r`               | a reference (URL, etc)               | --                              | [24](24.md), [25](25.md)                           |
 | `r`               | relay url                            | marker                          | [65](65.md)                                        |
-| `s`               | status                               | --                              | [69](69.md)                                        |
+| `s`               | status                               | --                              | [88](88.md)                                        |
 | `t`               | hashtag                              | --                              | [24](24.md), [34](34.md), [35](35.md)              |
 | `u`               | url                                  | --                              | [61](61.md), [98](98.md)                           |
 | `x`               | infohash                             | --                              | [35](35.md)                                        |
-| `y`               | platform                             | --                              | [69](69.md)                                        |
-| `z`               | order number                         | --                              | [69](69.md)                                        |
+| `y`               | platform                             | --                              | [88](88.md)                                        |
+| `z`               | order number                         | --                              | [88](88.md)                                        |
 | `-`               | --                                   | --                              | [70](70.md)                                        |
 | `alt`             | summary                              | --                              | [31](31.md)                                        |
 | `amount`          | millisatoshis, stringified           | --                              | [57](57.md)                                        |
