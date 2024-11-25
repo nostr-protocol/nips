@@ -86,6 +86,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-75: Zap Goals](75.md)
 - [NIP-78: Application-specific data](78.md)
 - [NIP-84: Highlights](84.md)
+- [NIP-86: Relay Management API](86.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-90: Data Vending Machines](90.md)
 - [NIP-92: Media Attachments](92.md)
