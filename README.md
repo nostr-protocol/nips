@@ -86,6 +86,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-75: Zap Goals](75.md)
 - [NIP-78: Application-specific data](78.md)
 - [NIP-84: Highlights](84.md)
+- [NIP-86: Relay Management API](86.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-90: Data Vending Machines](90.md)
 - [NIP-92: Media Attachments](92.md)
@@ -93,6 +94,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-7D: Threads](7D.md)
+- [NIP-C7: Chats](C7.md)
 
 ## Event Kinds
 
@@ -107,9 +110,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `6`           | Repost                          | [18](18.md)                            |
 | `7`           | Reaction                        | [25](25.md)                            |
 | `8`           | Badge Award                     | [58](58.md)                            |
-| `9`           | Group Chat Message              | [29](29.md)                            |
+| `9`           | Chat Message                    | [C7](C7.md)                            |
 | `10`          | Group Chat Threaded Reply       | 29 (deprecated)                        |
-| `11`          | Group Thread                    | [29](29.md)                            |
+| `11`          | Thread                          | [7D](7D.md)                            |
 | `12`          | Group Thread Reply              | 29 (deprecated)                        |
 | `13`          | Seal                            | [59](59.md)                            |
 | `14`          | Direct Message                  | [17](17.md)                            |
