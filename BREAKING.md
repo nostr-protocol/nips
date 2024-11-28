@@ -5,7 +5,7 @@ reverse chronological order.
 
 | Date        | Commit    | NIP      | Change |
 | ----------- | --------- | -------- | ------ |
-| 2023-11-12  | [2838e3bd](https://github.com/nostr-protocol/nips/commit/2838e3bd) | [NIP-29](29.md) | `kind: 12` and `kind: 10` were removed (use `kind: 1111` instead) |
+| 2024-11-12  | [2838e3bd](https://github.com/nostr-protocol/nips/commit/2838e3bd) | [NIP-29](29.md) | `kind: 12` and `kind: 10` were removed (use `kind: 1111` instead) |
 | 2024-11-12  | [926a51e7](https://github.com/nostr-protocol/nips/commit/926a51e7) | [NIP-46](46.md) | NIP-05 login was removed |
 | 2024-11-12  | [926a51e7](https://github.com/nostr-protocol/nips/commit/926a51e7) | [NIP-46](46.md) | `create_account` method was removed |
 | 2024-11-12  | [926a51e7](https://github.com/nostr-protocol/nips/commit/926a51e7) | [NIP-46](46.md) | `connect` params and result were changed |
