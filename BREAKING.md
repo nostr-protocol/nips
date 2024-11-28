@@ -5,6 +5,11 @@ reverse chronological order.
 
 | Date        | Commit    | NIP      | Change |
 | ----------- | --------- | -------- | ------ |
+| 2023-11-12  | [2838e3bd](https://github.com/nostr-protocol/nips/commit/2838e3bd) | [NIP-29](29.md) | `kind: 12` and `kind: 10` were removed (use `kind: 1111` instead) |
+| 2024-11-12  | [926a51e7](https://github.com/nostr-protocol/nips/commit/926a51e7) | [NIP-46](46.md) | NIP-05 login was removed |
+| 2024-11-12  | [926a51e7](https://github.com/nostr-protocol/nips/commit/926a51e7) | [NIP-46](46.md) | `create_account` method was removed |
+| 2024-11-12  | [926a51e7](https://github.com/nostr-protocol/nips/commit/926a51e7) | [NIP-46](46.md) | `connect` params and result were changed |
+| 2024-10-29  | [f1e8d2c4](https://github.com/nostr-protocol/nips/commit/f1e8d2c4) | [NIP-46](46.md) | bunker URL should use `remote-signer-key` |
 | 2024-10-15  | [1cda2dcc](https://github.com/nostr-protocol/nips/commit/1cda2dcc) | [NIP-71](71.md) | some tags were replaced with `imeta` tag |
 | 2024-10-15  | [1cda2dcc](https://github.com/nostr-protocol/nips/commit/1cda2dcc) | [NIP-71](71.md) | `kind: 34237` was dropped |
 | 2024-10-07  | [7bb8997b](https://github.com/nostr-protocol/nips/commit/7bb8997b) | [NIP-55](55.md) | some fields and passing data were changed |
@@ -60,4 +65,3 @@ Breaking changes prior to 2023-03-01 are not yet documented.
 
 - If it isn't clear that a change is breaking or not, we list it.
 - The date is the date it was merged, not necessarily the date of the commit.
-
