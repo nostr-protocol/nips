@@ -183,7 +183,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `24242`       | Blobs stored on mediaservers    | [Blossom][blossom]                     |
 | `27235`       | HTTP Auth                       | [98](98.md)                            |
 | `30000`       | Follow sets                     | [51](51.md)                            |
-| `30001`       | Generic lists                   | [51](51.md)                            |
+| `30001`       | Generic lists                   | 51 (deprecated)                        |
 | `30002`       | Relay sets                      | [51](51.md)                            |
 | `30003`       | Bookmark sets                   | [51](51.md)                            |
 | `30004`       | Curation sets                   | [51](51.md)                            |
