@@ -36,7 +36,8 @@ reverse chronological order.
 | 2023-12-27  | [17c67ef5](https://github.com/nostr-protocol/nips/commit/17c67ef5) | [94](94.md) | 'aes-256-gcm' tag was removed |
 | 2023-12-03  | [0ba45895](https://github.com/nostr-protocol/nips/commit/0ba45895) | [01](01.md) | WebSocket status code `4000` was replaced by 'CLOSED' message |
 | 2023-11-28  | [6de35f9e](https://github.com/nostr-protocol/nips/commit/6de35f9e) | [89](89.md) | 'client' tag value was changed |
-| 2023-11-20  | [7822a8b1](https://github.com/nostr-protocol/nips/commit/7822a8b1) | [51](51.md) | `kind: 30000` and `kind: 30001` were deprecated |
+| 2023-11-20  | [7822a8b1](https://github.com/nostr-protocol/nips/commit/7822a8b1) | [51](51.md) | `kind: 30001` was deprecated |
+| 2023-11-20  | [7822a8b1](https://github.com/nostr-protocol/nips/commit/7822a8b1) | [51](51.md) | the meaning of `kind: 30000` was changed |
 | 2023-11-11  | [cbdca1e9](https://github.com/nostr-protocol/nips/commit/cbdca1e9) | [84](84.md) | 'range' tag was removed |
 | 2023-11-10  | [c945d8bd](https://github.com/nostr-protocol/nips/commit/c945d8bd) | [32](32.md) | 'l' tag annotations was removed |
 | 2023-11-07  | [108b7f16](https://github.com/nostr-protocol/nips/commit/108b7f16) | [01](01.md) | 'OK' message must have 4 items |
