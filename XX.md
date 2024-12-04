@@ -6,6 +6,8 @@ Marketplace Protocol
 
 `draft` `optional`
 
+// TODO: Mention the optionality of the different components used in this nip.
+
 This NIP defines a comprehensive protocol for implementing decentralized marketplaces on Nostr, combining and enhancing the approaches from [NIP-15](15.md) and [NIP-99](99.md). It provides a complete e-commerce framework while maintaining the protocol's simplicity and interoperability.
 
 ## Events and Kinds
@@ -59,18 +61,21 @@ Using NIP-51 list format for grouping products:
   "tags": [
     ["d", "<collection identifier>"],
     ["name", "<collection name>"],
+    ["a", "30402:<pubkey>:<product-id>"], // Product references
     // Optional tags
     ["image", "<collection image>"],
     ["summary", "<collection description>"],
     ["location", "<location string>"],
-    ["a", "30402:<pubkey>:<product-id>"], // Product references
-    ["shipping", "<shipping-option-id>"] // References to shipping options
+    ["g", "<geo hash>"],
+    ["shipping", "<shipping-option-id>"], // References to shipping options
+    ["currency", "<collection-currency>"]
   ]
 }
 ```
 
 ### Shipping Option (Kind: 30406)
-Dedicated event for shipping details:
+
+This event type defines shipping methods, costs, and constraints. To ensure reliable tag association, each physical pickup location should be defined in a separate event. These events can be published by the merchant or a third-party provider, and can be subscribed to by the merchant. This approach allows merchants to easily define their shipping options manually, or reference shipping options published by a third-party provider, such as a delivery company, a DVM, etc.
 
 ```jsonc
 {
@@ -81,16 +86,115 @@ Dedicated event for shipping details:
     ["d", "<shipping identifier>"],
     ["name", "<shipping method name>"],
     ["price", "<base_cost>", "<currency>"],
-    // ["location", "<service area>"],
-    // ["duration", "<estimated delivery time>"]
-    // Maybe we can use `L`and `l` tags for ontology, and use proper ISO3166 for shipping zones, also constraints for sizes and weight
+    ["zone", "<ISO 3166-1 alpha-2 country code>"],  // Can be repeated for multiple countries
+    ["region", "<ISO 3166-2 region code>"],         // Optional subdivision within country
+    ["service", "<service-type>"],                  // e.g., "standard", "express", "overnight", "pickup"
+    ["duration", "<min-hours>", "<max-hours>"],     // Estimated delivery window
+    
+    // Optional tags    
+    ["location", "<pickup location description>"],   // Physical address
+    ["g", "<geohash>"],                            // Precise location
+    
+    // Weight constraints
+    ["weight-min", "<number>", "<unit>"],          // unit: g, kg, oz, lb
+    ["weight-max", "<number>", "<unit>"],
+    
+    // Dimensional constraints
+    ["dim-max", "<length>", "<width>", "<height>", "<unit>"],  // unit: cm, in
+    ["dim-min", "<length>", "<width>", "<height>", "<unit>"],
+    
+    // Price calculations
+    ["price-weight", "<price-per-unit>", "<currency>", "<weight-unit>"],
+    ["price-volume", "<price-per-unit>", "<currency>", "<volume-unit>"],
+    ["price-distance", "<price-per-unit>", "<currency>", "<distance-unit>"]
   ]
 }
 ```
 
+#### Example Events
+
+Single pickup location:
+```jsonc
+{
+  "kind": 30406,
+  "created_at": 1703187600,
+  "content": "Downtown Miami Store Pickup",
+  "tags": [
+    ["d", "miami-downtown-pickup"],
+    ["name", "Downtown Miami Pickup"],
+    ["price", "0", "USD"],
+    ["zone", "US"],
+    ["region", "US-FL"],
+    ["service", "pickup"],
+    ["location", "789 Brickell Ave, Miami, FL 33131"],
+    ["g", "dhwm9c4ws"],
+  ]
+}
+```
+
+Separate pickup location (same merchant):
+```jsonc
+{
+  "kind": 30406,
+  "created_at": 1703187600,
+  "content": "Miami Beach Store Pickup",
+  "tags": [
+    ["d", "miami-beach-pickup"],
+    ["name", "Miami Beach Pickup"],
+    ["price", "0", "USD"],
+    ["zone", "US"],
+    ["region", "US-FL"],
+    ["service", "pickup"],
+    ["location", "456 Ocean Drive, Miami Beach, FL 33139"],
+    ["g", "dhwv1zp8k"],
+  ]
+}
+```
+
+Standard shipping option:
+```jsonc
+{
+  "kind": 30406,
+  "created_at": 1703187600,
+  "content": "Standard domestic shipping within Florida",
+  "tags": [
+    ["d", "fl-standard"],
+    ["name", "Florida Standard Shipping"],
+    ["price", "5.99", "USD"],
+    ["zone", "US"],
+    ["region", "US-FL"],
+    ["service", "standard"],
+    ["duration", "24", "72"],
+    ["weight-max", "30", "kg"],
+    ["dim-max", "120", "60", "60", "cm"],
+    ["price-weight", "0.75", "USD", "kg"]
+  ]
+}
+```
+
+#### Shipping Notes
+
+1. For merchants with multiple pickup locations:
+   - Create separate shipping option events for each physical location
+   - Each location should have its own unique `d` tag identifier
+   - Product listings can reference multiple pickup options
+
+2. Clients should:
+   - Group pickup locations by merchant when displaying options
+   - Use geohash data to show pickup locations on a map
+   - Sort pickup locations by distance from user when possible
+
+3. Location identification:
+   - Each pickup location must have both `location` and `g` tags
+   - The `location` tag contains human-readable address
+   - The `g` tag contains geohash for precise positioning
+
 ## Order Communication Flow
 
-- Order processing uses [NIP-17](17.md) encrypted direct messages. Message direction is determined by the `p` tag - when sent from buyer to merchant, `p` contains the merchant's pubkey, and when sent from merchant to buyer, `p` contains the buyer's pubkey. 
+- Order processing and communication uses [NIP-17](17.md) encrypted direct messages.
+  - Kind `14` is used for regular communication, enabling users to maintain a conversation. The subject can be an order ID or left blank, depending on the context.
+  - Kind `15` is used for order processing and business logic.
+- Message direction is determined by the `p` tag - when sent from buyer to merchant, `p` contains the merchant's pubkey, and when sent from merchant to buyer, `p` contains the buyer's pubkey. 
 - The payment request message can be initiated in two ways, depending on whether the merchant has a server handling payments
 
 ### Message Types
@@ -98,7 +202,7 @@ Dedicated event for shipping details:
 1. Order Creation (buyer → merchant) (subject "order-info")
 ```jsonc
 {
-  "kind": 14,
+  "kind": 15,
   "tags": [
     ["p", "<merchant-pubkey>"],
     ["subject", "order-info"],
@@ -106,9 +210,11 @@ Dedicated event for shipping details:
     ["item", "<product-id>", "<quantity>"],
     ["item", "<product-id>", "<quantity>"], // Multiple items possible
     ["shipping", "<shipping-option-id>"],
+    ["amount", "<total-amount>"],
     ["address", "<shipping-address>"],
     ["email", "<customer-email>"],
-    ["phone", "<customer-phone>"]
+    ["phone", "<customer-phone>"],
+    // Other order related fields
   ],
   "content": "Additional notes: Please gift wrap the items."
 }
@@ -117,14 +223,14 @@ Dedicated event for shipping details:
 2. Payment Request (merchant doesnt have a payment server) (merchant → buyer ) (subject "order-payment")
 ```jsonc
 {
-  "kind": 14,
+  "kind": 15,
   "tags": [
     ["p", "<buyer-pubkey>"],
     ["subject", "order-payment"],
     ["order", "<order-id>"],
     ["amount", "<total-amount>", "<currency>"],
-    ["payment", "lightning", "<bolt11-invoice>"],
-    ["payment", "bitcoin", "<btc-address>"],
+    ["payment", "lightning", "<bolt11-invoice | ln-address(LUD16)>"],
+    ["payment", "bitcoin", "<btc-address>"] // Multiple payment options possible,
     ["expiry", "<unix-timestamp>"]
   ],
   "content": "Payment is due within 24 hours."
@@ -134,12 +240,12 @@ Dedicated event for shipping details:
 3. Payment Request (merchant have a payment server) ( buyer → merchant ) (subject "order-payment")
 ```jsonc
 {
-  "kind": 14,
+  "kind": 15,
   "tags": [
     ["p", "<merchant-pubkey>"],
     ["subject", "order-payment"],
     ["order", "<order-id>"],
-    ["amount", "<total-amount>", "<currency>"],
+    ["amount", "<total-amount>"],
     ["payment", "lightning", "<bolt11-invoice>"],
     ["payment", "bitcoin", "<btc-address>"],
     ["expiry", "<unix-timestamp>"]
@@ -150,7 +256,7 @@ Dedicated event for shipping details:
 4. Payment Receipt (buyer → merchant) (subject "order-receipt")
 ```jsonc
 {
-  "kind": 14,
+  "kind": 15,
   "tags": [
     ["p", "<merchant-pubkey>"],
     ["subject", "order-receipt"],
@@ -167,7 +273,7 @@ Dedicated event for shipping details:
 5. Shipping Updates (merchant → buyer) (subject "shipping-info")
 ```jsonc
 {
-  "kind": 14,
+  "kind": 15,
   "tags": [
     ["p", "<buyer-pubkey>"],
     ["subject", "shipping-info"],
@@ -184,10 +290,25 @@ Dedicated event for shipping details:
 6. Order Status Updates (merchant → buyer) (subject "order-info")
 ```jsonc
 {
-  "kind": 14,
+  "kind": 15,
   "tags": [
     ["p", "<buyer-pubkey>"],
     ["subject", "order-info"],
+    ["order", "<order-id>"],
+    ["status", "<order-status>"], // e.g., "confirmed", "processing", "completed"
+    ["date", "<unix-timestamp>"]
+  ],
+  "content": "Your order is being prepared for shipping."
+}
+```
+
+7. Regular communication between users (subject "<order-id>")
+```jsonc
+{
+  "kind": 14,
+  "tags": [
+    ["p", "<buyer-pubkey>"],
+    ["subject", "<order-id | empty-string>"],
     ["order", "<order-id>"],
     ["status", "<order-status>"], // e.g., "confirmed", "processing", "completed"
     ["date", "<unix-timestamp>"]
