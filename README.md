@@ -282,6 +282,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `L`               | label namespace                      | --                              | [32](32.md)                                        |
 | `m`               | MIME type                            | --                              | [94](94.md)                                        |
 | `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md)                           |
+| `P`               | pubkey (hex)                         | --                              | [57](57.md)                                        |
 | `q`               | event id (hex)                       | relay URL, pubkey (hex)         | [18](18.md)                                        |
 | `r`               | a reference (URL, etc)               | --                              | [24](24.md), [25](25.md)                           |
 | `r`               | relay url                            | marker                          | [65](65.md)                                        |
