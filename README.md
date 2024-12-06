@@ -119,7 +119,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `14`          | Direct Message                  | [17](17.md)                            |
 | `16`          | Generic Repost                  | [18](18.md)                            |
 | `17`          | Reaction to a website           | [25](25.md)                            |
-| `20`          | Picture-first feeds             | [68](68.md)                            |
+| `20`          | Picture                         | [68](68.md)                            |
 | `40`          | Channel Creation                | [28](28.md)                            |
 | `41`          | Channel Metadata                | [28](28.md)                            |
 | `42`          | Channel Message                 | [28](28.md)                            |
