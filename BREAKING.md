@@ -30,8 +30,7 @@ reverse chronological order.
 | 2024-02-07  | [d3dad114](https://github.com/nostr-protocol/nips/commit/d3dad114) | [46](46.md) | Connection token format was changed |
 | 2024-01-30  | [1a2b21b6](https://github.com/nostr-protocol/nips/commit/1a2b21b6) | [59](59.md) | 'p' tag became optional |
 | 2023-01-27  | [c2f34817](https://github.com/nostr-protocol/nips/commit/c2f34817) | [47](47.md) | optional expiration tag should be honored |
-| 2024-01-10  | [3d8652ea](https://github.com/nostr-protocol/nips/commit/3d8652ea) | [02](02.md) | list entries should be chronological |
-| 2024-01-10  | [3d8652ea](https://github.com/nostr-protocol/nips/commit/3d8652ea) | [51](51.md) | list entries should be chronological |
+| 2024-01-10  | [3d8652ea](https://github.com/nostr-protocol/nips/commit/3d8652ea) | [02](02.md), [51](51.md) | list entries should be chronological |
 | 2023-12-30  | [29869821](https://github.com/nostr-protocol/nips/commit/29869821) | [52](52.md) | 'name' tag was removed (use 'title' tag instead) |
 | 2023-12-27  | [17c67ef5](https://github.com/nostr-protocol/nips/commit/17c67ef5) | [94](94.md) | 'aes-256-gcm' tag was removed |
 | 2023-12-03  | [0ba45895](https://github.com/nostr-protocol/nips/commit/0ba45895) | [01](01.md) | WebSocket status code `4000` was replaced by 'CLOSED' message |
@@ -46,10 +45,7 @@ reverse chronological order.
 | 2023-08-21  | [89915e02](https://github.com/nostr-protocol/nips/commit/89915e02) | [11](11.md) | 'min_prefix' was removed |
 | 2023-08-20  | [37c4375e](https://github.com/nostr-protocol/nips/commit/37c4375e) | [01](01.md) | replaceable events with same timestamp should be retained event with lowest id |
 | 2023-08-15  | [88ee873c](https://github.com/nostr-protocol/nips/commit/88ee873c) | [15](15.md) | 'countries' tag was renamed to 'regions' |
-| 2023-08-14  | [72bb8a12](https://github.com/nostr-protocol/nips/commit/72bb8a12) | [12](12.md) | NIP-12, 16, 20 and 33 were merged into NIP-01 |
-| 2023-08-14  | [72bb8a12](https://github.com/nostr-protocol/nips/commit/72bb8a12) | [16](16.md) | NIP-12, 16, 20 and 33 were merged into NIP-01 |
-| 2023-08-14  | [72bb8a12](https://github.com/nostr-protocol/nips/commit/72bb8a12) | [20](20.md) | NIP-12, 16, 20 and 33 were merged into NIP-01 |
-| 2023-08-14  | [72bb8a12](https://github.com/nostr-protocol/nips/commit/72bb8a12) | [33](33.md) | NIP-12, 16, 20 and 33 were merged into NIP-01 |
+| 2023-08-14  | [72bb8a12](https://github.com/nostr-protocol/nips/commit/72bb8a12) | [12](12.md), [16](16.md), [20](20.md), [33](33.md) | NIP-12, 16, 20 and 33 were merged into NIP-01 |
 | 2023-08-11  | [d87f8617](https://github.com/nostr-protocol/nips/commit/d87f8617) | [25](25.md) | empty `content` should be considered as "+" |
 | 2023-08-01  | [5d63b157](https://github.com/nostr-protocol/nips/commit/5d63b157) | [57](57.md) | 'zap' tag was changed |
 | 2023-07-15  | [d1814405](https://github.com/nostr-protocol/nips/commit/d1814405) | [01](01.md) | `since` and `until` filters should be `since <= created_at <= until` |
