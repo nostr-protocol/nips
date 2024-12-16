@@ -136,7 +136,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1311`        | Live Chat Message               | [53](53.md)                            |
 | `1617`        | Patches                         | [34](34.md)                            |
 | `1621`        | Issues                          | [34](34.md)                            |
-| `1622`        | Replies                         | [34](34.md)                            |
+| `1622`        | Replies                         | [34](34.md) (deprecated)               |
 | `1630`-`1633` | Status                          | [34](34.md)                            |
 | `1971`        | Problem Tracker                 | [nostrocket][nostrocket]               |
 | `1984`        | Reporting                       | [56](56.md)                            |
