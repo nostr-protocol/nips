@@ -180,6 +180,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `22242`       | Client Authentication           | [42](42.md)                            |
 | `23194`       | Wallet Request                  | [47](47.md)                            |
 | `23195`       | Wallet Response                 | [47](47.md)                            |
+| `23196`       | NWC Notification (v0)           | [47](47.md)                            |
+| `23197`       | NWC Notification (v1+)          | [47](47.md)                            |
 | `24133`       | Nostr Connect                   | [46](46.md)                            |
 | `24242`       | Blobs stored on mediaservers    | [Blossom][blossom]                     |
 | `27235`       | HTTP Auth                       | [98](98.md)                            |
