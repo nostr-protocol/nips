@@ -130,6 +130,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `818`         | Merge Requests                  | [54](54.md)                            |
 | `1021`        | Bid                             | [15](15.md)                            |
 | `1022`        | Bid confirmation                | [15](15.md)                            |
+| `1234`        | Draft Checkpoint                | [37](37.md)                            |
 | `1040`        | OpenTimestamps                  | [03](03.md)                            |
 | `1059`        | Gift Wrap                       | [59](59.md)                            |
 | `1063`        | File Metadata                   | [94](94.md)                            |
