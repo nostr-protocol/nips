@@ -30,7 +30,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-06: Basic key derivation from mnemonic seed phrase](06.md)
 - [NIP-07: `window.nostr` capability for web browsers](07.md)
 - [NIP-08: Handling Mentions](08.md) --- **unrecommended**: deprecated in favor of [NIP-27](27.md)
-- [NIP-09: Event Deletion](09.md)
+- [NIP-09: Event Deletion Request](09.md)
 - [NIP-10: Text Notes and Threads](10.md)
 - [NIP-11: Relay Information Document](11.md)
 - [NIP-13: Proof of Work](13.md)
@@ -40,6 +40,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-18: Reposts](18.md)
 - [NIP-19: bech32-encoded entities](19.md)
 - [NIP-21: `nostr:` URI scheme](21.md)
+- [NIP-22: Comment](22.md)
 - [NIP-23: Long-form Content](23.md)
 - [NIP-24: Extra metadata fields and tags](24.md)
 - [NIP-25: Reactions](25.md)
@@ -53,6 +54,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-34: `git` stuff](34.md)
 - [NIP-35: Torrents](35.md)
 - [NIP-36: Sensitive Content](36.md)
+- [NIP-37: Draft Events](37.md)
 - [NIP-38: User Statuses](38.md)
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
@@ -73,13 +75,20 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
 - [NIP-59: Gift Wrap](59.md)
+- [NIP-60: Cashu Wallet](60.md)
+- [NIP-61: Nutzaps](61.md)
+- [NIP-64: Chess (PGN)](64.md)
 - [NIP-65: Relay List Metadata](65.md)
+- [NIP-68: Picture-first feeds](68.md)
+- [NIP-69: Peer-to-peer Order events](69.md)
 - [NIP-70: Protected Events](70.md)
 - [NIP-71: Video Events](71.md)
 - [NIP-72: Moderated Communities](72.md)
+- [NIP-73: External Content IDs](73.md)
 - [NIP-75: Zap Goals](75.md)
 - [NIP-78: Application-specific data](78.md)
 - [NIP-84: Highlights](84.md)
+- [NIP-86: Relay Management API](86.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-90: Data Vending Machines](90.md)
 - [NIP-92: Media Attachments](92.md)
@@ -87,119 +96,151 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-7D: Threads](7D.md)
+- [NIP-C7: Chats](C7.md)
 
 ## Event Kinds
-| kind          | description                | NIP                      |
-| ------------- | -------------------------- | ------------------------ |
-| `0`           | User Metadata              | [01](01.md)              |
-| `1`           | Short Text Note            | [01](01.md)              |
-| `2`           | Recommend Relay            | 01 (deprecated)          |
-| `3`           | Follows                    | [02](02.md)              |
-| `4`           | Encrypted Direct Messages  | [04](04.md)              |
-| `5`           | Event Deletion             | [09](09.md)              |
-| `6`           | Repost                     | [18](18.md)              |
-| `7`           | Reaction                   | [25](25.md)              |
-| `8`           | Badge Award                | [58](58.md)              |
-| `9`           | Group Chat Message         | [29](29.md)              |
-| `10`          | Group Chat Threaded Reply  | [29](29.md)              |
-| `11`          | Group Thread               | [29](29.md)              |
-| `12`          | Group Thread Reply         | [29](29.md)              |
-| `13`          | Seal                       | [59](59.md)              |
-| `14`          | Direct Message             | [17](17.md)              |
-| `16`          | Generic Repost             | [18](18.md)              |
-| `40`          | Channel Creation           | [28](28.md)              |
-| `41`          | Channel Metadata           | [28](28.md)              |
-| `42`          | Channel Message            | [28](28.md)              |
-| `43`          | Channel Hide Message       | [28](28.md)              |
-| `44`          | Channel Mute User          | [28](28.md)              |
-| `818`         | Merge Requests             | [54](54.md)              |
-| `1021`        | Bid                        | [15](15.md)              |
-| `1022`        | Bid confirmation           | [15](15.md)              |
-| `1040`        | OpenTimestamps             | [03](03.md)              |
-| `1059`        | Gift Wrap                  | [59](59.md)              |
-| `1063`        | File Metadata              | [94](94.md)              |
-| `1311`        | Live Chat Message          | [53](53.md)              |
-| `1617`        | Patches                    | [34](34.md)              |
-| `1621`        | Issues                     | [34](34.md)              |
-| `1622`        | Replies                    | [34](34.md)              |
-| `1630`-`1633` | Status                     | [34](34.md)              |
-| `1971`        | Problem Tracker            | [nostrocket][nostrocket] |
-| `1984`        | Reporting                  | [56](56.md)              |
-| `1985`        | Label                      | [32](32.md)              |
-| `2003`        | Torrent                    | [35](35.md)              |
-| `2004`        | Torrent Comment            | [35](35.md)              |
-| `2022`       | Coinjoin Pool              | [joinstr][joinstr]       |
-| `4550`        | Community Post Approval    | [72](72.md)              |
-| `5000`-`5999` | Job Request                | [90](90.md)              |
-| `6000`-`6999` | Job Result                 | [90](90.md)              |
-| `7000`        | Job Feedback               | [90](90.md)              |
-| `9000`-`9030` | Group Control Events       | [29](29.md)              |
-| `9041`        | Zap Goal                   | [75](75.md)              |
-| `9734`        | Zap Request                | [57](57.md)              |
-| `9735`        | Zap                        | [57](57.md)              |
-| `9802`        | Highlights                 | [84](84.md)              |
-| `10000`       | Mute list                  | [51](51.md)              |
-| `10001`       | Pin list                   | [51](51.md)              |
-| `10002`       | Relay List Metadata        | [65](65.md)              |
-| `10003`       | Bookmark list              | [51](51.md)              |
-| `10004`       | Communities list           | [51](51.md)              |
-| `10005`       | Public chats list          | [51](51.md)              |
-| `10006`       | Blocked relays list        | [51](51.md)              |
-| `10007`       | Search relays list         | [51](51.md)              |
-| `10009`       | User groups                | [51](51.md), [29](29.md) |
-| `10015`       | Interests list             | [51](51.md)              |
-| `10030`       | User emoji list            | [51](51.md)              |
-| `10050`       | Relay list to receive DMs  | [17](17.md)              |
-| `10096`       | File storage server list   | [96](96.md)              |
-| `13194`       | Wallet Info                | [47](47.md)              |
-| `21000`       | Lightning Pub RPC          | [Lightning.Pub][lnpub]   |
-| `22242`       | Client Authentication      | [42](42.md)              |
-| `23194`       | Wallet Request             | [47](47.md)              |
-| `23195`       | Wallet Response            | [47](47.md)              |
-| `24133`       | Nostr Connect              | [46](46.md)              |
-| `27235`       | HTTP Auth                  | [98](98.md)              |
-| `30000`       | Follow sets                | [51](51.md)              |
-| `30001`       | Generic lists              | [51](51.md)              |
-| `30002`       | Relay sets                 | [51](51.md)              |
-| `30003`       | Bookmark sets              | [51](51.md)              |
-| `30004`       | Curation sets              | [51](51.md)              |
-| `30005`       | Video sets              | [51](51.md)              |
-| `30008`       | Profile Badges             | [58](58.md)              |
-| `30009`       | Badge Definition           | [58](58.md)              |
-| `30015`       | Interest sets              | [51](51.md)              |
-| `30017`       | Create or update a stall   | [15](15.md)              |
-| `30018`       | Create or update a product | [15](15.md)              |
-| `30019`       | Marketplace UI/UX          | [15](15.md)              |
-| `30020`       | Product sold as an auction | [15](15.md)              |
-| `30023`       | Long-form Content          | [23](23.md)              |
-| `30024`       | Draft Long-form Content    | [23](23.md)              |
-| `30030`       | Emoji sets                 | [51](51.md)              |
-| `30063`       | Release artifact sets      | [51](51.md)              |
-| `30078`       | Application-specific Data  | [78](78.md)              |
-| `30311`       | Live Event                 | [53](53.md)              |
-| `30315`       | User Statuses              | [38](38.md)              |
-| `30402`       | Classified Listing         | [99](99.md)              |
-| `30403`       | Draft Classified Listing   | [99](99.md)              |
-| `30617`       | Repository announcements   | [34](34.md)              |
-| `30818`       | Wiki article               | [54](54.md)              |
-| `30819`       | Redirects                  | [54](54.md)              |
-| `31890`       | Feed                       | [NUD: Custom Feeds](https://wikifreedia.xyz/cip-01/97c70a44366a6535c1)              |
-| `31922`       | Date-Based Calendar Event  | [52](52.md)              |
-| `31923`       | Time-Based Calendar Event  | [52](52.md)              |
-| `31924`       | Calendar                   | [52](52.md)              |
-| `31925`       | Calendar Event RSVP        | [52](52.md)              |
-| `31989`       | Handler recommendation     | [89](89.md)              |
-| `31990`       | Handler information        | [89](89.md)              |
-| `34235`       | Video Event                | [71](71.md)              |
-| `34236`       | Short-form Portrait Video Event    | [71](71.md)      |
-| `34237`       | Video View Event           | [71](71.md)              |
-| `34550`       | Community Definition       | [72](72.md)              |
-| `39000-9`     | Group metadata events      | [29](29.md)              |
 
-[NUD: Custom Feeds]: https://wikifreedia.xyz/cip-01/97c70a44366a6535c1
+| kind          | description                     | NIP                                    |
+| ------------- | ------------------------------- | -------------------------------------- |
+| `0`           | User Metadata                   | [01](01.md)                            |
+| `1`           | Short Text Note                 | [01](01.md)                            |
+| `2`           | Recommend Relay                 | 01 (deprecated)                        |
+| `3`           | Follows                         | [02](02.md)                            |
+| `4`           | Encrypted Direct Messages       | [04](04.md)                            |
+| `5`           | Event Deletion Request          | [09](09.md)                            |
+| `6`           | Repost                          | [18](18.md)                            |
+| `7`           | Reaction                        | [25](25.md)                            |
+| `8`           | Badge Award                     | [58](58.md)                            |
+| `9`           | Chat Message                    | [C7](C7.md)                            |
+| `10`          | Group Chat Threaded Reply       | 29 (deprecated)                        |
+| `11`          | Thread                          | [7D](7D.md)                            |
+| `12`          | Group Thread Reply              | 29 (deprecated)                        |
+| `13`          | Seal                            | [59](59.md)                            |
+| `14`          | Direct Message                  | [17](17.md)                            |
+| `16`          | Generic Repost                  | [18](18.md)                            |
+| `17`          | Reaction to a website           | [25](25.md)                            |
+| `20`          | Picture                         | [68](68.md)                            |
+| `40`          | Channel Creation                | [28](28.md)                            |
+| `41`          | Channel Metadata                | [28](28.md)                            |
+| `42`          | Channel Message                 | [28](28.md)                            |
+| `43`          | Channel Hide Message            | [28](28.md)                            |
+| `44`          | Channel Mute User               | [28](28.md)                            |
+| `64`          | Chess (PGN)                     | [64](64.md)                            |
+| `818`         | Merge Requests                  | [54](54.md)                            |
+| `1021`        | Bid                             | [15](15.md)                            |
+| `1022`        | Bid confirmation                | [15](15.md)                            |
+| `1040`        | OpenTimestamps                  | [03](03.md)                            |
+| `1059`        | Gift Wrap                       | [59](59.md)                            |
+| `1063`        | File Metadata                   | [94](94.md)                            |
+| `1111`        | Comment                         | [22](22.md)                            |
+| `1311`        | Live Chat Message               | [53](53.md)                            |
+| `1617`        | Patches                         | [34](34.md)                            |
+| `1621`        | Issues                          | [34](34.md)                            |
+| `1622`        | Replies                         | [34](34.md)                            |
+| `1630`-`1633` | Status                          | [34](34.md)                            |
+| `1971`        | Problem Tracker                 | [nostrocket][nostrocket]               |
+| `1984`        | Reporting                       | [56](56.md)                            |
+| `1985`        | Label                           | [32](32.md)                            |
+| `1986`        | Relay reviews                   |                                        |
+| `1987`        | AI Embeddings / Vector lists    | [NKBIP-02]                             |
+| `2003`        | Torrent                         | [35](35.md)                            |
+| `2004`        | Torrent Comment                 | [35](35.md)                            |
+| `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
+| `4550`        | Community Post Approval         | [72](72.md)                            |
+| `5000`-`5999` | Job Request                     | [90](90.md)                            |
+| `6000`-`6999` | Job Result                      | [90](90.md)                            |
+| `7000`        | Job Feedback                    | [90](90.md)                            |
+| `7374`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
+| `7375`        | Cashu Wallet Tokens             | [60](60.md)                            |
+| `7376`        | Cashu Wallet History            | [60](60.md)                            |
+| `9000`-`9030` | Group Control Events            | [29](29.md)                            |
+| `9041`        | Zap Goal                        | [75](75.md)                            |
+| `9321`        | Nutzap                          | [61](61.md)                            |
+| `9467`        | Tidal login                     | [Tidal-nostr]                          |
+| `9734`        | Zap Request                     | [57](57.md)                            |
+| `9735`        | Zap                             | [57](57.md)                            |
+| `9802`        | Highlights                      | [84](84.md)                            |
+| `10000`       | Mute list                       | [51](51.md)                            |
+| `10001`       | Pin list                        | [51](51.md)                            |
+| `10002`       | Relay List Metadata             | [65](65.md)                            |
+| `10003`       | Bookmark list                   | [51](51.md)                            |
+| `10004`       | Communities list                | [51](51.md)                            |
+| `10005`       | Public chats list               | [51](51.md)                            |
+| `10006`       | Blocked relays list             | [51](51.md)                            |
+| `10007`       | Search relays list              | [51](51.md)                            |
+| `10009`       | User groups                     | [51](51.md), [29](29.md)               |
+| `10013`       | Draft relays                    | [37](37.md)                            |
+| `10015`       | Interests list                  | [51](51.md)                            |
+| `10019`       | Nutzap Mint Recommendation      | [61](61.md)                            |
+| `10030`       | User emoji list                 | [51](51.md)                            |
+| `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
+| `10063`       | User server list                | [Blossom][blossom]                     |
+| `10096`       | File storage server list        | [96](96.md)                            |
+| `13194`       | Wallet Info                     | [47](47.md)                            |
+| `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
+| `22242`       | Client Authentication           | [42](42.md)                            |
+| `23194`       | Wallet Request                  | [47](47.md)                            |
+| `23195`       | Wallet Response                 | [47](47.md)                            |
+| `24133`       | Nostr Connect                   | [46](46.md)                            |
+| `24242`       | Blobs stored on mediaservers    | [Blossom][blossom]                     |
+| `27235`       | HTTP Auth                       | [98](98.md)                            |
+| `30000`       | Follow sets                     | [51](51.md)                            |
+| `30001`       | Generic lists                   | 51 (deprecated)                        |
+| `30002`       | Relay sets                      | [51](51.md)                            |
+| `30003`       | Bookmark sets                   | [51](51.md)                            |
+| `30004`       | Curation sets                   | [51](51.md)                            |
+| `30005`       | Video sets                      | [51](51.md)                            |
+| `30007`       | Kind mute sets                  | [51](51.md)                            |
+| `30008`       | Profile Badges                  | [58](58.md)                            |
+| `30009`       | Badge Definition                | [58](58.md)                            |
+| `30015`       | Interest sets                   | [51](51.md)                            |
+| `30017`       | Create or update a stall        | [15](15.md)                            |
+| `30018`       | Create or update a product      | [15](15.md)                            |
+| `30019`       | Marketplace UI/UX               | [15](15.md)                            |
+| `30020`       | Product sold as an auction      | [15](15.md)                            |
+| `30023`       | Long-form Content               | [23](23.md)                            |
+| `30024`       | Draft Long-form Content         | [23](23.md)                            |
+| `30030`       | Emoji sets                      | [51](51.md)                            |
+| `30040`       | Modular Article Header          | [NKBIP-01]                             |
+| `30041`       | Modular Article Content         | [NKBIP-01]                             |
+| `30063`       | Release artifact sets           | [51](51.md)                            |
+| `30078`       | Application-specific Data       | [78](78.md)                            |
+| `30311`       | Live Event                      | [53](53.md)                            |
+| `30315`       | User Statuses                   | [38](38.md)                            |
+| `30388`       | Slide Set                       | [Corny Chat][cornychat-slideset]       |
+| `30402`       | Classified Listing              | [99](99.md)                            |
+| `30403`       | Draft Classified Listing        | [99](99.md)                            |
+| `30617`       | Repository announcements        | [34](34.md)                            |
+| `30618`       | Repository state announcements  | [34](34.md)                            |
+| `30818`       | Wiki article                    | [54](54.md)                            |
+| `30819`       | Redirects                       | [54](54.md)                            |
+| `31234`       | Draft Event                     | [37](37.md)                            |
+| `31388`       | Link Set                        | [Corny Chat][cornychat-linkset]        |
+| `31890`       | Feed                            | [NUD: Custom Feeds][NUD: Custom Feeds] |
+| `31922`       | Date-Based Calendar Event       | [52](52.md)                            |
+| `31923`       | Time-Based Calendar Event       | [52](52.md)                            |
+| `31924`       | Calendar                        | [52](52.md)                            |
+| `31925`       | Calendar Event RSVP             | [52](52.md)                            |
+| `31989`       | Handler recommendation          | [89](89.md)                            |
+| `31990`       | Handler information             | [89](89.md)                            |
+| `34235`       | Video Event                     | [71](71.md)                            |
+| `34236`       | Short-form Portrait Video Event | [71](71.md)                            |
+| `34550`       | Community Definition            | [72](72.md)                            |
+| `37375`       | Cashu Wallet Event              | [60](60.md)                            |
+| `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
+| `39000-9`     | Group metadata events           | [29](29.md)                            |
+
+[NUD: Custom Feeds]: https://wikifreedia.xyz/cip-01/
 [nostrocket]: https://github.com/nostrocket/NIPS/blob/main/Problems.md
 [lnpub]: https://github.com/shocknet/Lightning.Pub/blob/master/proto/autogenerated/client.md
+[cornychat-slideset]: https://cornychat.com/datatypes#kind30388slideset
+[cornychat-linkset]: https://cornychat.com/datatypes#kind31388linkset
 [joinstr]: https://gitlab.com/1440000bytes/joinstr/-/blob/main/NIP.md
+[NKBIP-01]: https://wikistr.com/nkbip-01
+[NKBIP-02]: https://wikistr.com/nkbip-02
+[blossom]: https://github.com/hzrd149/blossom
+[Tidal-nostr]: https://wikistr.com/tidal-nostr
 
 ## Message types
 
@@ -227,56 +268,69 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 
 ## Standardized Tags
 
-| name              | value                                | other parameters                | NIP                                   |
-| ----------------- | ------------------------------------ | ------------------------------- | ------------------------------------- |
-| `e`               | event id (hex)                       | relay URL, marker, pubkey (hex) | [01](01.md), [10](10.md)              |
-| `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md)              |
-| `a`               | coordinates to an event              | relay URL                       | [01](01.md)                           |
-| `d`               | identifier                           | --                              | [01](01.md)                           |
-| `-`               | --                                   | --                              | [70](70.md)                           |
-| `g`               | geohash                              | --                              | [52](52.md)                           |
-| `h`               | group id                             | --                              | [29](29.md)                           |
-| `i`               | identity                             | proof                           | [39](39.md)                           |
-| `k`               | kind number (string)                 | --                              | [18](18.md), [25](25.md), [72](72.md) |
-| `l`               | label, label namespace               | --                              | [32](32.md)                           |
-| `L`               | label namespace                      | --                              | [32](32.md)                           |
-| `m`               | MIME type                            | --                              | [94](94.md)                           |
-| `q`               | event id (hex)                       | relay URL                       | [18](18.md)                           |
-| `r`               | a reference (URL, etc)               | petname                         | [24](24.md)                           |
-| `r`               | relay url                            | marker                          | [65](65.md)                           |
-| `t`               | hashtag                              | --                              |                                       |
-| `alt`             | summary                              | --                              | [31](31.md)                           |
-| `amount`          | millisatoshis, stringified           | --                              | [57](57.md)                           |
-| `bolt11`          | `bolt11` invoice                     | --                              | [57](57.md)                           |
-| `challenge`       | challenge string                     | --                              | [42](42.md)                           |
-| `client`          | name, address                        | relay URL                       | [89](89.md)                           |
-| `clone`           | git clone URL                        | --                              | [34](34.md)                           |
-| `content-warning` | reason                               | --                              | [36](36.md)                           |
-| `delegation`      | pubkey, conditions, delegation token | --                              | [26](26.md)                           |
-| `description`     | description                          | --                              | [34](34.md), [57](57.md), [58](58.md) |
-| `emoji`           | shortcode, image URL                 | --                              | [30](30.md)                           |
-| `encrypted`       | --                                   | --                              | [90](90.md)                           |
-| `expiration`      | unix timestamp (string)              | --                              | [40](40.md)                           |
-| `goal`            | event id (hex)                       | relay URL                       | [75](75.md)                           |
-| `image`           | image URL                            | dimensions in pixels            | [23](23.md), [58](58.md)              |
-| `imeta`           | inline metadata                      | --                              | [92](92.md)                           |
-| `lnurl`           | `bech32` encoded `lnurl`             | --                              | [57](57.md)                           |
-| `location`        | location string                      | --                              | [52](52.md), [99](99.md)              |
-| `name`            | name                                 | --                              | [34](34.md), [58](58.md)              |
-| `nonce`           | random                               | difficulty                      | [13](13.md)                           |
-| `preimage`        | hash of `bolt11` invoice             | --                              | [57](57.md)                           |
-| `price`           | price                                | currency, frequency             | [99](99.md)                           |
-| `proxy`           | external ID                          | protocol                        | [48](48.md)                           |
-| `published_at`    | unix timestamp (string)              | --                              | [23](23.md)                           |
-| `relay`           | relay url                            | --                              | [42](42.md), [17](17.md)              |
-| `relays`          | relay list                           | --                              | [57](57.md)                           |
-| `server`          | file storage server url              | --                              | [96](96.md)                           |
-| `subject`         | subject                              | --                              | [14](14.md), [17](17.md)              |
-| `summary`         | article summary                      | --                              | [23](23.md)                           |
-| `thumb`           | badge thumbnail                      | dimensions in pixels            | [58](58.md)                           |
-| `title`           | article title                        | --                              | [23](23.md)                           |
-| `web`             | webpage URL                          | --                              | [34](34.md)                           |
-| `zap`             | pubkey (hex), relay URL              | weight                          | [57](57.md)                           |
+| name              | value                                | other parameters                | NIP                                                |
+| ----------------- | ------------------------------------ | ------------------------------- | -------------------------------------------------- |
+| `a`               | coordinates to an event              | relay URL                       | [01](01.md)                                        |
+| `A`               | root address                         | relay URL                       | [22](22.md)                                        |
+| `d`               | identifier                           | --                              | [01](01.md)                                        |
+| `e`               | event id (hex)                       | relay URL, marker, pubkey (hex) | [01](01.md), [10](10.md)                           |
+| `E`               | root event id                        | relay URL                       | [22](22.md)                                        |
+| `f`               | currency code                        | --                              | [69](69.md)                                        |
+| `g`               | geohash                              | --                              | [52](52.md)                                        |
+| `h`               | group id                             | --                              | [29](29.md)                                        |
+| `i`               | external identity                    | proof, url hint                 | [35](35.md), [39](39.md), [73](73.md)              |
+| `I`               | root external identity               | --                              | [22](22.md)                                        |
+| `k`               | kind                                 | --                              | [18](18.md), [25](25.md), [72](72.md), [73](73.md) |
+| `K`               | root scope                           | --                              | [22](22.md)                                        |
+| `l`               | label, label namespace               | --                              | [32](32.md)                                        |
+| `L`               | label namespace                      | --                              | [32](32.md)                                        |
+| `m`               | MIME type                            | --                              | [94](94.md)                                        |
+| `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md)                           |
+| `P`               | pubkey (hex)                         | --                              | [57](57.md)                                        |
+| `q`               | event id (hex)                       | relay URL, pubkey (hex)         | [18](18.md)                                        |
+| `r`               | a reference (URL, etc)               | --                              | [24](24.md), [25](25.md)                           |
+| `r`               | relay url                            | marker                          | [65](65.md)                                        |
+| `s`               | status                               | --                              | [69](69.md)                                        |
+| `t`               | hashtag                              | --                              | [24](24.md), [34](34.md), [35](35.md)              |
+| `u`               | url                                  | --                              | [61](61.md), [98](98.md)                           |
+| `x`               | infohash                             | --                              | [35](35.md)                                        |
+| `y`               | platform                             | --                              | [69](69.md)                                        |
+| `z`               | order number                         | --                              | [69](69.md)                                        |
+| `-`               | --                                   | --                              | [70](70.md)                                        |
+| `alt`             | summary                              | --                              | [31](31.md)                                        |
+| `amount`          | millisatoshis, stringified           | --                              | [57](57.md)                                        |
+| `bolt11`          | `bolt11` invoice                     | --                              | [57](57.md)                                        |
+| `challenge`       | challenge string                     | --                              | [42](42.md)                                        |
+| `client`          | name, address                        | relay URL                       | [89](89.md)                                        |
+| `clone`           | git clone URL                        | --                              | [34](34.md)                                        |
+| `content-warning` | reason                               | --                              | [36](36.md)                                        |
+| `delegation`      | pubkey, conditions, delegation token | --                              | [26](26.md)                                        |
+| `description`     | description                          | --                              | [34](34.md), [57](57.md), [58](58.md)              |
+| `emoji`           | shortcode, image URL                 | --                              | [30](30.md)                                        |
+| `encrypted`       | --                                   | --                              | [90](90.md)                                        |
+| `expiration`      | unix timestamp (string)              | --                              | [40](40.md)                                        |
+| `file`            | full path (string)                   | --                              | [35](35.md)                                        |
+| `goal`            | event id (hex)                       | relay URL                       | [75](75.md)                                        |
+| `image`           | image URL                            | dimensions in pixels            | [23](23.md), [52](52.md), [58](58.md)              |
+| `imeta`           | inline metadata                      | --                              | [92](92.md)                                        |
+| `lnurl`           | `bech32` encoded `lnurl`             | --                              | [57](57.md)                                        |
+| `location`        | location string                      | --                              | [52](52.md), [99](99.md)                           |
+| `name`            | name                                 | --                              | [34](34.md), [58](58.md), [72](72.md)              |
+| `nonce`           | random                               | difficulty                      | [13](13.md)                                        |
+| `preimage`        | hash of `bolt11` invoice             | --                              | [57](57.md)                                        |
+| `price`           | price                                | currency, frequency             | [99](99.md)                                        |
+| `proxy`           | external ID                          | protocol                        | [48](48.md)                                        |
+| `published_at`    | unix timestamp (string)              | --                              | [23](23.md)                                        |
+| `relay`           | relay url                            | --                              | [42](42.md), [17](17.md)                           |
+| `relays`          | relay list                           | --                              | [57](57.md)                                        |
+| `server`          | file storage server url              | --                              | [96](96.md)                                        |
+| `subject`         | subject                              | --                              | [14](14.md), [17](17.md), [34](34.md)              |
+| `summary`         | summary                              | --                              | [23](23.md), [52](52.md)                           |
+| `thumb`           | badge thumbnail                      | dimensions in pixels            | [58](58.md)                                        |
+| `title`           | article title                        | --                              | [23](23.md)                                        |
+| `tracker`         | torrent tracker URL                  | --                              | [35](35.md)                                        |
+| `web`             | webpage URL                          | --                              | [34](34.md)                                        |
+| `zap`             | pubkey (hex), relay URL              | weight                          | [57](57.md)                                        |
 
 Please update these lists when proposing new NIPs.
 
