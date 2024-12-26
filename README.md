@@ -59,7 +59,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
 - [NIP-42: Authentication of clients to relays](42.md)
-- [NIP-44: Versioned Encryption](44.md)
+- [NIP-44: Encrypted Payloads (Versioned)](44.md)
 - [NIP-45: Counting results](45.md)
 - [NIP-46: Nostr Remote Signing](46.md)
 - [NIP-47: Nostr Wallet Connect](47.md)
