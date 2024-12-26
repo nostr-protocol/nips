@@ -248,7 +248,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | name              | value                                | other parameters                | NIP                                   |
 | ----------------- | ------------------------------------ | ------------------------------- | ------------------------------------- |
 | `e`               | event id (hex)                       | relay URL, marker, pubkey (hex) | [01](01.md), [10](10.md)              |
-| `f`               | stringified filter object            |                                 | [09](09.md)                           |
+| `filter`          | stringified filter object            |                                 | [09](09.md)                           |
 | `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md)              |
 | `a`               | coordinates to an event              | relay URL                       | [01](01.md)                           |
 | `d`               | identifier                           | --                              | [01](01.md)                           |
