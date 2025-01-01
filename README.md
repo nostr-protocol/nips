@@ -170,6 +170,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10006`       | Blocked relays list             | [51](51.md)                            |
 | `10007`       | Search relays list              | [51](51.md)                            |
 | `10009`       | User groups                     | [51](51.md), [29](29.md)               |
+| `10010`       | Story Set                       | [38](38.md)                            |
 | `10013`       | Draft relays                    | [37](37.md)                            |
 | `10015`       | Interests list                  | [51](51.md)                            |
 | `10019`       | Nutzap Mint Recommendation      | [61](61.md)                            |
@@ -288,7 +289,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md)                           |
 | `P`               | pubkey (hex)                         | --                              | [57](57.md)                                        |
 | `q`               | event id (hex)                       | relay URL, pubkey (hex)         | [18](18.md)                                        |
-| `r`               | a reference (URL, etc)               | --                              | [24](24.md), [25](25.md)                           |
+| `r`               | a reference (URL, etc)               | alt                             | [24](24.md), [25](25.md), [38](38.md)              |
 | `r`               | relay url                            | marker                          | [65](65.md)                                        |
 | `s`               | status                               | --                              | [69](69.md)                                        |
 | `t`               | hashtag                              | --                              | [24](24.md), [34](34.md), [35](35.md)              |
