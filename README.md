@@ -58,6 +58,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-38: User Statuses](38.md)
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
+- [NIP-41: Editable Short Notes](41.md)
 - [NIP-42: Authentication of clients to relays](42.md)
 - [NIP-44: Encrypted Payloads (Versioned)](44.md)
 - [NIP-45: Counting results](45.md)
@@ -128,6 +129,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `44`          | Channel Mute User               | [28](28.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
 | `818`         | Merge Requests                  | [54](54.md)                            |
+| `1010`        | Short Note Edits                | [41](41.md)                            |
 | `1021`        | Bid                             | [15](15.md)                            |
 | `1022`        | Bid confirmation                | [15](15.md)                            |
 | `1040`        | OpenTimestamps                  | [03](03.md)                            |
