@@ -310,6 +310,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `encrypted`       | --                                   | --                              | [90](90.md)                                        |
 | `expiration`      | unix timestamp (string)              | --                              | [40](40.md)                                        |
 | `file`            | full path (string)                   | --                              | [35](35.md)                                        |
+| `filter`          | stringified filter object            |                                 | [09](09.md)                                        |
 | `goal`            | event id (hex)                       | relay URL                       | [75](75.md)                                        |
 | `image`           | image URL                            | dimensions in pixels            | [23](23.md), [52](52.md), [58](58.md)              |
 | `imeta`           | inline metadata                      | --                              | [92](92.md)                                        |
