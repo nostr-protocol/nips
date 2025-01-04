@@ -8,9 +8,9 @@ Entirely Trusted Relays
 
 An entirely trusted relay list is a `kind:10051` event that includes a list of `r` tags with relay URLs. When a relay is included in a user's entirely trusted relay list, that relay is allowed to host rumors (events without a `sig` field) from that user.
 
-Entirely trusted relay lists MUST NOT be a rumor.
+Entirely trusted relay lists MUST NOT be rumors.
 
-Entirely trusted relay lists MUST contain an `alt` tag with the value `"entirely trusted relays"`, as it is very dangerous to publish this list by mistake.
+Entirely trusted relay lists MUST contain `alt` tags with the value `"entirely trusted relays"`, as it is very dangerous to publish this list by mistake.
 
 ```jsonc
 {
@@ -34,9 +34,9 @@ Relays MAY reject a rumor if the relay does not have an entirely trusted relay l
 
 ## Client Behavior
 
-Clients MUST only trust rumors from the relays included in the entirely trusted relay list of the rumor's author.
+When a client receives a rumor, it should first check if the author of the rumor has published an entirely trusted relay list. The rumor MUST NOT be trusted if the list is not found or the list is found but does not include the relay hosting the rumor.
 
-Clients MUST perform the [NIP-42](42.md) AUTH flow with the relay before publishing rumors to that relay.
+Clients MUST perform the [NIP-42](42.md) AUTH flow before publishing rumors to relays.
 
 Clients MUST NOT consider the entirely trusted relay list valid in any of the following cases:
 
@@ -44,7 +44,7 @@ Clients MUST NOT consider the entirely trusted relay list valid in any of the fo
 - It has an [`expiration` tag](40.md) and has already expired.
 - It is a rumor.
 
-Clients SHOULD NOT publish an entirely trusted relay list if one of the relays in the list accepts rumors from non-authenticated sessions or authenticated sessions with incorrect pubkeys.
+Clients SHOULD NOT publish an entirely trusted relay list if one of the relays in the list accepts rumors from unauthenticated sessions or authenticated sessions with incorrect pubkeys.
 
 ## Why
 
