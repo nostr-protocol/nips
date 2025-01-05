@@ -54,14 +54,15 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-34: `git` stuff](34.md)
 - [NIP-35: Torrents](35.md)
 - [NIP-36: Sensitive Content](36.md)
+- [NIP-37: Draft Events](37.md)
 - [NIP-38: User Statuses](38.md)
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
 - [NIP-42: Authentication of clients to relays](42.md)
-- [NIP-44: Versioned Encryption](44.md)
+- [NIP-44: Encrypted Payloads (Versioned)](44.md)
 - [NIP-45: Counting results](45.md)
-- [NIP-46: Nostr Connect](46.md)
-- [NIP-47: Wallet Connect](47.md)
+- [NIP-46: Nostr Remote Signing](46.md)
+- [NIP-47: Nostr Wallet Connect](47.md)
 - [NIP-48: Proxy Tags](48.md)
 - [NIP-49: Private Key Encryption](49.md)
 - [NIP-50: Search Capability](50.md)
@@ -78,6 +79,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-61: Nutzaps](61.md)
 - [NIP-64: Chess (PGN)](64.md)
 - [NIP-65: Relay List Metadata](65.md)
+- [NIP-68: Picture-first feeds](68.md)
 - [NIP-69: Peer-to-peer Order events](69.md)
 - [NIP-70: Protected Events](70.md)
 - [NIP-71: Video Events](71.md)
@@ -86,6 +88,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-75: Zap Goals](75.md)
 - [NIP-78: Application-specific data](78.md)
 - [NIP-84: Highlights](84.md)
+- [NIP-86: Relay Management API](86.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-90: Data Vending Machines](90.md)
 - [NIP-92: Media Attachments](92.md)
@@ -93,6 +96,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-7D: Threads](7D.md)
+- [NIP-C7: Chats](C7.md)
 
 ## Event Kinds
 
@@ -107,14 +112,15 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `6`           | Repost                          | [18](18.md)                            |
 | `7`           | Reaction                        | [25](25.md)                            |
 | `8`           | Badge Award                     | [58](58.md)                            |
-| `9`           | Group Chat Message              | [29](29.md)                            |
+| `9`           | Chat Message                    | [C7](C7.md)                            |
 | `10`          | Group Chat Threaded Reply       | 29 (deprecated)                        |
-| `11`          | Group Thread                    | [29](29.md)                            |
+| `11`          | Thread                          | [7D](7D.md)                            |
 | `12`          | Group Thread Reply              | 29 (deprecated)                        |
 | `13`          | Seal                            | [59](59.md)                            |
 | `14`          | Direct Message                  | [17](17.md)                            |
 | `16`          | Generic Repost                  | [18](18.md)                            |
 | `17`          | Reaction to a website           | [25](25.md)                            |
+| `20`          | Picture                         | [68](68.md)                            |
 | `40`          | Channel Creation                | [28](28.md)                            |
 | `41`          | Channel Metadata                | [28](28.md)                            |
 | `42`          | Channel Message                 | [28](28.md)                            |
@@ -164,6 +170,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10006`       | Blocked relays list             | [51](51.md)                            |
 | `10007`       | Search relays list              | [51](51.md)                            |
 | `10009`       | User groups                     | [51](51.md), [29](29.md)               |
+| `10013`       | Draft relays                    | [37](37.md)                            |
 | `10015`       | Interests list                  | [51](51.md)                            |
 | `10019`       | Nutzap Mint Recommendation      | [61](61.md)                            |
 | `10030`       | User emoji list                 | [51](51.md)                            |
@@ -179,7 +186,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `24242`       | Blobs stored on mediaservers    | [Blossom][blossom]                     |
 | `27235`       | HTTP Auth                       | [98](98.md)                            |
 | `30000`       | Follow sets                     | [51](51.md)                            |
-| `30001`       | Generic lists                   | [51](51.md)                            |
+| `30001`       | Generic lists                   | 51 (deprecated)                        |
 | `30002`       | Relay sets                      | [51](51.md)                            |
 | `30003`       | Bookmark sets                   | [51](51.md)                            |
 | `30004`       | Curation sets                   | [51](51.md)                            |
@@ -208,6 +215,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30618`       | Repository state announcements  | [34](34.md)                            |
 | `30818`       | Wiki article                    | [54](54.md)                            |
 | `30819`       | Redirects                       | [54](54.md)                            |
+| `31234`       | Draft Event                     | [37](37.md)                            |
 | `31388`       | Link Set                        | [Corny Chat][cornychat-linkset]        |
 | `31890`       | Feed                            | [NUD: Custom Feeds][NUD: Custom Feeds] |
 | `31922`       | Date-Based Calendar Event       | [52](52.md)                            |
@@ -277,7 +285,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `l`               | label, label namespace               | --                              | [32](32.md)                                        |
 | `L`               | label namespace                      | --                              | [32](32.md)                                        |
 | `m`               | MIME type                            | --                              | [94](94.md)                                        |
-| `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md)                           |
+| `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md), [22](22.md)              |
+| `P`               | pubkey (hex)                         | --                              | [22](22.md), [57](57.md)                           |
 | `q`               | event id (hex)                       | relay URL, pubkey (hex)         | [18](18.md)                                        |
 | `r`               | a reference (URL, etc)               | --                              | [24](24.md), [25](25.md)                           |
 | `r`               | relay url                            | marker                          | [65](65.md)                                        |
@@ -335,9 +344,9 @@ Please update these lists when proposing new NIPs.
 
 ## Is this repository a centralizing factor?
 
-To promote interoperability, we standards that everybody can follow, and we need them to define a **single way of doing each thing** without ever hurting **backwards-compatibility**, and for that purpose there is no way around getting everybody to agree on the same thing and keep a centralized index of these standards. However the fact that such index exists doesn't hurt the decentralization of Nostr. _At any point the central index can be challenged if it is failing to fulfill the needs of the protocol_ and it can migrate to other places and be maintained by other people.
+To promote interoperability, we need standards that everybody can follow, and we need them to define a **single way of doing each thing** without ever hurting **backwards-compatibility**, and for that purpose there is no way around getting everybody to agree on the same thing and keep a centralized index of these standards. However the fact that such an index exists doesn't hurt the decentralization of Nostr. _At any point the central index can be challenged if it is failing to fulfill the needs of the protocol_ and it can migrate to other places and be maintained by other people.
 
-It can even fork into multiple and then some clients would go one way, others would go another way, and some clients would adhere to both competing standards. This would hurt the simplicity, openness and interoperability of Nostr a little, but everything would still work in the short term.
+It can even fork into multiple versions, and then some clients would go one way, others would go another way, and some clients would adhere to both competing standards. This would hurt the simplicity, openness and interoperability of Nostr a little, but everything would still work in the short term.
 
 There is a list of notable Nostr software developers who have commit access to this repository, but that exists mostly for practical reasons, as by the nature of the thing we're dealing with the repository owner can revoke membership and rewrite history as they want -- and if these actions are unjustified or perceived as bad or evil the community must react.
 
