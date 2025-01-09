@@ -1,0 +1,41 @@
+name: Detect PR Merge and Notify
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  detect-merge:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check if PR was merged
+        id: check_merge
+        run: |
+          if [ "${{ github.event.pull_request.merged }}" != "true" ]; then
+            echo "This PR was not merged."
+            exit 0
+          fi
+          echo "PR was merged."
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install nostr
+
+      - name: Run notify script
+        env:
+          NOSTR_RELAYS: ${{ vars.NOSTR_RELAYS }}
+          NOSTR_PRIVATE_KEY: ${{ secrets.NOSTR_PRIVATE_KEY }}
+        run: |
+          python .github/workflows/scripts/nostr-notifications/notify_nostr.py \
+            --repo "${{ github.repository }}" \
+            --user "${{ github.event.pull_request.user.login }}" \
+            --title "${{ github.event.pull_request.title }}" \
+            --url "${{ github.event.pull_request.html_url }}"
