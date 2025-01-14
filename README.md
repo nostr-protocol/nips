@@ -127,6 +127,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `43`          | Channel Hide Message            | [28](28.md)                            |
 | `44`          | Channel Mute User               | [28](28.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
+| `88`          | DLC Oracle Announcement         | [88](88.md)                            |
+| `89`          | DLC Oracle Attestation          | [88](88.md)                            |
 | `818`         | Merge Requests                  | [54](54.md)                            |
 | `1021`        | Bid                             | [15](15.md)                            |
 | `1022`        | Bid confirmation                | [15](15.md)                            |
@@ -176,6 +178,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10030`       | User emoji list                 | [51](51.md)                            |
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
 | `10063`       | User server list                | [Blossom][blossom]                     |
+| `10088`       | Trusted DLC Oracle List         | [88](88.md)                            |
 | `10096`       | File storage server list        | [96](96.md)                            |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
