@@ -105,7 +105,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | kind          | description                     | NIP                                    |
 | ------------- | ------------------------------- | -------------------------------------- |
 | `0`           | User Metadata                   | [01](01.md)                            |
-| `1`           | Short Text Note                 | [01](01.md)                            |
+| `1`           | Short Text Note                 | [10](10.md)                            |
 | `2`           | Recommend Relay                 | 01 (deprecated)                        |
 | `3`           | Follows                         | [02](02.md)                            |
 | `4`           | Encrypted Direct Messages       | [04](04.md)                            |
