@@ -335,6 +335,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `tracker`         | torrent tracker URL                  | --                              | [35](35.md)                                        |
 | `web`             | webpage URL                          | --                              | [34](34.md)                                        |
 | `zap`             | pubkey (hex), relay URL              | weight                          | [57](57.md)                                        |
+| `zapraiser`       | value in sats                        | --                              | [57](57.md)                                        |
 
 Please update these lists when proposing new NIPs.
 
