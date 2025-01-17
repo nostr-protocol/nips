@@ -101,25 +101,6 @@ For optimal performance on low-bandwidth networks, clients should:
 4. Rate limit event publishing
 5. Limit event content length when possible
 
-## Protocol Flow Example
-
-```
-Client                     NoR Relay
-   |                          |
-   |   [Request Path]         |
-   |------------------------->|
-   |                          |
-   |   [Establish Link]       |
-   |------------------------->|
-   |                          |
-   |   ["REQ", subid, {...}]  |
-   |------------------------->|
-   |                          |
-   |   ["EVENT", subid, evt]  |
-   |<-------------------------|
-   |                          |
-```
-
 ## References
 
 1. [Reticulum Network Stack](https://reticulum.network/manual/)
