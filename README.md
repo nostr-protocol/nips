@@ -228,6 +228,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31925`       | Calendar Event RSVP             | [52](52.md)                            |
 | `31989`       | Handler recommendation          | [89](89.md)                            |
 | `31990`       | Handler information             | [89](89.md)                            |
+| `32267`       | Software Application            |                                        |
 | `34235`       | Video Event                     | [71](71.md)                            |
 | `34236`       | Short-form Portrait Video Event | [71](71.md)                            |
 | `34550`       | Community Definition            | [72](72.md)                            |
