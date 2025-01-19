@@ -8,6 +8,20 @@ Marketplace Protocol
 
 This NIP defines a comprehensive protocol for implementing decentralized marketplaces on Nostr, combining and enhancing the approaches from [NIP-15](15.md) and [NIP-99](99.md). It provides a complete e-commerce framework while maintaining the protocol's simplicity and interoperability.
 
+The focus for NIP-99 is on the product listing but this NIP also provides a structure for other necessary flows for a complete checkout procedure:
+
+1) Order Communication Flow 
+2) Shipping Calculation Flow
+   This will be it's own kind ( replaceable event ) for updates during the shipping process, pricing schema for shipping costs and general shipping settings: Examples are zoning restrictions: USA, EU, NA, and free shipping: 50 USD
+3) Payment Flows
+
+A general checkout implementation can be structured as followed:
+1) Items are gathered in a Local Basket 
+2) Shipping details are required to calculate a full payment amount
+3) Order gets send once Payment is received ( Zap Receipt , Nut Receipt, Marketplace server )
+
+In practice a shop can have a preferred checkout and shipping option defined at the store level and product level. A option at the store level will be used if nothing is defined at the product level, essentially making it that product level shipping and payment options always overrule store level settings.
+
 ## Events and Kinds
 
 ### Product Listing (Kind: 30402)
@@ -196,6 +210,35 @@ Dedicated event for shipping details:
 }
 ```
 
+
+
+### Payment Flow Notes
+
+A payment preference can be added to the Kind0 event in the following structure payment-preference = ecash | lud16 | bolt12 | manual
+
+ORDER OF SUGGESTED PAYMENT ACCEPTANCE:
+
+1) eCach
+
+2)  Lightning (bolt11 / bolt12)
+   
+3) On-chain
+
+4) Marketplace Server 
+
+4.1. When a merchant has a payment server:
+    - The buyer can immediately send a payment request message containing payment details obtained from the merchant's server
+    - This eliminates the need to wait for the merchant to come online
+    - The payment server is responsible for generating valid payment details and monitoring for completion
+4.2 When no payment server is available:
+    - The traditional flow is used where the merchant sends the payment request
+    - The buyer waits for the merchant's response before proceeding with payment
+43 In both cases:
+    - The payment receipt is sent by the buyer after completing payment
+    - All payment details should be verified against the original order
+    - The message direction is clearly indicated by the `p` tag
+
+5) Fiat Gateway ( Example Robosats )
 ### Marketplace Server Role
 
 Marketplace servers can optionally facilitate the payment process by:
@@ -208,19 +251,7 @@ Marketplace servers can optionally facilitate the payment process by:
 
 This provides a smoother user experience while maintaining the ability for direct merchant-buyer communication as a fallback mechanism.
 
-### Payment Flow Notes
 
-1. When a merchant has a payment server:
-    - The buyer can immediately send a payment request message containing payment details obtained from the merchant's server
-    - This eliminates the need to wait for the merchant to come online
-    - The payment server is responsible for generating valid payment details and monitoring for completion
-2. When no payment server is available:
-    - The traditional flow is used where the merchant sends the payment request
-    - The buyer waits for the merchant's response before proceeding with payment
-3. In both cases:
-    - The payment receipt is sent by the buyer after completing payment
-    - All payment details should be verified against the original order
-    - The message direction is clearly indicated by the `p` tag
 
 ## Notes and Considerations
 
