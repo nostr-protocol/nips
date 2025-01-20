@@ -49,7 +49,7 @@ Responses are returned in the format:
 - `/name-key <index> <name>`: Assigns a human-readable name to a key
 
 #### Message Signing
-- `/sign-message <hex_message>`: Signs a 32-byte message with the active key
+- `/sign-message <message>`: Signs message text with the active key
 - `/shared-secret <hex_pubkey>`: Performs ECDH with provided public key
 - `/encrypt-message <hex_pubkey> <message>`: Encrypts a message for recipient
 - `/decrypt-message <hex_pubkey> <encrypted>`: Decrypts a message from sender
