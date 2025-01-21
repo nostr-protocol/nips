@@ -97,7 +97,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
-- [NIP-100: NostrReAction - Unified Interactions for Likes, Shares, and Replies](100.md)
+- [NIP-100: NostrReAction - Unified Interactions and Content Evolution](100.md)
 - [NIP-7D: Threads](7D.md)
 - [NIP-C7: Chats](C7.md)
 
@@ -338,7 +338,18 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `tracker`         | torrent tracker URL                  | --                              | [35](35.md)                                        |
 | `web`             | webpage URL                          | --                              | [34](34.md)                                        |
 | `zap`             | pubkey (hex), relay URL              | weight                          | [57](57.md)                                        |
-
+| `original_event_id`   | event ID being interacted with   | --                              | [100](100.md)                                        |
+| `original_author_info` | original pubkey and relay URL    | --                              | [100](100.md)                                        |
+| `action_type`     | type of interaction               | --                              | [100](100.md)                                        |
+| `reply_to_event_id` | event ID being replied to           | --                              | [100](100.md)                                        |
+| `ipfs_cid`          | IPFS content identifier            | --                              | [100](100.md)                                        |
+| `original_content_hash` | hash of the original content    | --                              | [100](100.md)                                        |
+| `reply_text`        |  text of the reply               | --                                 | [100](100.md)                                       |
+| `theme`             |  theme or topic of the event       |  (multiple)                       | [100](100.md)                                       |
+| `language`        | language of the content            |   (multiple)                      | [100](100.md)                                        |
+| `validate`        |  event id to validate        |  --                         | [100](100.md)                                       |
+| `refuse`          |   event id to refuse       |  --                           | [100](100.md)                                        |
+                                      |
 Please update these lists when proposing new NIPs.
 
 ## Criteria for acceptance of NIPs
