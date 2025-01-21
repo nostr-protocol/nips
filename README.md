@@ -349,7 +349,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `language`        | language of the content            |   (multiple)                      | [100](100.md)                                        |
 | `validate`        |  event id to validate        |  --                         | [100](100.md)                                       |
 | `refuse`          |   event id to refuse       |  --                           | [100](100.md)                                        |
-                                      |
+
 Please update these lists when proposing new NIPs.
 
 ## Criteria for acceptance of NIPs
