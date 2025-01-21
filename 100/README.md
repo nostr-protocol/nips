@@ -1,153 +1,67 @@
-# NostrReAction Client and Relay Monitor
+# NostrReAction (NIP-100) Demo
 
-This project implements the NIP-100 NostrReAction protocol, providing a client interface and a relay monitor for the Nostr network.
+**WORK IN PROGRESS**
+
+This is a web-based demonstration application showcasing the features of NIP-100, also known as NostrReAction. NIP-100 is a proposed extension to the Nostr protocol that aims to unify and improve content interactions, content evolution, and validation.
+
+## Overview
+
+This demo allows you to interact with the Nostr network and experience NIP-100 concepts firsthand, including:
+
+*   **Unified Interactions:**  Consolidated "like," "share," "reply," and "modify" actions into a single event type (kind: 10037).
+*   **Content Evolution:**  Enables users to propose modifications to original content and content owners to validate or refuse these modifications.
+*   **Notifications:** Notifies content owners of all interactions on their content (kind: 10038).
+*   **IPFS Integration:** Leverages IPFS to handle larger content, ensuring censorship resistance and content availability.
+* **Content Validation** : A robust system of validation is put in place, allowing original authors to validate the modifications and other users to see the different versions and the influence of each.
+*   **Web of Trust Potential** The app offers a base for a web of trust approach to content validation by the means of G1 public key usage, and the IPNS/IPFS for better decentralization.
 
 ## Features
 
-- NostrReAction Client
-  - Connect to Nostr relays
-  - Send unified interactions (likes, shares, replies)
-  - Support for content modifications
-  - IPFS integration for larger content
-  - Real-time event display
+*   **Connect to a Nostr Relay:** Connects to any Nostr relay via WebSocket, allowing interaction with the network.
+*   **Private Key Input (for testing):** Provides an input field for a Nostr private key, enabling the signing of events (use with caution). If no private key is given, the app will try to use a nostr extension (like Alby).
+*   **Follow Public Keys:** Allows subscribing to events from specific public keys
+*   **Publish Events:** Publishes simple text-based events to the connected relay.
+*   **View Events:** Displays received events, their content, and associated data.
+*   **React to Events (NIP-100):**
+    *   **Like:** Send a like action.
+    *   **Modify:** Propose a modification to an event.
+    *   **Reply:** Reply to an event with a short text or a longer content through IPFS.
+        *   Long replies (over 140 chars) are automatically handled by IPFS.
+   *   **Validate/Refuse:** Validates a proposed modification.
+*   **Notifications:** List all the notifications sent to the content author.
+*   **IPFS Content Display:** Fetches and displays content from IPFS if the event has an `ipfs_cid` tag.
+*   **Persistent Settings:** The app persists the relay URL and public key settings in local storage, so they are not lost when the page is reloaded.
 
-- Nostr Relay Monitor
-  - Monitor specific Nostr relays
-  - Display real-time statistics (events per second, total events)
-  - Filter events by public key and action type
+## Getting Started
 
-## Implementation
+1.  **Open the HTML file:** Open the `index.html` file in a web browser.
+2.  **Enter a Relay URL:** In the relay URL input field, enter the URL of a Nostr relay (e.g., `wss://relay.damus.io`).
+3. **Enter public keys** If you want to see specific authors, enter the public keys you want to follow, separated by comma.
+4.  **Connect to Relay:** Click the "Connect" button to establish a WebSocket connection with the specified relay.
+5.  **Enter Private Key:** If you plan to publish event, enter your private key.
+6.  **Publish Event:** Enter a message and click the "Publish Event" button to send a basic Nostr note (kind:10037).
+7.  **Interact with Events:** Once the events are received, use the action buttons (like, modify, reply, validate, refuse) on every events.
+8. **Content evolution** Once you start using the application, you will see how a content can be improved by proposing a modification, and validated or refused by the original author.
+9. **Explore the power of decentralization:** Every long content (replies and modifications) are stored on IPFS, and you can see how the validation mechanism make the link between the different parts of a content and its history.
 
-```javascript
-import { getEventHash, signEvent, validateEvent, verifySignature } from 'nostr-tools';
+## Important Notes
 
-class NostrReAction {
-  constructor(privateKey, relay) {
-    this.privateKey = privateKey;
-    this.relay = relay;
-  }
+*   **Private Key Security:** Use the private key input field with caution. It is primarily intended for testing and demonstration purposes.
+*   **Nostr Extension:** If no private key is entered, the app will use the `window.nostr` if it exists (usually when the user has installed a Nostr browser extension like Alby), and prompt a signature request for each action.
+*   **Relay Selection:**  Choose a stable and reliable Nostr relay for a better experience.
+*   **IPFS Gateway:** The app uses `https://ipfs.io` as the default IPFS gateway.
+*   **Demo Purposes:** This is a demo application and it doesn't store or persist any data.
 
-  createNostrRAEvent(actionType, originalEventId, originalAuthorInfo, content, replyToEventId = null, ipfsCid = null) {
-    const event = {
-      kind: 10037,
-      created_at: Math.floor(Date.now() / 1000),
-      tags: [
-        ['original_event_id', originalEventId],
-        ['original_author_info', ...originalAuthorInfo],
-        ['action_type', actionType],
-      ],
-      content: content,
-      pubkey: getPublicKey(this.privateKey),
-    };
+## Technologies Used
 
-    if (replyToEventId) {
-      event.tags.push(['reply_to_event_id', replyToEventId]);
-    }
-
-    if (ipfsCid) {
-      event.tags.push(['ipfs_cid', ipfsCid]);
-    }
-
-    event.id = getEventHash(event);
-    event.sig = signEvent(event, this.privateKey);
-
-    return event;
-  }
-
-  createNotificationEvent(originalEventId, originalAuthorInfo, repostEventId, modifyEventId = null) {
-    const event = {
-      kind: 10038,
-      created_at: Math.floor(Date.now() / 1000),
-      tags: [
-        ['original_event_id', originalEventId],
-        ['original_author_info', ...originalAuthorInfo],
-        ['repost_event_id', repostEventId],
-      ],
-      content: '',
-      pubkey: getPublicKey(this.privateKey),
-    };
-
-    if (modifyEventId) {
-      event.tags.push(['modify_event_id', modifyEventId]);
-    }
-
-    event.id = getEventHash(event);
-    event.sig = signEvent(event, this.privateKey);
-
-    return event;
-  }
-
-  async publishEvent(event) {
-    if (validateEvent(event) && verifySignature(event)) {
-      await this.relay.publish(event);
-      return true;
-    }
-    return false;
-  }
-
-  async like(originalEventId, originalAuthorInfo) {
-    const event = this.createNostrRAEvent('like', originalEventId, originalAuthorInfo, '');
-    const notification = this.createNotificationEvent(originalEventId, originalAuthorInfo, event.id);
-
-    await this.publishEvent(event);
-    await this.publishEvent(notification);
-  }
-
-  async reply(originalEventId, originalAuthorInfo, content, replyToEventId) {
-    const event = this.createNostrRAEvent('reply', originalEventId, originalAuthorInfo, content, replyToEventId);
-    const notification = this.createNotificationEvent(originalEventId, originalAuthorInfo, event.id);
-
-    await this.publishEvent(event);
-    await this.publishEvent(notification);
-  }
-
-  async modify(originalEventId, originalAuthorInfo, newContent, originalContentHash) {
-    const event = this.createNostrRAEvent('modify', originalEventId, originalAuthorInfo, newContent);
-    event.tags.push(['original_content_hash', originalContentHash]);
-    const notification = this.createNotificationEvent(originalEventId, originalAuthorInfo, event.id, event.id);
-
-    await this.publishEvent(event);
-    await this.publishEvent(notification);
-  }
-
-  async validate(originalEventId, originalAuthorInfo, eventIdToValidate) {
-    const event = this.createNostrRAEvent('validate', originalEventId, originalAuthorInfo, '');
-    event.tags.push(['validate', eventIdToValidate]);
-
-    await this.publishEvent(event);
-  }
-}
-
-```
-
-## How To make
-
-### NostrReAction Client
-
-[nostr-re-action-client/](nostr-re-action-client/)
-
-1. Enter your private key (for testing only) or use a Nostr extension
-2. Add and select a Nostr relay
-3. Click "Connect" to join the relay
-4. View and interact with events using the NostrReAction protocol
-
-### Nostr Relay Monitor
-
-[nostr-relay-monitor/](nostr-relay-monitor/)
-
-1. Enter the URL of the relay to monitor
-2. Click "Connect" to start monitoring
-3. Use filters to refine displayed events
-
-## Dependencies
-
-- nostr-tools
-- TailwindCSS (for NostrReAction client)
-- Font Awesome (for NostrReAction client)
+*   **HTML, CSS, JavaScript:** For the user interface and application logic.
+*   **Tailwind CSS:** For rapid and responsive styling.
+*   **Nostr-tools:**  A JavaScript library for interacting with the Nostr network.
+*   **Font-Awesome:** An icon library.
 
 ## Contributing
 
-Contributions are welcome.
+Feel free to contribute to the development of this demo application! Please submit any bug fixes or enhancements to the corresponding repository.
 
 ## License
 
