@@ -51,9 +51,11 @@ Responses are returned in the format:
 #### Message Signing
 - `/sign-message <message>`: Signs message text with the active key
 - `/shared-secret <hex_pubkey>`: Performs ECDH with provided public key
-- `/encrypt-message <hex_pubkey> <message>`: Encrypts a message for recipient
-- `/decrypt-message <hex_pubkey> <encrypted>`: Decrypts a message from sender
-
+- `/encrypt-message-nip04 <hex_pubkey> <message>`: Encrypts a message for recipient (legacy support for NIP-04)
+- `/decrypt-message-nip04 <hex_pubkey> <encrypted>`: Decrypts a message from sender (legacy support for NIP-04)
+- `/encrypt-message-nip44 <hex_pubkey> <message>`: Encrypts a message for recipient (NIP-44)
+- `/decrypt-message-nip44 <hex_pubkey> <encrypted>`: Decrypts a message from sender (NIP-44)
+  
 #### Device Management  
 - `/help`: Lists available commands
 - `/ping`: Tests device connectivity
