@@ -97,6 +97,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-100: NostrReAction - Unified Interactions for Likes, Shares, and Replies](100.md)
 - [NIP-7D: Threads](7D.md)
 - [NIP-C7: Chats](C7.md)
 
@@ -177,6 +178,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10015`       | Interests list                  | [51](51.md)                            |
 | `10019`       | Nutzap Mint Recommendation      | [61](61.md)                            |
 | `10030`       | User emoji list                 | [51](51.md)                            |
+| `10037`       | NostrReAction                   | [100](100.md)                          |
+| `10038`       | NostrReAction Notification      | [100](100.md)                          |
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
 | `10063`       | User server list                | [Blossom][blossom]                     |
 | `10096`       | File storage server list        | [96](96.md)                            |
