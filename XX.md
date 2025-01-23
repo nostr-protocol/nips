@@ -65,6 +65,35 @@ Responses are returned in the format:
 ### Command Queue
 The device implements a circular buffer queue (size 10) for BLE commands to handle rapid command transmission. Commands are processed in FIFO order.
 
+### Message Batching
+Due to BLE's inherent packet size limitations (typically 20-23 bytes per packet in BLE 4.2, and up to 255 bytes in BLE 5), a batching mechanism is required to handle larger messages. While BLE does provide its own segmentation and reassembly for large packets, implementing an application-layer batching protocol ensures reliable message delivery across different BLE versions and implementations.
+
+The device implements a batching mechanism with the following characteristics:
+
+1. Message Size Limits
+   - Maximum BLE packet size: 100 bytes (conservative limit accounting for BLE overhead)
+   - Maximum total message size: 65536 bytes (64KB)
+   - Batch delimiter: "|||" (chosen for uniqueness and minimal overhead)
+
+2. Sending Messages
+   - Messages exceeding the maximum BLE packet size are automatically split into batches
+   - Each batch is limited to (MAX_BLE_PACKET_SIZE - delimiter_length) bytes
+   - All batches except the last one are appended with the "|||" delimiter
+   - A 150ms delay is enforced between batch transmissions to ensure reliable delivery and prevent BLE buffer overflow
+
+3. Receiving Messages
+   - The device buffers incoming batches until a complete message is received
+   - Batches are identified by the "|||" delimiter
+   - Messages are processed only after all batches are received
+   - Incomplete messages are discarded after a timeout period
+   - Messages exceeding the maximum size limit (64KB) are rejected
+
+4. Reliability Considerations
+   - The 150ms inter-batch delay accounts for BLE connection interval limitations
+   - Buffer size limits prevent memory exhaustion on resource-constrained devices
+   - The batching protocol is transparent to the application layer
+   - Error detection is handled through message completeness validation
+
 ## Client Implementation Notes
 
 1. Device Discovery
@@ -85,6 +114,3 @@ The device implements a circular buffer queue (size 10) for BLE commands to hand
 
 The reference implementation is available at:
 https://github.com/lnbits/nostr-signing-device
-
-## Authors
-cr0bar
