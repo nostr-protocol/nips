@@ -31,7 +31,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-07: `window.nostr` capability for web browsers](07.md)
 - [NIP-08: Handling Mentions](08.md) --- **unrecommended**: deprecated in favor of [NIP-27](27.md)
 - [NIP-09: Event Deletion Request](09.md)
-- [NIP-10: Conventions for clients' use of `e` and `p` tags in text events](10.md)
+- [NIP-10: Text Notes and Threads](10.md)
 - [NIP-11: Relay Information Document](11.md)
 - [NIP-13: Proof of Work](13.md)
 - [NIP-14: Subject tag in text events](14.md)
@@ -59,10 +59,10 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
 - [NIP-42: Authentication of clients to relays](42.md)
-- [NIP-44: Versioned Encryption](44.md)
+- [NIP-44: Encrypted Payloads (Versioned)](44.md)
 - [NIP-45: Counting results](45.md)
-- [NIP-46: Nostr Connect](46.md)
-- [NIP-47: Wallet Connect](47.md)
+- [NIP-46: Nostr Remote Signing](46.md)
+- [NIP-47: Nostr Wallet Connect](47.md)
 - [NIP-48: Proxy Tags](48.md)
 - [NIP-49: Private Key Encryption](49.md)
 - [NIP-50: Search Capability](50.md)
@@ -89,6 +89,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-78: Application-specific data](78.md)
 - [NIP-84: Highlights](84.md)
 - [NIP-86: Relay Management API](86.md)
+- [NIP-88: Polls](88.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-90: Data Vending Machines](90.md)
 - [NIP-92: Media Attachments](92.md)
@@ -104,7 +105,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | kind          | description                     | NIP                                    |
 | ------------- | ------------------------------- | -------------------------------------- |
 | `0`           | User Metadata                   | [01](01.md)                            |
-| `1`           | Short Text Note                 | [01](01.md)                            |
+| `1`           | Short Text Note                 | [10](10.md)                            |
 | `2`           | Recommend Relay                 | 01 (deprecated)                        |
 | `3`           | Follows                         | [02](02.md)                            |
 | `4`           | Encrypted Direct Messages       | [04](04.md)                            |
@@ -128,11 +129,13 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `44`          | Channel Mute User               | [28](28.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
 | `818`         | Merge Requests                  | [54](54.md)                            |
+| `1018`        | Poll Response                   | [88](88.md)                            |
 | `1021`        | Bid                             | [15](15.md)                            |
 | `1022`        | Bid confirmation                | [15](15.md)                            |
 | `1040`        | OpenTimestamps                  | [03](03.md)                            |
 | `1059`        | Gift Wrap                       | [59](59.md)                            |
 | `1063`        | File Metadata                   | [94](94.md)                            |
+| `1068`        | Poll                            | [88](88.md)                            |
 | `1111`        | Comment                         | [22](22.md)                            |
 | `1311`        | Live Chat Message               | [53](53.md)                            |
 | `1617`        | Patches                         | [34](34.md)                            |
@@ -206,6 +209,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30041`       | Modular Article Content         | [NKBIP-01]                             |
 | `30063`       | Release artifact sets           | [51](51.md)                            |
 | `30078`       | Application-specific Data       | [78](78.md)                            |
+| `30267`       | App curation sets               | [51](51.md)                            |
 | `30311`       | Live Event                      | [53](53.md)                            |
 | `30315`       | User Statuses                   | [38](38.md)                            |
 | `30388`       | Slide Set                       | [Corny Chat][cornychat-slideset]       |
@@ -285,8 +289,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `l`               | label, label namespace               | --                              | [32](32.md)                                        |
 | `L`               | label namespace                      | --                              | [32](32.md)                                        |
 | `m`               | MIME type                            | --                              | [94](94.md)                                        |
-| `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md)                           |
-| `P`               | pubkey (hex)                         | --                              | [57](57.md)                                        |
+| `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md), [22](22.md)              |
+| `P`               | pubkey (hex)                         | --                              | [22](22.md), [57](57.md)                           |
 | `q`               | event id (hex)                       | relay URL, pubkey (hex)         | [18](18.md)                                        |
 | `r`               | a reference (URL, etc)               | --                              | [24](24.md), [25](25.md)                           |
 | `r`               | relay url                            | marker                          | [65](65.md)                                        |
@@ -344,9 +348,9 @@ Please update these lists when proposing new NIPs.
 
 ## Is this repository a centralizing factor?
 
-To promote interoperability, we standards that everybody can follow, and we need them to define a **single way of doing each thing** without ever hurting **backwards-compatibility**, and for that purpose there is no way around getting everybody to agree on the same thing and keep a centralized index of these standards. However the fact that such index exists doesn't hurt the decentralization of Nostr. _At any point the central index can be challenged if it is failing to fulfill the needs of the protocol_ and it can migrate to other places and be maintained by other people.
+To promote interoperability, we need standards that everybody can follow, and we need them to define a **single way of doing each thing** without ever hurting **backwards-compatibility**, and for that purpose there is no way around getting everybody to agree on the same thing and keep a centralized index of these standards. However the fact that such an index exists doesn't hurt the decentralization of Nostr. _At any point the central index can be challenged if it is failing to fulfill the needs of the protocol_ and it can migrate to other places and be maintained by other people.
 
-It can even fork into multiple and then some clients would go one way, others would go another way, and some clients would adhere to both competing standards. This would hurt the simplicity, openness and interoperability of Nostr a little, but everything would still work in the short term.
+It can even fork into multiple versions, and then some clients would go one way, others would go another way, and some clients would adhere to both competing standards. This would hurt the simplicity, openness and interoperability of Nostr a little, but everything would still work in the short term.
 
 There is a list of notable Nostr software developers who have commit access to this repository, but that exists mostly for practical reasons, as by the nature of the thing we're dealing with the repository owner can revoke membership and rewrite history as they want -- and if these actions are unjustified or perceived as bad or evil the community must react.
 
