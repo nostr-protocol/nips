@@ -98,6 +98,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
 - [NIP-100: NostrReAction - Unified Interactions and Content Evolution](100.md)
+- [NIP-101: Decentralized Trust System for Nostr](101.md)
 - [NIP-7D: Threads](7D.md)
 - [NIP-C7: Chats](C7.md)
 
@@ -123,6 +124,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `16`          | Generic Repost                  | [18](18.md)                            |
 | `17`          | Reaction to a website           | [25](25.md)                            |
 | `20`          | Picture                         | [68](68.md)                            |
+| `33`          | Trust Rating                    | [101](101.md)                            |
 | `40`          | Channel Creation                | [28](28.md)                            |
 | `41`          | Channel Metadata                | [28](28.md)                            |
 | `42`          | Channel Message                 | [28](28.md)                            |
