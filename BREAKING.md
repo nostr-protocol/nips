@@ -5,6 +5,7 @@ reverse chronological order.
 
 | Date        | Commit    | NIP      | Change |
 | ----------- | --------- | -------- | ------ |
+| 2025-01-31  | [6a4b125a](https://github.com/nostr-protocol/nips/commit/6a4b125a) | [71](71.md) | video events were changed to regular |
 | 2024-12-05  | [6d16019e](https://github.com/nostr-protocol/nips/commit/6d16019e) | [46](46.md) | message encryption was changed to NIP-44 |
 | 2024-11-12  | [2838e3bd](https://github.com/nostr-protocol/nips/commit/2838e3bd) | [29](29.md) | `kind: 12` and `kind: 10` were removed (use `kind: 1111` instead) |
 | 2024-11-12  | [926a51e7](https://github.com/nostr-protocol/nips/commit/926a51e7) | [46](46.md) | NIP-05 login was removed |
