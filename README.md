@@ -122,6 +122,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `16`          | Generic Repost                  | [18](18.md)                            |
 | `17`          | Reaction to a website           | [25](25.md)                            |
 | `20`          | Picture                         | [68](68.md)                            |
+| `21`          | Video Event                     | [71](71.md)                            |
+| `22`          | Short-form Portrait Video Event | [71](71.md)                            |
 | `40`          | Channel Creation                | [28](28.md)                            |
 | `41`          | Channel Metadata                | [28](28.md)                            |
 | `42`          | Channel Message                 | [28](28.md)                            |
@@ -227,9 +229,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31924`       | Calendar                        | [52](52.md)                            |
 | `31925`       | Calendar Event RSVP             | [52](52.md)                            |
 | `31989`       | Handler recommendation          | [89](89.md)                            |
-| `31990`       | Handler information             | [89](89.md)                            |
-| `21`          | Video Event                     | [71](71.md)                            |
-| `22`          | Short-form Portrait Video Event | [71](71.md)                            |
+| `31990`       | Handler information             | [89](89.md)                            |                         |
+| `32267`       | Software Application            |                                        |                        |
 | `34550`       | Community Definition            | [72](72.md)                            |
 | `37375`       | Cashu Wallet Event              | [60](60.md)                            |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
