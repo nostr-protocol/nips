@@ -150,7 +150,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `2003`        | Torrent                         | [35](35.md)                            |
 | `2004`        | Torrent Comment                 | [35](35.md)                            |
 | `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
-| `4341`        | Peer notary                     | [03](03.md)                            |
+| `4341`        | Timestamp Attestation           | [03](03.md)                            |
 | `4550`        | Community Post Approval         | [72](72.md)                            |
 | `5000`-`5999` | Job Request                     | [90](90.md)                            |
 | `6000`-`6999` | Job Result                      | [90](90.md)                            |
