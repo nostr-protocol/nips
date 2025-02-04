@@ -183,6 +183,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10063`       | User server list                | [Blossom][blossom]                     |
 | `10096`       | File storage server list        | [96](96.md)                            |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
+| `17375`       | Cashu Wallet Event              | [60](60.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
 | `22242`       | Client Authentication           | [42](42.md)                            |
 | `23194`       | Wallet Request                  | [47](47.md)                            |
@@ -232,7 +233,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31990`       | Handler information             | [89](89.md)                            |                         |
 | `32267`       | Software Application            |                                        |                        |
 | `34550`       | Community Definition            | [72](72.md)                            |
-| `37375`       | Cashu Wallet Event              | [60](60.md)                            |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
 
