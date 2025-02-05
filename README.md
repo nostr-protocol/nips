@@ -344,6 +344,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `A`               | root address                         | relay URL                       | [22](22.md)                                        |
 | `c`               | commit id                            |                                 | [34](34.md)                                       |
 | `d`               | identifier                           | --                              | [01](01.md)                                        |
+| `D`               | day                                  | --                              | [52](52.md)                                        |
 | `e`               | event id (hex)                       | relay URL, marker, pubkey (hex) | [01](01.md), [10](10.md)                           |
 | `E`               | root event id                        | relay URL                       | [22](22.md)                                        |
 | `f`               | currency code                        | --                              | [69](69.md)                                        |
