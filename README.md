@@ -298,7 +298,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `s`               | status                               | --                              | [69](69.md)                                        |
 | `t`               | hashtag                              | --                              | [24](24.md), [34](34.md), [35](35.md)              |
 | `u`               | url                                  | --                              | [61](61.md), [98](98.md)                           |
-| `x`               | infohash                             | --                              | [35](35.md)                                        |
+| `x`               | hash                                 | --                              | [35](35.md), [56](56.md)                           |
 | `y`               | platform                             | --                              | [69](69.md)                                        |
 | `z`               | order number                         | --                              | [69](69.md)                                        |
 | `-`               | --                                   | --                              | [70](70.md)                                        |
