@@ -95,6 +95,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-92: Media Attachments](92.md)
 - [NIP-94: File Metadata](94.md)
 - [NIP-96: HTTP File Storage Integration](96.md)
+- [NIP-97: White-listed Events](97.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
 - [NIP-7D: Threads](7D.md)
@@ -131,6 +132,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `44`          | Channel Mute User               | [28](28.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
 | `818`         | Merge Requests                  | [54](54.md)                            |
+| `819`         | Private Follow Request          | [97](97.md)                            |
 | `1018`        | Poll Response                   | [88](88.md)                            |
 | `1021`        | Bid                             | [15](15.md)                            |
 | `1022`        | Bid confirmation                | [15](15.md)                            |
