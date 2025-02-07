@@ -200,6 +200,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30007`       | Kind mute sets                  | [51](51.md)                            |
 | `30008`       | Profile Badges                  | [58](58.md)                            |
 | `30009`       | Badge Definition                | [58](58.md)                            |
+| `30010`       | Seen Messages                   | [17](17.md)                            |
 | `30015`       | Interest sets                   | [51](51.md)                            |
 | `30017`       | Create or update a stall        | [15](15.md)                            |
 | `30018`       | Create or update a product      | [15](15.md)                            |
