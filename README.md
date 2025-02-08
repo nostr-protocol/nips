@@ -366,7 +366,7 @@ These two ways of standardizing things are supported by this repository. Althoug
 
 Here is a list of common terms between NIPs defined to prevent misunderstanding:
 
-- **Relay**: An independent websocket server which stores and retrieves events.
+- **Relay**: An independent websocket server which stores and serves events.
 - **Client**: A software which allows a **user** to interact with **relay**s.
 - **User**: An individual using a **client** to interact with a relay.
 - **Pubkey**: A cryptography public key which a **user** uses within their **client** to sign their events.
