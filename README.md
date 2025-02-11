@@ -246,9 +246,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 [cornychat-slideset]: https://cornychat.com/datatypes#kind30388slideset
 [cornychat-linkset]: https://cornychat.com/datatypes#kind31388linkset
 [joinstr]: https://gitlab.com/1440000bytes/joinstr/-/blob/main/NIP.md
-[NKBIP-01]: https://wikistr.com/nkbip-01
-[NKBIP-02]: https://wikistr.com/nkbip-02
-[NKBIP-03]: https://wikistr.com/nkbip-03
+[NKBIP-01]: https://wikistr.com/nkbip-01*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1
+[NKBIP-02]: https://wikistr.com/nkbip-02*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1
+[NKBIP-03]: https://wikistr.com/nkbip-03*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1
 [blossom]: https://github.com/hzrd149/blossom
 [Tidal-nostr]: https://wikistr.com/tidal-nostr
 
