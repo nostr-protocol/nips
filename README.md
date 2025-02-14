@@ -119,6 +119,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `12`          | Group Thread Reply              | 29 (deprecated)                        |
 | `13`          | Seal                            | [59](59.md)                            |
 | `14`          | Direct Message                  | [17](17.md)                            |
+| `15`          | File Message                    | [17](17.md)                            |
 | `16`          | Generic Repost                  | [18](18.md)                            |
 | `17`          | Reaction to a website           | [25](25.md)                            |
 | `20`          | Picture                         | [68](68.md)                            |
