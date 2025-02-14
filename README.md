@@ -169,7 +169,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `9802`        | Highlights                      | [84](84.md)                            |
 | `10000`       | Mute list                       | [51](51.md)                            |
 | `10001`       | Pin list                        | [51](51.md)                            |
-| `10002`       | Relay List Metadata             | [65](65.md)                            |
+| `10002`       | Relay List Metadata             | [65](65.md), [51](51.md)               |
 | `10003`       | Bookmark list                   | [51](51.md)                            |
 | `10004`       | Communities list                | [51](51.md)                            |
 | `10005`       | Public chats list               | [51](51.md)                            |
