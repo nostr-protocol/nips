@@ -96,6 +96,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-92: Media Attachments](92.md)
 - [NIP-94: File Metadata](94.md)
 - [NIP-96: HTTP File Storage Integration](96.md)
+- [NIP-97: White-listed Events](97.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
 - [NIP-7D: Threads](7D.md)
@@ -134,6 +135,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `62`          | Request to Vanish               | [62](62.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
 | `818`         | Merge Requests                  | [54](54.md)                            |
+| `819`         | White-listed Follow Request     | [97](97.md)                       |
 | `1018`        | Poll Response                   | [88](88.md)                            |
 | `1021`        | Bid                             | [15](15.md)                            |
 | `1022`        | Bid confirmation                | [15](15.md)                            |
@@ -185,6 +187,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
 | `10063`       | User server list                | [Blossom][blossom]                     |
 | `10096`       | File storage server list        | [96](96.md)                            |
+| `10101`       | Good wiki authors               | [51](51.md)                            |
+| `10102`       | Good wiki relays                | [51](51.md)                            |
+| `10103`       | Private Followers               | [51](51.md)                            |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `17375`       | Cashu Wallet Event              | [60](60.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
@@ -233,8 +238,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31924`       | Calendar                        | [52](52.md)                            |
 | `31925`       | Calendar Event RSVP             | [52](52.md)                            |
 | `31989`       | Handler recommendation          | [89](89.md)                            |
-| `31990`       | Handler information             | [89](89.md)                            |                         |
-| `32267`       | Software Application            |                                        |                        |
+| `31990`       | Handler information             | [89](89.md)                            |
+| `32267`       | Software Application            |                                        |
 | `34550`       | Community Definition            | [72](72.md)                            |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
