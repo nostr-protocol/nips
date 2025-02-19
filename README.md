@@ -77,6 +77,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-59: Gift Wrap](59.md)
 - [NIP-60: Cashu Wallet](60.md)
 - [NIP-61: Nutzaps](61.md)
+- [NIP-62: Request to Vanish](62.md)
 - [NIP-64: Chess (PGN)](64.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-68: Picture-first feeds](68.md)
@@ -130,6 +131,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `42`          | Channel Message                 | [28](28.md)                            |
 | `43`          | Channel Hide Message            | [28](28.md)                            |
 | `44`          | Channel Mute User               | [28](28.md)                            |
+| `62`          | Request to Vanish               | [62](62.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
 | `818`         | Merge Requests                  | [54](54.md)                            |
 | `1018`        | Poll Response                   | [88](88.md)                            |
