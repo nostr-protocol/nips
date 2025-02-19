@@ -77,6 +77,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-59: Gift Wrap](59.md)
 - [NIP-60: Cashu Wallet](60.md)
 - [NIP-61: Nutzaps](61.md)
+- [NIP-62: Request to Vanish](62.md)
 - [NIP-64: Chess (PGN)](64.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-68: Picture-first feeds](68.md)
@@ -119,6 +120,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `12`          | Group Thread Reply              | 29 (deprecated)                        |
 | `13`          | Seal                            | [59](59.md)                            |
 | `14`          | Direct Message                  | [17](17.md)                            |
+| `15`          | File Message                    | [17](17.md)                            |
 | `16`          | Generic Repost                  | [18](18.md)                            |
 | `17`          | Reaction to a website           | [25](25.md)                            |
 | `20`          | Picture                         | [68](68.md)                            |
@@ -129,6 +131,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `42`          | Channel Message                 | [28](28.md)                            |
 | `43`          | Channel Hide Message            | [28](28.md)                            |
 | `44`          | Channel Mute User               | [28](28.md)                            |
+| `62`          | Request to Vanish               | [62](62.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
 | `818`         | Merge Requests                  | [54](54.md)                            |
 | `1018`        | Poll Response                   | [88](88.md)                            |
@@ -168,7 +171,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `9802`        | Highlights                      | [84](84.md)                            |
 | `10000`       | Mute list                       | [51](51.md)                            |
 | `10001`       | Pin list                        | [51](51.md)                            |
-| `10002`       | Relay List Metadata             | [65](65.md)                            |
+| `10002`       | Relay List Metadata             | [65](65.md), [51](51.md)               |
 | `10003`       | Bookmark list                   | [51](51.md)                            |
 | `10004`       | Communities list                | [51](51.md)                            |
 | `10005`       | Public chats list               | [51](51.md)                            |
