@@ -18,7 +18,7 @@ All other tags MUST be encrypted to the pubkey indicated by the `p` tag using NI
 - `channel` indicates how the user would like to be notified. May be one of `email`, `push`
 - `relay` (one or more) indicates relays where notifications may be discovered
 - `filter` (one or more) indicates a filter matching events that the user wants to be notified about
-- `cadence` (optional) indicates (roughly) how often the user would like to be notified. May be one of `weekly`, `daily`, `immediate`
+- `cron` (optional) indicates using cron syntax how often the user would like to be notified, if not immediately.
 - `bunker_url` (optional) with permission to sign `kind 22242` AUTH requests (for access to auth-gated relays)
 - `pause_until` (optional) indicates how long the notifier should wait from the event's `created_at` before sending `immediate` mode notifications.
 
@@ -46,7 +46,7 @@ Below is an example tag array (the entire event is not shown because the tags ar
 ```jsonc
 [
   ["channel", "email"],
-  ["cadence", "weekly"],
+  ["cron", "0 15 * * 1"],
   ["bunker_url", "bunker://9ee57420bac3db5f1d7f43e1ed5f8bb6b81bf6df6350eb3377961da229eaab22?relay=wss://r.example.com&secret=9393"],
   ["pause_until", "1740002930"],
   ["relay", "wss://relay1.example.com/"],
