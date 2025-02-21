@@ -21,6 +21,7 @@ All other tags MUST be encrypted to the pubkey indicated by the `p` tag using NI
 - `cron` (optional) indicates using cron syntax how often the user would like to be notified, if not immediately.
 - `bunker_url` (optional) with permission to sign `kind 22242` AUTH requests (for access to auth-gated relays)
 - `pause_until` (optional) indicates how long the notifier should wait from the event's `created_at` before sending `immediate` mode notifications.
+- `handler` (zero or more) is the address of a [NIP 89](./89.md) handler event, for example `["handler", "31990:<pubkey>:<identifier>", "wss://relay.com", "web"]`
 
 If channel is set to `push`, the following tags are also required:
 
