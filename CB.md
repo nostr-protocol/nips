@@ -13,7 +13,7 @@ Clients are expected to only support a subset of event kinds when rendering Kanb
 
 ```json
 {
-  "kind": 34469,
+  "kind": 37733,
   "content": "",
   "tags": [
     ["d", "<board-identifier>"],
@@ -30,7 +30,7 @@ Clients are expected to only support a subset of event kinds when rendering Kanb
     ["col", "col-id-2", "In Progress"],
     ["col", "col-id-2", "Done"],
 
-    // Mapping events to Column IDs.
+    // Mapping of events to Column IDs.
     // Tags arranged in the intended order.
     ["e", "b7804254d1ae143aeacb50b2504398a43e2f39abd87141036b7f1cc8aec4069e", "col-id-1"],
     ["a", "<kind>:<pubkey>:<d-identifier>", "col-id-1"],
