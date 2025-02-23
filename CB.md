@@ -45,6 +45,8 @@ Clients are expected to only support a subset of event kinds when rendering Kanb
   "kind": 37734,
   "content": "",
   "tags": [
+    ["d", "<column-identifier>"],
+    
     // Tags arranged in the intended order.
     ["e", "b7804254d1ae143aeacb50b2504398a43e2f39abd87141036b7f1cc8aec4069e", "<relay-hint>"],
     ["a", "<kind>:<pubkey>:<d-identifier>", "<relay-hint>"],
