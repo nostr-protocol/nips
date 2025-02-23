@@ -240,8 +240,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31990`       | Handler information             | [89](89.md)                            |                         |
 | `32267`       | Software Application            |                                        |                        |
 | `34550`       | Community Definition            | [72](72.md)                            |
-| `35000`       | Task Event                      | [XXA](XXA.md)                          |
-| `35001`       | Kanban Board Event              | [XXC](XXC.md)                          |
+| `35000`       | Tracker Event                   | [XXE](XXE.md)                          |
+| `35001`       | Task Event                      | [XXA](XXA.md)                          |
+| `35002`       | Kanban Board Event              | [XXC](XXC.md)                          |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
 

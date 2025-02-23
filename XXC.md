@@ -6,7 +6,9 @@ Simple Kanban Board Workflow
 
 `draft` `optional`
 
-This NIP defines a Kanban board workflow, building on [NIP-XXA](XXA.md) for tasks. This proposal allows tasks to be organized within a Kanban board using definable states, linked tasks, and sorting order.
+_Draft note: Some content was taken from https://github.com/nostr-protocol/nips/pull/1665/files, the credit to some of the content and ideas should go to the author_
+
+This NIP defines a Kanban board workflow, and is a **Workflow** as described in [NIP-XXE](XXE.md). This proposal allows tasks to be organized within a Kanban board using definable states, linked tasks, and sorting order.
 
 The Kanban board is a simple workflow tool that allows users to visualize tasks in different states of completion. Each task is represented as a card that can be moved between different columns, each representing a different state of completion.
 
@@ -14,35 +16,40 @@ This is useful for use cases similar to apps such as Trello, Asana, Jira, Github
 
 # Kanban board event format
 
-## Event Kind
+The Kanban board is an _addressable_ event as defined in [NIP-01](01.md), with `kind:35002`. Here is the format:
 
-The `kind` of these events MUST be `35001`, and this is meant to be an _addressable_ event as defined in [NIP-01](01.md).
-
-## Content
-
-The `.content` of a kanban board event MUST be a JSON string defining the permissible states for tasks. The JSON should be in the following format:
-
-```jsonc
+```javascript
 {
-  "title": <title string>,
-  "description": <OPTIONAL description string>,
-  "states": [
-    {"id": <id string>, "label": <label string>, "color": <OPTIONAL color value>},
-    <other possible states>
-  ]
+    "created_at": 1740274054, //<Unix timestamp in seconds>
+    "kind": 35002,
+    "content": "",   // Not used
+    "tags": [
+        ["d", "<board-d-identifier>"],
+        ["title", "<board-title>"],
+        ["description", "<board-description>"], // NIP-23 markdown
+        ["alt","A board to track my work"], // Human-readable plaintext summary to be shown in non-supporting clients — as per NIP-31
+
+        // List of all columns in the board below ["col","<column-id>","<column-label>", "<optional color value>"]. The order in which they appear MUST match the order here
+        ["col", "to-do", "To Do", "gray"],
+        ["col", "in-progress", "In Progress", "blue"],
+        ["col", "done", "Done", "green"],
+
+        // Clients may designate a 'maintainers' list who can add/edit cards in this board
+        [ "p", "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2" ],
+        [ "p", "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52" ],
+        [ "p", "460c25e682fda7832b52d1f22d3d22b3176d972f60dcdc3212ed8c92ef85065c" ],
+    // other fields...
+    ]
 }
 ```
 
-The `states` array MUST contain at least one state object. Each state object MUST have the following fields:
-- `id`: A unique identifier for the state within the board. This identifier MUST be unique within the board. (e.g., "todo", "in-progress", "in-review", "done")
-- `label`: A human-readable label for the state. (e.g., "To Do", "In Progress", "In Review", "Done")
-- `color`: An optional color value for the state, to provide a visual cue. See the "Colors" section below for allowed values.
+To find out which tasks/cards are in the board, clients MUST query [Tracker events](XXE.md) authored by any of the maintainers list AND are linked back to this workflow.
 
-Other fields MAY be added to the Content JSON, on other NIPs that extend this one.
+In case there are no `p` tags to designate maintainers, the owner of the board is the only person who can publish cards on the boards.
 
 ### Colors
 
-The `color` field can have any of the following values:
+The `color` field for a column can have any of the following values:
 - One of the following preset colors:
   - "red"
   - "orange"
@@ -51,52 +58,35 @@ The `color` field can have any of the following values:
   - "cyan"
   - "blue"
   - "purple"
+  - "gray"
 - A hex RGB color code (e.g., `#FF0000`).
 
-Clients MAY choose to display the color in the UI, but it is not required. The color is intended only to provide a visual cue to users.
+Clients MAY choose to display the color in the UI, but it is not required. The color is intended only to provide a visual cue to users, but text labels are always required — for accessibility purposes.
 
 The exact color codes for the preset colors is not specified and is left to the discretion of the client to match their own color scheme.
 
-## Tags
+## Tracker event
 
-Each task on the Kanban board should be added using an `a` anchor tag. These tags reference the task events defined in [NIP-XXA](XXA.md). The tags are structured as follows, with one dedicated value for the task's current state within the Kanban board:
+As per [NIP-XXE](XXE.md), `kind:35000` tracker events are used for tracking tasks/items within a kanban board.
 
-```jsonc
-"tags": [
-  ["a", "35000:<32-bytes lowercase hex of task author's pubkey>:<task d-identifier>", "<state id string>"],
-  ["a", "35000:<32-bytes lowercase hex of task author's pubkey>:<task d-identifier>", "<state id string>"],
-  ["a", "35000:<32-bytes lowercase hex of task author's pubkey>:<task d-identifier>", "<state id string>"],
-  // Other tasks can be added similarly.
-]
-```
+Furthermore, this NIP makes use of the RESERVED fields in `kind:35000` tracker events, in the following manner:
+1. `"content"` MUST be set to the column id representing the state of the task/item, or should be left EMPTY (`""`)
+  1. If empty, and the `"tracked_item"` is a second `kind:35000` tracker event, the state/status of the task MUST be the one specified in the second tracker event. If it refers to a column id not present in the current board, the client MAY temporarily display those special columns, or in one catch-all "other" column.
+2. The `"rank"` tag is used to denote manual ordering within columns — items MAY be displayed in the ascending order of rank by default
+  - **Example:** `["rank","10"]`
+3. All other RESERVED tags have the same meaning and use as [NIP-XXA](XXA.md).
+  1. If the `"tracked_item"` refers to a `kind:35001` task event ([NIP-XXA](XXA.md)), the Client SHOULD combine/merge tag content for display as follows:
+    - `"title"`, `"image"`, `"published_at"`, `"due_at"`, and `"archived"` fields in the tracker SHOULD override the fields on the original `kind:35001` event
+    - `"t"` and `"p"` tags SHOULD be combined in both events (set union operation)
+  2. If `"tracked_item"` refers to a second `kind:35001` tracker event, the same rules as point `3.1` above apply — recursively — as in a chain.
 
-The `state id string` MUST match one of the `id` values defined in the Kanban board's `.content` JSON.
 
-Clients SHOULD by default display the tasks in the order they are listed in the `tags` array, from top to bottom. If the client allows users to reorder tasks, the client MUST update the `tags` array sorting order accordingly. However, the client MAY choose to display tasks in a different order based on other criteria, such as due date or priority, sorting filters, etc.
+### Editability and multi-user collaboration
 
-Other required tags:
-- `d`: The board's unique identifier
-
-Optional tags:
-- `p`: MAY be interpreted as the board's participant list, which could be used by clients and relays to determine who is allowed to view or edit the board, but the exact interpretation is left to the implementation.
-
-### Linking Kanban and Tasks
-
-When a task's status changes within this board, the tag's state value should update to reflect its new position in the workflow sequence.
-
-### Multi-user editing
-
-This NIP explicitly does not define how different users can edit the same board, since different use cases may require different solutions.
-
-However, here are some possible approaches (listed here for inspiration, but not a requirement):
-- A single authoritative private/public keypair that represents a group/team of users, and produce/sign new board updates, by having a program listen to [edit requests](XXD.md) from any of the group members, and automatically approving/rejecting them based on the group's rules.
-  - This program could be simple or very complex with a lot of rules on who can edit what, when, and how — to fit several business use cases.
-- A FROST-like key scheme can be used to require multiple signatures from different users to approve a change to the board.
-- A board can be owned and controlled by a single user, publishing the board to private relays (single-user apps)
-- A board can be controlled by a single user, but allow other users to view it.
-- A client could listen to board events from a group of users and choose to display the board based on the most recent event it has seen from any of the users, or somehow "merge" different users' boards.
+This NIP follows the same standards and rules for multi-user collaboration as [NIP-XXA](XXA.md).
 
 ## Intended use cases
 
 - Trello-like boards for personal or team task management.
 - Business process workflows that require multiple stages of completion.
+- Executive kanban boards that would like to keep track of a specific subset of tasks in other kanban boards — with automatic state changes.

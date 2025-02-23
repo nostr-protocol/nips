@@ -6,7 +6,7 @@ Tasks
 
 `draft` `optional`
 
-This NIP defines `kind:35000` (an _addressable event_) for tasks, generally referred to as "tasks", "to-do items", or "reminders".
+This NIP defines `kind:35001` (an _addressable event_) for tasks, generally referred to as "tasks", "to-do items", or "reminders".
 
 This NIP intentionally does not define any information about workflows, states, authorization mechanisms, or any other complex task management features, as the needs and requirements for these vary greatly between different applications and use cases. This NIP is meant to be used only as a base for more complex task management systems, and only focuses on the basic information that models a task itself.
 
@@ -20,12 +20,9 @@ The `kind` of these events MUST be `35000`, which is an _addressable event_ as d
 
 ### Content
 
-The `.content` of these events MUST be used as the description of a task, and should be a string text in [Github Flavored Markdown syntax](https://github.github.com/gfm), with the following constraints:
-- MUST NOT hard line-break paragraphs of text, such as arbitrary line breaks at 80 column boundaries.
-- MUST NOT support adding HTML to Markdown.
-- MUST NOT support adding JavaScript to Markdown.
+The `.content` of these events MUST be used as the description of a task, and should be a string text in Markdown format, following [NIP-23](23.md) conventions.
 
-Clients MAY render any inline [Nostr URI](21.md) into a rich interactive object or widget, to allow for easy navigation and interaction with the referenced content, or as simple hyperlinks.
+Clients MAY render any inline [Nostr URI](21.md) into a rich interactive object or widget, to allow for easy navigation and interaction with the referenced content with improved user experience, or as simple hyperlinks.
 
 ### Metadata and Tags
 
@@ -56,18 +53,15 @@ The role is optional, and this NIP only standardizes the following values:
 - `"client"`: The user is the client or requester of the task.
 - (Any other value): Any other role that is not standardized by this NIP, which for the purposes of this NIP is treated the same as an empty role.
 
-### Editability
+### Editability and multi-user collaboration
 
-These tasks are meant to be editable, so they should include a `d` tag with an identifier for the task. Clients should take care to only publish and read these events from relays that implement that. If they don't do that they should also take care to hide old versions of the same tasks they may receive.
+These tasks are editable in the same way as any other addressable event. To keep in compliance with [NIP-01](01.md), the authoring pubkey is the ultimate authority on the source of truth for the task data.
 
-For simplicity and flexibility, this NIP does not define a specific mechanism to allow groups of users to edit the same task. This is deliberately left out to allow for different implementations to be built on top of this NIP in a way that best suits the needs of a particular use case. Examples of possible implementations include:
-- A single user is assigned to a task, and only that user can edit the task.
-- The task is signed using a collaborative signing mechanism, such as a multi-signature or FROST-like scheme.
-- The task is signed by an authoritative keypair representing a group/company, and members of a group need to request changes to the task from that entity using [edit requests](XXD.md) or other mechanisms.
+For clarity, clients and servers MUST NOT decide on a source of truth based on a set of events signed by different pubkeys, because that will break anchor tags of addressable events and is in violation of [NIP-01](01.md).
 
-### Linking
-
-The task may be linked to using the [NIP-19](19.md) `naddr` code along with the `a` tag.
+This does not constrain the possibilities and use cases, because any possible multi-user editing logic can be implemented using some combination of:
+- [Edit Requests](XXD.md) to propose changes to the task, with _(optionally)_ scripts that listens to them and approves/rejects based on any arbitrarily complex logic.
+- FROST signature schemes (or any other multisig/key-splitting technique) to split the private key that signs these events and allow n-of-N multisig schemes
 
 ## Example Event
 
