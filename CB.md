@@ -21,14 +21,21 @@ A Kanban Board is a replaceable `kind 37733` event, which includes a list of col
     // For example a GitRepositoryAnnouncement:
     ["A", "30617:<pubkey>:<repo-identifier>"],
 
-    // Columns have the format `["a", "<coordinate>", "<name>", "<optional-relay-hint>"]` 
+    // Columns have the format `["a", "<coordinate>", "<name>", "<purpose>", "<optional-relay-hint>"]` 
     // and are arranged in the intended order. 
-    ["a", "<column-kind>:<pubkey>:<d-identifier>", "To Do", "wss://relay.lol"],
-    ["a", "<column-kind>:<pubkey>:<d-identifier>", "In Progress", ""],
-    ["a", "<column-kind>:<pubkey>:<d-identifier>", "Done"],
+    ["a", "<column-kind>:<pubkey>:<d-identifier>", "To Do", "OPEN", "wss://relay.lol"],
+    ["a", "<column-kind>:<pubkey>:<d-identifier>", "In Progress", "OPEN", ""],
+    ["a", "<column-kind>:<pubkey>:<d-identifier>", "Done", "CLOSED"],
   ]
 }
 ```
+
+The column purpose can be either `"OPEN"`, `"FINISHED"` or `"REJECTED"`.
+An empty purpose string should be interpreted as `"OPEN"`.
+Clients may customize the rendering of columns based on their designated purpose 
+or trigger specific actions when adding cards to columns with a particular purpose.
+
+## Columns 
 
 Columns are `kind 37734` events containing a list of Kanban cards, which can be of any event kind.
 Clients are expected to only support a subset of event kinds when rendering Kanban cards.
@@ -48,6 +55,7 @@ Clients are expected to only support a subset of event kinds when rendering Kanb
   
 ## Possible extentions to add later
 
+- Add more column purposes
 - Define additional actions a client should perform when adding cards to certain columns 
 - Dedicated event kind for Kanban cards
 - Multi-user support
