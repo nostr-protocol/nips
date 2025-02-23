@@ -30,7 +30,7 @@ A Kanban Board is a replaceable `kind 37733` event, which includes a list of col
 }
 ```
 
-The column purpose can be either `"OPEN"`, `"FINISHED"` or `"REJECTED"`.
+The column purpose can be either `"OPEN"`, `"CLOSED"` or `"REJECTED"`.
 An empty purpose string should be interpreted as `"OPEN"`.
 Clients may customize the rendering of columns based on their designated purpose 
 or trigger specific actions when adding cards to columns with a particular purpose.
