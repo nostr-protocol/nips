@@ -1,17 +1,17 @@
 NIP-46
 ======
 
-Notifiers
----------
+Alerts
+------
 
-A notifier is a nostr application whose job is to monitor the nostr network and notify users of updates via email, push, SMS, DM, etc.
+An alert provider is a nostr application whose job is to monitor the nostr network and notify users of updates via email, push, SMS, DM, etc.
 
-# Notification Subscription
+# Alert
 
-A notification subscription is a `kind 32830` event which specifies how a user would like to be notified, and by whom. It MUST have the following tags, and no others:
+An alert is a `kind 32830` event which specifies how a user would like to be notified, and by whom. It MUST have the following tags, and no others:
 
 - A `d` tag set to an arbitrary string
-- A `p` tag indicating the notifier the subscription is addressed to
+- A `p` tag indicating the provider the alert is addressed to
 
 All other tags MUST be encrypted to the pubkey indicated by the `p` tag using NIP 44. The following tags are defined:
 
@@ -20,7 +20,7 @@ All other tags MUST be encrypted to the pubkey indicated by the `p` tag using NI
 - `filter` (one or more) indicates a filter matching events that the user wants to be notified about
 - `cron` (optional) indicates using cron syntax how often the user would like to be notified, if not immediately.
 - `bunker_url` (optional) with permission to sign `kind 22242` AUTH requests (for access to auth-gated relays)
-- `pause_until` (optional) indicates how long the notifier should wait from the event's `created_at` before sending `immediate` mode notifications.
+- `pause_until` (optional) indicates how long the provider should wait from the event's `created_at` before sending `immediate` mode alerts.
 - `handler` (zero or more) is the address of a [NIP 89](./89.md) handler event, for example `["handler", "31990:<pubkey>:<identifier>", "wss://relay.com", "web"]`
 
 If channel is set to `push`, the following tags are also required:
@@ -34,11 +34,11 @@ If channel is set to `email`, the following tags are also required:
 
 ## Unsubscribing
 
-When a user no longer wants to be notified, they may delete the subscription event by address following [NIP 09](./09.md).
+When a user no longer wants to be notified, they may delete the alert by address, as specified in [NIP 09](./09.md).
 
 ## Pausing while online
 
-When a user becomes active, their client SHOULD automatically update all relevant `kind 32930` events with a current `pause_until` timestamp. This allows the notifier to know the user is online and avoid sending push notifications. When a client knows it's about to go offline, it MAY update the `pause_until` timestamp to the current time.
+When a user becomes active, their client SHOULD automatically update all relevant `kind 32930` events with a current `pause_until` timestamp. This allows the provider to know the user is online and avoid sending push notifications. When a client knows it's about to go offline, it MAY update the `pause_until` timestamp to the current time.
 
 ## Example
 
@@ -58,18 +58,18 @@ Below is an example tag array (the entire event is not shown because the tags ar
 ]
 ```
 
-# Notification Subscription Status
+# Alerts Status
 
-A notifier SHOULD publish a `kind 32831` event which details the status of the user's subscription. A non-existent subscription event indicates that no action has been taken. It MUST have the following tags, and no others:
+A provider SHOULD publish a `kind 32831` event which details the status of the user's alert. A non-existent alert status event indicates that no action has been taken. It MUST have the following tags, and no others:
 
-- An `a` tag set to the address of the `kind 32830` it refers to
-- A `p` tag indicating the notifier the subscription is addressed to
+- A `d` tag set to the address of the `kind 32830` it refers to
+- A `p` tag indicating the author of the `kind 32830` alert event
 
 All other tags MUST be encrypted to the pubkey indicated by the `p` tag using NIP 44. The following tags are defined:
 
-- `status` SHOULD be one of `ok`, `payment-required`, `error`
-- `message` SHOULD include human-readable information explaining the status of the subscription
+- `status` SHOULD be one of `ok`, `pending`, `payment-required`, `error`
+- `message` SHOULD include human-readable information explaining the status of the alert
 
 # Discovery
 
-A notifier MAY advertise its services via NIP 89 client listing.
+A provider MAY advertise its services via NIP 89 client listing.
