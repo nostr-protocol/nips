@@ -100,6 +100,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-99: Classified Listings](99.md)
 - [NIP-7D: Threads](7D.md)
 - [NIP-C7: Chats](C7.md)
+- [NIP-101e: Workout Events](101e.md)
 
 ## Event Kinds
 
@@ -143,6 +144,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1068`        | Poll                            | [88](88.md)                            |
 | `1111`        | Comment                         | [22](22.md)                            |
 | `1311`        | Live Chat Message               | [53](53.md)                            |
+| `1301`        | Workout Record                  | [101e](101e.md)                        |
 | `1617`        | Patches                         | [34](34.md)                            |
 | `1621`        | Issues                          | [34](34.md)                            |
 | `1622`        | Replies                         | [34](34.md)                            |
@@ -235,6 +237,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31989`       | Handler recommendation          | [89](89.md)                            |
 | `31990`       | Handler information             | [89](89.md)                            |                         |
 | `32267`       | Software Application            |                                        |                        |
+| `33401`       | Exercise Template               | [101e](101e.md)                        |
+| `33402`       | Workout Template                | [101e](101e.md)                        |
 | `34550`       | Community Definition            | [72](72.md)                            |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
