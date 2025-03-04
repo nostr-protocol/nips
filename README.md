@@ -80,6 +80,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-62: Request to Vanish](62.md)
 - [NIP-64: Chess (PGN)](64.md)
 - [NIP-65: Relay List Metadata](65.md)
+- [NIP-66: Relay Discovery and Liveness Monitoring](66.md)
 - [NIP-68: Picture-first feeds](68.md)
 - [NIP-69: Peer-to-peer Order events](69.md)
 - [NIP-70: Protected Events](70.md)
@@ -185,6 +186,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
 | `10063`       | User server list                | [Blossom][blossom]                     |
 | `10096`       | File storage server list        | [96](96.md)                            |
+| `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `17375`       | Cashu Wallet Event              | [60](60.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
@@ -215,6 +217,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30041`       | Modular Article Content         | [NKBIP-01]                             |
 | `30063`       | Release artifact sets           | [51](51.md)                            |
 | `30078`       | Application-specific Data       | [78](78.md)                            |
+| `30166`       | Relay Discovery                 | [66](66.md)                            |
 | `30267`       | App curation sets               | [51](51.md)                            |
 | `30311`       | Live Event                      | [53](53.md)                            |
 | `30315`       | User Statuses                   | [38](38.md)                            |
