@@ -31,7 +31,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-07: `window.nostr` capability for web browsers](07.md)
 - [NIP-08: Handling Mentions](08.md) --- **unrecommended**: deprecated in favor of [NIP-27](27.md)
 - [NIP-09: Event Deletion Request](09.md)
-- [NIP-10: Conventions for clients' use of `e` and `p` tags in text events](10.md)
+- [NIP-10: Text Notes and Threads](10.md)
 - [NIP-11: Relay Information Document](11.md)
 - [NIP-13: Proof of Work](13.md)
 - [NIP-14: Subject tag in text events](14.md)
@@ -54,14 +54,15 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-34: `git` stuff](34.md)
 - [NIP-35: Torrents](35.md)
 - [NIP-36: Sensitive Content](36.md)
+- [NIP-37: Draft Events](37.md)
 - [NIP-38: User Statuses](38.md)
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
 - [NIP-42: Authentication of clients to relays](42.md)
-- [NIP-44: Versioned Encryption](44.md)
+- [NIP-44: Encrypted Payloads (Versioned)](44.md)
 - [NIP-45: Counting results](45.md)
-- [NIP-46: Nostr Connect](46.md)
-- [NIP-47: Wallet Connect](47.md)
+- [NIP-46: Nostr Remote Signing](46.md)
+- [NIP-47: Nostr Wallet Connect](47.md)
 - [NIP-48: Proxy Tags](48.md)
 - [NIP-49: Private Key Encryption](49.md)
 - [NIP-50: Search Capability](50.md)
@@ -76,8 +77,11 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-59: Gift Wrap](59.md)
 - [NIP-60: Cashu Wallet](60.md)
 - [NIP-61: Nutzaps](61.md)
+- [NIP-62: Request to Vanish](62.md)
 - [NIP-64: Chess (PGN)](64.md)
 - [NIP-65: Relay List Metadata](65.md)
+- [NIP-66: Relay Discovery and Liveness Monitoring](66.md)
+- [NIP-68: Picture-first feeds](68.md)
 - [NIP-69: Peer-to-peer Order events](69.md)
 - [NIP-70: Protected Events](70.md)
 - [NIP-71: Video Events](71.md)
@@ -86,6 +90,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-75: Zap Goals](75.md)
 - [NIP-78: Application-specific data](78.md)
 - [NIP-84: Highlights](84.md)
+- [NIP-86: Relay Management API](86.md)
+- [NIP-88: Polls](88.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-90: Data Vending Machines](90.md)
 - [NIP-92: Media Attachments](92.md)
@@ -93,13 +99,15 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-7D: Threads](7D.md)
+- [NIP-C7: Chats](C7.md)
 
 ## Event Kinds
 
 | kind          | description                     | NIP                                    |
 | ------------- | ------------------------------- | -------------------------------------- |
 | `0`           | User Metadata                   | [01](01.md)                            |
-| `1`           | Short Text Note                 | [01](01.md)                            |
+| `1`           | Short Text Note                 | [10](10.md)                            |
 | `2`           | Recommend Relay                 | 01 (deprecated)                        |
 | `3`           | Follows                         | [02](02.md)                            |
 | `4`           | Encrypted Direct Messages       | [04](04.md)                            |
@@ -107,26 +115,34 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `6`           | Repost                          | [18](18.md)                            |
 | `7`           | Reaction                        | [25](25.md)                            |
 | `8`           | Badge Award                     | [58](58.md)                            |
-| `9`           | Group Chat Message              | [29](29.md)                            |
-| `10`          | Group Chat Threaded Reply       | [29](29.md)                            |
-| `11`          | Group Thread                    | [29](29.md)                            |
-| `12`          | Group Thread Reply              | [29](29.md)                            |
+| `9`           | Chat Message                    | [C7](C7.md)                            |
+| `10`          | Group Chat Threaded Reply       | 29 (deprecated)                        |
+| `11`          | Thread                          | [7D](7D.md)                            |
+| `12`          | Group Thread Reply              | 29 (deprecated)                        |
 | `13`          | Seal                            | [59](59.md)                            |
 | `14`          | Direct Message                  | [17](17.md)                            |
+| `15`          | File Message                    | [17](17.md)                            |
 | `16`          | Generic Repost                  | [18](18.md)                            |
 | `17`          | Reaction to a website           | [25](25.md)                            |
+| `20`          | Picture                         | [68](68.md)                            |
+| `21`          | Video Event                     | [71](71.md)                            |
+| `22`          | Short-form Portrait Video Event | [71](71.md)                            |
 | `40`          | Channel Creation                | [28](28.md)                            |
 | `41`          | Channel Metadata                | [28](28.md)                            |
 | `42`          | Channel Message                 | [28](28.md)                            |
 | `43`          | Channel Hide Message            | [28](28.md)                            |
 | `44`          | Channel Mute User               | [28](28.md)                            |
+| `62`          | Request to Vanish               | [62](62.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
 | `818`         | Merge Requests                  | [54](54.md)                            |
+| `1018`        | Poll Response                   | [88](88.md)                            |
 | `1021`        | Bid                             | [15](15.md)                            |
 | `1022`        | Bid confirmation                | [15](15.md)                            |
 | `1040`        | OpenTimestamps                  | [03](03.md)                            |
 | `1059`        | Gift Wrap                       | [59](59.md)                            |
 | `1063`        | File Metadata                   | [94](94.md)                            |
+| `1068`        | Poll                            | [88](88.md)                            |
+| `1111`        | Comment                         | [22](22.md)                            |
 | `1311`        | Live Chat Message               | [53](53.md)                            |
 | `1617`        | Patches                         | [34](34.md)                            |
 | `1621`        | Issues                          | [34](34.md)                            |
@@ -156,20 +172,23 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `9802`        | Highlights                      | [84](84.md)                            |
 | `10000`       | Mute list                       | [51](51.md)                            |
 | `10001`       | Pin list                        | [51](51.md)                            |
-| `10002`       | Relay List Metadata             | [65](65.md)                            |
+| `10002`       | Relay List Metadata             | [65](65.md), [51](51.md)               |
 | `10003`       | Bookmark list                   | [51](51.md)                            |
 | `10004`       | Communities list                | [51](51.md)                            |
 | `10005`       | Public chats list               | [51](51.md)                            |
 | `10006`       | Blocked relays list             | [51](51.md)                            |
 | `10007`       | Search relays list              | [51](51.md)                            |
 | `10009`       | User groups                     | [51](51.md), [29](29.md)               |
+| `10013`       | Private event relay list        | [37](37.md)                            |
 | `10015`       | Interests list                  | [51](51.md)                            |
 | `10019`       | Nutzap Mint Recommendation      | [61](61.md)                            |
 | `10030`       | User emoji list                 | [51](51.md)                            |
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
 | `10063`       | User server list                | [Blossom][blossom]                     |
 | `10096`       | File storage server list        | [96](96.md)                            |
+| `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
+| `17375`       | Cashu Wallet Event              | [60](60.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
 | `22242`       | Client Authentication           | [42](42.md)                            |
 | `23194`       | Wallet Request                  | [47](47.md)                            |
@@ -178,7 +197,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `24242`       | Blobs stored on mediaservers    | [Blossom][blossom]                     |
 | `27235`       | HTTP Auth                       | [98](98.md)                            |
 | `30000`       | Follow sets                     | [51](51.md)                            |
-| `30001`       | Generic lists                   | [51](51.md)                            |
+| `30001`       | Generic lists                   | 51 (deprecated)                        |
 | `30002`       | Relay sets                      | [51](51.md)                            |
 | `30003`       | Bookmark sets                   | [51](51.md)                            |
 | `30004`       | Curation sets                   | [51](51.md)                            |
@@ -198,6 +217,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30041`       | Modular Article Content         | [NKBIP-01]                             |
 | `30063`       | Release artifact sets           | [51](51.md)                            |
 | `30078`       | Application-specific Data       | [78](78.md)                            |
+| `30166`       | Relay Discovery                 | [66](66.md)                            |
+| `30267`       | App curation sets               | [51](51.md)                            |
 | `30311`       | Live Event                      | [53](53.md)                            |
 | `30315`       | User Statuses                   | [38](38.md)                            |
 | `30388`       | Slide Set                       | [Corny Chat][cornychat-slideset]       |
@@ -207,6 +228,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30618`       | Repository state announcements  | [34](34.md)                            |
 | `30818`       | Wiki article                    | [54](54.md)                            |
 | `30819`       | Redirects                       | [54](54.md)                            |
+| `31234`       | Draft Event                     | [37](37.md)                            |
 | `31388`       | Link Set                        | [Corny Chat][cornychat-linkset]        |
 | `31890`       | Feed                            | [NUD: Custom Feeds][NUD: Custom Feeds] |
 | `31922`       | Date-Based Calendar Event       | [52](52.md)                            |
@@ -214,11 +236,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31924`       | Calendar                        | [52](52.md)                            |
 | `31925`       | Calendar Event RSVP             | [52](52.md)                            |
 | `31989`       | Handler recommendation          | [89](89.md)                            |
-| `31990`       | Handler information             | [89](89.md)                            |
-| `34235`       | Video Event                     | [71](71.md)                            |
-| `34236`       | Short-form Portrait Video Event | [71](71.md)                            |
+| `31990`       | Handler information             | [89](89.md)                            |                         |
+| `32267`       | Software Application            |                                        |                        |
 | `34550`       | Community Definition            | [72](72.md)                            |
-| `37375`       | Cashu Wallet Event              | [60](60.md)                            |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
 
@@ -265,7 +285,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `A`               | root address                         | relay URL                       | [22](22.md)                                        |
 | `d`               | identifier                           | --                              | [01](01.md)                                        |
 | `e`               | event id (hex)                       | relay URL, marker, pubkey (hex) | [01](01.md), [10](10.md)                           |
-| `E`               | root event i                         | relay URL                       | [22](22.md)                                        |
+| `E`               | root event id                        | relay URL                       | [22](22.md)                                        |
 | `f`               | currency code                        | --                              | [69](69.md)                                        |
 | `g`               | geohash                              | --                              | [52](52.md)                                        |
 | `h`               | group id                             | --                              | [29](29.md)                                        |
@@ -276,14 +296,15 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `l`               | label, label namespace               | --                              | [32](32.md)                                        |
 | `L`               | label namespace                      | --                              | [32](32.md)                                        |
 | `m`               | MIME type                            | --                              | [94](94.md)                                        |
-| `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md)                           |
+| `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md), [22](22.md)              |
+| `P`               | pubkey (hex)                         | --                              | [22](22.md), [57](57.md)                           |
 | `q`               | event id (hex)                       | relay URL, pubkey (hex)         | [18](18.md)                                        |
 | `r`               | a reference (URL, etc)               | --                              | [24](24.md), [25](25.md)                           |
 | `r`               | relay url                            | marker                          | [65](65.md)                                        |
 | `s`               | status                               | --                              | [69](69.md)                                        |
 | `t`               | hashtag                              | --                              | [24](24.md), [34](34.md), [35](35.md)              |
 | `u`               | url                                  | --                              | [61](61.md), [98](98.md)                           |
-| `x`               | infohash                             | --                              | [35](35.md)                                        |
+| `x`               | hash                                 | --                              | [35](35.md), [56](56.md)                           |
 | `y`               | platform                             | --                              | [69](69.md)                                        |
 | `z`               | order number                         | --                              | [69](69.md)                                        |
 | `-`               | --                                   | --                              | [70](70.md)                                        |
@@ -334,9 +355,9 @@ Please update these lists when proposing new NIPs.
 
 ## Is this repository a centralizing factor?
 
-To promote interoperability, we standards that everybody can follow, and we need them to define a **single way of doing each thing** without ever hurting **backwards-compatibility**, and for that purpose there is no way around getting everybody to agree on the same thing and keep a centralized index of these standards. However the fact that such index exists doesn't hurt the decentralization of Nostr. _At any point the central index can be challenged if it is failing to fulfill the needs of the protocol_ and it can migrate to other places and be maintained by other people.
+To promote interoperability, we need standards that everybody can follow, and we need them to define a **single way of doing each thing** without ever hurting **backwards-compatibility**, and for that purpose there is no way around getting everybody to agree on the same thing and keep a centralized index of these standards. However the fact that such an index exists doesn't hurt the decentralization of Nostr. _At any point the central index can be challenged if it is failing to fulfill the needs of the protocol_ and it can migrate to other places and be maintained by other people.
 
-It can even fork into multiple and then some clients would go one way, others would go another way, and some clients would adhere to both competing standards. This would hurt the simplicity, openness and interoperability of Nostr a little, but everything would still work in the short term.
+It can even fork into multiple versions, and then some clients would go one way, others would go another way, and some clients would adhere to both competing standards. This would hurt the simplicity, openness and interoperability of Nostr a little, but everything would still work in the short term.
 
 There is a list of notable Nostr software developers who have commit access to this repository, but that exists mostly for practical reasons, as by the nature of the thing we're dealing with the repository owner can revoke membership and rewrite history as they want -- and if these actions are unjustified or perceived as bad or evil the community must react.
 
