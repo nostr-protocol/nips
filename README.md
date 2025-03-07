@@ -32,6 +32,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-08: Handling Mentions](08.md) --- **unrecommended**: deprecated in favor of [NIP-27](27.md)
 - [NIP-09: Event Deletion Request](09.md)
 - [NIP-10: Text Notes and Threads](10.md)
+- [NIP-101: Decentralized Trust System for Nostr](101.md)
 - [NIP-11: Relay Information Document](11.md)
 - [NIP-13: Proof of Work](13.md)
 - [NIP-14: Subject tag in text events](14.md)
@@ -127,6 +128,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `20`          | Picture                         | [68](68.md)                            |
 | `21`          | Video Event                     | [71](71.md)                            |
 | `22`          | Short-form Portrait Video Event | [71](71.md)                            |
+| `33`          | Trust Rating                    | [101](101.md)                          |
 | `40`          | Channel Creation                | [28](28.md)                            |
 | `41`          | Channel Metadata                | [28](28.md)                            |
 | `42`          | Channel Message                 | [28](28.md)                            |
@@ -342,6 +344,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `tracker`         | torrent tracker URL                  | --                              | [35](35.md)                                        |
 | `web`             | webpage URL                          | --                              | [34](34.md)                                        |
 | `zap`             | pubkey (hex), relay URL              | weight                          | [57](57.md)                                        |
+                                      |
 
 Please update these lists when proposing new NIPs.
 
