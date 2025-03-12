@@ -1,4 +1,4 @@
-# NIP-104
+# NIP-EE
 
 ## E2EE Messaging using the Messaging Layer Security (MLS) Protocol
 
