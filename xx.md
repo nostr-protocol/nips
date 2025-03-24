@@ -19,7 +19,7 @@ All other tags MUST be encrypted to the pubkey indicated by the `p` tag using NI
 - `relay` (one or more) indicates relays where notifications may be discovered
 - `filter` (one or more) indicates a filter matching events that the user wants to be notified about
 - `cron` (optional) indicates using cron syntax how often the user would like to be notified, if not immediately.
-- `bunker_url` (optional) with permission to sign `kind 22242` AUTH requests (for access to auth-gated relays)
+- `nip46` (optional) client secret, bunker url tuple with permission to sign `kind 22242` AUTH requests (for access to auth-gated relays), for example `["nip46", "<client-private-key>", "<bunker-url>"]`
 - `pause_until` (optional) indicates how long the provider should wait from the event's `created_at` before sending `immediate` mode alerts.
 - `handler` (zero or more) is the address of a [NIP 89](./89.md) handler event, for example `["handler", "31990:<pubkey>:<identifier>", "wss://relay.com", "web"]`
 - `timezone` (optional) is the user's timezone
