@@ -24,7 +24,7 @@ The below example uses the Sha256 hash of a book ISBN number (in this case, 9780
   "kind": 30250,
   "content": "",
   "tags": [
-    ["d", "648370d3279993b70d7f75625d765e08ddcbb4db5262ebd2e9db0d666c0b841"],
+    ["d", "648370d3279993b70d7f75625d765e08ddcbb4db5262ebd2e9db0d666c0b8412"],
     ["k", "ibsn"]
     ["current", "250"],
     ["max", "364"],
