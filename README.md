@@ -101,6 +101,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-99: Classified Listings](99.md)
 - [NIP-7D: Threads](7D.md)
 - [NIP-C7: Chats](C7.md)
+- [NIP-EE: E2EE Messaging using MLS Protocol](EE.md)
 
 ## Event Kinds
 
