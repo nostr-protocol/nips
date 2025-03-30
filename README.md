@@ -100,6 +100,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
 - [NIP-7D: Threads](7D.md)
+- [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
 
 ## Event Kinds
@@ -148,6 +149,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1068`        | Poll                            | [88](88.md)                            |
 | `1111`        | Comment                         | [22](22.md)                            |
 | `1311`        | Live Chat Message               | [53](53.md)                            |
+| `1337`        | Code Snippet                    | [C0](C0.md)                            |
 | `1617`        | Patches                         | [34](34.md)                            |
 | `1621`        | Issues                          | [34](34.md)                            |
 | `1622`        | Git Replies (deprecated)        | [34](34.md)                            |
