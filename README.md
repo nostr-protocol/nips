@@ -102,6 +102,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-7D: Threads](7D.md)
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
+- [NIP-XX: Progress Event](XX.md)
 
 ## Event Kinds
 
@@ -224,6 +225,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30063`       | Release artifact sets           | [51](51.md)                            |
 | `30078`       | Application-specific Data       | [78](78.md)                            |
 | `30166`       | Relay Discovery                 | [66](66.md)                            |
+| `30250`       | Progress Event                  | [XX](XX.md)                            |
 | `30267`       | App curation sets               | [51](51.md)                            |
 | `30311`       | Live Event                      | [53](53.md)                            |
 | `30315`       | User Statuses                   | [38](38.md)                            |
@@ -322,10 +324,12 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `client`          | name, address                        | relay URL                       | [89](89.md)                                        |
 | `clone`           | git clone URL                        | --                              | [34](34.md)                                        |
 | `content-warning` | reason                               | --                              | [36](36.md)                                        |
+| `current`         | current value                        | progress events                 | [XX](XX.md)                                        |
 | `delegation`      | pubkey, conditions, delegation token | --                              | [26](26.md)                                        |
 | `description`     | description                          | --                              | [34](34.md), [57](57.md), [58](58.md)              |
 | `emoji`           | shortcode, image URL                 | --                              | [30](30.md)                                        |
 | `encrypted`       | --                                   | --                              | [90](90.md)                                        |
+| `ended`           | end date/time                        | progress events                 | [XX](XX.md)                                        |
 | `expiration`      | unix timestamp (string)              | --                              | [40](40.md)                                        |
 | `file`            | full path (string)                   | --                              | [35](35.md)                                        |
 | `goal`            | event id (hex)                       | relay URL                       | [75](75.md)                                        |
@@ -333,6 +337,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `imeta`           | inline metadata                      | --                              | [92](92.md)                                        |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                              | [57](57.md)                                        |
 | `location`        | location string                      | --                              | [52](52.md), [99](99.md)                           |
+| `max`             | maximum value                        | progress events                 | [XX](XX.md)                                        |
 | `name`            | name                                 | --                              | [34](34.md), [58](58.md), [72](72.md)              |
 | `nonce`           | random                               | difficulty                      | [13](13.md)                                        |
 | `preimage`        | hash of `bolt11` invoice             | --                              | [57](57.md)                                        |
@@ -342,11 +347,13 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `relay`           | relay url                            | --                              | [42](42.md), [17](17.md)                           |
 | `relays`          | relay list                           | --                              | [57](57.md)                                        |
 | `server`          | file storage server url              | --                              | [96](96.md)                                        |
+| `started`         | start date/time                      | progress events                 | [XX](XX.md)                                        |
 | `subject`         | subject                              | --                              | [14](14.md), [17](17.md), [34](34.md)              |
 | `summary`         | summary                              | --                              | [23](23.md), [52](52.md)                           |
 | `thumb`           | badge thumbnail                      | dimensions in pixels            | [58](58.md)                                        |
 | `title`           | article title                        | --                              | [23](23.md)                                        |
 | `tracker`         | torrent tracker URL                  | --                              | [35](35.md)                                        |
+| `unit`            | unit of measurement                  | progress events                 | [XX](XX.md)                                        |
 | `web`             | webpage URL                          | --                              | [34](34.md)                                        |
 | `zap`             | pubkey (hex), relay URL              | weight                          | [57](57.md)                                        |
 
