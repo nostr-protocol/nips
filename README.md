@@ -300,7 +300,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `I`               | root external identity               | --                              | [22](22.md)                                        |
 | `k`               | kind                                 | --                              | [18](18.md), [25](25.md), [72](72.md), [73](73.md) |
 | `K`               | root scope                           | --                              | [22](22.md)                                        |
-| `l`               | label, label namespace               | --                              | [32](32.md)                                        |
+| `l`               | label, label namespace, language name| --                              | [32](32.md), [C0](C0.md)                                        |
 | `L`               | label namespace                      | --                              | [32](32.md)                                        |
 | `m`               | MIME type                            | --                              | [94](94.md)                                        |
 | `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md), [22](22.md)              |
