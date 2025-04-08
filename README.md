@@ -109,7 +109,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | ------------- | ------------------------------- | -------------------------------------- |
 | `0`           | User Metadata                   | [01](01.md)                            |
 | `1`           | Short Text Note                 | [10](10.md)                            |
-| `2`           | Recommend Relay                 | 01 (deprecated)                        |
+| `2`           | Recommend Relay                 |  01 (deprecated)                       |
 | `3`           | Follows                         | [02](02.md)                            |
 | `4`           | Encrypted Direct Messages       | [04](04.md)                            |
 | `5`           | Event Deletion Request          | [09](09.md)                            |
@@ -117,9 +117,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `7`           | Reaction                        | [25](25.md)                            |
 | `8`           | Badge Award                     | [58](58.md)                            |
 | `9`           | Chat Message                    | [C7](C7.md)                            |
-| `10`          | Group Chat Threaded Reply       | 29 (deprecated)                        |
+| `10`          | Group Chat Threaded Reply       |  29 (deprecated)                       |
 | `11`          | Thread                          | [7D](7D.md)                            |
-| `12`          | Group Thread Reply              | 29 (deprecated)                        |
+| `12`          | Group Thread Reply              |  29 (deprecated)                       |
 | `13`          | Seal                            | [59](59.md)                            |
 | `14`          | Direct Message                  | [17](17.md)                            |
 | `15`          | File Message                    | [17](17.md)                            |
@@ -129,9 +129,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `21`          | Video Event                     | [71](71.md)                            |
 | `22`          | Short-form Portrait Video Event | [71](71.md)                            |
 | `30`          | internal reference              | [NKBIP-03]                             |
-| `31`          | external web reference          | [NKBIP-03]                            |
-| `32`          | hardcopy reference              | [NKBIP-03]                            |
-| `33`          | prompt reference                | [NKBIP-03]                            |
+| `31`          | external web reference          | [NKBIP-03]                             |
+| `32`          | hardcopy reference              | [NKBIP-03]                             |
+| `33`          | prompt reference                | [NKBIP-03]                             |
 | `40`          | Channel Creation                | [28](28.md)                            |
 | `41`          | Channel Metadata                | [28](28.md)                            |
 | `42`          | Channel Message                 | [28](28.md)                            |
@@ -203,7 +203,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `24242`       | Blobs stored on mediaservers    | [Blossom][blossom]                     |
 | `27235`       | HTTP Auth                       | [98](98.md)                            |
 | `30000`       | Follow sets                     | [51](51.md)                            |
-| `30001`       | Generic lists                   | 51 (deprecated)                        |
+| `30001`       | Generic lists                   |  51 (deprecated)                       |
 | `30002`       | Relay sets                      | [51](51.md)                            |
 | `30003`       | Bookmark sets                   | [51](51.md)                            |
 | `30004`       | Curation sets                   | [51](51.md)                            |
@@ -242,8 +242,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31924`       | Calendar                        | [52](52.md)                            |
 | `31925`       | Calendar Event RSVP             | [52](52.md)                            |
 | `31989`       | Handler recommendation          | [89](89.md)                            |
-| `31990`       | Handler information             | [89](89.md)                            |                         |
-| `32267`       | Software Application            |                                        |                        |
+| `31990`       | Handler information             | [89](89.md)                            |
+| `32267`       | Software Application            |                                        |
 | `34550`       | Community Definition            | [72](72.md)                            |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
