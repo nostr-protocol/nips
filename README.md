@@ -100,6 +100,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
 - [NIP-7D: Threads](7D.md)
+- [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
 
 ## Event Kinds
@@ -148,9 +149,10 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1068`        | Poll                            | [88](88.md)                            |
 | `1111`        | Comment                         | [22](22.md)                            |
 | `1311`        | Live Chat Message               | [53](53.md)                            |
+| `1337`        | Code Snippet                    | [C0](C0.md)                            |
 | `1617`        | Patches                         | [34](34.md)                            |
 | `1621`        | Issues                          | [34](34.md)                            |
-| `1622`        | Replies                         | [34](34.md)                            |
+| `1622`        | Git Replies (deprecated)        | [34](34.md)                            |
 | `1630`-`1633` | Status                          | [34](34.md)                            |
 | `1971`        | Problem Tracker                 | [nostrocket][nostrocket]               |
 | `1984`        | Reporting                       | [56](56.md)                            |
@@ -298,7 +300,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `I`               | root external identity               | --                              | [22](22.md)                                        |
 | `k`               | kind                                 | --                              | [18](18.md), [25](25.md), [72](72.md), [73](73.md) |
 | `K`               | root scope                           | --                              | [22](22.md)                                        |
-| `l`               | label, label namespace               | --                              | [32](32.md)                                        |
+| `l`               | label, label namespace, language name| --                              | [32](32.md), [C0](C0.md)                           |
 | `L`               | label namespace                      | --                              | [32](32.md)                                        |
 | `m`               | MIME type                            | --                              | [94](94.md)                                        |
 | `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md), [22](22.md)              |
@@ -321,17 +323,20 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `clone`           | git clone URL                        | --                              | [34](34.md)                                        |
 | `content-warning` | reason                               | --                              | [36](36.md)                                        |
 | `delegation`      | pubkey, conditions, delegation token | --                              | [26](26.md)                                        |
-| `description`     | description                          | --                              | [34](34.md), [57](57.md), [58](58.md)              |
+| `dep`             | Required dependency                  | --                              | [C0](C0.md)                                        |
+| `description`     | description                          | --                              | [34](34.md), [57](57.md), [58](58.md), [C0](C0.md) |
 | `emoji`           | shortcode, image URL                 | --                              | [30](30.md)                                        |
 | `encrypted`       | --                                   | --                              | [90](90.md)                                        |
+| `extension`       | File extension                       | --                              | [C0](C0.md)                                        |
 | `expiration`      | unix timestamp (string)              | --                              | [40](40.md)                                        |
 | `file`            | full path (string)                   | --                              | [35](35.md)                                        |
 | `goal`            | event id (hex)                       | relay URL                       | [75](75.md)                                        |
 | `image`           | image URL                            | dimensions in pixels            | [23](23.md), [52](52.md), [58](58.md)              |
 | `imeta`           | inline metadata                      | --                              | [92](92.md)                                        |
+| `license`         | License of the shared content        | --                              | [C0](C0.md)                                        |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                              | [57](57.md)                                        |
 | `location`        | location string                      | --                              | [52](52.md), [99](99.md)                           |
-| `name`            | name                                 | --                              | [34](34.md), [58](58.md), [72](72.md)              |
+| `name`            | name                                 | --                              | [34](34.md), [58](58.md), [72](72.md), [C0](C0.md) |
 | `nonce`           | random                               | difficulty                      | [13](13.md)                                        |
 | `preimage`        | hash of `bolt11` invoice             | --                              | [57](57.md)                                        |
 | `price`           | price                                | currency, frequency             | [99](99.md)                                        |
@@ -339,6 +344,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `published_at`    | unix timestamp (string)              | --                              | [23](23.md)                                        |
 | `relay`           | relay url                            | --                              | [42](42.md), [17](17.md)                           |
 | `relays`          | relay list                           | --                              | [57](57.md)                                        |
+| `repo`            | Reference to the origin repository   | --                              | [C0](C0.md)                                        |
+| `runtime`         | Runtime or environment specification | --                              | [C0](C0.md)                                        |
 | `server`          | file storage server url              | --                              | [96](96.md)                                        |
 | `subject`         | subject                              | --                              | [14](14.md), [17](17.md), [34](34.md)              |
 | `summary`         | summary                              | --                              | [23](23.md), [52](52.md)                           |
