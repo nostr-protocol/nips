@@ -89,6 +89,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-73: External Content IDs](73.md)
 - [NIP-75: Zap Goals](75.md)
 - [NIP-78: Application-specific data](78.md)
+- [NIP-7D: Threads](7D.md)
 - [NIP-84: Highlights](84.md)
 - [NIP-86: Relay Management API](86.md)
 - [NIP-88: Polls](88.md)
@@ -99,7 +100,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
-- [NIP-7D: Threads](7D.md)
+- [NIP-B7: Blossom](B7.md)
 - [NIP-C7: Chats](C7.md)
 
 ## Event Kinds
