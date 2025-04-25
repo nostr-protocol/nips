@@ -249,6 +249,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `34550`       | Community Definition            | [72](72.md)                            |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
+| `39701`       | Web bookmarks                   | [B0](B0.md)                            |
 
 [NUD: Custom Feeds]: https://wikifreedia.xyz/cip-01/
 [nostrocket]: https://github.com/nostrocket/NIPS/blob/main/Problems.md
