@@ -14,6 +14,7 @@ See [NIP-59][nip59]
 
 - Only the owner of the key can publish PNS events. So there is no risk of DoS or spam attacks. 
 - Seal (giftwrap inner event) is no longer needed, since knowledge of the outer key implies authenticity of the inner note.
+- The `rumor` (unsigned inner event) is optional but recommended.
 
 ## Terminology & Notation
 
@@ -54,14 +55,14 @@ PNS events use **kind 1080**.
 
 ### 4. Event Structure
 
-The inner plaintext note **MUST** be any **unsigned** Nostr event (any `kind`). This is called the `rumor`. If you want to use this scheme for arbitrary data, use a different application-specific kind, or consider using a [NIP-78][nip78] note as the rumor.
+The inner plaintext note **MUST** be either an **unsigned** nostr event (any `kind`) where the pubkey matches the original `nsec`'s pubkey **OR** any **signed** nostr event. The note in the unsigned case is called a `rumor`. If you want to use this scheme for arbitrary data, use a different application-specific kind, or consider using a [NIP-78][nip78] note.
 
-The inner note can always be signed and broadcasted if needed, but by default they are always a `rumor` so that they are not accidentally broadcasted.
+Notes **SHOULD** be `rumor`s when possible so that they are not accidentally broadcasted.
 
 ### 5. Encryption
 
-1. Encode the plaintext note as a valid Nostr event (`kind` flexible).
-2. Ensure the `sig` field is empty, if not, remove it.
+1. JSON-encode a valid Nostr event (`kind` flexible). This is the inner note.
+2. Optionally drop the `sig` before encoding. Only do this if the `pubkey` matches the original `nsec`'s pubkey.
 3. Derive `pns_key = hkdf_extract(ikm=device_key, salt="nip-pns")`.
 4. Derive `pns_keypair = derive_secp256k1_keypair(pns_key)`.
 5. Derive `pns_nip44_key = hkdf_extract(ikm=pns_key, salt="nip44-v2")`.
@@ -112,7 +113,8 @@ relay.publish(pns_evt)
    - Attempt NIP-44 decryption using `pns_nip44_key`.
    - If successful, parse the decrypted inner event.
    - If decryption fails, discard.
-   - All decrypted notes are assumed to be authored by original `nsec`, ensure `pubkey` of the decrypted note matches the original `nsec`s pubkey.
+   - Parse the decrypted `contents` as JSON.
+   - If the note has a `sig`, optionally verify the note, and discard if its invalid.
 
 ## Reference Implementation (TypeScript excerpt)
 
