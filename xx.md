@@ -16,10 +16,11 @@ An alert is a `kind 32830` event which specifies how a user would like to be not
 All other tags MUST be encrypted to the pubkey indicated by the `p` tag using NIP 44. The following tags are defined:
 
 - `channel` indicates how the user would like to be notified. May be one of `email`, `push`
-- `feed` indicates a [NIP-FE](https://github.com/nostr-protocol/nips/pull/1554) feed that the user wants to be notified about.
+- `feed` (one or more) indicates [NIP-FE](https://github.com/nostr-protocol/nips/pull/1554) feeds that the user wants to be notified about.
 - `cron` (optional) indicates using cron syntax how often the user would like to be notified, if not immediately.
 - `nip46` (optional) client secret, bunker url tuple with permission to sign `kind 22242` AUTH requests (for access to auth-gated relays), for example `["nip46", "<client-private-key>", "<bunker-url>"]`
 - `handler` (zero or more) is the address of a [NIP 89](./89.md) handler event, for example `["handler", "31990:<pubkey>:<identifier>", "wss://relay.com", "web"]`
+- `description` (optional) is a human-readable description of the alert
 - `timezone` (optional) is the user's timezone
 - `locale` (optional) is the user's locale
 
