@@ -54,7 +54,7 @@ PNS events use **kind 1080**.
 
 ### 4. Event Structure
 
-The inner plaintext note **MUST** be any **unsigned** Nostr event (any `kind`). This is called the `rumor`. If you want to use this scheme for arbitrary data, use a different application-specific kind.
+The inner plaintext note **MUST** be any **unsigned** Nostr event (any `kind`). This is called the `rumor`. If you want to use this scheme for arbitrary data, use a different application-specific kind, or consider using a [NIP-78][nip78] note as the rumor.
 
 The inner note can always be signed and broadcasted if needed, but by default they are always a `rumor` so that they are not accidentally broadcasted.
 
@@ -72,14 +72,22 @@ The inner note can always be signed and broadcasted if needed, but by default th
 ### 6. Publishing Workflow
 
 ```javascript
-plaintext_evt = make_note(kind=1, content="hello world")
-inner = json_encode(plaintext_evt)
+inner_event = {
+  kind: 1,
+  pubkey: device_nsec_pubkey,
+  created_at: now(),
+  tags: [],
+  content: "hi",
+}
+
+inner_event.id = generated_id(inner_event)
+inner_event_json = json_encode(inner_event)
 
 pns_key = hkdf_extract(ikm=device_key, salt="nip-pns")
 pns_keypair = derive_secp256k1_keypair(pns_key)
 pns_nip44_key = hkdf_extract(ikm=pns_key, salt="nip44-v2")
 
-ctext = nip44_encrypt(pns_nip44_key, nonce, inner)
+ctext = nip44_encrypt(pns_nip44_key, nonce, inner_event_json)
 
 pns_evt = {
   kind: 1080,
