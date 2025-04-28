@@ -112,7 +112,7 @@ relay.publish(pns_evt)
    - Attempt NIP-44 decryption using `pns_nip44_key`.
    - If successful, parse the decrypted inner event.
    - If decryption fails, discard.
-
+   - All decrypted notes are assumed to be authored by original `nsec`, ensure `pubkey` of the decrypted note matches the original `nsec`s pubkey.
 
 ## Reference Implementation (TypeScript excerpt)
 
