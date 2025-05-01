@@ -165,9 +165,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `2004`        | Torrent Comment                 | [35](35.md)                            |
 | `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
 | `4550`        | Community Post Approval         | [72](72.md)                            |
-| `5000`-`5999` | Job Request                     | [90](90.md)                            |
-| `6000`-`6999` | Job Result                      | [90](90.md)                            |
-| `7000`        | Job Feedback                    | [90](90.md)                            |
 | `7374`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
 | `7375`        | Cashu Wallet Tokens             | [60](60.md)                            |
 | `7376`        | Cashu Wallet History            | [60](60.md)                            |
@@ -329,7 +326,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `dep`             | Required dependency                  | --                              | [C0](C0.md)                                        |
 | `description`     | description                          | --                              | [34](34.md), [57](57.md), [58](58.md), [C0](C0.md) |
 | `emoji`           | shortcode, image URL                 | --                              | [30](30.md)                                        |
-| `encrypted`       | --                                   | --                              | [90](90.md)                                        |
 | `extension`       | File extension                       | --                              | [C0](C0.md)                                        |
 | `expiration`      | unix timestamp (string)              | --                              | [40](40.md)                                        |
 | `file`            | full path (string)                   | --                              | [35](35.md)                                        |
