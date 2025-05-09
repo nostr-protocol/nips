@@ -191,6 +191,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10013`       | Private event relay list        | [37](37.md)                            |
 | `10015`       | Interests list                  | [51](51.md)                            |
 | `10019`       | Nutzap Mint Recommendation      | [61](61.md)                            |
+| `10020`       | Media follows                   | [51](51.md)                            |
 | `10030`       | User emoji list                 | [51](51.md)                            |
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
 | `10063`       | User server list                | [Blossom][blossom]                     |
@@ -250,6 +251,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `34550`       | Community Definition            | [72](72.md)                            |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
+| `39089`       | Starter packs                   | [51](51.md)                            |
+| `39092`       | Media starter packs             | [51](51.md)                            |
 | `39701`       | Web bookmarks                   | [B0](B0.md)                            |
 
 [NUD: Custom Feeds]: https://wikifreedia.xyz/cip-01/
