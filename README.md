@@ -48,6 +48,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-27: Text Note References](27.md)
 - [NIP-28: Public Chat](28.md)
 - [NIP-29: Relay-based Groups](29.md)
+- [NIP-29a: Group-based channels](29a.md)
 - [NIP-30: Custom Emoji](30.md)
 - [NIP-31: Dealing with Unknown Events](31.md)
 - [NIP-32: Labeling](32.md)
@@ -172,6 +173,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `7375`        | Cashu Wallet Tokens             | [60](60.md)                            |
 | `7376`        | Cashu Wallet History            | [60](60.md)                            |
 | `9000`-`9030` | Group Control Events            | [29](29.md)                            |
+| `9031`-`9061` | Channel Control Events          | [29a](29a.md)                          |
 | `9041`        | Zap Goal                        | [75](75.md)                            |
 | `9321`        | Nutzap                          | [61](61.md)                            |
 | `9467`        | Tidal login                     | [Tidal-nostr]                          |
@@ -299,6 +301,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `f`               | currency code                        | --                              | [69](69.md)                                        |
 | `g`               | geohash                              | --                              | [52](52.md)                                        |
 | `h`               | group id                             | --                              | [29](29.md)                                        |
+| `t`               | channel id                           | --                              | [29a](29a.md)                                      |
 | `i`               | external identity                    | proof, url hint                 | [35](35.md), [39](39.md), [73](73.md)              |
 | `I`               | root external identity               | --                              | [22](22.md)                                        |
 | `k`               | kind                                 | --                              | [18](18.md), [25](25.md), [72](72.md), [73](73.md) |
