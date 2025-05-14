@@ -1,7 +1,7 @@
 NIP-XX
 ======
 
-Voice Notes
+Voice Messages
 -----------
 
 **Status:** Draft
