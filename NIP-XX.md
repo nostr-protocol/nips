@@ -6,15 +6,7 @@ Voice Messages
 
 **Status:** Draft
 
-This NIP defines a new event `kind: 1222` for short voice messages, typically up to 60 seconds in length. These are analogous to `kind: 1` (Short Text Note) events but for audio content.
-
-## Motivation
-
-Nostr is primarily a text-based protocol. While `kind: 1` allows for links to any media, a dedicated kind for short voice messages offers several advantages:
-1.  **Discoverability:** Clients can specifically request or filter for voice messages.
-2.  **User Experience:** Clients can provide a tailored UI for recording, sending, and playing voice notes, distinct from general media links.
-3.  **Brevity:** By convention and recommendation, these are short, fostering quick, personal communication.
-4.  **Standardization:** Provides a clear way to share voice snippets without overloading `kind: 1` or requiring complex parsing of its content.
+This NIP defines a new event `kind: 1222` for short voice messages, typically up to 60 seconds in length.
 
 ## Specification
 
