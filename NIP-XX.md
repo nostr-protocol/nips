@@ -21,9 +21,6 @@ The `kind: 1222` event is defined as follows:
     -   For replies, `kind: 1222` events MUST follow `NIP-10` marker conventions (e.g., `e` tags for root, reply, mention; `p` tags for pubkeys being replied to or mentioned).
     -   Other tags MAY be included as per other NIPs (e.g., `t` for hashtags, `g` for geohash, etc.).
 
-### Audio File Hosting
-
-The audio file referenced in the `content` field MUST be hosted on a server accessible via HTTP(S). Clients are responsible for uploading the audio file to a suitable host before creating the `kind: 1222` event. Common media hosts (e.g., nostr.download, blossom.band, blossom.primal.net) or self-hosted solutions can be used.
 
 
 ## Examples
