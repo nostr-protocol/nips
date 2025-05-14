@@ -25,36 +25,6 @@ The `kind: 1222` event is defined as follows:
 
 The audio file referenced in the `content` field MUST be hosted on a server accessible via HTTP(S). Clients are responsible for uploading the audio file to a suitable host before creating the `kind: 1222` event. Common media hosts (e.g., nostr.download, blossom.band, blossom.primal.net) or self-hosted solutions can be used.
 
-## Client Behavior
-
-### Publishing Clients
-
-1.  SHOULD allow users to record and upload audio.
-2.  SHOULD attempt to encode or transcode the audio to `audio/webm` format.
-3.  SHOULD enforce or strongly recommend a maximum audio duration of 60 seconds.
-4.  MUST upload the audio file to a publicly accessible URL.
-5.  MUST set the `kind` to `1222`.
-6.  MUST set the `content` field to the direct URL of the uploaded audio file.
-7.  When replying to another event (including another `kind: 1222`), MUST include `e` and `p` tags as specified in `NIP-10`.
-
-###Receiving Clients
-
-1.  SHOULD recognize `kind: 1222` events as voice notes.
-2.  SHOULD fetch the audio file from the URL specified in the `content` field.
-3.  SHOULD provide an interface to play the audio (e.g., an embedded audio player).
-4.  MAY display the duration of the audio message, if known (e.g., from HTTP headers or by pre-fetching and analyzing the audio file).
-5.  MAY choose to warn users or refuse to automatically play/download audio messages significantly exceeding the 60-second recommendation to conserve bandwidth or prevent abuse.
-6.  SHOULD display `kind: 1222` events in timelines and threads, respecting `NIP-10` reply/threading conventions.
-
-## Relay Behavior
-
-Relays SHOULD treat `kind: 1222` events like any other regular, non-replaceable event (similar to `kind: 1`). No special validation of the `content` URL or the audio format/duration by relays is required or expected.
-
-## Limitations
-
--   **External Hosting:** The availability and persistence of voice notes depend on the external hosting provider of the audio file.
--   **File Size:** While `webm` is efficient, longer or higher-quality recordings can still result in larger file sizes, which might be a concern for users with limited data plans. The 60-second recommendation helps mitigate this.
--   **Accessibility:** This NIP does not specify a mechanism for audio transcriptions. Clients or future NIPs may address this.
 
 ## Examples
 
