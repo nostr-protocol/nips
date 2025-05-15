@@ -6,11 +6,11 @@ Voice Messages
 
 **Status:** Draft
 
-This NIP defines a new event `kind: 1222` for short voice messages, typically up to 60 seconds in length.
+This NIP defines new events `kind: 1222` for root messages and `kind: 1244` for reply messages to be used for short voice messages, typically up to 60 seconds in length.
 
 ## Specification
 
-### Event Kind `1222`
+### Event Kind `1222` and Kind `1244`
 
 The `kind: 1222` event is defined as follows:
 
@@ -18,14 +18,22 @@ The `kind: 1222` event is defined as follows:
     -   The audio file SHOULD be in `audio/webm` format. Clients MAY support other common audio formats like `audio/ogg`, `audio/mp4` (m4a), or `audio/mpeg` (mp3), but `audio/webm` is recommended for broad compatibility and efficiency.
     -   The audio duration SHOULD be no longer than 60 seconds. Clients publishing `kind: 1222` events SHOULD enforce this limit or provide a clear warning to the user if exceeded.
 -   `tags`:
-    -   For replies, `kind: 1222` events MUST follow `NIP-10` marker conventions (e.g., `e` tags for root, reply, mention; `p` tags for pubkeys being replied to or mentioned).
-    -   Other tags MAY be included as per other NIPs (e.g., `t` for hashtags, `g` for geohash, etc.).
+    -   Tags MAY be included as per other NIPs (e.g., `t` for hashtags, `g` for geohash, etc.).
+
+  The `kind: 1244` event is defined as follows:
+  
+-    To be used for replies, `kind: 1244` events MUST follow the structure of `NIP-22`.
+-   `content`: MUST be a URL pointing directly to an audio file.
+    -   The audio file SHOULD be in `audio/webm` format. Clients MAY support other common audio formats like `audio/ogg`, `audio/mp4` (m4a), or `audio/mpeg` (mp3), but `audio/webm` is recommended for broad compatibility and efficiency.
+    -   The audio duration SHOULD be no longer than 60 seconds. Clients publishing `kind: 1222` events SHOULD enforce this limit or provide a clear warning to the user if exceeded.
+-   `tags`:
+    -   Tags MAY be included as per other NIPs (e.g., `t` for hashtags, `g` for geohash, etc.).
 
 
 
 ## Examples
 
-### Root Voice Note Example
+### Root Voice Message Example
 
 ```json
 {
