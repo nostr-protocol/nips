@@ -46,7 +46,7 @@ _An anonymous donation to the human rights foundation with an 100,000 satoshi on
     ["amount", "100000000"],
     ["payer", "", "", "Anonymous"],
     ["payee", "f1989a96d75aa386b4c871543626cbb362c03248b220dc9ae53d7cefbcaaf2c1", "wss://purplepag.es", "HRF"],
-    ["metadata": "{\"program\":\"Bitcoin Development Fund\"}"]
+    ["metadata", "{\"program\":\"Bitcoin Development Fund\"}"]
     ],
   "content": "",
 }
