@@ -1,8 +1,8 @@
 # NIP-YYY: Standardized LLM/AI Agent Communication Protocol
 
-**Abstract:** This NIP proposes a standardized protocol for Large Language Model (LLM) and AI Agent communication on the Nostr network. It aims to build on many aspects of [NIP-90](./90.md) while specifically replacing kind 5050, text generation services, by providing a more comprehensive and robust framework. This proposal standardizes communication patterns, LLM parameter exchange, context and state management, service discovery, and secure payment/job contract mechanisms. The goal is to foster a vibrant, interoperable ecosystem of user-agent and agent-agent interactions and transactions.
+**Abstract:** This NIP proposes a standardized protocol for Large Language Model (LLM) and AI Agent communication on the Nostr network. It aims to build on and replace many aspects of [NIP-90](./90.md) by providing a more comprehensive and robust specification without the extra bloat. This proposal standardizes communication patterns, LLM parameter exchange, context and state management, service discovery, and secure payment/job contract mechanisms. The goal is to foster a vibrant, interoperable ecosystem of user-agent and agent-agent interactions and transactions.
 
-**Replaces:** [NIP-90](./90.md), specifically kind 5050.
+**Replaces:** [NIP-90](./90.md), specifically kinds [5000](https://github.com/nostr-protocol/data-vending-machines/blob/master/kinds/5000.md)-[5250](https://github.com/nostr-protocol/data-vending-machines/blob/master/kinds/5250.md) content generation services, in general.
 
 **Kind:** `ZZZZ` - *TBD*.
 
@@ -27,7 +27,7 @@ For clarity and consistency, this NIP defines the following terms:
 
 ## Motivation
 
-The Nostr protocol's decentralized nature is well-suited for creating open marketplaces of services, including those powered by LLMs and AI. [NIP-90](./90.md) provided an initial generic framework for "data vending machines (DVMs)," but specific standardization for common LLM/AI agent interaction patterns and language model parameters is needed. Current approaches lack clarity in:
+The Nostr protocol's decentralized nature is well-suited for creating open marketplaces of services, including those powered by LLMs and AI. [NIP-90](./90.md) provided an initial generic framework for "data vending machines (DVMs)," but specific standardization for common LLM/AI agent interaction patterns and language model parameters is needed. Current approaches lack clarity and consistency in:
 
 *   Standardized representation of LLM tasks and parameters.
 *   Efficient context and state management for multi-turn conversations.
@@ -372,9 +372,9 @@ This NIP is designed to be extensible:
 *   [NIP-89](./89.md): Recommended Application Handlers
 *   [NIP-90](./90.md): Data Vending Machines
 *   [NIP-98](./98.md): HTTP Auth
-*   Agent Protocol (LangChain): `https://github.com/langchain-ai/agent-protocol`
-*   Open Agentic Schema Framework (OASF): `https://github.com/agntcy/oasf`
-*   Agents JSON: `https://github.com/wild-card-ai/agents-json`
-*   Mostro (Lightning Escrow): `https://github.com/MostroP2P`
-*   OpenAI API Reference: `https://platform.openai.com/docs/api-reference`
-*   JSON Schema: `https://json-schema.org/`
+*   [Agent Protocol (LangChain)](https://github.com/langchain-ai/agent-protocol)
+*   [Open Agentic Schema Framework (OASF)](https://github.com/agntcy/oasf)
+*   [Agents JSON](https://github.com/wild-card-ai/agents-json)
+*   [Mostro (Lightning Escrow)](https://github.com/MostroP2P)
+*   [OpenAI API Reference](https://platform.openai.com/docs/api-reference)
+*   [JSON Schema](https://json-schema.org/)
