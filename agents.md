@@ -1,8 +1,8 @@
 # NIP-YYY: Standardized LLM/AI Agent Communication Protocol
 
-**Abstract:** This NIP proposes a standardized protocol for Large Language Model (LLM) and AI Agent communication on the Nostr network. It aims to build on many aspects of NIP-90 while specifically replacing kind 5050, text generation services, by providing a more comprehensive and robust framework. This proposal standardizes communication patterns, LLM parameter exchange, context and state management, service discovery, and secure payment/job contract mechanisms. The goal is to foster a vibrant, interoperable ecosystem of user-agent and agent-agent interactions and transactions.
+**Abstract:** This NIP proposes a standardized protocol for Large Language Model (LLM) and AI Agent communication on the Nostr network. It aims to build on many aspects of [NIP-90](./90.md) while specifically replacing kind 5050, text generation services, by providing a more comprehensive and robust framework. This proposal standardizes communication patterns, LLM parameter exchange, context and state management, service discovery, and secure payment/job contract mechanisms. The goal is to foster a vibrant, interoperable ecosystem of user-agent and agent-agent interactions and transactions.
 
-**Replaces:** NIP-90, specifically kind 5050.
+**Replaces:** [NIP-90](./90.md), specifically kind 5050.
 
 **Kind:** `ZZZZ` - *TBD*.
 
@@ -27,7 +27,7 @@ For clarity and consistency, this NIP defines the following terms:
 
 ## Motivation
 
-The Nostr protocol's decentralized nature is well-suited for creating open marketplaces of services, including those powered by LLMs and AI. NIP-90 provided an initial generic framework for "data vending machines (DVMs)," but specific standardization for common LLM/AI agent interaction patterns and language model parameters is needed. Current approaches lack clarity in:
+The Nostr protocol's decentralized nature is well-suited for creating open marketplaces of services, including those powered by LLMs and AI. [NIP-90](./90.md) provided an initial generic framework for "data vending machines (DVMs)," but specific standardization for common LLM/AI agent interaction patterns and language model parameters is needed. Current approaches lack clarity in:
 
 *   Standardized representation of LLM tasks and parameters.
 *   Efficient context and state management for multi-turn conversations.
@@ -156,7 +156,7 @@ And MAY include:
 
 ## Agent Cards
 
-To facilitate discovery and interoperability, AI Agents SHOULD publish an "Agent Card." This is a JSON file hosted at a publicly accessible URL, linked from the agent's NIP-05 identifier or a dedicated NIP-89-style announcement (e.g., kind `3ZZZZ`, where `ZZZZ` is the NIP kind).
+To facilitate discovery and interoperability, AI Agents SHOULD publish an "Agent Card." This is a JSON file hosted at a publicly accessible URL, linked from the agent's [NIP-05](./05.md) identifier or a dedicated [NIP-89](./89.md)-style announcement (e.g., kind `3ZZZZ`, where `ZZZZ` is the NIP kind). Agent Cards offer a much more detailed and reliable way to describe an agent's details, parameters, and custom properties, without the need to perpetually broadcast [NIP-89](./89.md) announcements.
 
 Agent Cards MUST be versioned (e.g., using a `version` field or SemVer in the URL). Clients SHOULD cache Agent Cards but periodically refresh them.
 
@@ -258,8 +258,8 @@ Agent Cards MUST be versioned (e.g., using a `version` field or SemVer in the UR
 
 ## Discovery of AI Agents
 
-*   **Agent Cards:** As described above, linked from NIP-05 or a dedicated NIP-89 announcement.
-*   **NIP-89 Application Handlers:** Agents SHOULD advertise their support for this NIP (`kind ZZZZ`) via NIP-89, allowing clients to discover them.
+*   **Agent Cards:** As described above, linked from [NIP-05](./05.md) or a dedicated [NIP-89](./89.md) announcement.
+*   **[NIP-89](./89.md) Application Handlers:** Agents SHOULD advertise their support for this NIP (`kind ZZZZ`) via [NIP-89](./89.md), allowing clients to discover them.
 *   **Dedicated Announcement Kind:** A kind like `3ZZZZ` (e.g., `37001` if `ZZZZ` is `7001`) can be used for agents to announce their Agent Card URL and key capabilities using standardized tags (e.g., `["capability", "text_summarization"]`, `["capability", "image_generation"]`).
 *   **Searchable Tags:** Using standardized tags in these announcements facilitates client-side searching and filtering.
 *   **Directories:** Services like Nostrbook MAY be leveraged to list AI agents and their Agent Cards.
@@ -290,28 +290,27 @@ AI Agents MUST use the `["error", "<json_string>"]` tag in their Task Result eve
 
 ## Security Considerations
 
-*   **Authentication:** Agents MAY require client authentication (e.g., NIP-98) for certain operations or to access higher rate limits. This SHOULD be specified in the Agent Card.
-*   **Input Validation & Sanitization:** Agents MUST validate and sanitize all inputs from clients to prevent prompt injection, denial-of-service, and other attacks.
+*   **Authentication:** Agents MAY require client authentication (e.g., [NIP-98](./98.md)) for certain operations or to access higher rate limits. This SHOULD be specified in the Agent Card.
+*   **Input Validation & Sanitization:** Agents SHOULD validate and sanitize all inputs from clients to prevent prompt injection, denial-of-service, and other attacks.
 *   **Output Sanitization:** Agents SHOULD sanitize outputs to prevent the generation of malicious content or exposure of sensitive information.
-*   **Resource Limits:** Agents MUST implement resource limits (CPU, memory, time) for processing requests to prevent abuse.
+*   **Resource Limits:** Agents SHOULD implement resource limits (CPU, memory, time) for processing requests to prevent abuse.
 *   **Rate Limiting:** Agents SHOULD implement rate limiting based on `pubkey`, IP address (if applicable), or other factors. Details MAY be in the Agent Card.
-*   **Encryption:** For sensitive data, communication SHOULD utilize end-to-end encryption (e.g., NIP-04/NIP-17/NIP-44 between client and agent for the content of `request` and `result` tags if not already encrypted within the payload).
-*   **Permissions:** Agents that can perform actions (e.g., call tools, interact with other services) MUST operate under the principle of least privilege.
+*   **Encryption:** For sensitive data, communication SHOULD utilize end-to-end encryption (e.g., [NIP-04](./04.md)/[NIP-17](./17.md)/[NIP-44](./44.md) between client and agent for the content of `request` and `result` tags if not already encrypted within the payload).
+*   **Permissions:** Agents that can perform actions (e.g., call tools, interact with other services) SHOULD operate under the principle of least privilege.
 *   **Client-Side Caution:** Clients SHOULD be cautious when interacting with unknown or untrusted AI Agents. Verify Agent Cards and look for community trust signals.
 *   **Session Security:** Session IDs (`t` tag) are not inherently secret. Do not embed sensitive capability-granting tokens directly in them. Use established authentication methods for sensitive operations within a session.
 
 ## Privacy Considerations
 
 *   **Data Minimization:** Agents SHOULD only request and store data necessary for providing the service.
-*   **Transparency:** Agents MUST clearly state their data handling practices in their privacy policy, linked from the Agent Card.
-*   **User Consent:** For any data processing beyond the immediate task request, explicit user consent SHOULD be obtained.
+*   **Transparency:** Agents SHOULD clearly state their data handling practices in their privacy policy, linked from the Agent Card.
 *   **Data Deletion:** Clients SHOULD have a way to request deletion of their data, and agents SHOULD comply as per their privacy policy.
 *   **Anonymization/Pseudonymization:** Agents SHOULD consider anonymizing or pseudonymizing data used for logging or analytics.
 
-## Removed Features (from NIP-90 context)
+## Removed Features (from [NIP-90](./90.md) context)
 
-*   **Job Chaining:** Removed to simplify the protocol. Complex workflows can be orchestrated by clients by making sequential requests.
-*   **Bid System:** Removed. Pricing is made explicit via Agent Cards and the `cost` tag, or negotiated through contracts. This reduces complexity and latency.
+*   **Job Chaining:** Removed to simplify the protocol. Complex workflows can be orchestrated by clients by making sequential requests, linked by standard tags, `session_id`s, and timestamps.
+*   **Bid System:** Removed. Pricing is made explicit via Agent Cards and the `cost` tag, or negotiated through contracts. This reduces complexity and latency. Simple overpayments MAY be used to incentivize agents to complete tasks during high demand.
 
 ## Extensibility
 
@@ -322,7 +321,7 @@ This NIP is designed to be extensible:
 
 ## Example Flow (Summarization Task)
 
-1.  **Client Discovers Agent:** Client finds an agent supporting `kind ZZZZ` via NIP-89 or a directory, and fetches its Agent Card.
+1.  **Client Discovers Agent:** Client finds an agent supporting `kind ZZZZ` via [NIP-89](./89.md) or a directory, and fetches its Agent Card.
 2.  **Client Constructs Request:**
     ```json
     // Nostr Event
@@ -365,17 +364,17 @@ This NIP is designed to be extensible:
 
 ## References
 
-*   NIP-01: Basic protocol flow
-*   NIP-04: Encrypted Direct Message
-*   NIP-05: Mapping Nostr keys to DNS-based internet identifiers
-*   NIP-17: Encrypted Direct Messages v2
-*   NIP-44: Encrypted Direct Messages v3
-*   NIP-89: Recommended Application Handlers
-*   NIP-90: Data Vending Machines
-*   NIP-98: HTTP Auth
-*   Agent Protocol (LangChain): `https://blog.langchain.dev/agent-protocol-interoperability-for-llm-agents/`
+*   [NIP-01](./01.md): Basic protocol flow
+*   [NIP-04](./04.md): Encrypted Direct Message
+*   [NIP-05](./05.md): Mapping Nostr keys to DNS-based internet identifiers
+*   [NIP-17](./17.md): Encrypted Direct Messages v2
+*   [NIP-44](./44.md): Encrypted Direct Messages v3
+*   [NIP-89](./89.md): Recommended Application Handlers
+*   [NIP-90](./90.md): Data Vending Machines
+*   [NIP-98](./98.md): HTTP Auth
+*   Agent Protocol (LangChain): `https://github.com/langchain-ai/agent-protocol`
 *   Open Agentic Schema Framework (OASF): `https://github.com/agntcy/oasf`
-*   Agents JSON: `https://fortegrp.com/insights/agents-json-schema-ai-agents`
-*   Mostro (Lightning Escrow): `https://mostro.network/`
+*   Agents JSON: `https://github.com/wild-card-ai/agents-json`
+*   Mostro (Lightning Escrow): `https://github.com/MostroP2P`
 *   OpenAI API Reference: `https://platform.openai.com/docs/api-reference`
 *   JSON Schema: `https://json-schema.org/`
