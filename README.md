@@ -104,6 +104,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-B7: Blossom](B7.md)
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
+- [NIP-E: App Configs](E.md)
 
 ## Event Kinds
 
@@ -131,9 +132,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `21`          | Video Event                     | [71](71.md)                            |
 | `22`          | Short-form Portrait Video Event | [71](71.md)                            |
 | `30`          | internal reference              | [NKBIP-03]                             |
-| `31`          | external web reference          | [NKBIP-03]                            |
-| `32`          | hardcopy reference              | [NKBIP-03]                            |
-| `33`          | prompt reference                | [NKBIP-03]                            |
+| `31`          | external web reference          | [NKBIP-03]                             |
+| `32`          | hardcopy reference              | [NKBIP-03]                             |
+| `33`          | prompt reference                | [NKBIP-03]                             |
 | `40`          | Channel Creation                | [28](28.md)                            |
 | `41`          | Channel Metadata                | [28](28.md)                            |
 | `42`          | Channel Message                 | [28](28.md)                            |
@@ -236,6 +237,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30403`       | Draft Classified Listing        | [99](99.md)                            |
 | `30617`       | Repository announcements        | [34](34.md)                            |
 | `30618`       | Repository state announcements  | [34](34.md)                            |
+| `30707`       | App Config                      | [E](E.md)                              |
 | `30818`       | Wiki article                    | [54](54.md)                            |
 | `30819`       | Redirects                       | [54](54.md)                            |
 | `31234`       | Draft Event                     | [37](37.md)                            |
@@ -296,6 +298,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | name              | value                                | other parameters                | NIP                                                |
 | ----------------- | ------------------------------------ | ------------------------------- | -------------------------------------------------- |
 | `a`               | coordinates to an event              | relay URL                       | [01](01.md)                                        |
+| `c`               | config                               | config name, config value       | [E](E.md)                                          |
 | `A`               | root address                         | relay URL                       | [22](22.md)                                        |
 | `d`               | identifier                           | --                              | [01](01.md)                                        |
 | `e`               | event id (hex)                       | relay URL, marker, pubkey (hex) | [01](01.md), [10](10.md)                           |
