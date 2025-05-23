@@ -88,7 +88,7 @@ Clients MAY support additional assets and networks beyond this list.
 
 ## Rationale
 
-The `w` tag was chosen to represent "wallet" or "where to send" donations. This provides:
+The `w` tag was chosen to represent "wallet" for donations "wants" accepted forms of payment. This provides:
 
 - **Simplicity**: A straightforward 4-element tag structure
 - **Flexibility**: Support for any asset/network combination
