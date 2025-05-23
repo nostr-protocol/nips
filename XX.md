@@ -45,8 +45,10 @@ Clients SHOULD support the following common combinations:
 
 #### Bitcoin (BTC)
 - `bitcoin`: Bitcoin mainnet (addresses: bc1..., 1..., 3...)
-- `liquid`: Liquid Network sidechain (addresses: lq1...)
 - `lightning`: Lightning Network (lightning addresses: user@domain.tld)
+
+#### Liquid Bitcoin (LBTC)
+- `liquid`: Liquid Network sidechain (addresses: lq1...)
 
 #### Ethereum (ETH)  
 - `ethereum`: Ethereum mainnet (addresses: 0x...)
