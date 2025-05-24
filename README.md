@@ -150,7 +150,10 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1063`        | File Metadata                   | [94](94.md)                            |
 | `1068`        | Poll                            | [88](88.md)                            |
 | `1111`        | Comment                         | [22](22.md)                            |
-| `1311`        | Live Chat Message               | [53](53.md)                            |
+| `1311`        | Live Stream Chat Message        | [53](53.md)                            |
+| `1312`        | Live Stream Raid                | [53](53.md)                            |
+| `1313`        | Live Stream Clip                | [53](53.md)                            |
+| `1314`        | Live Stream Timeout             | [53](53.md)                            |
 | `1337`        | Code Snippet                    | [C0](C0.md)                            |
 | `1617`        | Patches                         | [34](34.md)                            |
 | `1621`        | Issues                          | [34](34.md)                            |
