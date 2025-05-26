@@ -99,6 +99,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-101h: Health and Fitness Metrics](101h.md)
 - [NIP-7D: Threads](7D.md)
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
@@ -150,6 +151,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1111`        | Comment                         | [22](22.md)                            |
 | `1311`        | Live Chat Message               | [53](53.md)                            |
 | `1337`        | Code Snippet                    | [C0](C0.md)                            |
+| `1351`-`1399` | Health Metrics (Primary)        | [101h](101h.md)                        |
 | `1617`        | Patches                         | [34](34.md)                            |
 | `1621`        | Issues                          | [34](34.md)                            |
 | `1622`        | Git Replies (deprecated)        | [34](34.md)                            |
@@ -162,6 +164,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `2003`        | Torrent                         | [35](35.md)                            |
 | `2004`        | Torrent Comment                 | [35](35.md)                            |
 | `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
+| `2351`-`2399` | Health Metrics (Secondary)      | [101h](101h.md)                        |
 | `4550`        | Community Post Approval         | [72](72.md)                            |
 | `5000`-`5999` | Job Request                     | [90](90.md)                            |
 | `6000`-`6999` | Job Result                      | [90](90.md)                            |
@@ -352,8 +355,13 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `thumb`           | badge thumbnail                      | dimensions in pixels            | [58](58.md)                                        |
 | `title`           | article title                        | --                              | [23](23.md)                                        |
 | `tracker`         | torrent tracker URL                  | --                              | [35](35.md)                                        |
+| `unit`            | unit of measurement                  | --                              | [101h](101h.md)                                    |
 | `web`             | webpage URL                          | --                              | [34](34.md)                                        |
 | `zap`             | pubkey (hex), relay URL              | weight                          | [57](57.md)                                        |
+| `converted_value` | alternative unit value               | unit                            | [101h](101h.md)                                    |
+| `period`          | time period for metric               | --                              | [101h](101h.md)                                    |
+| `source`          | data source/application              | --                              | [101h](101h.md)                                    |
+| `timestamp`       | ISO8601 measurement time             | --                              | [101h](101h.md)                                    |
 
 Please update these lists when proposing new NIPs.
 
