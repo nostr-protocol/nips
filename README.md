@@ -334,6 +334,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `description`     | description                          | --                              | [34](34.md), [57](57.md), [58](58.md), [C0](C0.md) |
 | `emoji`           | shortcode, image URL                 | --                              | [30](30.md)                                        |
 | `encrypted`       | --                                   | --                              | [90](90.md)                                        |
+| `ends`            | unix timestamp (string)              | --                              | [53](53.md), [88](88.md)                           |
 | `extension`       | File extension                       | --                              | [C0](C0.md)                                        |
 | `expiration`      | unix timestamp (string)              | --                              | [40](40.md)                                        |
 | `file`            | full path (string)                   | --                              | [35](35.md)                                        |
