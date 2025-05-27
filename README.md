@@ -88,6 +88,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-72: Moderated Communities](72.md)
 - [NIP-73: External Content IDs](73.md)
 - [NIP-75: Zap Goals](75.md)
+- [NIP-77: Negentropy Syncing](77.md)
 - [NIP-78: Application-specific data](78.md)
 - [NIP-7D: Threads](7D.md)
 - [NIP-84: Highlights](84.md)
