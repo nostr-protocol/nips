@@ -1,43 +1,46 @@
 # NIP-XX
 
-## Donation Addresses in User Metadata
+## Static Payment Addresses
 
 `draft` `optional`
 
 ## Abstract
 
-This NIP defines a standardized method for including donation addresses in user metadata events using `w` tags to specify supported assets, networks, and receiving addresses.
+This NIP defines a standardized method for publishing static payment addresses using a dedicated event kind, allowing users to advertise their preferred payment methods across multiple cryptocurrencies and networks.
 
 ## Motivation
 
-Users want to publish their donation addresses in their profiles in a standardized way that is interoperable across Nostr clients. Currently, there is no consistent method for including payment information in user metadata, leading to fragmented implementations and poor user experience.
+Users want to publish their payment addresses in a standardized way that is interoperable across Nostr clients. This creates a dedicated event type that clients can fetch only when needed, such as when viewing a user's profile or donation page.
 
 ## Specification
 
-### The `w` tag
+### Event Kind
 
-A new optional `w` tag is introduced for `kind 0` metadata events defined in [NIP-01](01.md):
+This NIP introduces **kind 10780** for static payment addresses.
+
+### Event Structure
 
 ```json
 {
-  "kind": 0,
+  "kind": 10780,
+  "content": "",
   "tags": [
-    ["w", "BTC", "bitcoin", "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"],
-    ["w", "BTC", "lightning", "alice@zbd.gg"],
-    ["w", "ETH", "ethereum", "0x742d35Cc6634C0532925a3b2F0E5f4C96C60BcEe"],
-    ["w", "XMR", "monero", "4A5BNZmM5VXyU2P7J8Q3hY8wXD2E8L9G3qZ2vF1H7sR4cN8xY6fL2mK9qW3eT5r"],
-    ["w", "USDT", "liquid", "lq1qqf7ns3aawy8k3gv6v6zhqjcw99e8v0fyxrc0ewz3vkclfslp7y9c24k8xm6l3j"]
+    ["BTC", "bitcoin", "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"],
+    ["BTC", "lightning", "alice@example.com"],
+    ["ETH", "ethereum", "0x742d35Cc6634C0532925a3b2F0E5f4C96C60BcEe"],
+    ["XMR", "monero", "4A5BNZmM5VXyU2P7J8Q3hY8wXD2E8L9G3qZ2vF1H7sR4cN8xY6fL2mK9qW3eT5r"],
+    ["LBTC", "liquid", "lq1qqf7ns3aawy8k3gv6v6zhqjcw99e8v0fyxrc0ewz3vkclfslp7y9c24k8xm6l3j"]
   ],
-  "content": "{\"name\": \"Alice\", \"about\": \"Nostr enthusiast\"}",
   // other fields...
 }
 ```
 
-A `w` tag MUST have exactly 4 elements:
-1. The string `"w"` (tag name)
-2. `<asset>`: The asset ticker (case-sensitive, uppercase recommended)
-3. `<network>`: The network identifier (case-sensitive, lowercase recommended)  
-4. `<address>`: The receiving address for the specified asset on the specified network
+### Tag Structure
+
+Each tag MUST have exactly 3 elements:
+1. `<asset>`: The asset ticker (case-sensitive, uppercase recommended)
+2. `<network>`: The network identifier (case-sensitive, lowercase recommended)  
+3. `<address>`: The receiving address for the specified asset on the specified network
 
 ### Supported Assets and Networks
 
@@ -45,7 +48,7 @@ Clients SHOULD support the following common combinations:
 
 #### Bitcoin (BTC)
 - `bitcoin`: Bitcoin mainnet (addresses: bc1..., 1..., 3...)
-- `lightning`: Lightning Network (lightning addresses: user@domain.tld)
+- `lightning`: Lightning Network (lightning addresses: user@domain.tld only)
 
 #### Liquid Bitcoin (LBTC)
 - `liquid`: Liquid Network sidechain (addresses: lq1...)
@@ -59,7 +62,7 @@ Clients SHOULD support the following common combinations:
 #### Tether USD (USDT)
 - `ethereum`: USDT on Ethereum
 - `liquid`: USDT on Liquid Network  
-- `tron`: USDT on Tron (addresses: T...)
+- `tron`: USDT on Tron (addresses: TRX...)
 
 Clients MAY support additional assets and networks beyond this list.
 
@@ -67,69 +70,39 @@ Clients MAY support additional assets and networks beyond this list.
 
 ### Client Behavior
 
-1. **Display**: Clients SHOULD display both the asset name and network for clarity (e.g., "BTC (Lightning)", "USDT (Ethereum)")
+1. **Fetching**: Clients SHOULD fetch payment address events only when needed (e.g., when viewing a profile or donation interface)
 
-2. **User Interface**: Clients SHOULD provide mechanisms for users to easily copy addresses or display QR codes for donation addresses
+2. **Display**: Clients SHOULD display both the asset name and network for clarity (e.g., "BTC (Lightning)", "USDT (Ethereum)")
 
-3. **Ordering**: Multiple `w` tags MAY be interpreted as the user's preferred donation methods in order of appearance
+3. **User Interface**: Clients SHOULD provide mechanisms for users to easily copy addresses or display QR codes
 
-4. **Validation**: Clients MAY implement basic format validation for addresses on supported networks
+4. **Ordering**: Multiple `payment` tags MAY be interpreted as the user's preferred payment methods in order of appearance
 
-5. **Unknown Assets/Networks**: Clients SHOULD gracefully handle unknown asset or network identifiers by displaying them as-is rather than throwing errors
+5. **Validation**: Clients MAY implement basic format validation for addresses on supported networks
 
-### Address Format Examples
+6. **Unknown Assets/Networks**: Clients SHOULD gracefully handle unknown asset or network identifiers by displaying them as-is
+
+## Address Format Examples
 
 - **Bitcoin mainnet**: `bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh`
-- **Bitcoin Lightning**: `alice@zbd.gg` or `lnbc1...` (bolt11 invoices)
+- **Bitcoin Lightning**: `alice@example.com` (lightning addresses only)
 - **Liquid Network**: `lq1qqf7ns3aawy8k3gv6v6zhqjcw99e8v0fyxrc0ewz3vkclfslp7y9c24k8xm6l3j`
 - **Ethereum**: `0x742d35Cc6634C0532925a3b2F0E5f4C96C60BcEe`
 - **Tron**: `TRX9QqJo6UbgJ1CXr5wQv9vJ2N8KdGhH9L`
 - **Monero**: `4A5BNZmM5VXyU2P7J8Q3hY8wXD2E8L9G3qZ2vF1H7sR4cN8xY6fL2mK9qW3eT5r`
 
-## Rationale
-
-The `w` tag was chosen to represent "wallet" for donations or "wants" for forms of payment. This provides:
-
-- **Simplicity**: A straightforward 4-element tag structure
-- **Flexibility**: Support for any asset/network combination
-- **Extensibility**: Easy to add new assets and networks over time
-- **Clarity**: Explicit network specification prevents confusion (e.g., USDT on different chains)
-
-The asset and network are separated to allow precise specification of the blockchain or payment network, which is crucial for cryptocurrencies that exist on multiple networks.
-
 ## Security Considerations
 
-- Users SHOULD verify their addresses are correct before publishing, as incorrect addresses may result in permanent loss of funds
-- Clients SHOULD warn users when addresses don't match expected formats for known networks
-- Lightning addresses SHOULD be tested for functionality before publishing
-- Users SHOULD be aware that published donation addresses are public and permanently associated with their Nostr identity
-
-## Examples
-
-### Basic Bitcoin donation
-```json
-["w", "BTC", "bitcoin", "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"]
-```
-
-### Multiple donation options
-```json
-{
-  "tags": [
-    ["w", "BTC", "lightning", "donations@alice.com"],
-    ["w", "BTC", "bitcoin", "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"],
-    ["w", "ETH", "ethereum", "0x742d35Cc6634C0532925a3b2F0E5f4C96C60BcEe"],
-    ["w", "USDT", "liquid", "lq1qqf7ns3aawy8k3gv6v6zhqjcw99e8v0fyxrc0ewz3vkclfslp7y9c24k8xm6l3j"]
-  ]
-}
-```
-
-## Backwards Compatibility
-
-Clients that do not support the `w` tag SHOULD ignore it without error. This NIP does not affect existing functionality or other metadata fields.
+- Users SHOULD verify their addresses are correct before publishing
+- Clients SHOULD warn users when addresses don't match expected formats
+- Lightning addresses SHOULD be tested to verify that invoices can be fetched from them
+- Users SHOULD be aware that payment addresses are public and permanently associated with their Nostr identity
+- Consider the privacy implications of publishing payment addresses
 
 ## Future Extensions
 
 This specification may be extended in the future to include:
 - Additional standardized assets and networks
-- Optional metadata fields (e.g., memo requirements, minimum amounts)
+- Optional metadata fields for payment preferences
 - Integration with other payment protocols
+- Support for dynamic payment requests
