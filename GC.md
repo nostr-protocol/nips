@@ -45,6 +45,7 @@ Optional tags:
 - `t` (optional, repeated): Hashtags/categories (e.g., "urban", "forest", "historical")
 - `published_at` (optional): Unix timestamp when the cache was first hidden
 - `status` (optional): Current cache status - `active` (default), `disabled`, or `archived`
+- `relay` (optional but recommended, repeated): Preferred relays for log submissions in order of preference
 
 ### Example
 
@@ -68,7 +69,9 @@ Optional tags:
     ["t", "scenic"],
     ["t", "river"],
     ["published_at", "1704067200"],
-    ["status", "active"]
+    ["status", "active"],
+    ["relay", "wss://geocaching.example.com"],
+    ["relay", "wss://oregon.nostr.com"]
   ]
 }
 ```
@@ -84,7 +87,7 @@ The `.content` field contains the log message as plain text.
 ### Tags
 
 Required tags:
-- `a` (required): Reference to the geocache being logged using NIP-01 `a` tag format: `["a", "37515:<cache-owner-pubkey>:<d-tag>", "<optional-relay-url>"]`
+- `a` (required): Reference to the geocache being logged using NIP-01 `a` tag format: `["a", "37515:<cache-owner-pubkey>:<d-tag>", "<relay-url>"]`. The relay URL SHOULD be the preferred relay from the cache listing if available
 - `log-type` (required): One of:
   - `found`: Successfully found the cache
   - `dnf`: Did Not Find despite searching
@@ -108,7 +111,7 @@ Optional tags:
   "created_at": 1234567890,
   "content": "Beautiful location! Took me 20 minutes to find it. TFTC!",
   "tags": [
-    ["a", "37515:abc123...:riverside-mystery-2024", "wss://relay.example.com"],
+    ["a", "37515:abc123...:riverside-mystery-2024", "wss://geocaching.example.com"],
     ["log-type", "found"],
     ["image", "https://example.com/selfie.jpg"],
     ["g", "dp3w"],
@@ -116,6 +119,29 @@ Optional tags:
   ]
 }
 ```
+
+## Relay Selection
+
+### For Cache Listings
+Cache owners SHOULD include one or more `relay` tags in their listing events to indicate preferred relays for log submissions. Relays are listed in order of preference, with the first relay being the primary choice.
+
+### For Log Events
+When creating log events (kind:37516), clients SHOULD:
+1. Check the cache listing for `relay` tags and publish logs to those relays
+2. Include the first (primary) relay URL in the `a` tag reference (third parameter)
+3. Also publish to the user's regular write relays for their own activity tracking
+
+### Geographic and Specialized Relays
+Communities MAY establish geographic or geocaching-specific relays. Clients SHOULD:
+- Allow users to configure geocaching-specific relays in settings
+- Consider implementing relay selection based on geohash prefixes for geographic relevance
+- Support community-maintained relay lists for geocaching activities
+
+### Relay Discovery
+When querying for geocaches and logs, clients SHOULD:
+1. Use the relay hints from `a` tags when fetching referenced cache listings
+2. Query both general-purpose and specialized geocaching relays
+3. Consider geographic proximity when selecting relays to query
 
 ## Client Implementation Notes
 
