@@ -1,0 +1,68 @@
+NIP-46
+======
+
+Alerts
+------
+
+An alert provider is a nostr application whose job is to monitor the nostr network and notify users of updates via email, push, SMS, DM, etc.
+
+# Alert
+
+An alert is a `kind 32830` event which specifies how a user would like to be notified, and by whom. It MUST have the following tags, and no others:
+
+- A `d` tag set to an arbitrary string
+- A `p` tag indicating the provider the alert is addressed to
+
+All other tags MUST be encrypted to the pubkey indicated by the `p` tag using NIP 44. The following tags are defined:
+
+- `channel` indicates how the user would like to be notified. May be one of `email`, `push`
+- `feed` (one or more) indicates [NIP-FE](https://github.com/nostr-protocol/nips/pull/1554) feeds that the user wants to be notified about.
+- `cron` (optional) indicates using cron syntax how often the user would like to be notified, if not immediately.
+- `nip46` (optional) client secret, bunker url tuple with permission to sign `kind 22242` AUTH requests (for access to auth-gated relays), for example `["nip46", "<client-private-key>", "<bunker-url>"]`
+- `handler` (zero or more) is the address of a [NIP 89](./89.md) handler event, for example `["handler", "31990:<pubkey>:<identifier>", "wss://relay.com", "web"]`
+- `description` (optional) is a human-readable description of the alert
+- `timezone` (optional) is the user's ISO 8601 timezone (e.g. `+03:00`)
+- `locale` (optional) is the user's ISO 3166/639 locale (e.g. `en-US`)
+
+If channel is set to `push`, the following tags are also required:
+
+- `token` indicates a push notification token
+- `platform` indicates the user's app platform (`ios|android|web`)
+
+If channel is set to `email`, the following tags are also required:
+
+- `email` indicates the user's email address
+
+## Unsubscribing
+
+When a user no longer wants to be notified, they may delete the alert by address, as specified in [NIP 09](./09.md).
+
+## Example
+
+Below is an example tag array (the entire event is not shown because the tags are encrypted and placed in `content`).
+
+```jsonc
+[
+  ["channel", "email"],
+  ["cron", "0 15 * * 1"],
+  ["email", "email@example.com"],
+  ["feed", "[\"intersection\",[\"relay\",\"wss://relay.example.com/\"],[\"scope\",\"network\"]]"],
+  ["bunker_url", "bunker://9ee57420bac3db5f1d7f43e1ed5f8bb6b81bf6df6350eb3377961da229eaab22?elay=wss://r.example.com&secret=9393"]
+]
+```
+
+# Alerts Status
+
+A provider SHOULD publish a `kind 32831` event which details the status of the user's alert. A non-existent alert status event indicates that no action has been taken. It MUST have the following tags, and no others:
+
+- A `d` tag set to the address of the `kind 32830` it refers to
+- A `p` tag indicating the author of the `kind 32830` alert event
+
+All other tags MUST be encrypted to the pubkey indicated by the `p` tag using NIP 44. The following tags are defined:
+
+- `status` SHOULD be one of `ok`, `pending`, `payment-required`, `error`
+- `message` SHOULD include human-readable information explaining the status of the alert
+
+# Discovery
+
+A provider MAY advertise its services via NIP 89 client listing.
