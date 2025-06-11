@@ -166,9 +166,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `2004`        | Torrent Comment                 | [35](35.md)                            |
 | `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
 | `4550`        | Community Post Approval         | [72](72.md)                            |
-| `5000`-`5999` | Job Request                     | [90](90.md)                            |
-| `6000`-`6999` | Job Result                      | [90](90.md)                            |
-| `7000`        | Job Feedback                    | [90](90.md)                            |
+| `5000`-`5999` | Legacy DVM Job Request          | [90](90.md)                            |
+| `6000`-`6999` | Legacy DVM Job Result           | [90](90.md)                            |
+| `7000`        | Legacy DVM Job Feedback         | [90](90.md)                            |
 | `7374`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
 | `7375`        | Cashu Wallet Tokens             | [60](60.md)                            |
 | `7376`        | Cashu Wallet History            | [60](60.md)                            |
@@ -198,9 +198,12 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10063`       | User server list                | [Blossom][blossom]                     |
 | `10096`       | File storage server list        | [96](96.md)                            |
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
+| `11998`       | DVM Heartbeat                   | [90](90.md)                            |
+| `11999`       | DVM Provider Announcement       | [90](90.md)                            |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `17375`       | Cashu Wallet Event              | [60](60.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
+| `21999`       | DVM Feedback                    | [90](90.md)                            |
 | `22242`       | Client Authentication           | [42](42.md)                            |
 | `23194`       | Wallet Request                  | [47](47.md)                            |
 | `23195`       | Wallet Response                 | [47](47.md)                            |
@@ -247,8 +250,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31924`       | Calendar                        | [52](52.md)                            |
 | `31925`       | Calendar Event RSVP             | [52](52.md)                            |
 | `31989`       | Handler recommendation          | [89](89.md)                            |
-| `31990`       | Handler information             | [89](89.md)                            |                         |
-| `32267`       | Software Application            |                                        |                        |
+| `31990`       | Handler information             | [89](89.md)                            |
+| `31999`       | DVM Announcement                | [90](90.md)                            |
+| `32267`       | Software Application            |                                        |
 | `34550`       | Community Definition            | [72](72.md)                            |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
