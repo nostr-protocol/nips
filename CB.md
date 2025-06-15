@@ -6,7 +6,14 @@ Kanban Boards
 
 `draft` `optional`
 
-A Kanban Board is a replaceable `kind 37733` event, which includes a list of column events.
+A Kanban Board is a replaceable `kind 37733` event, which includes a list of column names and a mapping to their associated content.
+
+Columns can contain any nostr event.
+
+Clients are expected to only support a subset of event kinds when rendering Kanban cards.
+
+When a column holds a large number of cards, these cards SHOULD be placed into a `kind 37734 Column reserve` event to prevent the `kind 37733` event from getting too large.
+
 
 ```json
 {
@@ -21,19 +28,28 @@ A Kanban Board is a replaceable `kind 37733` event, which includes a list of col
     // For example a GitRepositoryAnnouncement:
     ["A", "30617:<pubkey>:<repo-identifier>"],
 
-    // Columns have the format `["a", "<coordinate>", "<title>", "<optional-relay-hint>"]` 
-    // and are arranged in the intended order. 
-    ["a", "<column-kind>:<pubkey>:<d-identifier>", "To Do", "wss://relay.lol"],
-    ["a", "<column-kind>:<pubkey>:<d-identifier>", "In Progress", ""],
-    ["a", "<column-kind>:<pubkey>:<d-identifier>", "Done"],
+    // Columns arranged in the intended order. 
+    // Column IDs should be lowercase and alphanumeric.
+    ["col", "col-id-1", "To Do"],
+    ["col", "col-id-2", "In Progress"],
+    ["col", "col-id-2", "Done"],
+
+    // Column items `["e/a", "<event-id/coordinate>", "<col-id>", "<optional-relay-hint>"]` arranged in the intended order
+    ["e", "<event-id>", "col-id-1", "wss://relay.lol"],
+    ["a", "<event-coordinate>", "col-id-1", ""],
+    ["e", "<event-id>", "col-id-2"],
+    ["e", "<event-id>", "col-id-3"],
+
+    // Optional column reserve for holding large amount of cards 
+    // `["r", "37734:<pubkey>:<d-identifier", "<col-id>", "<optional-relay-hint>"]`
+    ["r", "37734:<pubkey>:<d-identifier", "col-id-3", "wss://relay.lol"],
   ]
 }
 ```
 
-## Columns 
+## Column reserve
 
-Columns are `kind 37734` events containing a list of Kanban cards, which can be of any event kind.
-Clients are expected to only support a subset of event kinds when rendering Kanban cards.
+A column reserve is a replaceable `kind 37734` event that contains a list of Kanban cards, used to offload and reduce the size of the original `kind 37733` event. Its usage is optional but recommended for columns with a large amount of cards.
 
 ```json
 {
