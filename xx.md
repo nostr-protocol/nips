@@ -18,11 +18,11 @@ All other tags MUST be encrypted to the pubkey indicated by the `p` tag using NI
 - `channel` indicates how the user would like to be notified. May be one of `email`, `push`
 - `feed` (one or more) indicates [NIP-FE](https://github.com/nostr-protocol/nips/pull/1554) feeds that the user wants to be notified about.
 - `cron` (optional) indicates using cron syntax how often the user would like to be notified, if not immediately.
-- `nip46` (optional) client secret, bunker url tuple with permission to sign `kind 22242` AUTH requests (for access to auth-gated relays), for example `["nip46", "<client-private-key>", "<bunker-url>"]`
 - `handler` (zero or more) is the address of a [NIP 89](./89.md) handler event, for example `["handler", "31990:<pubkey>:<identifier>", "wss://relay.com", "web"]`
 - `description` (optional) is a human-readable description of the alert
 - `timezone` (optional) is the user's ISO 8601 timezone (e.g. `+03:00`)
 - `locale` (optional) is the user's ISO 3166/639 locale (e.g. `en-US`)
+- `claim` (optional) is a relay url and an invite code that may be used to request access (https://github.com/nostr-protocol/nips/pull/1079). This should only be used to provide access to the alert provider, not for selecting relays when fetching feeds (the outbox model or relay feeds should be used instead).
 
 If channel is set to `push`, the following tags are also required:
 
