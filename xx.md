@@ -8,30 +8,39 @@ An alert provider is a nostr application whose job is to monitor the nostr netwo
 
 # Alert
 
-An alert is a `kind 32830` event which specifies how a user would like to be notified, and by whom. It MUST have the following tags, and no others:
+An alert is an event which specifies how a user would like to be notified, and by whom. It MUST have the following tags, and no others:
 
 - A `d` tag set to an arbitrary string
 - A `p` tag indicating the provider the alert is addressed to
 
 All other tags MUST be encrypted to the pubkey indicated by the `p` tag using NIP 44. The following tags are defined:
 
-- `channel` indicates how the user would like to be notified. May be one of `email`, `push`
 - `feed` (one or more) indicates [NIP-FE](https://github.com/nostr-protocol/nips/pull/1554) feeds that the user wants to be notified about.
-- `cron` (optional) indicates using cron syntax how often the user would like to be notified, if not immediately.
-- `handler` (zero or more) is the address of a [NIP 89](./89.md) handler event, for example `["handler", "31990:<pubkey>:<identifier>", "wss://relay.com", "web"]`
 - `description` (optional) is a human-readable description of the alert
 - `timezone` (optional) is the user's ISO 8601 timezone (e.g. `+03:00`)
 - `locale` (optional) is the user's ISO 3166/639 locale (e.g. `en-US`)
 - `claim` (optional) is a relay url and an invite code that may be used to request access (https://github.com/nostr-protocol/nips/pull/1079). This should only be used to provide access to the alert provider, not for selecting relays when fetching feeds (the outbox model or relay feeds should be used instead).
 
-If channel is set to `push`, the following tags are also required:
+## Email Alerts
+
+Email alerts are `kind 32830` events which specify a requested email digest.
+
+The following additional tags are defined:
+
+- `email` indicates the user's email address
+- `cron` indicates using cron syntax how often the user would like to be notified
+- `handler` (zero or more) is the address of a [NIP 89](./89.md) handler event, for example `["handler", "31990:<pubkey>:<identifier>", "wss://relay.com", "web"]`
+
+## Push Alerts
+
+Push alerts are `kind 32832` events which can be used to request push notifications to be delivered to a specific app.
+
+The following additional tags are defined:
 
 - `token` indicates a push notification token
 - `platform` indicates the user's app platform (`ios|android|web`)
 
-If channel is set to `email`, the following tags are also required:
-
-- `email` indicates the user's email address
+Providers SHOULD validate that the `token` is one that they are capable of sending push notifications to.
 
 ## Unsubscribing
 
