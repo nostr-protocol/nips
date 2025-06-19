@@ -55,6 +55,7 @@ Below is an example tag array (the entire event is not shown because the tags ar
   ["channel", "email"],
   ["cron", "0 15 * * 1"],
   ["email", "email@example.com"],
+  ["claim", "wss://relay.example.com/", "MYACCESSCODE"],
   ["feed", "[\"intersection\",[\"relay\",\"wss://relay.example.com/\"],[\"scope\",\"network\"]]"],
   ["bunker_url", "bunker://9ee57420bac3db5f1d7f43e1ed5f8bb6b81bf6df6350eb3377961da229eaab22?elay=wss://r.example.com&secret=9393"]
 ]
