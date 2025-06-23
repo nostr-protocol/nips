@@ -6,9 +6,9 @@ Alerts
 
 An alert provider is a nostr application whose job is to monitor the nostr network and notify users of updates via email, push, SMS, DM, etc.
 
-# Alert
+# Alert Request
 
-An alert is an event which specifies how a user would like to be notified, and by whom. It MUST have the following tags, and no others:
+An alert request is an event which specifies how a user would like to be notified, and by whom. It MUST have the following tags, and no others:
 
 - A `d` tag set to an arbitrary string
 - A `p` tag indicating the provider the alert is addressed to
@@ -16,14 +16,14 @@ An alert is an event which specifies how a user would like to be notified, and b
 All other tags MUST be encrypted to the pubkey indicated by the `p` tag using NIP 44. The following tags are defined:
 
 - `feed` (one or more) indicates [NIP-FE](https://github.com/nostr-protocol/nips/pull/1554) feeds that the user wants to be notified about.
-- `description` (optional) is a human-readable description of the alert
+- `description` (optional) is a human-readable description of the alert request
 - `timezone` (optional) is the user's ISO 8601 timezone (e.g. `+03:00`)
 - `locale` (optional) is the user's ISO 3166/639 locale (e.g. `en-US`)
 - `claim` (optional) is a relay url and an invite code that may be used to request access (https://github.com/nostr-protocol/nips/pull/1079). This should only be used to provide access to the alert provider, not for selecting relays when fetching feeds (the outbox model or relay feeds should be used instead).
 
 ## Email Alerts
 
-Email alerts are `kind 32830` events which specify a requested email digest.
+Email alert requests are `kind 32830` events which specify a requested email digest.
 
 The following additional tags are defined:
 
@@ -31,16 +31,22 @@ The following additional tags are defined:
 - `cron` indicates using cron syntax how often the user would like to be notified
 - `handler` (zero or more) is the address of a [NIP 89](./89.md) handler event, for example `["handler", "31990:<pubkey>:<identifier>", "wss://relay.com", "web"]`
 
-## Push Alerts
+## Web Push Alerts
 
-Push alerts are `kind 32832` events which can be used to request push notifications to be delivered to a specific app.
+Web push alert requests are `kind 32832` events which can be used to request web push notifications.
 
 The following additional tags are defined:
 
-- `token` indicates a push notification token
-- `platform` indicates the user's app platform (`ios|android|web`)
+- `endpoint` indicates a push notification endpoint
+- `p256dh` indicates the p256dh key
+- `auth` indicates the auth key
 
-Providers SHOULD validate that the `token` is one that they are capable of sending push notifications to.
+The push notification payload SHOULD be a JSON object with the following fields:
+
+- `title` - notification title text
+- `body` - notification body text
+- `event` - a nostr event
+- `relays` - a list of nostr relays
 
 ## Unsubscribing
 
