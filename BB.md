@@ -48,7 +48,7 @@ Forums are defined by `kind:30891` and organize threads within specific topics.
 }
 ```
 
-# Treads and replies
+# Threads and replies
 
 Threads are root posts, specified by `kind:892` in Markdown. They reference a forum using an `A` tag.
 ```jsonc
