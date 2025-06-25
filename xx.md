@@ -47,6 +47,32 @@ The push notification payload SHOULD be a JSON object with the following fields:
 - `body` - notification body text
 - `event` - a nostr event
 - `relays` - a list of nostr relays
+-
+## Android Push Alerts
+
+Android push alert requests are `kind 32833` events which can be used to request Android push notifications.
+
+The following additional tags are defined:
+
+- `device_token` indicates a Firebase Cloud Messaging token
+
+The push notification SHOULD include the following JSON-encoded data:
+
+- `event` - a nostr event
+- `relays` - a list of nostr relays
+
+## iOS Push Alerts
+
+iOS push alert requests are `kind 32834` events which can be used to request iOS push notifications.
+
+The following additional tags are defined:
+
+- `device_token` indicates a push token
+
+The push notification SHOULD include the following JSON-encoded data:
+
+- `event` - a nostr event
+- `relays` - a list of nostr relays
 
 ## Unsubscribing
 
