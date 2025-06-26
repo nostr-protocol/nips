@@ -109,7 +109,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 ## Event Kinds
 
 | kind          | description                     | NIP                                    |
-| ------------- | ------------------------------- | -------------------------------------- |
+|---------------|---------------------------------|----------------------------------------|
 | `0`           | User Metadata                   | [01](01.md)                            |
 | `1`           | Short Text Note                 | [10](10.md)                            |
 | `2`           | Recommend Relay                 | 01 (deprecated)                        |
@@ -132,9 +132,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `21`          | Video Event                     | [71](71.md)                            |
 | `22`          | Short-form Portrait Video Event | [71](71.md)                            |
 | `30`          | internal reference              | [NKBIP-03]                             |
-| `31`          | external web reference          | [NKBIP-03]                            |
-| `32`          | hardcopy reference              | [NKBIP-03]                            |
-| `33`          | prompt reference                | [NKBIP-03]                            |
+| `31`          | external web reference          | [NKBIP-03]                             |
+| `32`          | hardcopy reference              | [NKBIP-03]                             |
+| `33`          | prompt reference                | [NKBIP-03]                             |
 | `40`          | Channel Creation                | [28](28.md)                            |
 | `41`          | Channel Metadata                | [28](28.md)                            |
 | `42`          | Channel Message                 | [28](28.md)                            |
@@ -230,7 +230,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30078`       | Application-specific Data       | [78](78.md)                            |
 | `30166`       | Relay Discovery                 | [66](66.md)                            |
 | `30267`       | App curation sets               | [51](51.md)                            |
-| `30301`       | Multi-User Kanban Board         | [PR#1665](https://github.com/nostr-protocol/nips/pull/1665) |
+| `30301`       | Multi-User Kanban Board         | [PR#1665]                              |
 | `30311`       | Live Event                      | [53](53.md)                            |
 | `30315`       | User Statuses                   | [38](38.md)                            |
 | `30388`       | Slide Set                       | [Corny Chat][cornychat-slideset]       |
@@ -248,10 +248,10 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31924`       | Calendar                        | [52](52.md)                            |
 | `31925`       | Calendar Event RSVP             | [52](52.md)                            |
 | `31989`       | Handler recommendation          | [89](89.md)                            |
-| `31990`       | Handler information             | [89](89.md)                            |                         |
-| `32267`       | Software Application            |                                        |                        |
+| `31990`       | Handler information             | [89](89.md)                            |
+| `32267`       | Software Application            |                                        |
 | `34550`       | Community Definition            | [72](72.md)                            |
-| `37733`       | Single-Event Kanban Board       | [PR#1804](https://github.com/nostr-protocol/nips/pull/1804) |
+| `37733`       | Single-Event Kanban Board       | [PR#1804]                              |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
 | `39089`       | Starter packs                   | [51](51.md)                            |
@@ -269,6 +269,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 [NKBIP-03]: https://wikistr.com/nkbip-03*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1
 [blossom]: https://github.com/hzrd149/blossom
 [Tidal-nostr]: https://wikistr.com/tidal-nostr
+[PR#1665]: https://github.com/nostr-protocol/nips/pull/1665
+[PR#1804]: https://github.com/nostr-protocol/nips/pull/1804
 
 ## Message types
 
