@@ -230,6 +230,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30078`       | Application-specific Data       | [78](78.md)                            |
 | `30166`       | Relay Discovery                 | [66](66.md)                            |
 | `30267`       | App curation sets               | [51](51.md)                            |
+| `30301`       | Multi-User Kanban Board         | [PR#1665](https://github.com/nostr-protocol/nips/pull/1665) |
 | `30311`       | Live Event                      | [53](53.md)                            |
 | `30315`       | User Statuses                   | [38](38.md)                            |
 | `30388`       | Slide Set                       | [Corny Chat][cornychat-slideset]       |
@@ -250,6 +251,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31990`       | Handler information             | [89](89.md)                            |                         |
 | `32267`       | Software Application            |                                        |                        |
 | `34550`       | Community Definition            | [72](72.md)                            |
+| `37733`       | Single-Event Kanban Board       | [PR#1804](https://github.com/nostr-protocol/nips/pull/1804) |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
 | `39089`       | Starter packs                   | [51](51.md)                            |
