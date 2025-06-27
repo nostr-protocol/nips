@@ -97,28 +97,7 @@ Most push notification standards limit payloads to 4KB, beyond which notificatio
 - `tags` MAY be omitted
 - `sig` SHOULD be removed if either `content` or `tags` are not sent
 
-# Heartbeats
-
-Clients MAY send `kind 23830` heartbeat events to the notifier when the user is online so that notifiers can avoid sending unnecessary notifications. Heartbeats should be one minute apart.
-
-In order to protect user privacy, the `content` should contain a [NIP-44](./44.md) encrypted JSON-encoded tag array with the following values:
-
-- One or more `a` tags indicate alert request addresses
-
-```jsonc
-{
-  "kind": 23830,
-  "tags": [
-    ["a", "32830:1238876738ce5bc6ddea7732e35e77f1216c000657b3cff5c7ff26a11fd145d2:1294742"],
-  ]
-}
-```
-
-# Unsubscribing
-
-When a user no longer wants to be notified, they may delete the alert by address, using a [NIP 09](./09.md) `kind 5` event with the `a` tag of the alert request. This event MUST be wrapped as described in [NIP 59](./59.md) and p-tagged to the alert provider so that providers don't need to maintain filters for a large number of `a` tags.
-
-# Alerts Status
+# Alert Status
 
 A provider SHOULD publish a `kind 32831` event which details the status of the user's alert. A non-existent alert status event indicates that no action has been taken. It MUST have the following tags, and no others:
 
@@ -129,7 +108,45 @@ All other tags MUST be encrypted to the pubkey indicated by the `p` tag using NI
 
 - `status` SHOULD be one of `ok`, `pending`, `payment-required`, `error`
 - `message` SHOULD include human-readable information explaining the status of the alert
+- `secret` (optional) is a one-off private key that can be used to send heartbeats privately
+
+# Heartbeats
+
+Clients MAY send `kind 23830` heartbeat events to the notifier when the user is online so that notifiers can avoid sending unnecessary notifications. Heartbeats should be one minute apart.
+
+In order to protect user privacy, heartbeats MUST be signed using the `secret` provided by the `kind 32831` alert status event. The `content` should contain a [NIP-44](./44.md) encrypted JSON-encoded tag array with one or more `a` tags which indicate an alert request address.
+
+```jsonc
+{
+  "kind": 23830,
+  "content": nip44_encrypt(json_encode([
+    ["a", "32830:1238876738ce5bc6ddea7732e35e77f1216c000657b3cff5c7ff26a11fd145d2:1294742"],
+  ]))
+}
+```
+
+# Unsubscribing
+
+When a user no longer wants to be notified, they may delete the alert by address, using a [NIP 09](./09.md) `kind 5` event with the `a` tag of the alert request. This event MUST also include a `p` tag with the alert provider's pubkey (in order to reduce the number of relay subscriptions a provider has to manage).
 
 # Discovery
 
-A provider MAY advertise its services via NIP 89 client listing.
+A provider MAY advertise its services using a `kind 13830` listing:
+
+- `name` is the name of the provider
+- `icon` is an icon representing the provider
+- `about` is a description of the provider
+- One or more `k` tags indicate what alert request kinds are supported
+
+Example:
+
+```jsonc
+{
+  "kind": 13830,
+  "pubkey": "f011bf6c6b79ec30df422c26dcc8e29cb87598dc61fd19cf5a4e145a7aa3f7cf",
+  "tags": [
+    ["name", "My notifier"],
+    ["k", "32832"],
+  ],
+}
+```
