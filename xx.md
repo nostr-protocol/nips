@@ -21,6 +21,20 @@ All other tags MUST be encrypted to the pubkey indicated by the `p` tag using NI
 - `locale` (optional) is the user's ISO 3166/639 locale (e.g. `en-US`)
 - `claim` (optional) is a relay url and an invite code that may be used to request access (https://github.com/nostr-protocol/nips/pull/1079). This should only be used to provide access to the alert provider, not for selecting relays when fetching feeds (the outbox model or relay feeds should be used instead).
 
+Below is an example tag array for a `kind 32830` email alert (the entire event is not shown because the tags are encrypted and placed in `content`):
+
+```jsonc
+[
+  ["locale","en-US"],
+  ["timezone","-07:00"],
+  ["cron", "0 15 * * 1"],
+  ["email", "email@example.com"],
+  ["claim", "wss://relay.example.com/", "MYACCESSCODE"],
+  ["feed", "[\"intersection\",[\"relay\",\"wss://relay.example.com/\"],[\"scope\",\"network\"]]"],
+  ["description", "My notification"]
+]
+```
+
 ## Email Alerts
 
 Email alert requests are `kind 32830` events which specify a requested email digest.
@@ -45,7 +59,7 @@ The push notification payload SHOULD be a JSON object with the following fields:
 
 - `title` - notification title text
 - `body` - notification body text
-- `event` - a nostr event
+- `event` - a [truncated nostr event](#event-truncation)
 - `relays` - a list of nostr relays
 -
 ## Android Push Alerts
@@ -58,7 +72,7 @@ The following additional tags are defined:
 
 The push notification SHOULD include the following JSON-encoded data:
 
-- `event` - a nostr event
+- `event` - a [truncated nostr event](#event-truncation)
 - `relays` - a list of nostr relays
 
 ## iOS Push Alerts
@@ -67,31 +81,42 @@ iOS push alert requests are `kind 32834` events which can be used to request iOS
 
 The following additional tags are defined:
 
-- `device_token` indicates a push token
+- `device_token` indicates an APNs token
+- `bundle_identifier` indicates a iOS app bundle identifier
 
 The push notification SHOULD include the following JSON-encoded data:
 
-- `event` - a nostr event
+- `event` - a [truncated nostr event](#event-truncation)
 - `relays` - a list of nostr relays
 
-## Unsubscribing
+## Event Truncation
 
-When a user no longer wants to be notified, they may delete the alert by address, as specified in [NIP 09](./09.md).
+Most push notification standards limit payloads to 4KB, beyond which notifications are not delivered. Since nostr events may be greater than this limit, notifiers SHOULD truncate events when sending push notifications in the following way:
 
-## Example
+- `content` MAY be omitted
+- `tags` MAY be omitted
+- `sig` SHOULD be removed if either `content` or `tags` are not sent
 
-Below is an example tag array (the entire event is not shown because the tags are encrypted and placed in `content`).
+# Heartbeats
+
+Clients MAY send `kind 23830` heartbeat events to the notifier when the user is online so that notifiers can avoid sending unnecessary notifications. Heartbeats should be one minute apart.
+
+In order to protect user privacy, the `content` should contain a [NIP-44](./44.md) encrypted JSON-encoded tag array with the following values:
+
+- One or more `a` tags indicate alert request addresses
 
 ```jsonc
-[
-  ["channel", "email"],
-  ["cron", "0 15 * * 1"],
-  ["email", "email@example.com"],
-  ["claim", "wss://relay.example.com/", "MYACCESSCODE"],
-  ["feed", "[\"intersection\",[\"relay\",\"wss://relay.example.com/\"],[\"scope\",\"network\"]]"],
-  ["bunker_url", "bunker://9ee57420bac3db5f1d7f43e1ed5f8bb6b81bf6df6350eb3377961da229eaab22?elay=wss://r.example.com&secret=9393"]
-]
+{
+  "kind": 23830,
+  "tags": [
+    ["a", "32830:1238876738ce5bc6ddea7732e35e77f1216c000657b3cff5c7ff26a11fd145d2:1294742"],
+  ]
+}
 ```
+
+# Unsubscribing
+
+When a user no longer wants to be notified, they may delete the alert by address, using a [NIP 09](./09.md) `kind 5` event with the `a` tag of the alert request. This event MUST be wrapped as described in [NIP 59](./59.md) and p-tagged to the alert provider so that providers don't need to maintain filters for a large number of `a` tags.
 
 # Alerts Status
 
