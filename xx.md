@@ -112,9 +112,9 @@ All other tags MUST be encrypted to the pubkey indicated by the `p` tag using NI
 
 # Heartbeats
 
-Clients MAY send `kind 23830` heartbeat events to the notifier when the user is online so that notifiers can avoid sending unnecessary notifications. Heartbeats should be one minute apart.
+Clients MAY send `kind 23830` heartbeat events to the notifier when the user is online so that notifiers can avoid sending unnecessary notifications. Heartbeats SHOULD be one minute apart.
 
-In order to protect user privacy, heartbeats MUST be signed using the `secret` provided by the `kind 32831` alert status event. The `content` should contain a [NIP-44](./44.md) encrypted JSON-encoded tag array with one or more `a` tags which indicate an alert request address.
+In order to protect user privacy, heartbeats MUST be signed using the `secret` provided by the `kind 32831` alert status event. If no secret is provided, heartbeats MUST NOT be sent. The `content` should contain a [NIP-44](./44.md) encrypted JSON-encoded tag array with one or more `a` tags which indicate an alert request address.
 
 ```jsonc
 {
