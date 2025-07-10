@@ -1,0 +1,63 @@
+NIP-98
+======
+
+HTTP Auth
+---------
+
+`draft` `optional`
+
+This NIP defines an ephemeral event used to authorize requests to HTTP servers using nostr events.
+
+This is useful for HTTP services which are built for Nostr and deal with Nostr user accounts.
+
+## Nostr event
+
+A `kind 27235` (In reference to [RFC 7235](https://www.rfc-editor.org/rfc/rfc7235)) event is used.
+
+The `content` SHOULD be empty.
+
+The following tags MUST be included.
+
+* `u` - absolute URL
+* `method` - HTTP Request Method
+
+Example event:
+```json
+{
+  "id": "fe964e758903360f28d8424d092da8494ed207cba823110be3a57dfe4b578734",
+  "pubkey": "63fe6318dc58583cfe16810f86dd09e18bfd76aabc24a0081ce2856f330504ed",
+  "content": "",
+  "kind": 27235,
+  "created_at": 1682327852,
+  "tags": [
+    ["u", "https://api.snort.social/api/v1/n5sp/list"],
+    ["method", "GET"]
+  ],
+  "sig": "5ed9d8ec958bc854f997bdc24ac337d005af372324747efe4a00e24f4c30437ff4dd8308684bed467d9d6be3e5a517bb43b1732cc7d33949a3aaf86705c22184"
+}
+```
+
+Servers MUST perform the following checks in order to validate the event:
+1. The `kind` MUST be `27235`.
+2. The `created_at` timestamp MUST be within a reasonable time window (suggestion 60 seconds).
+3. The `u` tag MUST be exactly the same as the absolute request URL (including query parameters).
+4. The `method` tag MUST be the same HTTP method used for the requested resource.
+
+When the request contains a body (as in POST/PUT/PATCH methods) clients SHOULD include a SHA256 hash of the request body in a `payload` tag as hex (`["payload", "<sha256-hex>"]`), servers MAY check this to validate that the requested payload is authorized.
+
+If one of the checks was to fail the server SHOULD respond with a 401 Unauthorized response code.
+
+Servers MAY perform additional implementation-specific validation checks.
+
+## Request Flow
+
+Using the `Authorization` HTTP header, the `kind 27235` event MUST be `base64` encoded and use the Authorization scheme `Nostr`
+
+Example HTTP Authorization header:
+```
+Authorization: Nostr 
+eyJpZCI6ImZlOTY0ZTc1ODkwMzM2MGYyOGQ4NDI0ZDA5MmRhODQ5NGVkMjA3Y2JhODIzMTEwYmUzYTU3ZGZlNGI1Nzg3MzQiLCJwdWJrZXkiOiI2M2ZlNjMxOGRjNTg1ODNjZmUxNjgxMGY4NmRkMDllMThiZmQ3NmFhYmMyNGEwMDgxY2UyODU2ZjMzMDUwNGVkIiwiY29udGVudCI6IiIsImtpbmQiOjI3MjM1LCJjcmVhdGVkX2F0IjoxNjgyMzI3ODUyLCJ0YWdzIjpbWyJ1IiwiaHR0cHM6Ly9hcGkuc25vcnQuc29jaWFsL2FwaS92MS9uNXNwL2xpc3QiXSxbIm1ldGhvZCIsIkdFVCJdXSwic2lnIjoiNWVkOWQ4ZWM5NThiYzg1NGY5OTdiZGMyNGFjMzM3ZDAwNWFmMzcyMzI0NzQ3ZWZlNGEwMGUyNGY0YzMwNDM3ZmY0ZGQ4MzA4Njg0YmVkNDY3ZDlkNmJlM2U1YTUxN2JiNDNiMTczMmNjN2QzMzk0OWEzYWFmODY3MDVjMjIxODQifQ
+```
+
+## Reference Implementations
+- C# ASP.NET `AuthenticationHandler` [NostrAuth.cs](https://gist.github.com/v0l/74346ae530896115bfe2504c8cd018d3)

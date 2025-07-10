@@ -1,0 +1,126 @@
+
+NIP-49
+======
+
+Private Key Encryption
+----------------------
+
+`draft` `optional`
+
+This NIP defines a method by which clients can encrypt (and decrypt) a user's private key with a password.
+
+Symmetric Encryption Key derivation
+-----------------------------------
+
+PASSWORD = Read from the user. The password should be unicode normalized to NFKC format to ensure that the password can be entered identically on other computers/clients.
+
+LOG\_N = Let the user or implementer choose one byte representing a power of 2 (e.g. 18 represents 262,144) which is used as the number of rounds for scrypt. Larger numbers take more time and more memory, and offer better protection:
+
+    | LOG_N | MEMORY REQUIRED | APPROX TIME ON FAST COMPUTER |
+    |-------|-----------------|----------------------------- |
+    | 16    | 64 MiB          | 100 ms                       |
+    | 18    | 256 MiB         |                              |
+    | 20    | 1 GiB           | 2 seconds                    |
+    | 21    | 2 GiB           |                              |
+    | 22    | 4 GiB           |                              |
+
+SALT = 16 random bytes
+
+SYMMETRIC_KEY = scrypt(password=PASSWORD, salt=SALT, log\_n=LOG\_N, r=8, p=1)
+
+The symmetric key should be 32 bytes long.
+
+This symmetric encryption key is temporary and should be zeroed and discarded after use and not stored or reused for any other purpose.
+
+
+Encrypting a private key
+------------------------
+
+The private key encryption process is as follows:
+
+PRIVATE\_KEY = User's private (secret) secp256k1 key as 32 raw bytes (not hex or bech32 encoded!)
+
+KEY\_SECURITY\_BYTE = one of:
+
+*  0x00 - if the key has been known to have been handled insecurely (stored unencrypted, cut and paste unencrypted, etc)
+*  0x01 - if the key has NOT been known to have been handled insecurely (stored unencrypted, cut and paste unencrypted, etc)
+ * 0x02 - if the client does not track this data
+
+ASSOCIATED\_DATA = KEY\_SECURITY\_BYTE
+
+NONCE = 24 byte random nonce
+
+CIPHERTEXT = XChaCha20-Poly1305(
+    plaintext=PRIVATE\_KEY,
+    associated_data=ASSOCIATED\_DATA,
+    nonce=NONCE,
+    key=SYMMETRIC\_KEY
+)
+
+VERSION\_NUMBER = 0x02
+
+CIPHERTEXT_CONCATENATION = concat(
+    VERSION\_NUMBER,
+    LOG\_N,
+    SALT,
+    NONCE,
+    ASSOCIATED\_DATA,
+    CIPHERTEXT
+)
+
+ENCRYPTED\_PRIVATE\_KEY = bech32_encode('ncryptsec', CIPHERTEXT\_CONCATENATION)
+
+The output prior to bech32 encoding should be 91 bytes long.
+
+The decryption process operates in the reverse.
+
+
+Test Data
+---------
+
+## Password Unicode Normalization
+
+The following password input: "ÅΩẛ̣"
+- Unicode Codepoints: U+212B U+2126 U+1E9B U+0323
+- UTF-8 bytes: [0xE2, 0x84, 0xAB, 0xE2, 0x84, 0xA6, 0xE1, 0xBA, 0x9B, 0xCC, 0xA3]
+
+Should be converted into the unicode normalized NFKC format prior to use in scrypt: "ÅΩẛ̣"
+- Unicode Codepoints: U+00C5 U+03A9 U+1E69
+- UTF-8 bytes: [0xC3, 0x85, 0xCE, 0xA9, 0xE1, 0xB9, 0xA9]
+
+## Encryption
+
+The encryption process is non-deterministic due to the random nonce.
+
+## Decryption
+
+The following encrypted private key:
+
+`ncryptsec1qgg9947rlpvqu76pj5ecreduf9jxhselq2nae2kghhvd5g7dgjtcxfqtd67p9m0w57lspw8gsq6yphnm8623nsl8xn9j4jdzz84zm3frztj3z7s35vpzmqf6ksu8r89qk5z2zxfmu5gv8th8wclt0h4p`
+
+When decrypted with password='nostr' and log_n=16 yields the following hex-encoded private key:
+
+`3501454135014541350145413501453fefb02227e449e57cf4d3a3ce05378683`
+
+Discussion
+----------
+
+### On Key Derivation
+
+Passwords make poor cryptographic keys. Prior to use as a cryptographic key, two things need to happen:
+
+1. An encryption key needs to be deterministically created from the password such that is has a uniform functionally random distribution of bits, such that the symmetric encryption algorithm's assumptions are valid, and
+2. A slow irreversible algorithm should be injected into the process, so that brute-force attempts to decrypt by trying many passwords are severely hampered.
+
+These are achieved using a password-based key derivation function. We use scrypt, which has been proven to be maximally memory hard and which several cryptographers have indicated to the author is better than argon2 even though argon2 won a competition in 2015.
+
+### On the symmetric encryption algorithm
+
+XChaCha20-Poly1305 is typically favored by cryptographers over AES and is less associated with the U.S. government.  It (or it's earlier variant without the 'X') is gaining wide usage, is used in TLS and OpenSSH, and is available in most modern crypto libraries.
+
+Recommendations
+---------
+
+It is not recommended that users publish these encrypted private keys to nostr, as cracking a key may become easier when an attacker can amass many encrypted private keys.
+
+It is recommended that clients zero out the memory of passwords and private keys before freeing that memory.
