@@ -36,6 +36,7 @@ Each event MUST contain the following:
 - `"type"`: call type — `audio`, `video`, or `screen`
 - `"sig_alg"`: signaling payload encryption algorithm, e.g. `NIP-04`, `NIP-44`
 - (optional) `"relay"`: preferred relay for communication
+- (optional) `"rtc_servers"`: comma-separated list of STUN/TURN server URLs or identifiers
 
 ### Content:
 
@@ -46,7 +47,11 @@ Encrypted JSON payload, depending on the event type. The encryption method (NIP-
 {
   "sdp": "v=0\no=alice...",
   "timestamp": 1721128392,
-  "expires_in": 60
+  "expires_in": 60,
+  "rtc_servers": [
+    {"urls": "stun:stun.l.google.com:19302"},
+    {"urls": "turn:turn.example.com", "username": "user", "credential": "pass"}
+  ]
 }
 ```
 
@@ -96,7 +101,7 @@ If a user is logged in on multiple devices, signaling events MAY be sent to all 
 
 ## TURN/STUN
 
-This NIP assumes clients implement WebRTC-compatible STUN and TURN fallback logic on their own. The infrastructure for ICE negotiation is handled through `ice_candidate` events.
+This NIP assumes clients implement WebRTC-compatible STUN and TURN fallback logic on their own. The infrastructure for ICE negotiation is handled through `ice_candidate` events. Call offers MAY include a `rtc_servers` field in the payload to suggest or require specific ICE servers.
 
 ---
 
@@ -106,6 +111,7 @@ This NIP assumes clients implement WebRTC-compatible STUN and TURN fallback logi
 - Clients should allow optional relay hints or fast relays for low-latency call setup.
 - Session ID must be unique per call session to avoid conflicts.
 - Clients SHOULD notify the user of the npub initiating the call, or display known alias.
+- Clients SHOULD honor provided `rtc_servers` or fallback to defaults.
 
 ---
 
@@ -115,6 +121,7 @@ This NIP assumes clients implement WebRTC-compatible STUN and TURN fallback logi
 - Screen sharing / remote assistance
 - Session re-negotiation and codec negotiation tagging
 - Recording support metadata (locally only)
+- Dynamic call renegotiation and ICE restart
 
 ---
 
