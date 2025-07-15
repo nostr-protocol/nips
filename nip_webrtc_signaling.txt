@@ -103,6 +103,17 @@ If a user is logged in on multiple devices, signaling events MAY be sent to all 
 
 This NIP assumes clients implement WebRTC-compatible STUN and TURN fallback logic on their own. The infrastructure for ICE negotiation is handled through `ice_candidate` events. Call offers MAY include a `rtc_servers` field in the payload to suggest or require specific ICE servers.
 
+### Appendix: How STUN and TURN Work
+
+- **STUN** is used to discover the public IP and port of a device behind a NAT by sending a request to a public STUN server. The server replies with what IP/port it sees — this is the "reflexive candidate."
+  - 🔍 This alone does **not** open a port. It's only for external address discovery.
+
+- **For a connection to succeed**, the user's **router must forward the traffic back to the client** — this usually happens automatically via NAT behavior when the external peer sends a packet to the discovered IP/port. No UPnP is needed in typical WebRTC.
+
+- **TURN** is used as a fallback when NAT traversal fails. It acts as a full media relay, forwarding audio/video between both peers through an intermediate server. TURN requires much more bandwidth and often needs authentication.
+
+- **IPv6**: If both peers are on native IPv6 with no restrictive firewall rules, a direct peer-to-peer connection is often possible without STUN or TURN.
+
 ---
 
 ## Implementation Notes
