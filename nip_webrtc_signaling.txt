@@ -1,0 +1,145 @@
+# NIP-XXX: WebRTC Signaling over Nostr
+
+## Summary
+
+Defines a mechanism for initiating and negotiating peer-to-peer WebRTC voice and video calls over the Nostr protocol using encrypted or ephemeral event-based signaling. This NIP introduces new event kinds and a structure for exchanging SDP offers, answers, and ICE candidates between peers using Nostr relays.
+
+---
+
+## Motivation
+
+Current Nostr clients lack a standardized mechanism for real-time voice or video communication. Traditional WebRTC apps rely on centralized signaling servers to exchange connection metadata (SDP and ICE candidates). Nostr provides an ideal transport mechanism for signaling while preserving user anonymity, decentralization, and cryptographic authenticity. 
+
+This NIP defines an interoperable way for clients to initiate and accept WebRTC calls by exchanging offer/answer/candidate payloads through encrypted or ephemeral Nostr events.
+
+---
+
+## Event Kinds
+
+| Kind      | Name               | Description                                |
+|-----------|--------------------|--------------------------------------------|
+| 14300     | `call_offer`       | Initiates a WebRTC call                    |
+| 14301     | `call_answer`      | Response to a `call_offer`                 |
+| 14302     | `ice_candidate`    | ICE candidate exchange event               |
+| 14303     | `call_end`         | Signals termination of the session         |
+
+---
+
+## Event Format
+
+Each event MUST contain the following:
+
+### Tags:
+
+- `"p"`: target public key (receiver)
+- `"session_id"`: Unique identifier for the session (UUID or hash)
+- `"type"`: call type — `audio`, `video`, or `screen`
+- `"sig_alg"`: signaling payload encryption algorithm, e.g. `NIP-04`, `NIP-44`
+- (optional) `"relay"`: preferred relay for communication
+
+### Content:
+
+Encrypted JSON payload, depending on the event type. The encryption method (NIP-04, NIP-44) should be agreed upon or assumed by clients.
+
+#### Example `call_offer` (content decrypted):
+```json
+{
+  "sdp": "v=0\no=alice...",
+  "timestamp": 1721128392,
+  "expires_in": 60
+}
+```
+
+#### Example `call_answer` (content decrypted):
+```json
+{
+  "sdp": "v=0\no=bob...",
+  "accepted": true,
+  "timestamp": 1721128423
+}
+```
+
+#### Example `ice_candidate` (content decrypted):
+```json
+{
+  "candidate": "candidate:1 1 udp 2130706431 ...",
+  "sdpMid": "0",
+  "sdpMLineIndex": 0,
+  "timestamp": 1721128450
+}
+```
+
+#### Example `call_end`:
+```json
+{
+  "reason": "user_left" | "rejected" | "timeout",
+  "timestamp": 1721128490
+}
+```
+
+---
+
+## Security Considerations
+
+- Events MUST be encrypted (NIP-04 or stronger, e.g. NIP-44).
+- Clients SHOULD reject call signaling from unknown/untrusted npubs unless explicitly allowed.
+- Clients SHOULD support ephemeral relays or purge signaling events quickly.
+- No media flows through Nostr — only metadata for peer connection.
+
+---
+
+## Multi-device Support
+
+If a user is logged in on multiple devices, signaling events MAY be sent to all active sessions. Each device MAY independently respond with `call_answer` or ignore.
+
+---
+
+## TURN/STUN
+
+This NIP assumes clients implement WebRTC-compatible STUN and TURN fallback logic on their own. The infrastructure for ICE negotiation is handled through `ice_candidate` events.
+
+---
+
+## Implementation Notes
+
+- Media is transmitted peer-to-peer using standard WebRTC.
+- Clients should allow optional relay hints or fast relays for low-latency call setup.
+- Session ID must be unique per call session to avoid conflicts.
+- Clients SHOULD notify the user of the npub initiating the call, or display known alias.
+
+---
+
+## Future Extensions
+
+- Group calls (multi-participant session IDs)
+- Screen sharing / remote assistance
+- Session re-negotiation and codec negotiation tagging
+- Recording support metadata (locally only)
+
+---
+
+## Backwards Compatibility
+
+This NIP does not affect existing Nostr message formats. It is entirely additive.
+
+---
+
+## Reference Implementations
+
+- [OxChat](https://github.com/oxchat)
+- [Coracle](https://github.com/nbd-wtf/nostr) (pending patch)
+- JavaScript demo using WebRTC + Nostr signaling (coming soon)
+
+---
+
+## Author
+
+- _Your Name or Pseudonym_
+- npub: `npub1...`
+- GitHub: [github.com/yourname](https://github.com/yourname)
+
+---
+
+## Status
+
+Draft — community feedback requested
