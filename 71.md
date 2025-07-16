@@ -1,0 +1,129 @@
+NIP-71
+======
+
+Video Events
+------------
+
+`draft` `optional`
+
+This specification defines _video_ events representing a dedicated post of externally hosted content.
+
+Unlike a `kind:1` event with a video attached, video events are meant to contain all additional metadata concerning the subject media and to be surfaced in video-specific clients rather than general micro-blogging clients. The thought is for events of this kind to be referenced in a Netflix, YouTube, or TikTok like nostr client where the video itself is at the center of the experience.
+
+## Video Events
+
+There are two types of video events represented by different kinds: _normal_ and _short_ video events. This is meant to allow clients to cater to each as the viewing experience for longer, mostly horizontal (landscape) videos is often different than that of short-form, mostly vertical (portrait), videos ("stories", "reels", "shorts" etc).
+
+Nothing except cavaliership and common sense prevents a _short_ video from being long, or a _normal_ video from being vertical, and that may or may not be justified, it's mostly a stylistic qualitative difference, not a question of actual raw size.
+
+#### Format
+
+The format uses a _regular event_ kind `21` for _normal_ videos and `22` for _short_ videos.
+
+The `.content` of these events is a summary or description on the video content.
+
+The primary source of video information is the `imeta` tags which is defined in [NIP-92](92.md)
+
+Each `imeta` tag can be used to specify a variant of the video by the `dim` & `m` properties.
+
+Example:
+```json
+[
+  ["imeta",
+    "dim 1920x1080",
+    "url https://myvideo.com/1080/12345.mp4",
+    "x 3093509d1e0bc604ff60cb9286f4cd7c781553bc8991937befaacfdc28ec5cdc",
+    "m video/mp4",
+    "image https://myvideo.com/1080/12345.jpg",
+    "image https://myotherserver.com/1080/12345.jpg",
+    "fallback https://myotherserver.com/1080/12345.mp4",
+    "fallback https://andanotherserver.com/1080/12345.mp4",
+    "service nip96",
+  ],
+  ["imeta",
+    "dim 1280x720",
+    "url https://myvideo.com/720/12345.mp4",
+    "x e1d4f808dae475ed32fb23ce52ef8ac82e3cc760702fca10d62d382d2da3697d",
+    "m video/mp4",
+    "image https://myvideo.com/720/12345.jpg",
+    "image https://myotherserver.com/720/12345.jpg",
+    "fallback https://myotherserver.com/720/12345.mp4",
+    "fallback https://andanotherserver.com/720/12345.mp4",
+    "service nip96",
+  ],
+  ["imeta",
+    "dim 1280x720",
+    "url https://myvideo.com/720/12345.m3u8",
+    "x 704e720af2697f5d6a198ad377789d462054b6e8d790f8a3903afbc1e044014f",
+    "m application/x-mpegURL",
+    "image https://myvideo.com/720/12345.jpg",
+    "image https://myotherserver.com/720/12345.jpg",
+    "fallback https://myotherserver.com/720/12345.m3u8",
+    "fallback https://andanotherserver.com/720/12345.m3u8",
+    "service nip96",
+  ],
+]
+```
+
+Where `url` is the primary server url and `fallback` are other servers hosting the same file, both `url` and `fallback` should be weighted equally and clients are recommended to use any of the provided video urls.
+
+The `image` tag contains a preview image (at the same resolution). Multiple `image` tags may be used to specify fallback copies in the same way `fallback` is used for `url`.
+
+Additionally `service nip96` may be included to allow clients to search the authors NIP-96 server list to find the file using the hash.
+
+### Other tags:
+* `title` (required) title of the video
+* `published_at`, for the timestamp in unix seconds (stringified) of the first time the video was published
+* `duration` (optional) video duration in seconds
+* `text-track` (optional, repeated) link to WebVTT file for video, type of supplementary information (captions/subtitles/chapters/metadata), optional language code
+* `content-warning` (optional) warning about content of NSFW video
+* `alt` (optional) description for accessibility
+* `segment` (optional, repeated) start timestamp in format `HH:MM:SS.sss`, end timestamp in format `HH:MM:SS.sss`, chapter/segment title, chapter thumbnail-url
+* `t` (optional, repeated) hashtag to categorize video
+* `p` (optional, repeated) 32-bytes hex pubkey of a participant in the video, optional recommended relay URL
+* `r` (optional, repeated) references / links to web pages
+
+```jsonc
+{
+  "id": <32-bytes lowercase hex-encoded SHA-256 of the the serialized event data>,
+  "pubkey": <32-bytes lowercase hex-encoded public key of the event creator>,
+  "created_at": <Unix timestamp in seconds>,
+  "kind": 21 | 22,
+  "content": "<summary / description of video>",
+  "tags": [
+    ["title", "<title of video>"],
+    ["published_at", "<unix timestamp>"],
+    ["alt", <description>],
+
+    // video Data
+    ["imeta",
+      "dim 1920x1080",
+      "url https://myvideo.com/1080/12345.mp4",
+      "x 3093509d1e0bc604ff60cb9286f4cd7c781553bc8991937befaacfdc28ec5cdc",
+      "m video/mp4",
+      "image https://myvideo.com/1080/12345.jpg",
+      "image https://myotherserver.com/1080/12345.jpg",
+      "fallback https://myotherserver.com/1080/12345.mp4",
+      "fallback https://andanotherserver.com/1080/12345.mp4",
+      "service nip96",
+    ],
+
+    ["duration", <duration of video in seconds>],
+    ["text-track", "<encoded `kind 6000` event>", "<recommended relay urls>"],
+    ["content-warning", "<reason>"],
+    ["segment", <start>, <end>, "<title>", "<thumbnail URL>"],
+
+    // participants
+    ["p", "<32-bytes hex of a pubkey>", "<optional recommended relay URL>"],
+    ["p", "<32-bytes hex of a pubkey>", "<optional recommended relay URL>"],
+
+    // hashtags
+    ["t", "<tag>"],
+    ["t", "<tag>"],
+
+    // reference links
+    ["r", "<url>"],
+    ["r", "<url>"]
+  ]
+}
+```
