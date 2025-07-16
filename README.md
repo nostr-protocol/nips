@@ -93,6 +93,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-7D: Threads](7D.md)
 - [NIP-84: Highlights](84.md)
 - [NIP-86: Relay Management API](86.md)
+- [NIP-87: Ecash Mint Discoverability](87.md)
 - [NIP-88: Polls](88.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-90: Data Vending Machines](90.md)
@@ -107,7 +108,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-C7: Chats](C7.md)
 
 ## Event Kinds
-
 | kind          | description                     | NIP                                    |
 | ------------- | ------------------------------- | -------------------------------------- |
 | `0`           | User Metadata                   | [01](01.md)                            |
@@ -200,6 +200,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `17375`       | Cashu Wallet Event              | [60](60.md)                            |
+| `17375`       | Ecash Mint Recommendation       | [87](87.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
 | `22242`       | Client Authentication           | [42](42.md)                            |
 | `23194`       | Wallet Request                  | [47](47.md)                            |
@@ -247,9 +248,11 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31924`       | Calendar                        | [52](52.md)                            |
 | `31925`       | Calendar Event RSVP             | [52](52.md)                            |
 | `31989`       | Handler recommendation          | [89](89.md)                            |
-| `31990`       | Handler information             | [89](89.md)                            |                         |
-| `32267`       | Software Application            |                                        |                        |
+| `31990`       | Handler information             | [89](89.md)                            |
+| `32267`       | Software Application            |                                        |
 | `34550`       | Community Definition            | [72](72.md)                            |
+| `38172`       | Cashu Mint Announcement         | [87](87.md)                            |
+| `38173`       | Fedimint Announcement           | [87](87.md)                            |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
 | `39089`       | Starter packs                   | [51](51.md)                            |
