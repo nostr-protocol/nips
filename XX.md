@@ -137,7 +137,6 @@ Persistent discussion threads use existing comment protocols such as [NIP-22](22
 
 - Use `t` tags for genre/category filtering
 - Include `l` tags for internationalization
-- Add `location` for geographical discovery
 
 ## Reference Implementation
 
