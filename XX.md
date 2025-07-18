@@ -141,7 +141,7 @@ Real-time chat during radio streaming uses existing live chat protocols such as 
 
 ### Station Comments
 
-Persistent discussion threads use existing comment protocols such as [NIP-25](25.md). Comments should reference the radio station event to create threaded discussions about stations.
+Persistent discussion threads use existing comment protocols such as [NIP-22](22.md). Comments should reference the radio station event to create threaded discussions about stations.
 
 ## Implementation Notes
 
