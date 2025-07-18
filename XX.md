@@ -6,30 +6,6 @@
 
 This NIP defines a standard for publishing and discovering internet radio stations on Nostr, enabling decentralized radio station directories, streaming metadata, social features, and interoperability between radio applications.
 
-## Rationale
-
-Traditional internet radio directories are centralized services controlled by single entities, making them vulnerable to censorship, takedowns, and service discontinuation. Radio stations and listeners lack data portability between different platforms and applications.
-
-This specification leverages Nostr's decentralized infrastructure to create an open, censorship-resistant radio ecosystem where:
-
-- Radio stations can publish their metadata and streaming information directly
-- Users maintain portable favorites lists across applications
-- Developers can build interoperable radio clients without vendor lock-in
-- Communities can engage around stations through comments and live chat
-- Discovery happens through the network rather than centralized algorithms
-- Organic, decentralized maintenance of station entries helps keep quality high and mitigate broken links
-- Direct listener-to-station monetization becomes possible through Nostr's native micropayment capabilities
-
-## Overview
-
-This specification defines radio station events and describes how existing Nostr protocols can be used to create a complete radio ecosystem:
-
-- **Radio Station Events** (`kind:31237`) - Station metadata and streaming information (defined in this NIP)
-- **Live Chat Messages** - Real-time chat during streaming using existing live chat protocols
-- **Station Comments** - Persistent discussion threads using existing comment protocols
-- **Favorites Management** - Personal and curated station collections using [NIP-78](78.md)
-- **Application Discovery** - Handler registration using [NIP-89](89.md)
-
 ## Radio Station Events
 
 Radio stations are published as addressable events of `kind:31237`. These events contain streaming URLs, metadata, and technical specifications needed for playback.
