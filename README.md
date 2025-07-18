@@ -198,6 +198,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10063`       | User server list                | [Blossom][blossom]                     |
 | `10096`       | File storage server list        | [96](96.md)                            |
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
+| `10312`       | Room Presence                   | [53](53.md)                            |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `17375`       | Cashu Wallet Event              | [60](60.md)                            |
 | `17375`       | Ecash Mint Recommendation       | [87](87.md)                            |
@@ -232,6 +233,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30166`       | Relay Discovery                 | [66](66.md)                            |
 | `30267`       | App curation sets               | [51](51.md)                            |
 | `30311`       | Live Event                      | [53](53.md)                            |
+| `30312`       | Interactive Room                | [53](53.md)                            |
+| `30313`       | Conference Event                | [53](53.md)                            |
 | `30315`       | User Statuses                   | [38](38.md)                            |
 | `30388`       | Slide Set                       | [Corny Chat][cornychat-slideset]       |
 | `30402`       | Classified Listing              | [99](99.md)                            |
