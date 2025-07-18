@@ -48,8 +48,7 @@ Radio stations are published as addressable events of `kind:31237`. These events
     ["countryCode", "<ISO-3166-2-code>"],
     ["location", "<human-readable-location>"],
     ["thumbnail", "<image-url>"],
-    ["website", "<station-website>"],
-    ["client", "<client-name>", "<handler-address>", "<relay-hint>"]
+    ["website", "<station-website>"]
   ]
 }
 ```
@@ -108,7 +107,6 @@ Each stream object MUST include:
 - `location`: Human-readable location string
 - `thumbnail`: Station logo/image URL
 - `website`: Station's official website
-- `client`: Client that published the event (format: `["client", "ClientName", "HandlerId", "RelayURL"]`)
 
 ### Example
 
@@ -128,13 +126,7 @@ Each stream object MUST include:
     ["countryCode", "FR"],
     ["location", "Paris, France"],
     ["thumbnail", "https://example.com/fip-logo.png"],
-    ["website", "https://www.radiofrance.fr/fip"],
-    [
-      "client",
-      "NostrRadio",
-      "31990:pubkey:handler123",
-      "wss://relay.example.com"
-    ]
+    ["website", "https://www.radiofrance.fr/fip"]
   ]
 }
 ```
@@ -173,7 +165,6 @@ Persistent discussion threads use existing comment protocols such as [NIP-25](25
 
 ### Privacy Considerations
 
-- The `client` tag has privacy implications - clients SHOULD allow opt-out
 - Station owners can moderate chat/comments by maintaining block lists
 - Consider rate limiting for chat messages to prevent spam
 
