@@ -204,6 +204,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10096`       | File storage server list        | [96](96.md)                            |
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
 | `10312`       | Room Presence                   | [53](53.md)                            |
+| `10377`       | Proxy Announcement              | [Nostr Epoxy][nostr-epoxy]             |
+| `11111`       | Transport Method Announcement   | [Nostr Epoxy][nostr-epoxy]             |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `17375`       | Cashu Wallet Event              | [60](60.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
@@ -279,6 +281,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 [blossom]: https://github.com/hzrd149/blossom
 [Tidal-nostr]: https://wikistr.com/tidal-nostr
 [geocaching]: https://nostrhub.io/naddr1qvzqqqrcvypzppscgyy746fhmrt0nq955z6xmf80pkvrat0yq0hpknqtd00z8z68qqgkwet0vdskx6rfdenj6etkv4h8guc6gs5y5
+[nostr-epoxy]: https://github.com/Origami74/nostr-epoxy-reverse-proxy
 
 ## Message types
 
