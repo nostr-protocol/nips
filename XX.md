@@ -117,7 +117,7 @@ Each stream object MUST include:
   "created_at": 1690000000,
   "content": "{\"description\":\"Eclectic mix of jazz, world music, and electronic sounds from France.\",\"streams\":[{\"url\":\"https://icecast.radiofrance.fr/fiprock-hifi.aac\",\"format\":\"audio/aac\",\"quality\":{\"bitrate\":128000,\"codec\":\"aac\",\"sampleRate\":44100},\"primary\":true}]}",
   "tags": [
-    ["d", "fip-radio-paris"],
+    ["d", "a7f9d2e1b8c3"],
     ["name", "FIP Radio"],
     ["t", "jazz"],
     ["t", "world"],
@@ -147,9 +147,9 @@ Persistent discussion threads use existing comment protocols such as [NIP-25](25
 
 ### Station Identification
 
-- The `d` tag value SHOULD be descriptive and stable for the station
+- The `d` tag value SHOULD be a random identifier to ensure stability over time
+- If no `d` tag is present, it defaults to an empty string
 - Multiple stations can be published by the same pubkey using different `d` tags
-- Clients SHOULD use the station name as a fallback identifier
 
 ### Streaming Compatibility
 
