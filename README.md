@@ -102,9 +102,11 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-5E: Nostr Live Streams](5E.md)
 - [NIP-B0: Web Bookmarks](B0.md)
 - [NIP-B7: Blossom](B7.md)
 - [NIP-C0: Code Snippets](C0.md)
+- [NIP-7D: Threads](7D.md)
 - [NIP-C7: Chats](C7.md)
 
 ## Event Kinds
@@ -147,6 +149,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1021`        | Bid                             | [15](15.md)                            |
 | `1022`        | Bid confirmation                | [15](15.md)                            |
 | `1040`        | OpenTimestamps                  | [03](03.md)                            |
+| `1053`        | Live Stream                     | [5E](5E.md)                            |
 | `1059`        | Gift Wrap                       | [59](59.md)                            |
 | `1063`        | File Metadata                   | [94](94.md)                            |
 | `1068`        | Poll                            | [88](88.md)                            |
