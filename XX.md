@@ -23,6 +23,7 @@ Radio stations are published as addressable events of `kind:31237`. These events
     ["l", "<ISO-639-1-code>"],
     ["countryCode", "<ISO-3166-2-code>"],
     ["location", "<human-readable-location>"],
+    ["g", "<geohash>"],
     ["thumbnail", "<image-url>"],
     ["website", "<station-website>"]
   ]
@@ -81,6 +82,7 @@ Each stream object MUST include:
 - `l`: ISO 639-1 language codes (multiple allowed)
 - `countryCode`: ISO 3166-2 country code
 - `location`: Human-readable location string
+- `g`: Geohash for precise geographical coordinates
 - `thumbnail`: Station logo/image URL
 - `website`: Station's official website
 
@@ -101,6 +103,7 @@ Each stream object MUST include:
     ["l", "fr"],
     ["countryCode", "FR"],
     ["location", "Paris, France"],
+    ["g", "u09tvw0"],
     ["thumbnail", "https://example.com/fip-logo.png"],
     ["website", "https://www.radiofrance.fr/fip"]
   ]
@@ -137,6 +140,7 @@ Persistent discussion threads use existing comment protocols such as [NIP-22](22
 
 - Use `t` tags for genre/category filtering
 - Include `l` tags for internationalization
+- Add `g` tags with geohash for precise geographical discovery
 
 ## Reference Implementation
 
