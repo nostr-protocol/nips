@@ -44,7 +44,7 @@ Radio stations are published as addressable events of `kind:31237`. These events
     ["d", "<station-identifier>"],
     ["name", "<station-name>"],
     ["t", "<genre>"],
-    ["language", "<ISO-639-1-code>"],
+    ["l", "<ISO-639-1-code>"],
     ["countryCode", "<ISO-3166-2-code>"],
     ["location", "<human-readable-location>"],
     ["thumbnail", "<image-url>"],
@@ -102,7 +102,7 @@ Each stream object MUST include:
 ### Recommended Tags
 
 - `t`: Genre/category tags (multiple allowed)
-- `language`: ISO 639-1 language codes (multiple allowed)
+- `l`: ISO 639-1 language codes (multiple allowed)
 - `countryCode`: ISO 3166-2 country code
 - `location`: Human-readable location string
 - `thumbnail`: Station logo/image URL
@@ -122,7 +122,7 @@ Each stream object MUST include:
     ["t", "jazz"],
     ["t", "world"],
     ["t", "electronic"],
-    ["language", "fr"],
+    ["l", "fr"],
     ["countryCode", "FR"],
     ["location", "Paris, France"],
     ["thumbnail", "https://example.com/fip-logo.png"],
@@ -160,7 +160,7 @@ Persistent discussion threads use existing comment protocols such as [NIP-22](22
 ### Content Indexing
 
 - Use `t` tags for genre/category filtering
-- Include `language` tags for internationalization
+- Include `l` tags for internationalization
 - Add `location` for geographical discovery
 
 ## Reference Implementation
