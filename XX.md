@@ -163,26 +163,6 @@ Persistent discussion threads use existing comment protocols such as [NIP-25](25
 - Include `language` tags for internationalization
 - Add `location` for geographical discovery
 
-### Privacy Considerations
-
-- Station owners can moderate chat/comments by maintaining block lists
-- Consider rate limiting for chat messages to prevent spam
-
-## Security Considerations
-
-- Validate stream URLs before playback to prevent malicious redirects
-- Sanitize station descriptions when rendering markdown content
-- Implement reasonable limits on metadata size to prevent DoS attacks
-- Verify signatures on all events before processing
-
-## Backwards Compatibility
-
-This specification introduces new event kinds that do not conflict with existing NIPs. Clients that don't understand `kind:31237` can safely ignore these events without affecting other functionality.
-
 ## Reference Implementation
 
 A reference implementation is available at [WaveFunc](https://github.com/zeSchlausKwab/wavefunc), demonstrating station publishing, favorites management, and social features.
-
-## Conclusion
-
-This specification enables a decentralized internet radio ecosystem built on Nostr's foundation of censorship resistance and data portability. By standardizing station metadata, social features, and application discovery, it creates interoperability between radio clients while preserving user autonomy and freedom of choice.
