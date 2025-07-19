@@ -42,6 +42,52 @@ All messages will follow [NIP-01](/01.md) message structure. For a given message
 ```
 After reception of all batches, the other device can then join them and decompress. To ensure reliability, only 1 message will be read/written at a time. MTU can be negotiated in advance. The maximum size for a message is 64KB; bigger messages will be rejected.
 
+## Examples
+
+This example implements a function to split and compress a byte array into chunks, as well as another function to join and decompress them in order to obtain the initial result:
+
+```kotlin
+fun splitInChunks(message: ByteArray): Array<ByteArray> {
+   val chunkSize = 500 // define the chunk size
+   var byteArray = compressByteArray(message)
+   val numChunks = (byteArray.size + chunkSize - 1) / chunkSize // calculate the number of chunks
+   var chunkIndex = 0
+   val chunks = Array(numChunks) { ByteArray(0) }
+
+   for (i in 0 until numChunks) {
+         val start = i * chunkSize
+         val end = minOf((i + 1) * chunkSize, byteArray.size)
+         val chunk = byteArray.copyOfRange(start, end)
+
+         // add chunk index to the first 2 bytes and last chunk flag to the last byte
+         val chunkWithIndex = ByteArray(chunk.size + 2)
+         chunkWithIndex[0] = chunkIndex.toByte() // chunk index
+         chunk.copyInto(chunkWithIndex, 1)
+         chunkWithIndex[chunkWithIndex.size - 1] = numChunks.toByte()
+
+         // store the chunk in the array
+         chunks[i] = chunkWithIndex
+
+         chunkIndex++
+   }
+
+   return chunks
+}
+
+fun joinChunks(chunks: Array<ByteArray>): ByteArray {
+   val sortedChunks = chunks.sortedBy { it[0] }
+   var reassembledByteArray = ByteArray(0)
+   for (chunk in sortedChunks) {
+         val chunkData = chunk.copyOfRange(1, chunk.size - 1)
+         reassembledByteArray = reassembledByteArray.copyOf(reassembledByteArray.size + chunkData.size)
+         chunkData.copyInto(reassembledByteArray, reassembledByteArray.size - chunkData.size)
+   }
+
+   return decompressByteArray(reassembledByteArray)
+}
+
+```
+
 ## Workflows
 
 ### Client to Relay
