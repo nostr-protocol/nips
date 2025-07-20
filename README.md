@@ -102,6 +102,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-A1: Relay Keypairs, nred:// URLs, and TLS](A1.md)
 - [NIP-B0: Web Bookmarks](B0.md)
 - [NIP-B7: Blossom](B7.md)
 - [NIP-C0: Code Snippets](C0.md)
