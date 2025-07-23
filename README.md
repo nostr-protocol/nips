@@ -102,6 +102,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-A1: Voice Messages](A0.md)
 - [NIP-B0: Web Bookmarks](B0.md)
 - [NIP-B7: Blossom](B7.md)
 - [NIP-C0: Code Snippets](C0.md)
@@ -151,6 +152,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1063`        | File Metadata                   | [94](94.md)                            |
 | `1068`        | Poll                            | [88](88.md)                            |
 | `1111`        | Comment                         | [22](22.md)                            |
+| `1222`        | Voice Message                   | [A0](A0.md)                            |
+| `1244`        | Voice Message Comment           | [A0](A0.md)                            |
 | `1311`        | Live Chat Message               | [53](53.md)                            |
 | `1337`        | Code Snippet                    | [C0](C0.md)                            |
 | `1617`        | Patches                         | [34](34.md)                            |
