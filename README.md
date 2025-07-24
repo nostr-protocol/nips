@@ -157,6 +157,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1311`        | Live Chat Message               | [53](53.md)                            |
 | `1337`        | Code Snippet                    | [C0](C0.md)                            |
 | `1617`        | Patches                         | [34](34.md)                            |
+| `1618`        | Pull Requests                   | [34](34.md)                            |
+| `1619`        | Pull Request Updates            | [34](34.md)                            |
 | `1621`        | Issues                          | [34](34.md)                            |
 | `1622`        | Git Replies (deprecated)        | [34](34.md)                            |
 | `1630`-`1633` | Status                          | [34](34.md)                            |
@@ -307,6 +309,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | ----------------- | ------------------------------------ | ------------------------------- | -------------------------------------------------- |
 | `a`               | coordinates to an event              | relay URL                       | [01](01.md)                                        |
 | `A`               | root address                         | relay URL                       | [22](22.md)                                        |
+| `c`               | commit id                            |                                 | [34](34.md)                                       |
 | `d`               | identifier                           | --                              | [01](01.md)                                        |
 | `e`               | event id (hex)                       | relay URL, marker, pubkey (hex) | [01](01.md), [10](10.md)                           |
 | `E`               | root event id                        | relay URL                       | [22](22.md)                                        |
@@ -335,6 +338,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `alt`             | summary                              | --                              | [31](31.md)                                        |
 | `amount`          | millisatoshis, stringified           | --                              | [57](57.md)                                        |
 | `bolt11`          | `bolt11` invoice                     | --                              | [57](57.md)                                        |
+| `branch-name`     | branch name suggestion               | --                              | [34](34.md)                                        |
 | `challenge`       | challenge string                     | --                              | [42](42.md)                                        |
 | `client`          | name, address                        | relay URL                       | [89](89.md)                                        |
 | `clone`           | git clone URL                        | --                              | [34](34.md)                                        |
