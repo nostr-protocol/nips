@@ -204,7 +204,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10312`       | Room Presence                   | [53](53.md)                            |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `17375`       | Cashu Wallet Event              | [60](60.md)                            |
-| `17375`       | Ecash Mint Recommendation       | [87](87.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
 | `22242`       | Client Authentication           | [42](42.md)                            |
 | `23194`       | Wallet Request                  | [47](47.md)                            |
