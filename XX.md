@@ -121,7 +121,8 @@ After two devices have successfully connected and established the Client-Server 
 8. Server -
    1. If the Server has messages missing on the Client, it responds with one `EVENT`.
    2. If the Client doesn't have any messages missing on the Server, it responds with `EOSE`. In this case, subsequent responses to the Client will be empty.
-9. After the two devices detect that there are no more missing events on both ends, the workflow will pause at this point.
+9. If the Client detects that the devices are not synchronized yet, jump to step 5.
+10. After the two devices detect that there are no more missing events on both ends, the workflow will pause at this point.
 
 #### Half-duplex event spread
 
