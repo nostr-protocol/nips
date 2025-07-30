@@ -8,12 +8,12 @@ Nostr BLE Communications Protocol
 
 This NIP specifies how Nostr apps can use BLE to communicate and synchronize with each other. The BLE protocol follows a client-server pattern, so this NIP emulates the WS structure in a similar way, but with some adaptations to its limitations.
 
-## Device Advertisement
+## Device advertisement
 A device advertises itself with:
 - Service UUID: `0000180f-0000-1000-8000-00805f9b34fb`
 - Data: Device UUID in ByteArray format
 
-## GATT Service
+## GATT service
 The device exposes a Nordic UART Service with the following characteristics:
 
 1. Write Characteristic
@@ -24,7 +24,7 @@ The device exposes a Nordic UART Service with the following characteristics:
    - UUID: `12345678-0000-1000-8000-00805f9b34fb`
    - Properties: Notify, Read
 
-## Role Assignment
+## Role assignment
 
 When one device initially finds another advertising the service, it will read the service's data to get the device UUID and compare it with its own advertised device UUID. For this communication, the device with the highest ID will take the role of GATT Server (Relay), the other will be considered the GATT Client (Client) and will proceed to establish the connection.
 
@@ -90,15 +90,45 @@ fun joinChunks(chunks: Array<ByteArray>): ByteArray {
 
 ## Workflows
 
-### Client to Relay
+### Client to relay
 
-- Any message the client wants to send to the Relay will be a write message.
-- Any message the client receives from the Relay will be a read message.
+- Any message the client wants to send to a relay will be a write message.
+- Any message the client receives from a relay will be a read message.
 
-### Relay to Client
+### Relay to client
 
-The Relay should notify the Client about any new event matching subscription's filters by using the Notify action of the Read Characteristic. After that, the Client can proceed to read messages from the Relay.
+The relay should notify the client about any new event matching subscription's filters by using the Notify action of the Read Characteristic. After that, the client can proceed to read messages from the relay.
 
-### Device Synchronization
+### Device synchronization
 
-WIP
+Given the nature of BLE, it is expected that the direct connection between two devices might be extremely intermittent, with gaps of hours or even days. That's why it's crucial to define a synchronization process by following [NIP-77](./77.md) but with an adaptation to the limitations of the technology.
+
+After two devices have successfully connected and established the Client-Server roles, the devices will use half-duplex communication to intermittently send and receive messages, with the Client being the one who sends the first message.
+
+#### Half-duplex synchronization example
+
+1. Client - Writes ["NEG-OPEN"](/77.md#initial-message-client-to-relay) message.
+2. Server - Sends `write-success`.
+3. Client - Sends `read-message`.
+4. Server - Responds with ["NEG-MSG"](./77.md#subsequent-messages-bidirectional) message.
+5. Client -
+   1. If the Client has messages missing on the Server, it writes one `EVENT`.
+   2. If the Client doesn't have any messages missing on the Server, it writes `EOSE`. In this case, subsequent messages to the Server will be empty while the Server claims to have more notes for the Client.
+6. Server - Sends `write-success`.
+7. Client - Sends `read-message`.
+8. Server -
+   1. If the Server has messages missing on the Client, it responds with one `EVENT`.
+   2. If the Client doesn't have any messages missing on the Server, it responds with `EOSE`. In this case, subsequent responses to the Client will be empty.
+9. After the two devices detect that there are no more missing events on both ends, the workflow will pause at this point.
+
+#### Half-duplex event spread example
+
+While two devices are connected and synchronized, it might happen that one of them receives a new message from another connected peer. Devices MUST keep track of which notes have been sent to its peers while they are connected. If the newly received event is detected as missing in one of the connected and synchronized peers:
+
+1. If the peer is a Server:
+   1. Client - It writes the `EVENT`.
+   2. Server - Sends `write-success`.
+2. If the peer is a Client:
+   1. Server - It will send an empty notification to the Client.
+   2. Client - Sends `read-message`.
+   3. Server - Responds with the `EVENT`.
