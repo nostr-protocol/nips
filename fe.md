@@ -47,20 +47,34 @@ If included in the `relative` list, `since` and `until` values MUST be interpret
 ["created_at", {"since": 1715293673, "until": 86400, "relative": ["until"]}]
 ```
 
-## DVM
+## Content Discovery DVM
 
-A `dvm` feed includes one or more objects describing a DVM request. Each object MUST
-have a request `kind`, and MAY have a list of request `tags`, `relays` to send the
-request to, and a list of `mappings` mapping response tags to feeds. If omitted,
-applications SHOULD provide a reasonable set of default `mappings`.
+A `dvm_5300` feed includes one or more objects describing a [kind 5300 DVM request](https://www.data-vending-machines.org/kinds/5300/). Each object MAY have a list of request `tags` and `relays` to send the request to.
+
+The `a` and `e` tags in the DVM response MUST then be used to build filters for requesting the recommended events.
 
 ```json
 [
-  "dvm",
+  "dvm_5300",
   {
-    "kind": 5300,
     "tags": [["i", "philosophy", "text"]],
-    "mappings": [["e", ["tag", "#e"]]]
+    "relays": ["wss://relay.example.com/"]
+  }
+]
+```
+
+## People Discovery DVM
+
+A `dvm_5301` feed includes one or more objects describing a [kind 5301 DVM request](https://www.data-vending-machines.org/kinds/5301/). Each object MAY have a list of request `tags` and `relays` to send the request to.
+
+The `p` tags in the DVM response MUST then be used to build filters for requesting events published by the recommended pubkeys.
+
+```json
+[
+  "dvm_5301",
+  {
+    "tags": [["i", "philosophy", "text"]],
+    "relays": ["wss://relay.example.com/"]
   }
 ]
 ```
@@ -120,17 +134,6 @@ Label items may have the following keys:
     "mappings": [["p", ["authors"]]]
   }
 ]
-```
-
-## WOT
-
-A `wot` feed includes one or more objects with optional `min` and `max` properties. These
-MUST be between 0 and 1 (inclusive) so that the interpeting application can scale the filter
-to their own web of trust's score range. If empty, `min` MUST be interpreted as `0`, and
-`max` as `1`.
-
-```json
-["wot", {"min": 0.3}]
 ```
 
 ## Relay
