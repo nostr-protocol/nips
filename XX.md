@@ -105,7 +105,9 @@ Given the nature of BLE, it is expected that the direct connection between two d
 
 After two devices have successfully connected and established the Client-Server roles, the devices will use half-duplex communication to intermittently send and receive messages, with the Client being the one who sends the first message.
 
-#### Half-duplex synchronization example
+### Examples
+
+#### Half-duplex synchronization
 
 1. Client - Writes ["NEG-OPEN"](/77.md#initial-message-client-to-relay) message.
 2. Server - Sends `write-success`.
@@ -121,7 +123,7 @@ After two devices have successfully connected and established the Client-Server 
    2. If the Client doesn't have any messages missing on the Server, it responds with `EOSE`. In this case, subsequent responses to the Client will be empty.
 9. After the two devices detect that there are no more missing events on both ends, the workflow will pause at this point.
 
-#### Half-duplex event spread example
+#### Half-duplex event spread
 
 While two devices are connected and synchronized, it might happen that one of them receives a new message from another connected peer. Devices MUST keep track of which notes have been sent to its peers while they are connected. If the newly received event is detected as missing in one of the connected and synchronized peers:
 
