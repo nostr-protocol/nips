@@ -103,11 +103,11 @@ The relay should notify the client about any new event matching subscription's f
 
 Given the nature of BLE, it is expected that the direct connection between two devices might be extremely intermittent, with gaps of hours or even days. That's why it's crucial to define a synchronization process by following [NIP-77](./77.md) but with an adaptation to the limitations of the technology.
 
-After two devices have successfully connected and established the Client-Server roles, the devices will use half-duplex communication to intermittently send and receive messages, with the Client being the one who sends the first message.
-
-### Examples
+After two devices have successfully connected and established the Client-Server roles, the devices will use half-duplex communication to intermittently send and receive messages.
 
 #### Half-duplex synchronization
+
+Right after the 2 devices connect, the Client starts the workflow by sending the first message.
 
 1. Client - Writes ["NEG-OPEN"](/77.md#initial-message-client-to-relay) message.
 2. Server - Sends `write-success`.
