@@ -175,6 +175,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `7374`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
 | `7375`        | Cashu Wallet Tokens             | [60](60.md)                            |
 | `7376`        | Cashu Wallet History            | [60](60.md)                            |
+| `7516`        | Geocache log                    | [geocaching](geocaching)               |
+| `7517`        | Geocache proof of find          | [geocaching](geocaching)               |
 | `9000`-`9030` | Group Control Events            | [29](29.md)                            |
 | `9041`        | Zap Goal                        | [75](75.md)                            |
 | `9321`        | Nutzap                          | [61](61.md)                            |
@@ -258,6 +260,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `34550`       | Community Definition            | [72](72.md)                            |
 | `38172`       | Cashu Mint Announcement         | [87](87.md)                            |
 | `38173`       | Fedimint Announcement           | [87](87.md)                            |
+| `37516`       | Geocache listing                | [geocaching](geocaching)               |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
 | `39089`       | Starter packs                   | [51](51.md)                            |
@@ -275,6 +278,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 [NKBIP-03]: https://wikistr.com/nkbip-03*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1
 [blossom]: https://github.com/hzrd149/blossom
 [Tidal-nostr]: https://wikistr.com/tidal-nostr
+[geocaching]: https://nostrhub.io/naddr1qvzqqqrcvypzppscgyy746fhmrt0nq955z6xmf80pkvrat0yq0hpknqtd00z8z68qqgkwet0vdskx6rfdenj6etkv4h8guc6gs5y5
 
 ## Message types
 
