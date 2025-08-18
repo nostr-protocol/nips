@@ -175,8 +175,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `7374`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
 | `7375`        | Cashu Wallet Tokens             | [60](60.md)                            |
 | `7376`        | Cashu Wallet History            | [60](60.md)                            |
-| `7516`        | Geocache log                    | [geocaching](geocaching)               |
-| `7517`        | Geocache proof of find          | [geocaching](geocaching)               |
+| `7516`        | Geocache log                    | [geocaching][geocaching]               |
+| `7517`        | Geocache proof of find          | [geocaching][geocaching]               |
 | `9000`-`9030` | Group Control Events            | [29](29.md)                            |
 | `9041`        | Zap Goal                        | [75](75.md)                            |
 | `9321`        | Nutzap                          | [61](61.md)                            |
