@@ -69,6 +69,7 @@ Android push alert requests are `kind 32833` events which can be used to request
 The following additional tags are defined:
 
 - `device_token` indicates a Firebase Cloud Messaging token
+- `silent` indicates whether silent push notifications should be used
 
 The push notification SHOULD include the following JSON-encoded data:
 
@@ -83,6 +84,7 @@ The following additional tags are defined:
 
 - `device_token` indicates an APNs token
 - `bundle_identifier` indicates a iOS app bundle identifier
+- `silent` indicates whether silent push notifications should be used
 
 The push notification SHOULD include the following JSON-encoded data:
 
