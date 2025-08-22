@@ -133,9 +133,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `21`          | Video Event                     | [71](71.md)                            |
 | `22`          | Short-form Portrait Video Event | [71](71.md)                            |
 | `30`          | internal reference              | [NKBIP-03]                             |
-| `31`          | external web reference          | [NKBIP-03]                            |
-| `32`          | hardcopy reference              | [NKBIP-03]                            |
-| `33`          | prompt reference                | [NKBIP-03]                            |
+| `31`          | external web reference          | [NKBIP-03]                             |
+| `32`          | hardcopy reference              | [NKBIP-03]                             |
+| `33`          | prompt reference                | [NKBIP-03]                             |
 | `40`          | Channel Creation                | [28](28.md)                            |
 | `41`          | Channel Metadata                | [28](28.md)                            |
 | `42`          | Channel Message                 | [28](28.md)                            |
@@ -148,6 +148,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1021`        | Bid                             | [15](15.md)                            |
 | `1022`        | Bid confirmation                | [15](15.md)                            |
 | `1040`        | OpenTimestamps                  | [03](03.md)                            |
+| `1041`         | Quote                           | [C1](C1.md)                            |
 | `1059`        | Gift Wrap                       | [59](59.md)                            |
 | `1063`        | File Metadata                   | [94](94.md)                            |
 | `1068`        | Poll                            | [88](88.md)                            |
@@ -340,6 +341,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `-`               | --                                   | --                              | [70](70.md)                                        |
 | `alt`             | summary                              | --                              | [31](31.md)                                        |
 | `amount`          | millisatoshis, stringified           | --                              | [57](57.md)                                        |
+| `author`          | A full name                          | --                              | [C1](C1.md)                                        |
 | `bolt11`          | `bolt11` invoice                     | --                              | [57](57.md)                                        |
 | `challenge`       | challenge string                     | --                              | [42](42.md)                                        |
 | `client`          | name, address                        | relay URL                       | [89](89.md)                                        |
@@ -366,6 +368,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `price`           | price                                | currency, frequency             | [99](99.md)                                        |
 | `proxy`           | external ID                          | protocol                        | [48](48.md)                                        |
 | `published_at`    | unix timestamp (string)              | --                              | [23](23.md), [B0](B0.md)                           |
+| `ref`             | content reference                    | variant/version details         | [42](42.md), [17](17.md)                           |
 | `relay`           | relay url                            | --                              | [42](42.md), [17](17.md)                           |
 | `relays`          | relay list                           | --                              | [57](57.md)                                        |
 | `repo`            | Reference to the origin repository   | --                              | [C0](C0.md)                                        |
