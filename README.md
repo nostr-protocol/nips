@@ -107,6 +107,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-B7: Blossom](B7.md)
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
+- [NIP-PNS: Private Note Storage](PNS.md)
 
 ## Event Kinds
 | kind          | description                     | NIP                                    |
@@ -151,6 +152,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1059`        | Gift Wrap                       | [59](59.md)                            |
 | `1063`        | File Metadata                   | [94](94.md)                            |
 | `1068`        | Poll                            | [88](88.md)                            |
+| `1080`        | Private Note Storage            | [PNS](PNS.md)                            |
 | `1111`        | Comment                         | [22](22.md)                            |
 | `1222`        | Voice Message                   | [A0](A0.md)                            |
 | `1244`        | Voice Message Comment           | [A0](A0.md)                            |
