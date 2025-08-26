@@ -107,6 +107,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-B7: Blossom](B7.md)
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
+- [NIP-D3: DMZ Kinds](D3.md)
 
 ## Event Kinds
 | kind          | description                     | NIP                                    |
@@ -168,6 +169,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `2003`        | Torrent                         | [35](35.md)                            |
 | `2004`        | Torrent Comment                 | [35](35.md)                            |
 | `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
+| `3000`-`3004` | DMZ Kind                        | [D3][D3.md]                            |
 | `4550`        | Community Post Approval         | [72](72.md)                            |
 | `5000`-`5999` | Job Request                     | [90](90.md)                            |
 | `6000`-`6999` | Job Result                      | [90](90.md)                            |
@@ -198,6 +200,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10015`       | Interests list                  | [51](51.md)                            |
 | `10019`       | Nutzap Mint Recommendation      | [61](61.md)                            |
 | `10020`       | Media follows                   | [51](51.md)                            |
+| `10021`-`10025`| DMZ Kinds                      | [D3](D3.md)                            |
 | `10030`       | User emoji list                 | [51](51.md)                            |
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
 | `10063`       | User server list                | [Blossom][blossom]                     |
@@ -208,6 +211,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `11111`       | Transport Method Announcement   | [Nostr Epoxy][nostr-epoxy]             |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `17375`       | Cashu Wallet Event              | [60](60.md)                            |
+| `20000`-`20004`| DMZ Kinds                      | [D3](D3.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
 | `22242`       | Client Authentication           | [42](42.md)                            |
 | `23194`       | Wallet Request                  | [47](47.md)                            |
@@ -224,6 +228,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30007`       | Kind mute sets                  | [51](51.md)                            |
 | `30008`       | Profile Badges                  | [58](58.md)                            |
 | `30009`       | Badge Definition                | [58](58.md)                            |
+| `30010`-`30014`| DMZ Kinds                      | [D3](D3.md)                            |
 | `30015`       | Interest sets                   | [51](51.md)                            |
 | `30017`       | Create or update a stall        | [15](15.md)                            |
 | `30018`       | Create or update a product      | [15](15.md)                            |
