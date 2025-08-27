@@ -107,7 +107,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-B7: Blossom](B7.md)
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
-- [NIP-XXX: Binary Attachments | DRAFT](nip-xxx-binary-attachments.md)
+- [NIP-EE: E2EE Messaging using MLS Protocol](EE.md)
+- [NIP-XXX: Encrypted Binary Attachments | DRAFT](nip-xxx-binary-attachments.md)
 
 ## Event Kinds
 | kind          | description                     | NIP                                    |
