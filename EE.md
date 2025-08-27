@@ -117,7 +117,7 @@ When creating a new group, the following MLS extensions MUST be used.
 
 - [`required_capabilities`](https://docs.rs/openmls/latest/openmls/extensions/struct.RequiredCapabilitiesExtension.html)
 - [`ratchet_tree`](https://docs.rs/openmls/latest/openmls/extensions/struct.RatchetTreeExtension.html)
-- [`nostr_group_data`](https://github.com/erskingardner/nostr-openmls/blob/master/src/nostr_group_data_extension.rs)
+- [`nostr_group_data`](https://github.com/rust-nostr/nostr/blob/master/mls/nostr-mls/src/extension.rs)
 
 And the following MLS extension is highly recommended (more [here](#keypackage-event-and-signing-keys)):
 - [`last_resort`](https://docs.rs/openmls/latest/openmls/extensions/struct.LastResortExtension.html)
@@ -259,7 +259,7 @@ Group Events are published using an ephemeral Nostr keypair to obfuscate the num
    "sig": <signed with ephemeral sender key>
 }
 ```
-- The `content` field is a [tls-style](https://www.rfc-editor.org/rfc/rfc9420.html#name-the-message-mls-media-type) serialized [`MLSMessage`](https://www.rfc-editor.org/rfc/rfc9420.html#section-6-4) object which is then encrypted according to [NIP-44](44.md). However, instead of using the sender and receivers keys the NIP-44 encryption is done using a Nostr keypair generated from the MLS [`exporter_secret`](https://www.rfc-editor.org/rfc/rfc9420.html#section-8.5) to calulate the `conversation key` value. Essentially, you use the hex-encoded `exporter_secret` value as the private key, calculate the public key, and then use those two keys to encrypt and decrypt messages.
+- The `content` field is a [tls-style](https://www.rfc-editor.org/rfc/rfc9420.html#name-the-message-mls-media-type) serialized [`MLSMessage`](https://www.rfc-editor.org/rfc/rfc9420.html#section-6-4) object which is then encrypted according to [NIP-44](44.md). However, instead of using the sender and receivers keys to derive a `conversation_key`, the NIP-44 encryption is done using a Nostr keypair generated from the MLS [`exporter_secret`](https://www.rfc-editor.org/rfc/rfc9420.html#section-8.5) to calculate the `conversation_key` value. Essentially, you use the hex-encoded `exporter_secret` value as the private key (used as the sender key), calculate the public key for that private key (used as the receiver key), and then proceed with the standard NIP-44 scheme to encrypt and decrypt messages.
 - The `exporter_secret` value should be generated with a 32-byte length and labeled `nostr`. This `exporter_secret` value is rotated on each new epoch in the group. Clients should generate a new 32-byte value each time they process a valid `Commit` message.
 - The `pubkey` is the hex-encoded public key of the ephemeral sender.
 - The `h` tag is the nostr group ID value (from the Nostr Group Data Extension).
