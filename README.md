@@ -145,8 +145,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `62`          | Request to Vanish               | [62](62.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
 | `443`         | KeyPackage                      | [EE](EE.md)                            |
-| `444`         | Welcome                         | [EE](EE.md)                            |
-| `445`         | Group                           | [EE](EE.md)                            |
+| `444`         | Welcome Message                 | [EE](EE.md)                            |
+| `445`         | Group Event                     | [EE](EE.md)                            |
 | `818`         | Merge Requests                  | [54](54.md)                            |
 | `1018`        | Poll Response                   | [88](88.md)                            |
 | `1021`        | Bid                             | [15](15.md)                            |
