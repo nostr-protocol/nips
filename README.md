@@ -144,6 +144,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `44`          | Channel Mute User               | [28](28.md)                            |
 | `62`          | Request to Vanish               | [62](62.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
+| `443`         | KeyPackage                      | [EE](EE.md)                            |
+| `444`         | Welcome Message                 | [EE](EE.md)                            |
+| `445`         | Group Event                     | [EE](EE.md)                            |
 | `818`         | Merge Requests                  | [54](54.md)                            |
 | `1018`        | Poll Response                   | [88](88.md)                            |
 | `1021`        | Bid                             | [15](15.md)                            |
@@ -201,6 +204,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10020`       | Media follows                   | [51](51.md)                            |
 | `10030`       | User emoji list                 | [51](51.md)                            |
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
+| `10051`       | KeyPackage Relays List          | [EE](EE.md)                            |
 | `10063`       | User server list                | [Blossom][blossom]                     |
 | `10096`       | File storage server list        | [96](96.md)                            |
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
