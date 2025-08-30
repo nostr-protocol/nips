@@ -15,7 +15,7 @@ Time-locked capsules allow content to be:
 Permalink: Event Kinds
 
 - `1990`: Time Capsule (regular)
-- `30095`: Time Capsule (parameterized replaceable; keyed by `d` tag)
+- `30095`: Time Capsule (addressable)
 - `1991`: Time Capsule Unlock Share
 - `1992`: Time Capsule Share Distribution
 
