@@ -12,6 +12,7 @@ Time-locked capsules allow content to be:
 - Protected with built-in delays for sensitive material
 
 ## Event Kinds
+
 Permalink: Event Kinds
 
 - `1990`: Time Capsule (regular)
@@ -20,17 +21,19 @@ Permalink: Event Kinds
 - `1992`: Time Capsule Share Distribution
 
 ## Specification
+
 Permalink: Specification
 
 ### Time Capsule Events (kinds `1990` and `30095`)
+
 Permalink: Time Capsule Events
 
 A time capsule event contains encrypted content and unlock conditions.
 
 #### Required tags
 
-- `u`: Unlock configuration in format `["u","<mode>","<param1>","<value1>",...]`
-- `p`: Witness pubkeys (one or more) - `["p","<witness_pubkey_hex>"]`
+- `unlock`: Unlock configuration (one tag per capsule). After `"unlock"`, each entry is `"key value"`. Unknown keys MUST be ignored without failing.
+- `p`: Witness pubkeys (one or more) — `["p","<witness_pubkey_hex>","<relay_hint>?"]` (relay hint RECOMMENDED)
 - `w-commit`: Merkle root commitment - `["w-commit","<hex_merkle_root>"]`
 - `enc`: Encryption method - `["enc","nip44:v2"]`
 - `loc`: Storage location - `["loc","inline"|"https"|"blossom"|"ipfs"]`
@@ -48,56 +51,66 @@ A time capsule event contains encrypted content and unlock conditions.
 The `content` field MUST contain a base64-encoded NIP-44 v2 encrypted payload. When `loc` is `"inline"`, the entire encrypted content is in this field. When `loc` is external, this field MAY be empty and the `uri` tag points to the encrypted content.
 
 ### Unlock Modes
+
 Permalink: Unlock Modes
 
 #### Threshold Mode
 
-```plaintext
-["u","threshold","t","<t>","n","<n>","T","<unix_unlock_time>"]
-```
+````json
+["unlock",
+  "mode threshold",
+  "t <t>",
+  "n <n>",
+  "T <unix_unlock_time>"
+]```
 
 - **t**-of-**n** witnesses must provide shares at/after timestamp `T`
 - Prevents unilateral early disclosure but not collusion of any `t` witnesses
 
 #### Scheduled Mode
 
-```plaintext
-["u","scheduled","T","<unix_unlock_time>"]
-```
+```json
+["unlock",
+  "mode scheduled",
+  "T <unix_unlock_time>"
+]```
 
 - Indicates time-based operational release where witnesses or services intend to post shares after `T`
 - This mode is not a cryptographic timelock; a future revision may define a VDF-based trustless mode
 
-Implementations MUST parse unknown `u` modes conservatively and treat them as unsupported.
+Implementations MUST parse unknown `unlock` keys conservatively (ignore unknown keys without failing).
+If a key appears multiple times, clients SHOULD use the first occurrence and ignore subsequent duplicates.
 
 ### Unlock Share Events (kind `1991`)
+
 Permalink: Unlock Share Events
 
 A witness posts one share after the unlock timestamp (with optional skew tolerance).
 
 #### Required tags
 
-- `e`: Capsule event reference - `["e","<capsule_event_id>"]`
-- `a`: Addressable reference (if capsule is parameterized replaceable) - `["a","30095:<pubkey_hex>:<d>"]`
-- `p`: Witness pubkey - `["p","<witness_pubkey_hex>"]`
+- `e`: Capsule event reference — `["e","<capsule_event_id>","<relay_hint>?"]`
+- `a`: Addressable reference (if capsule is parameterized replaceable) — `["a","30095:<pubkey_hex>:<d>","<relay_hint>?"]`
+- `p`: Witness pubkey — `["p","<witness_pubkey_hex>","<relay_hint>?"]`
 - `T`: Unlock time from capsule - `["T","<unix_timestamp>"]`
 
 #### Content
 
 - Base64 Shamir share for threshold mode
 - MAY be gift-wrapped (per NIP-59) to reduce metadata leakage
-- Clients MUST access the plaintext share after timestamp `T`
+- Clients MUST only consider plaintext shares created at or after `T` (± skew)
 
 ### Share Distribution Events (kind `1992`)
+
 Permalink: Share Distribution Events
 
 Automates delivery of per-witness shares immediately after capsule creation.
 
 #### Required tags
 
-- `e`: Capsule event reference - `["e","<capsule_event_id>"]`
-- `a`: Addressable reference (if capsule is parameterized replaceable) - `["a","30095:<pubkey_hex>:<d>"]`
-- `p`: Recipient witness - `["p","<witness_pubkey_hex>"]`
+- `e`: Capsule event reference — `["e","<capsule_event_id>","<relay_hint>?"]`
+- `a`: Addressable reference (if capsule is parameterized replaceable) — `["a","30095:<pubkey_hex>:<d>","<relay_hint>?"]`
+- `p`: Witness pubkey — `["p","<witness_pubkey_hex>","<relay_hint>?"]`
 - `share-idx`: Share index - `["share-idx","<0..n-1>"]`
 - `enc`: Encryption method - `["enc","nip44:v2"]`
 
@@ -112,15 +125,18 @@ NIP-44 v2 ciphertext containing the Shamir share destined for the witness. Only 
 - `share-idx` MUST be within `[0, n-1]`
 
 ## Protocol Flow
+
 Permalink: Protocol Flow
 
 1. **Create Capsule** (kind `1990` or `30095`)
+
    - Author generates random key `K` and encrypts payload with NIP-44 v2 → `C`
    - Selects witnesses (p tags), sets threshold `t`, witness count `n`, unlock time `T`
    - Computes `w-commit` over ordered witnesses
    - Publishes capsule with `content=C`, unlock config, witness list, commitment, storage location
 
-2. **Distribute Shares** (kind `1992`) *(recommended)*
+2. **Distribute Shares** (kind `1992`) _(recommended)_
+
    - Split `K` using Shamir's Secret Sharing (t, n)
    - For each witness, publish `1992` with NIP-44 encrypted share for that witness
    - Include `share-idx` to maintain ordering
@@ -130,16 +146,18 @@ Permalink: Protocol Flow
    - Clients collect any `t` valid shares, reconstruct `K`, and decrypt `C`
 
 ## Relay Behavior
+
 Permalink: Relay Behavior
 
-### Validation
+### Validation (Optional)
 
-Relays MUST:
+Relays MAY:
 
 - Ensure required tags exist and are well-formed
 - For `1991`, reject shares where `now < T - skew` (recommended skew = 300 seconds)
-- For `1992`, validate author matches capsule author and recipient witness is in capsule's witness list
+- For `1992`, validate author matches capsule author and recipient witness is in the capsule's witness list
 
+Relays that do not implement these checks remain compliant.
 ### Indexing
 
 Relays SHOULD:
@@ -148,6 +166,7 @@ Relays SHOULD:
 - Not rely on custom tag filters beyond NIP-01
 
 ### NIP-11 Capability Advertisement
+
 Permalink: NIP-11 Capability Advertisement
 
 Relays implementing this NIP SHOULD advertise their support in their NIP-11 document:
@@ -170,6 +189,7 @@ Relays implementing this NIP SHOULD advertise their support in their NIP-11 docu
 Early share rejection SHOULD use clear error messages per NIP-01 (e.g., `["OK", <event_id>, false, "invalid: too early"]`).
 
 ## Client Behavior
+
 Permalink: Client Behavior
 
 - **Creation**: Generate `K`, encrypt payload with NIP-44 v2, produce capsule event, compute `w-commit`, publish
@@ -184,15 +204,17 @@ Permalink: Client Behavior
 ```
 
 ## Security Considerations
+
 Permalink: Security Considerations
 
 - **Witness Collusion**: Threshold prevents unilateral early disclosure but not collusion of any `t` witnesses. Choose diverse witnesses and set `t` accordingly.
-- **Early Disclosure**: Enforce timestamp `T` at relays (reject pre-`T - skew`) and at clients (ignore early shares).
+- **Early Disclosure**: Clients MUST ignore early shares; relays MAY reject pre-`T - skew` as policy.
 - **Time Manipulation**: Use trusted time sources where possible; keep small skew windows.
 - **External Storage Integrity**: Include `sha256` for any `uri` content.
 - **Spam/DoS**: Rate-limit `1991/1992` per capsule and per witness.
 
 ## Examples
+
 Permalink: Examples
 
 ### Time Capsule (kind 1990, threshold 2/3)
@@ -204,14 +226,14 @@ Permalink: Examples
   "created_at": 1735689600,
   "content": "base64_encoded_nip44v2_ciphertext",
   "tags": [
-    ["u","threshold","t","2","n","3","T","1735776000"],
-    ["p","f7234bd4..."],
-    ["p","a1a2a3a4..."],
-    ["p","b1b2b3b4..."],
-    ["w-commit","3a5f...c9"],
-    ["enc","nip44:v2"],
-    ["loc","inline"],
-    ["alt","Secret message requiring 2 of 3 witnesses"]
+    ["unlock", "mode threshold", "t 2", "n 3", "T 1735776000"],
+    ["p", "f7234bd4...", "wss://relay.one"],
+    ["p", "a1a2a3a4...", "wss://relay.two"],
+    ["p", "b1b2b3b4...", "wss://relay.three"],
+    ["w-commit", "3a5f...c9"],
+    ["enc", "nip44:v2"],
+    ["loc", "inline"],
+    ["alt", "Secret message requiring 2 of 3 witnesses"]
   ]
 }
 ```
@@ -225,19 +247,19 @@ Permalink: Examples
   "created_at": 1735689600,
   "content": "",
   "tags": [
-    ["d","capsule-2025-07"],
-    ["u","threshold","t","3","n","5","T","1736000000"],
-    ["p","w1..."],
-    ["p","w2..."],
-    ["p","w3..."],
-    ["p","w4..."],
-    ["p","w5..."],
-    ["w-commit","9c01...ab"],
-    ["enc","nip44:v2"],
-    ["loc","https"],
-    ["uri","https://media.example/caps/abc"],
-    ["sha256","c0ffee..."],
-    ["alt","External ciphertext with integrity hash"]
+    ["d", "capsule-2025-07"],
+    ["unlock", "mode threshold", "t 3", "n 5", "T 1736000000"],
+    ["p", "w1...", "wss://relay.one"],
+    ["p", "w2...", "wss://relay.two"],
+    ["p", "w3...", "wss://relay.three"],
+    ["p", "w4...", "wss://relay.four"],
+    ["p", "w5...", "wss://relay.five"],
+    ["w-commit", "9c01...ab"],
+    ["enc", "nip44:v2"],
+    ["loc", "https"],
+    ["uri", "https://media.example/caps/abc"],
+    ["sha256", "c0ffee..."],
+    ["alt", "External ciphertext with integrity hash"]
   ]
 }
 ```
@@ -251,10 +273,10 @@ Permalink: Examples
   "created_at": 1735776100,
   "content": "base64_shamir_share",
   "tags": [
-    ["e","...capsule_event_id..."],
-    ["a","30095:a2b3c4d5...:capsule-2025-07"],
-    ["p","a1a2a3a4..."],
-    ["T","1735776000"]
+    ["e", "...capsule_event_id...", "wss://relay.capsules.example"],
+    ["a", "30095:a2b3c4d5...:capsule-2025-07", "wss://relay.capsules.example"],
+    ["p", "a1a2a3a4...", "wss://relay.two"],
+    ["T", "1735776000"]
   ]
 }
 ```
@@ -268,16 +290,17 @@ Permalink: Examples
   "created_at": 1735689700,
   "content": "base64_nip44v2_encrypted_share_for_witness",
   "tags": [
-    ["e","...capsule_event_id..."],
-    ["a","30095:a2b3c4d5...:capsule-2025-07"],
-    ["p","a1a2a3a4..."],
-    ["share-idx","1"],
-    ["enc","nip44:v2"]
+    ["e", "...capsule_event_id...", "wss://relay.capsules.example"],
+    ["a", "30095:a2b3c4d5...:capsule-2025-07", "wss://relay.capsules.example"],
+    ["p", "a1a2a3a4...", "wss://relay.two"],
+    ["share-idx", "1"],
+    ["enc", "nip44:v2"]
   ]
 }
 ```
 
 ## Test Vectors
+
 Permalink: Test Vectors
 
 ### Test Vector A: Threshold 2-of-3
@@ -296,6 +319,7 @@ Expected flow:
 - Client reconstructs `K` and decrypts `C` → `"hello world"`
 
 ## Rationale
+
 Permalink: Rationale
 
 - Uses new kinds to avoid overloading existing semantics; unaware nodes ignore unknown kinds
@@ -304,14 +328,17 @@ Permalink: Rationale
 - Parameterized replaceable variant (`30095`) supports pre-`T` fixes via the `d` tag and `a` addressing
 
 ## Backwards Compatibility
+
 Permalink: Backwards Compatibility
 
 New kinds are ignored by unaware relays/clients. The `alt` tag provides a human-readable hint for unknown kinds. Use of standard `p` and `e` tags preserves discoverability via existing filters.
 
 ## Reference Implementation
+
 Permalink: Reference Implementation
 
 A reference implementation is provided in [Shugur Relay](https://github.com/Shugur-Network/relay) project:
 
 - Relay validation: `internal/relay/nips/nip_time_capsules.go`
 - Test suite: `tests/nips/test_time_capsules_comprehensive.sh`
+````
