@@ -33,7 +33,7 @@ A time capsule event contains encrypted content and unlock conditions.
 #### Required tags
 
 - `unlock`: Unlock configuration (one tag per capsule). After `"unlock"`, each entry is `"key value"`. Unknown keys MUST be ignored without failing.
-- `p`: Witness pubkeys (one or more) — `["p","<witness_pubkey_hex>","<relay_hint>?"]` (relay hint RECOMMENDED)
+- `p`: Witness pubkeys (one or more) — `["p","<witness_pubkey_hex>","<relay_url>?"]` (relay URL RECOMMENDED)
 - `w-commit`: Merkle root commitment - `["w-commit","<hex_merkle_root>"]`
 - `enc`: Encryption method - `["enc","nip44:v2"]`
 - `loc`: Storage location - `["loc","inline"|"https"|"blossom"|"ipfs"]`
@@ -56,13 +56,9 @@ Permalink: Unlock Modes
 
 #### Threshold Mode
 
-````json
-["unlock",
-  "mode threshold",
-  "t <t>",
-  "n <n>",
-  "T <unix_unlock_time>"
-]```
+```json
+["unlock", "mode threshold", "t <t>", "n <n>", "T <unix_unlock_time>"]
+```
 
 - **t**-of-**n** witnesses must provide shares at/after timestamp `T`
 - Prevents unilateral early disclosure but not collusion of any `t` witnesses
@@ -70,10 +66,8 @@ Permalink: Unlock Modes
 #### Scheduled Mode
 
 ```json
-["unlock",
-  "mode scheduled",
-  "T <unix_unlock_time>"
-]```
+["unlock", "mode scheduled", "T <unix_unlock_time>"]
+```
 
 - Indicates time-based operational release where witnesses or services intend to post shares after `T`
 - This mode is not a cryptographic timelock; a future revision may define a VDF-based trustless mode
@@ -89,9 +83,9 @@ A witness posts one share after the unlock timestamp (with optional skew toleran
 
 #### Required tags
 
-- `e`: Capsule event reference — `["e","<capsule_event_id>","<relay_hint>?"]`
-- `a`: Addressable reference (if capsule is parameterized replaceable) — `["a","30095:<pubkey_hex>:<d>","<relay_hint>?"]`
-- `p`: Witness pubkey — `["p","<witness_pubkey_hex>","<relay_hint>?"]`
+- `e`: Capsule event reference — `["e","<capsule_event_id>","<relay_url>?"]`
+- `a`: Addressable reference (if capsule is parameterized replaceable) — `["a","30095:<pubkey_hex>:<d>","<relay_url>?"]`
+- `p`: Witness pubkey — `["p","<witness_pubkey_hex>","<relay_url>?"]`
 - `T`: Unlock time from capsule - `["T","<unix_timestamp>"]`
 
 #### Content
@@ -108,9 +102,9 @@ Automates delivery of per-witness shares immediately after capsule creation.
 
 #### Required tags
 
-- `e`: Capsule event reference — `["e","<capsule_event_id>","<relay_hint>?"]`
-- `a`: Addressable reference (if capsule is parameterized replaceable) — `["a","30095:<pubkey_hex>:<d>","<relay_hint>?"]`
-- `p`: Witness pubkey — `["p","<witness_pubkey_hex>","<relay_hint>?"]`
+- `e`: Capsule event reference — `["e","<capsule_event_id>","<relay_url>?"]`
+- `a`: Addressable reference (if capsule is parameterized replaceable) — `["a","30095:<pubkey_hex>:<d>","<relay_url>?"]`
+- `p`: Witness pubkey — `["p","<witness_pubkey_hex>","<relay_url>?"]`
 - `share-idx`: Share index - `["share-idx","<0..n-1>"]`
 - `enc`: Encryption method - `["enc","nip44:v2"]`
 
@@ -158,6 +152,7 @@ Relays MAY:
 - For `1992`, validate author matches capsule author and recipient witness is in the capsule's witness list
 
 Relays that do not implement these checks remain compliant.
+
 ### Indexing
 
 Relays SHOULD:
@@ -341,4 +336,4 @@ A reference implementation is provided in [Shugur Relay](https://github.com/Shug
 
 - Relay validation: `internal/relay/nips/nip_time_capsules.go`
 - Test suite: `tests/nips/test_time_capsules_comprehensive.sh`
-````
+
