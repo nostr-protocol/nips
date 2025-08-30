@@ -70,7 +70,7 @@ Permalink: Unlock Modes
 ```
 
 - Indicates time-based operational release where witnesses or services intend to post shares after `T`
-- This mode is not a cryptographic timelock; a future revision may define a VDF-based trustless mode
+- This mode is not a cryptographic timelock; relies on witness cooperation.
 
 Implementations MUST parse unknown `unlock` keys conservatively (ignore unknown keys without failing).
 If a key appears multiple times, clients SHOULD use the first occurrence and ignore subsequent duplicates.
@@ -336,4 +336,3 @@ A reference implementation is provided in [Shugur Relay](https://github.com/Shug
 
 - Relay validation: `internal/relay/nips/nip_time_capsules.go`
 - Test suite: `tests/nips/test_time_capsules_comprehensive.sh`
-
