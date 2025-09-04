@@ -99,7 +99,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-90: Data Vending Machines](90.md)
 - [NIP-92: Media Attachments](92.md)
 - [NIP-94: File Metadata](94.md)
-- [NIP-96: HTTP File Storage Integration](96.md)
+- [NIP-96: HTTP File Storage Integration](96.md) --- **unrecommended**: replaced by blossom APIs
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
 - [NIP-A0: Voice Messages](A0.md)
@@ -206,7 +206,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
 | `10051`       | KeyPackage Relays List          | [EE](EE.md)                            |
 | `10063`       | User server list                | [Blossom][blossom]                     |
-| `10096`       | File storage server list        | [96](96.md)                            |
+| `10096`       | File storage server list        | [96](96.md) (deprecated)               |
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
 | `10312`       | Room Presence                   | [53](53.md)                            |
 | `10377`       | Proxy Announcement              | [Nostr Epoxy][nostr-epoxy]             |
