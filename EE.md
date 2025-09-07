@@ -82,7 +82,7 @@ This is a concise overview of the security trade-offs and considerations of this
 
 ### Forward Secrecy and Post-compromise Security
 
-- As per the MLS spec, keys are deleted as soon as they are used to encrypt or decrypt a message. This is usually handled by the MLS implementation library itself but attention needs to be paid by clients to ensure they're not storing secrets (expecially the [exporter secret](#group-events)) for longer than absolutely necessary.
+- As per the MLS spec, keys are deleted as soon as they are used to encrypt or decrypt a message. This is usually handled by the MLS implementation library itself but attention needs to be paid by clients to ensure they're not storing secrets (especially the [exporter secret](#group-events)) for longer than absolutely necessary.
 - This NIP maintains MLS forward secrecy and post-compromise security guarantees. You can read more about those in the MLS Architectural Overview section on [Forward Secrecy and Post-compromise Security](https://www.ietf.org/archive/id/draft-ietf-mls-architecture-15.html#name-forward-and-post-compromise).
 
 ### Leakage of various keys
