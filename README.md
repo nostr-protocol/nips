@@ -408,10 +408,6 @@ Standards may emerge in two ways: the first way is that someone starts doing som
 
 These two ways of standardizing things are supported by this repository. Although the second is preferred, an effort will be made to codify standards emerged outside this repository into NIPs that can be later referenced and easily understood and implemented by others -- but obviously as in any human system discretion may be applied when standards are considered harmful.
 
-## Breaking Changes
-
-[Breaking Changes](BREAKING.md)
-
 ## License
 
 All NIPs are public domain.
