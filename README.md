@@ -15,7 +15,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [Criteria for acceptance of NIPs](#criteria-for-acceptance-of-nips)
 - [Is this repository a centralizing factor?](#is-this-repository-a-centralizing-factor)
 - [How this repository works](#how-this-repository-works)
-- [Breaking Changes](#breaking-changes)
 - [License](#license)
 
 ---
