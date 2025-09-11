@@ -1,4 +1,4 @@
-NIP-PO
+NIP-xx
 ======
 
 Podcast Events
