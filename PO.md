@@ -1,7 +1,7 @@
 NIP-xx
 ======
 
-Podcast Events
+Podcasts
 --------------
 
 `draft` `optional`
