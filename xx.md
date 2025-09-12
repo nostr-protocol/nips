@@ -1,317 +1,179 @@
-# NIP-XX: Time Capsules
+# **NIP-XX — Time-Lock Encrypted Messages (Time Capsules)**
 
-`draft` `optional`
+`draft` `optional`
 
-This NIP defines time-locked capsules: encrypted Nostr events that become readable only at/after a target timestamp or when a threshold of designated witnesses publish unlock shares. This enables delayed revelation, threshold cryptography, digital inheritance, and whistleblowing protection.
+This NIP defines **time capsules**: Nostr events whose plaintext becomes readable **at/after a target time** using a drand time-lock (tlock). Capsules can be broadcast publicly or delivered privately with [**NIP-59**](https://github.com/nostr-protocol/nips/blob/master/59.md) gift wrapping; encryption for sealing/wrapping uses [**NIP-44 v2**](https://github.com/nostr-protocol/nips/blob/master/44.md).
 
-Time-locked capsules allow content to be:
+> Encoding note: All Base64 in this NIP is RFC 4648 padded and MUST NOT contain line breaks.
+>
+> **Hex note:** All hex strings in this NIP are **lowercase**.
 
-- Released automatically after a specific timestamp
-- Unlocked when multiple witnesses collaborate
-- Made accessible after long periods for digital inheritance
-- Protected with built-in delays for sensitive material
+---
 
-## Event Kinds
-Permalink: Event Kinds
+## Event kinds
 
-- `1990`: Time Capsule (regular)
-- `30095`: Time Capsule (parameterized replaceable; keyed by `d` tag)
-- `1991`: Time Capsule Unlock Share
-- `1992`: Time Capsule Share Distribution
+- **1041** — Time Capsule.
 
-## Specification
-Permalink: Specification
+---
 
-### Time Capsule Events (kinds `1990` and `30095`)
-Permalink: Time Capsule Events
+## Time capsule (kind: 1041)
 
-A time capsule event contains encrypted content and unlock conditions.
-
-#### Required tags
-
-- `u`: Unlock configuration in format `["u","<mode>","<param1>","<value1>",...]`
-- `p`: Witness pubkeys (one or more) - `["p","<witness_pubkey_hex>"]`
-- `w-commit`: Merkle root commitment - `["w-commit","<hex_merkle_root>"]`
-- `enc`: Encryption method - `["enc","nip44:v2"]`
-- `loc`: Storage location - `["loc","inline"|"https"|"blossom"|"ipfs"]`
-
-#### Optional tags
-
-- `d`: Identifier (required for kind `30095`) - `["d","<capsule-id>"]`
-- `uri`: External content URI (required when `loc != "inline"`) - `["uri","<url>"]`
-- `sha256`: Content integrity hash - `["sha256","<hex_hash>"]`
-- `expiration`: Expiration timestamp per NIP-40 - `["expiration","<unix>"]`
-- `alt`: Human-readable description - `["alt","<description>"]`
-
-#### Content
-
-The `content` field MUST contain a base64-encoded NIP-44 v2 encrypted payload. When `loc` is `"inline"`, the entire encrypted content is in this field. When `loc` is external, this field MAY be empty and the `uri` tag points to the encrypted content.
-
-### Unlock Modes
-Permalink: Unlock Modes
-
-#### Threshold Mode
-
-```plaintext
-["u","threshold","t","<t>","n","<n>","T","<unix_unlock_time>"]
-```
-
-- **t**-of-**n** witnesses must provide shares at/after timestamp `T`
-- Prevents unilateral early disclosure but not collusion of any `t` witnesses
-
-#### Scheduled Mode
-
-```plaintext
-["u","scheduled","T","<unix_unlock_time>"]
-```
-
-- Indicates time-based operational release where witnesses or services intend to post shares after `T`
-- This mode is not a cryptographic timelock; a future revision may define a VDF-based trustless mode
-
-Implementations MUST parse unknown `u` modes conservatively and treat them as unsupported.
-
-### Unlock Share Events (kind `1991`)
-Permalink: Unlock Share Events
-
-A witness posts one share after the unlock timestamp (with optional skew tolerance).
-
-#### Required tags
-
-- `e`: Capsule event reference - `["e","<capsule_event_id>"]`
-- `a`: Addressable reference (if capsule is parameterized replaceable) - `["a","30095:<pubkey_hex>:<d>"]`
-- `p`: Witness pubkey - `["p","<witness_pubkey_hex>"]`
-- `T`: Unlock time from capsule - `["T","<unix_timestamp>"]`
-
-#### Content
-
-- Base64 Shamir share for threshold mode
-- MAY be gift-wrapped (per NIP-59) to reduce metadata leakage
-- Clients MUST access the plaintext share after timestamp `T`
-
-### Share Distribution Events (kind `1992`)
-Permalink: Share Distribution Events
-
-Automates delivery of per-witness shares immediately after capsule creation.
-
-#### Required tags
-
-- `e`: Capsule event reference - `["e","<capsule_event_id>"]`
-- `a`: Addressable reference (if capsule is parameterized replaceable) - `["a","30095:<pubkey_hex>:<d>"]`
-- `p`: Recipient witness - `["p","<witness_pubkey_hex>"]`
-- `share-idx`: Share index - `["share-idx","<0..n-1>"]`
-- `enc`: Encryption method - `["enc","nip44:v2"]`
-
-#### Content
-
-NIP-44 v2 ciphertext containing the Shamir share destined for the witness. Only the intended witness can decrypt.
-
-#### Validation Rules
-
-- Event MUST be authored by the same pubkey as the capsule
-- The target `p` MUST appear in the capsule's witness list
-- `share-idx` MUST be within `[0, n-1]`
-
-## Protocol Flow
-Permalink: Protocol Flow
-
-1. **Create Capsule** (kind `1990` or `30095`)
-   - Author generates random key `K` and encrypts payload with NIP-44 v2 → `C`
-   - Selects witnesses (p tags), sets threshold `t`, witness count `n`, unlock time `T`
-   - Computes `w-commit` over ordered witnesses
-   - Publishes capsule with `content=C`, unlock config, witness list, commitment, storage location
-
-2. **Distribute Shares** (kind `1992`) *(recommended)*
-   - Split `K` using Shamir's Secret Sharing (t, n)
-   - For each witness, publish `1992` with NIP-44 encrypted share for that witness
-   - Include `share-idx` to maintain ordering
-
-3. **Unlock** (kind `1991`)
-   - At/after timestamp `T` (± skew tolerance), witnesses publish `1991` with plaintext shares
-   - Clients collect any `t` valid shares, reconstruct `K`, and decrypt `C`
-
-## Relay Behavior
-Permalink: Relay Behavior
-
-### Validation
-
-Relays MUST:
-
-- Ensure required tags exist and are well-formed
-- For `1991`, reject shares where `now < T - skew` (recommended skew = 300 seconds)
-- For `1992`, validate author matches capsule author and recipient witness is in capsule's witness list
-
-### Indexing
-
-Relays SHOULD:
-
-- Index `p` tags (witnesses) and `e` tags (capsule references) for discovery
-- Not rely on custom tag filters beyond NIP-01
-
-### NIP-11 Capability Advertisement
-Permalink: NIP-11 Capability Advertisement
-
-Relays implementing this NIP SHOULD advertise their support in their NIP-11 document:
+A public capsule is a signed `kind:1041` event. Its `content` is a **Base64 of the binary (non-armored) age v1 ciphertext** with **exactly one `tlock` recipient stanza** (no other recipient types).
 
 ```json
 {
-  "supported_nips": [1, 11, ...],
-  "software": "...",
-  "version": "...",
-  "capsules": {
-    "v": "1",
-    "modes": ["threshold","scheduled"],
-    "max_inline_bytes": 131072
-  }
-}
-```
-
-### Error Handling
-
-Early share rejection SHOULD use clear error messages per NIP-01 (e.g., `["OK", <event_id>, false, "invalid: too early"]`).
-
-## Client Behavior
-Permalink: Client Behavior
-
-- **Creation**: Generate `K`, encrypt payload with NIP-44 v2, produce capsule event, compute `w-commit`, publish
-- **Distribution**: Publish `1992` per witness with NIP-44 encrypted share; store local copy
-- **Monitoring**: Track timestamp `T`, watch for `1991` from witnesses; tolerate skew ±300s
-- **Reconstruction**: Verify witness membership via `w-commit`, collect any `t` valid shares, reconstruct `K`, decrypt content
-- **Integrity**: When `loc != inline`, fetch `uri`, verify `sha256` hash before decryption
-- **Discovery**: Use standard filters, e.g., witnesses look up:
-
-```json
-{ "kinds": [1992], "#p": ["<witness_pubkey_hex>"] }
-```
-
-## Security Considerations
-Permalink: Security Considerations
-
-- **Witness Collusion**: Threshold prevents unilateral early disclosure but not collusion of any `t` witnesses. Choose diverse witnesses and set `t` accordingly.
-- **Early Disclosure**: Enforce timestamp `T` at relays (reject pre-`T - skew`) and at clients (ignore early shares).
-- **Time Manipulation**: Use trusted time sources where possible; keep small skew windows.
-- **External Storage Integrity**: Include `sha256` for any `uri` content.
-- **Spam/DoS**: Rate-limit `1991/1992` per capsule and per witness.
-
-## Examples
-Permalink: Examples
-
-### Time Capsule (kind 1990, threshold 2/3)
-
-```json
-{
-  "kind": 1990,
-  "pubkey": "a2b3c4d5...",
-  "created_at": 1735689600,
-  "content": "base64_encoded_nip44v2_ciphertext",
+  "id": "<32-byte lowercase hex sha256 of serialized event>",
+  "pubkey": "<32-byte lowercase hex pubkey of the author>",
+  "created_at": "<unix timestamp in seconds>",
+  "kind": 1041,
   "tags": [
-    ["u","threshold","t","2","n","3","T","1735776000"],
-    ["p","f7234bd4..."],
-    ["p","a1a2a3a4..."],
-    ["p","b1b2b3b4..."],
-    ["w-commit","3a5f...c9"],
-    ["enc","nip44:v2"],
-    ["loc","inline"],
-    ["alt","Secret message requiring 2 of 3 witnesses"]
-  ]
+    ["tlock", "<drand_chain_hex64>", "<drand_round_uint>"],
+    ["alt", "<description>"]
+  ],
+  "content": "<base64(binary age v1 tlock ciphertext)>",
+  "sig": "<64-byte lowercase hex signature of the event hash>"
 }
 ```
 
-### Time Capsule (kind 30095, external storage)
+**Rules (public 1041):**
+
+- Exactly **one** `tlock` tag (see below).
+- `content` **MUST** be Base64 of **binary** age v1 with a **single `tlock` recipient stanza** and **no other** recipient stanzas (e.g., **no** `X25519`, `scrypt`). ASCII-armored age is **invalid**.
+- **clients** enforce unlock by verifying drand beacons; relays **do not** enforce time.
+
+---
+
+## Tags
+
+### `tlock` (required on 1041)
+
+**Single, preferred format (normative):**
+
+```json
+["tlock", "<drand_chain_hex64>", "<drand_round_uint>"]
+```
+
+**Validation:**
+
+- `drand_chain_hex64` matches `^[0-9a-f]{64}$` (lowercase).
+- `drand_round_uint` matches `^[1-9][0-9]{0,18}$` (positive, 64-bit safe).
+- The age ciphertext **MUST** contain **exactly one** recipient stanza of type `tlock` whose **chain and round equal** the tag values; any mismatch **MUST** be rejected.
+
+### `p` (routing) — **only valid on outer 1059**
+
+- The **inner** `kind:1041` **MUST NOT** contain `p` tags. Clients **MUST** reject any private capsule whose inner 1041 includes a `p` tag.
+- On the **outer** `kind:1059` (gift wrap), include at least one `["p","<recipient-npub>","<relay_url?>"]` per recipient for routing.
+
+### `alt` (optional on 1041)
+
+- Human-readable description for UX.
+
+---
+
+## Private capsule (sealed & wrapped per NIP-59)
+
+A private capsule is delivered via the NIP-59 pipeline:
+
+1. **Create the rumor (kind:1041, unsigned).**
+
+   Same schema as public, but **do not sign**. `content` is Base64(binary age v1 `tlock` ciphertext) and the `tlock` tag is present. **Omit `p`**.
+
+   **Rumor MUST NOT include `sig`.** **`id` MAY be present**; if present, clients **MUST** recompute it after recovery and reject on mismatch.
+
+2. **Seal (kind:13).**
+
+   JSON-serialize the rumor and encrypt it to the **recipient** using **NIP-44 v2**; put the ciphertext in `.content`. **`tags` MUST be `[]`**. **Sign with the author’s real key.**
+
+3. **Gift wrap (kind:1059).**
+
+   JSON-serialize the **seal** and encrypt it to the **recipient** using **NIP-44 v2** with a **one-time ephemeral** key; put the ciphertext in `.content`. Add at least one `["p","<recipient>","<relay_url?>"]` (one 1059 per recipient is best practice). **Sign with the ephemeral key.**
+
+   Broadcast only to the recipient’s **DM relays** as advertised by their relay list metadata (per the relevant NIP).
+
+### Minimal examples (structure only)
+
+**Rumor (kind:1041, unsigned):**
 
 ```json
 {
-  "kind": 30095,
-  "pubkey": "a2b3c4d5...",
-  "created_at": 1735689600,
-  "content": "",
+  "id": "<32-byte lowercase hex sha256 of serialized event>",
+  "pubkey": "<author pubkey hex32>",
+  "created_at": 1234567890,
+  "kind": 1041,
   "tags": [
-    ["d","capsule-2025-07"],
-    ["u","threshold","t","3","n","5","T","1736000000"],
-    ["p","w1..."],
-    ["p","w2..."],
-    ["p","w3..."],
-    ["p","w4..."],
-    ["p","w5..."],
-    ["w-commit","9c01...ab"],
-    ["enc","nip44:v2"],
-    ["loc","https"],
-    ["uri","https://media.example/caps/abc"],
-    ["sha256","c0ffee..."],
-    ["alt","External ciphertext with integrity hash"]
-  ]
+    ["tlock", "<drand_chain_hex64>", "<drand_round_uint>"],
+    ["alt", "<description>"]
+  ],
+  "content": "<base64(binary age v1 tlock ciphertext)>"
 }
 ```
 
-### Unlock Share (kind 1991)
+**Seal (kind:13, signed by author; `tags = []`):**
 
 ```json
 {
-  "kind": 1991,
-  "pubkey": "a1a2a3a4...",
-  "created_at": 1735776100,
-  "content": "base64_shamir_share",
-  "tags": [
-    ["e","...capsule_event_id..."],
-    ["a","30095:a2b3c4d5...:capsule-2025-07"],
-    ["p","a1a2a3a4..."],
-    ["T","1735776000"]
-  ]
+  "id": "<32-byte lowercase hex sha256 of serialized event>",
+  "pubkey": "<author pubkey hex32>",
+  "created_at": 1234567890,
+  "kind": 13,
+  "tags": [],
+  "content": "<NIP-44 v2 ciphertext of JSON(rumor kind:1041)>",
+  "sig": "<author signature hex64>"
 }
 ```
 
-### Share Distribution (kind 1992)
+**Gift wrap (kind:1059, signed by ephemeral; includes `p`):**
 
 ```json
 {
-  "kind": 1992,
-  "pubkey": "a2b3c4d5...",
-  "created_at": 1735689700,
-  "content": "base64_nip44v2_encrypted_share_for_witness",
-  "tags": [
-    ["e","...capsule_event_id..."],
-    ["a","30095:a2b3c4d5...:capsule-2025-07"],
-    ["p","a1a2a3a4..."],
-    ["share-idx","1"],
-    ["enc","nip44:v2"]
-  ]
+  "id": "<32-byte lowercase hex sha256 of serialized event>",
+  "pubkey": "<ephemeral pubkey hex32>",
+  "created_at": 1234567890,
+  "kind": 1059,
+  "tags": [["p", "<recipient npub>", "<relay_url>"]],
+  "content": "<NIP-44 v2 ciphertext of JSON(seal kind:13)>",
+  "sig": "<ephemeral signature hex64>"
 }
 ```
 
-## Test Vectors
-Permalink: Test Vectors
+---
 
-### Test Vector A: Threshold 2-of-3
+## Decryption & validation (client-side)
 
-- Witnesses (ordered pubkeys): `hex_pubkey_A`, `hex_pubkey_B`, `hex_pubkey_C`
-- `w-commit` = MerkleRoot([(0, `hex_pubkey_A`), (1, `hex_pubkey_B`), (2, `hex_pubkey_C`)])
-- `T` = `1735776000`
-- Shares: `S0,S1,S2`; any two reconstruct `K`
-- Ciphertext: `C = NIP44v2_Encrypt(K, "hello world")` → `content = base64(C)`
+### Public 1041
 
-Expected flow:
+1. Verify **NIP-01** signature; check **exactly one** `tlock` tag; Base64-decode `content`.
+2. Fetch the drand beacon for `drand_round_uint` and **verify** it against the chain’s BLS public key derived from `drand_chain_hex64`.
+3. Parse the **binary** age v1 ciphertext; ensure **exactly one** recipient stanza of type `tlock` whose chain/round **match the tag**; reject ASCII armor or extra recipient types.
+4. Decrypt with the verified beacon; the result is the plaintext.
 
-- `1990` event as shown above
-- `1992` to `hex_pubkey_B` with `share-idx=1` (content = NIP-44 encrypted `S1` to `hex_pubkey_B`)
-- `1991` from `hex_pubkey_B` and `hex_pubkey_C` after `T` (plaintext shares)
-- Client reconstructs `K` and decrypts `C` → `"hello world"`
+### Private (1059 → 13 → 1041)
 
-## Rationale
-Permalink: Rationale
+1. Validate outer **1059** (ephemeral **NIP-01** signature); **NIP-44 v2** decrypt `.content` with your key.
+2. Parse inner **kind:13**; **`tags` MUST be empty**; verify **author** signature; **NIP-44 v2** decrypt `.content` using the author↔recipient conversation key.
+3. Parse recovered **unsigned kind:1041 rumor**. **Verify** `lower(seal.pubkey) == lower(rumor.pubkey)` (both 32-byte lowercase hex). If `rumor.id` is present, **recompute** and reject on mismatch. For display and ordering, **use `rumor.created_at`**; the `created_at` of the seal and wrap are transport metadata and **MUST NOT** replace the rumor’s timestamp in UX.
+4. Fetch & verify drand beacon as above; ensure `tlock` tag ↔ age stanza chain/round match; then age-decrypt to recover the plaintext.
 
-- Uses new kinds to avoid overloading existing semantics; unaware nodes ignore unknown kinds
-- Leverages standard `p`/`e` tags for discovery; avoids non-standard tag filtering
-- `w-commit` binds the witness set to prevent tampering
-- Parameterized replaceable variant (`30095`) supports pre-`T` fixes via the `d` tag and `a` addressing
+---
 
-## Backwards Compatibility
-Permalink: Backwards Compatibility
+## Relay semantics
 
-New kinds are ignored by unaware relays/clients. The `alt` tag provides a human-readable hint for unknown kinds. Use of standard `p` and `e` tags preserves discoverability via existing filters.
+- Relays **MUST NOT** attempt to decrypt or enforce unlock times.
+- Clients **MUST** enforce unlock using **verified** drand beacons, **not** local clocks.
 
-## Reference Implementation
-Permalink: Reference Implementation
+---
 
-A reference implementation is provided in [Shugur Relay](https://github.com/Shugur-Network/relay) project:
+## Security considerations
 
-- Relay validation: `internal/relay/nips/nip_time_capsules.go`
-- Test suite: `tests/nips/test_time_capsules_comprehensive.sh`
+- **Beacon verification:** Always verify drand beacons against the chain’s BLS public key (derived from `drand_chain_hex64`) before age decryption. Do **not** trust local time or unsigned beacons; accept the first BLS-verified beacon from any endpoint.
+- **Ciphertext format:** Accept **only** binary age v1 `tlock` with **exactly one** recipient stanza; **reject** ASCII-armored inputs and stanza multiplicity or other stanza types.
+- **Bounds & DoS:** Before allocation, clients **SHOULD** enforce `tlock_blob ≤ 4096 bytes` and **SHOULD** reject 1041 whose **decoded** `content` exceeds **64 KiB**. Relays **MAY** drop 1041 exceeding **256 KiB** decoded.
+- **Sealing/wrapping crypto:** Use **NIP-44 v2** (ECDH → HKDF, ChaCha20, HMAC, padded Base64). Validate MAC in constant time **before** attempting decryption.
+- **Timestamps & privacy:** Randomize seal/wrap `created_at` slightly (e.g., jitter/backdate) for metadata privacy; the rumor’s `created_at` is canonical for UX.
+
+---
+
+## Implementations
+
+- **Relay** [**Shugur Relay**] (<https://github.com/Shugur-Network/relay>)
+- **Client** [**Shugur Time Capsules**] (<https://capsules.shugur.com>)
