@@ -1,4 +1,4 @@
-NIP-xx
+NIP-XX
 ======
 
 Podcasts
@@ -19,7 +19,7 @@ The `.content` field may contain markdown-formatted show notes, or episode descr
 - `d` - Episode identifier (slug or unique identifier for this episode)
 - `title` - Episode title
 - `audio` - URL to the audio file
-- `duration` - Episode duration in format "HH:MM:SS" or "MM:SS"
+- `duration` - Episode duration in seconds
 
 ## Optional Tags
 
@@ -45,10 +45,10 @@ The `.content` field may contain markdown-formatted show notes, or episode descr
     ["d", "the-science-of-sleep"],
     ["title", "The Science of Sleep: Why We Need Rest"],
     ["audio", "https://my-podcast.com/the-science-of-sleep/audio.mp3"],
-    ["duration", "10:35"],
+    ["duration", "635"], // duration in seconds (tags have to be string)
     ["summary", "Discover the science behind why sleep is essential for our health. This episode explores how sleep impacts memory, mood, and well-being, and shares expert tips for improving sleep quality."],
     ["image", "https://my-podcast.com/the-science-of-sleep/image.png"],
-    ["episode", 1],
+    ["episode", "1"], // episode number (tags have to be string)
     ["transcript", "https://my-podcast.com/the-science-of-sleep/transcript.vtt"],
     ["chapters", "https://my-podcast.com/the-science-of-sleep/chapters.json"],
     ["rss", "https://my-podcast.com/podcast.rss"],
