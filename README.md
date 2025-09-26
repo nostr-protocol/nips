@@ -263,6 +263,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31989`       | Handler recommendation          | [89](89.md)                            |
 | `31990`       | Handler information             | [89](89.md)                            |
 | `32267`       | Software Application            |                                        |
+| `34235`       | Addressable Video Event         | [71](71.md)                            |
+| `34236`       | Addressable Short Video Event   | [71](71.md)                            |
 | `34550`       | Community Definition            | [72](72.md)                            |
 | `38172`       | Cashu Mint Announcement         | [87](87.md)                            |
 | `38173`       | Fedimint Announcement           | [87](87.md)                            |
