@@ -248,9 +248,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31925`       | Calendar Event RSVP             | [52](52.md)                            |
 | `31989`       | Handler recommendation          | [89](89.md)                            |
 | `31990`       | Handler information             | [89](89.md)                            |                         |
-| `32221`       | Addressable Video Event         | [71](71.md)                            |
-| `32222`       | Addressable Short Video Event   | [71](71.md)                            |
 | `32267`       | Software Application            |                                        |                        |
+| `34235`       | Addressable Video Event         | [71](71.md)                            |
+| `34236`       | Addressable Short Video Event   | [71](71.md)                            |
 | `34550`       | Community Definition            | [72](72.md)                            |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
