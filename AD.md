@@ -98,7 +98,7 @@ To reduce fraud or abuse, participants may impose a [Proof-of-Work penalty](#pun
 
 A replaceable event (`kind:30100`) where an advertiser bids for ad placement.
 
-```json
+```yaml
 {
   "kind": 30100,
   "content": json({
