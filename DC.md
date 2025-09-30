@@ -30,6 +30,10 @@ function decrypt(localPrivKey, content, senderPubkey, roomPublicKey){
 }
 ```
 
+## Peer
+
+A peer is represented by the combination of a keypair (ideally a random one) and an optional `d` session id that can be used to discriminate between multiple connections from the same keypair, if the session id is not provided, the peer is identified only by the keypair.
+
 ## Presence Event
 
 Periodically clients should broadcast this event to update their presence in the room and allow the other peers to discover them.
@@ -41,6 +45,7 @@ Periodically clients should broadcast this event to update their presence in the
     "content": "<optional message>",
     "tags": [
         ["t", "connect"],
+        ["d", "<optional session id>"],
         ["P", "<room hex pubkey>"],
         ["i", "<protocol identifier>"],
         ["y", "<optional app id>"],
@@ -54,7 +59,7 @@ Periodically clients should broadcast this event to update their presence in the
 
 **`y` is an optional app id that is used to identify the application that should be used to handle this connection.**
 
-**`i` is a protocol identifier that is used to identify the protocol that should be used to connect to this peer. See [Standard Protocols](#standard-protocols) for more details.**
+**`i` is a protocol identifier that is used to identify the protocol that should be used to connect to this peer. See [Examples](#examples) for more details.**
 
 ## Disconnection Event
 
@@ -66,6 +71,7 @@ When a peer leaves the room, it should broadcast this event to inform the other 
     "content": "<optional message>",
     "tags": [
         ["t", "disconnect"],
+        ["d", "<optional session id>"],
         ["P", "<room hex pubkey>"]
     ]
 }
@@ -84,6 +90,7 @@ This list can be rebroadcasted as needed and each peer should maintain an update
     "content": "<encrypted routes>",
     "tags": [
         ["t", "route"],
+        ["d", "<optional session id>"],
         ["p", "<reciever pubkey>"],
         ["P", "<room hex pubkey>"]
     ],
@@ -103,6 +110,7 @@ Offer event is used to initiate a connection with another peer `p` in the room.
     "content": "<encrypted offer>",
     "tags": [
         ["t", "offer"],
+        ["d", "<optional session id>"],
         ["p", "<reciever pubkey>"],
         ["P", "<room hex pubkey>"]
     ]    
@@ -117,12 +125,13 @@ Offer event is used to initiate a connection with another peer `p` in the room.
 
 The answer event is used to respond to an offer.
 
-```json
+```yaml
 {
     "kind": 25050,
     "content":  "<encrypted answer>",
     "tags": [
         ["t", "answer"],
+        ["d", "<optional session id>"],
         ["p", "<reciever pubkey>"],
         ["P", "<room pubkey>"]
     ],
@@ -132,9 +141,9 @@ The answer event is used to respond to an offer.
 **The answer format is protocol specific.**
 
 
-## Standard Protocols
+## Examples
 
-### Data Channels (webrtc-dc)
+### Data Channels (`"i": "webrtc-dc"`)
 
 Binary packets via WebRTC Data Channels.
 
@@ -145,6 +154,7 @@ Binary packets via WebRTC Data Channels.
     "content": "<optional message>",
     "tags": [
         ["t", "connect"],
+        ["d", "<optional session id>"],
         ["P", "<room hex pubkey>"],
         ["i", "webrtc-dc"],
         ["y", "<optional app id>"],
@@ -160,6 +170,7 @@ Binary packets via WebRTC Data Channels.
     "content": "<optional message>",
     "tags": [
         ["t", "disconnect"],
+        ["d", "<optional session id>"],
         ["P", "<room hex pubkey>"]
     ]
 }
@@ -186,6 +197,7 @@ Binary packets via WebRTC Data Channels.
     })),
     "tags": [
         ["t", "route"],
+        ["d", "<optional session id>"],
         ["p", "<reciever pubkey>"],
         ["P", "<room hex pubkey>"]
     ],
@@ -208,6 +220,7 @@ Binary packets via WebRTC Data Channels.
     })),
     "tags": [
         ["t", "offer"],
+        ["d", "<optional session id>"],
         ["p", "<reciever pubkey>"],
         ["P", "<room hex pubkey>"]
     ]   
@@ -227,6 +240,7 @@ Binary packets via WebRTC Data Channels.
     })),
     "tags": [
         ["t", "answer"],
+        ["d", "<optional session id>"],
         ["p", "<reciever pubkey>"],
         ["P", "<room hex pubkey>"]
     ]
