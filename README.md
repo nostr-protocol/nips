@@ -57,6 +57,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-38: User Statuses](38.md)
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
+- [NIP-41: Physical Locations](41.md)
 - [NIP-42: Authentication of clients to relays](42.md)
 - [NIP-44: Encrypted Payloads (Versioned)](44.md)
 - [NIP-45: Counting results](45.md)
@@ -264,9 +265,10 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31990`       | Handler information             | [89](89.md)                            |
 | `32267`       | Software Application            |                                        |
 | `34550`       | Community Definition            | [72](72.md)                            |
+| `37515`       | Physical Location               | [42](42.md)                            |
+| `37516`       | Geocache listing                | [geocaching](geocaching)               |
 | `38172`       | Cashu Mint Announcement         | [87](87.md)                            |
 | `38173`       | Fedimint Announcement           | [87](87.md)                            |
-| `37516`       | Geocache listing                | [geocaching](geocaching)               |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
 | `39089`       | Starter packs                   | [51](51.md)                            |
