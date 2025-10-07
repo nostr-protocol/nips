@@ -264,8 +264,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31989`       | Handler recommendation          | [89](89.md)                            |
 | `31990`       | Handler information             | [89](89.md)                            |
 | `32267`       | Software Application            |                                        |
+| `33000`       | Physical Location               | [42](42.md)                            |
 | `34550`       | Community Definition            | [72](72.md)                            |
-| `37515`       | Physical Location               | [42](42.md)                            |
 | `37516`       | Geocache listing                | [geocaching](geocaching)               |
 | `38172`       | Cashu Mint Announcement         | [87](87.md)                            |
 | `38173`       | Fedimint Announcement           | [87](87.md)                            |
