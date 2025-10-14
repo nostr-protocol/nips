@@ -102,6 +102,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
 - [NIP-A0: Voice Messages](A0.md)
+- [NIP-Ad: Advertisements](AD.md)
 - [NIP-B0: Web Bookmarks](B0.md)
 - [NIP-B7: Blossom](B7.md)
 - [NIP-C0: Code Snippets](C0.md)
@@ -240,6 +241,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30041`       | Curated Publication Content     | [NKBIP-01]                             |
 | `30063`       | Release artifact sets           | [51](51.md)                            |
 | `30078`       | Application-specific Data       | [78](78.md)                            |
+| `30100`       | Ad Bidding Events               | [AD](AD.md)                            |
+| `30101`       | Ad Negotiation Events           | [AD](AD.md)                            |
 | `30166`       | Relay Discovery                 | [66](66.md)                            |
 | `30267`       | App curation sets               | [51](51.md)                            |
 | `30311`       | Live Event                      | [53](53.md)                            |
