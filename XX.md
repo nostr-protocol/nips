@@ -1,7 +1,7 @@
 NIP-XX
 ======
 
-Distributed Directory Consensus using Replica Identity Keys and Web of Trust
+Distributed Directory Consensus using Relay Identity Keys and Web of Trust
 ---------------------------------------------------------------------------
 
 `draft` `optional`
@@ -28,8 +28,8 @@ This NIP addresses these issues by enabling relay operators to form trusted cons
 Each participating relay MUST generate and maintain a long-term identity keypair separate from any user keys:
 
 - **Identity Key**: A secp256k1 keypair used to identify the relay in the consortium. The public key MUST be listed in the `pubkey` field of the NIP-11 relay information document, and the relay MUST prove control of the corresponding private key through the signature mechanism described below.
-- **Signing Keys**: Ephemeral keys used for signing attestations and directory events
-- **Encryption Keys**: Keys used for ECDH encryption of sensitive consortium communications
+- **Signing Keys**: secp256k1 keys used for Schnorr signatures on acts and directory events
+- **Encryption Keys**: secp256k1 keys used for ECDH encryption of sensitive consortium communications
 
 The relay identity key serves as the authoritative identifier for the relay and MUST be discoverable through the standard NIP-11 relay information document available at `https://<relay-domain>/.well-known/nostr.json` or via the `NIP11` WebSocket message. This ensures that any client or relay can verify the identity of a consortium member by requesting their relay information document and comparing the public key.
 
@@ -57,7 +57,7 @@ This protocol extends the NIP-11 relay information document with two additional 
 
 **Signature Generation:**
 1. Concatenate the `pubkey`, `nonce`, and relay address as strings: `pubkey + nonce + relay_address`
-2. The relay address MUST be the canonical WebSocket URL (e.g., "wss://relay.example.com")
+2. The relay address MUST be the canonical WebSocket URL (e.g., "wss://relay.example.com/", note the path suffix)
 3. Compute SHA256 hash of the concatenated string
 4. Sign the hash using the relay's private key (corresponding to `pubkey`)
 5. Encode the signature as hex and store in the `sig` field
@@ -79,8 +79,8 @@ This NIP defines the following new event kinds:
 | Kind | Description |
 |------|-------------|
 | `39100` | Relay Identity Announcement |
-| `39101` | Trust Attestation |
-| `39102` | Group Tag Attestation |
+| `39101` | Trust Act |
+| `39102` | Group Tag Act |
 | `39103` | Public Key Advertisement |
 | `39104` | Directory Event Replication Request |
 | `39105` | Directory Event Replication Response |
@@ -107,7 +107,7 @@ Relay operators publish this event to announce their participation in the distri
 **Tags:**
 - `d`: Identifier for the relay identity (always "relay-identity")
 - `relay`: WebSocket URL of the relay
-- `signing_key`: Public key for verifying attestations from this relay (MAY be the same as identity key)
+- `signing_key`: Public key for verifying acts from this relay (MAY be the same as identity key)
 - `encryption_key`: Public key for ECDH encryption
 - `version`: Protocol version number
 - `nip11_url`: URL to the relay's NIP-11 information document for identity verification
@@ -125,9 +125,9 @@ Relay operators publish this event to announce their participation in the distri
 5. They verify that the announcement event is signed by the same key
 6. This confirms that the relay identity is cryptographically bound to the specific network address
 
-### Trust Attestation (Kind 39101)
+### Trust Act (Kind 39101)
 
-Relay operators create trust attestations toward other relays they wish to enter consensus with:
+Relay operators create trust acts toward other relays they wish to enter consensus with:
 
 ```json
 {
@@ -149,7 +149,7 @@ Relay operators create trust attestations toward other relays they wish to enter
 - `p`: Public key of the target relay being attested
 - `trust_level`: Level of trust (high, medium, low)
 - `relay`: WebSocket URL of the target relay
-- `expiry`: Optional expiration timestamp for the attestation
+- `expiry`: Optional expiration timestamp for the act
 - `reason`: How this trust relationship was established
 - `K`: Comma-separated list of event kinds to replicate in near real-time (in addition to directory events)
 - `I`: Identity tag with npub, nonce, and proof-of-control signature (same format as Kind 39103)
@@ -166,7 +166,7 @@ Relay operators create trust attestations toward other relays they wish to enter
 - **Near Real-time**: Events matching `K` tag kinds are replicated with minimal delay
 - **Bidirectional**: Replication occurs both to and from the trusted relay for specified kinds
 
-### Group Tag Attestation (Kind 39102)
+### Group Tag Act (Kind 39102)
 
 Relays can attest to arbitrary string values used as tags to create logical groups:
 
@@ -184,14 +184,41 @@ Relays can attest to arbitrary string values used as tags to create logical grou
 ```
 
 **Tags:**
-- `d`: Unique identifier for this group attestation
+- `d`: Unique identifier for this group act
 - `group_tag`: The tag name and value being attested
-- `attestor`: Public key of the relay making the attestation
-- `confidence`: Confidence level (0-100) in this attestation
+- `actor`: Public key of the relay making the act
+- `confidence`: Confidence level (0-100) in this act
+
+### Hierarchical Deterministic Key Derivation
+
+This protocol uses BIP32-style HD key derivation to enable deterministic key generation and management across multiple clients sharing the same identity.
+
+**Derivation Path Structure:**
+```
+m/purpose'/coin_type'/identity'/usage/index
+```
+
+Where:
+- `purpose'`: 39103' (this NIP's purpose, hardened)
+- `coin_type'`: 1237' (Nostr coin type, hardened) 
+- `identity'`: Identity index (0' for primary identity, hardened)
+- `usage`: Key usage type (0=signing, 1=encryption, 2=delegation) - all secp256k1
+- `index`: Sequential key index (0, 1, 2, ...)
+
+**Example Derivation Paths:**
+- `m/39103'/1237'/0'/0/0` - First secp256k1 signing key for primary identity
+- `m/39103'/1237'/0'/1/0` - First secp256k1 encryption key (ECDH) for primary identity
+- `m/39103'/1237'/0'/2/0` - First secp256k1 delegation key for primary identity
+
+**Seed Sharing Requirements:**
+- Clients MUST use a secure side-channel to share the master seed (BIP39 mnemonic)
+- The master seed enables all clients to derive the same key space
+- Clients SHOULD use encrypted communication for seed distribution
+- Seed rotation SHOULD be performed periodically for security
 
 ### Public Key Advertisement (Kind 39103)
 
-Relays advertise public keys that will be used in future operations. Each relay MUST limit the number of unused key delegations to 512 per identity. Key delegations expire after 30 days if not used in any database operations:
+Relays advertise public keys that will be used in future operations. Keys are derived using the HD scheme above. Each relay MUST limit the number of unused key delegations to 512 per identity. Key delegations expire after 30 days if not used in any database operations:
 
 ```json
 {
@@ -200,10 +227,12 @@ Relays advertise public keys that will be used in future operations. Each relay 
   "tags": [
     ["d", "<key-identifier>"],
     ["pubkey", "<hex-encoded-public-key>"],
-    ["purpose", "signing|encryption|identity"],
+    ["purpose", "signing|encryption|delegation"],
     ["valid_from", "<unix-timestamp>"],
     ["valid_until", "<unix-timestamp>"],
-    ["algorithm", "secp256k1|x25519"],
+    ["algorithm", "secp256k1"],
+    ["derivation_path", "m/39103'/1237'/0'/0/5"],
+    ["key_index", "5"],
     ["I", "<npub-identity>", "<hex-nonce>", "<hex-signature>"]
   ]
 }
@@ -211,11 +240,13 @@ Relays advertise public keys that will be used in future operations. Each relay 
 
 **Tags:**
 - `d`: Unique identifier for this key advertisement
-- `pubkey`: The public key being advertised
-- `purpose`: Intended use of the key
+- `pubkey`: The public key being advertised (derived from HD path)
+- `purpose`: Intended use of the key (signing, encryption, delegation)
 - `valid_from`: When this key becomes valid
 - `valid_until`: When this key expires
-- `algorithm`: Cryptographic algorithm used
+- `algorithm`: Cryptographic algorithm used (always "secp256k1")
+- `derivation_path`: Full BIP32 derivation path used to generate this key
+- `key_index`: The index component of the derivation path for easy reference
 - `I`: Identity tag containing npub, nonce, and proof-of-control signature
 
 **Key Delegation Limits:**
@@ -251,6 +282,50 @@ This binding ensures that:
 - The identity holder explicitly authorized this specific delegate key
 - The delegate key cannot be used with a different identity
 - The signature proves both identity control and delegation authorization
+
+### HD Key Management Protocol
+
+**Client Responsibilities:**
+
+1. **Key Pool Management:**
+   - Clients MUST maintain a pool of pre-derived unused keys for each purpose
+   - Recommended pool size: 20 keys per purpose type
+   - Generate new keys when pool drops below 5 unused keys
+   - Publish key advertisements proactively to maintain availability
+
+2. **Key Consumption Tracking:**
+   - Mark keys as "used" when they sign any event stored in the database
+   - Remove used keys from the available pool
+   - Update local key index to prevent reuse
+   - Coordinate key usage across multiple client instances
+
+3. **Key Advertisement Publishing:**
+   - Publish new key advertisements when unused pool drops below threshold
+   - Include next sequential key indices in derivation paths
+   - Batch publish multiple keys to reduce network overhead
+   - Respect relay rate limits when publishing advertisements
+
+4. **Cross-Client Synchronization:**
+   - Clients sharing the same seed MUST coordinate key usage
+   - Use highest observed key index + 1 for new key generation
+   - Query existing key advertisements to determine current state
+   - Implement gap detection to identify missing key indices
+
+**Key Discovery Process:**
+```
+1. Client starts up with shared seed
+2. Query relays for existing key advertisements (Kind 39103)
+3. Parse derivation paths to find highest used indices per purpose
+4. Generate key pool starting from next available indices
+5. Publish new key advertisements for unused keys
+6. Monitor for key consumption and replenish pool as needed
+```
+
+**Key State Synchronization:**
+- Clients SHOULD query for key advertisements on startup
+- Parse `key_index` tags to determine the current key space state
+- Generate keys starting from `max_observed_index + 1`
+- Handle gaps in key indices gracefully (may indicate key expiration)
 
 ### Identity Tag Usage
 
@@ -288,8 +363,8 @@ The following existing event kinds are considered "directory events" and subject
 #### 1. Consortium Formation
 
 1. Relay operators publish Relay Identity Announcements (Kind 39100)
-2. Operators create Trust Attestations (Kind 39101) toward relays they wish to collaborate with
-3. When mutual trust attestations exist, relays begin sharing directory events
+2. Operators create Trust Acts (Kind 39101) toward relays they wish to collaborate with
+3. When mutual trust acts exist, relays begin sharing directory events
 4. Trust relationships can be inherited through the web of trust with appropriate confidence scoring
 
 #### 2. Directory Event Synchronization
@@ -300,15 +375,15 @@ When a relay receives an event from a user, it:
 2. If the event contains an `I` tag, verifies the identity proof-of-control signature
 3. Stores the event locally
 4. Updates key delegation usage tracking (if applicable)
-5. Identifies trusted consortium members based on current trust attestations
+5. Identifies trusted consortium members based on current trust acts
 6. Determines replication targets based on event kind:
    - **Directory Events**: Replicate to all trusted consortium members
    - **Custom Kinds**: Replicate only to relays that have specified this kind in their `K` tag
 7. Replicates the event to appropriate trusted relays using Directory Event Replication Requests (Kind 39104)
 
 **Event Kind Matching:**
-- Check each trust attestation's `K` tag for the event's kind number
-- Only replicate to relays that have explicitly included the kind in their attestation
+- Check each trust act's `K` tag for the event's kind number
+- Only replicate to relays that have explicitly included the kind in their act
 - Directory events are always replicated regardless of `K` tag contents
 - Respect trust level when determining replication scope and frequency
 
@@ -355,10 +430,10 @@ Trust relationships can be inherited through the web of trust:
 ```
 Relay A                    Relay B                    Relay C
    |                          |                          |
-   |-- Trust Attestation ---->|                          |
-   |<-- Trust Attestation ----|                          |
-   |                          |-- Trust Attestation ---->|
-   |                          |<-- Trust Attestation ----|
+   |-- Trust Act ---->|                          |
+   |<-- Trust Act ----|                          |
+   |                          |-- Trust Act ---->|
+   |                          |<-- Trust Act ----|
    |                          |                          |
    |-- Directory Event ------>|-- Directory Event ------>|
    |                          |                          |
@@ -374,9 +449,9 @@ Relay A                    Relay B                    Relay C
 
 3. **Rate Limiting**: Implement rate limiting to prevent spam and DoS attacks
 
-4. **Signature Validation**: All events and attestations MUST be cryptographically verified, including `I` tag proof-of-control signatures
+4. **Signature Validation**: All events and acts MUST be cryptographically verified, including `I` tag proof-of-control signatures
 
-5. **Privacy**: Sensitive consortium communications SHOULD use ECDH encryption
+5. **Privacy**: Sensitive consortium communications SHOULD use secp256k1 ECDH encryption
 
 6. **Address Binding**: The extended NIP-11 document serves as the authoritative source for relay identity verification. The signature includes the relay's network address, creating a cryptographic binding between identity, private key control, and network location. Relays MUST NOT accept consortium events from identities that cannot be verified through their NIP-11 document's signature mechanism. The `nonce` field SHOULD be regenerated periodically to maintain security.
 
@@ -392,12 +467,20 @@ Relay A                    Relay B                    Relay C
 
 12. **Delegate Authorization**: The `I` tag signature cryptographically proves that the identity holder explicitly authorized the delegate key for this specific use. This prevents unauthorized delegation and ensures accountability for delegated actions.
 
+13. **HD Seed Security**: The master seed MUST be protected with the highest security measures. Compromise of the seed compromises all derived keys. Clients SHOULD use hardware security modules or secure enclaves when available.
+
+14. **Key Index Coordination**: Clients sharing the same seed MUST coordinate key usage to prevent index collisions. Simultaneous key generation by multiple clients could lead to the same key being used by different clients.
+
+15. **Side-Channel Security**: Seed sharing between clients MUST use secure, authenticated channels. Consider using encrypted messaging, secure key exchange protocols, or physical transfer for initial seed distribution.
+
+16. **Derivation Path Validation**: Clients MUST validate derivation paths in key advertisements to ensure they follow the specified format and prevent malicious path injection.
+
 ### Implementation Guidelines
 
 #### Relay Operators
 
 1. Generate and securely store relay identity keys
-2. Configure trust policies and attestation criteria
+2. Configure trust policies and act criteria
 3. Implement Byzantine fault tolerance mechanisms
 4. Monitor consortium health and trust relationships
 5. Provide configuration options for users to opt-out of replication
@@ -417,6 +500,12 @@ Relay A                    Relay B                    Relay C
 6. Clients SHOULD validate `I` tag signatures when processing events
 7. Clients MAY use npub identities from `I` tags for user-friendly display
 8. Clients SHOULD implement proper nonce generation for `I` tag security
+9. Clients MUST implement BIP32 HD key derivation for deterministic key generation
+10. Clients SHOULD maintain key pools and coordinate usage across instances
+11. Clients MUST query existing key advertisements on startup for synchronization
+12. Clients SHOULD implement secure seed storage and sharing mechanisms
+13. Clients MUST validate derivation paths in received key advertisements
+14. Clients SHOULD implement key consumption tracking and pool replenishment
 
 ### Backwards Compatibility
 
@@ -450,10 +539,57 @@ This design draws inspiration from the democratic Byzantine Fault Tolerant appro
 A reference implementation will be provided showing:
 
 1. Relay identity key generation and management
-2. Trust attestation creation and validation
+2. Trust act creation and validation
 3. Directory event replication logic
 4. Byzantine fault tolerance mechanisms
 5. Web of trust computation algorithms
+6. BIP32 HD key derivation implementation
+7. Key pool management and synchronization
+8. Cross-client coordination mechanisms
+
+### Example Key Management Workflow
+
+**Initial Setup:**
+```
+1. Generate BIP39 mnemonic seed: "abandon abandon ... art"
+2. Derive master key: m/39103'/1237'/0'
+3. Share seed securely with other client instances
+```
+
+**Client Startup:**
+```
+1. Query relays for existing key advertisements:
+   REQ ["sub1", {"kinds": [39103], "authors": ["<identity-pubkey>"]}]
+
+2. Parse responses to find highest key indices:
+   - Signing keys: max index = 15
+   - Encryption keys: max index = 8  
+   - Delegation keys: max index = 3
+
+3. Generate new key pools starting from next indices:
+   - m/39103'/1237'/0'/0/16 through m/39103'/1237'/0'/0/35 (signing)
+   - m/39103'/1237'/0'/1/9 through m/39103'/1237'/0'/1/28 (encryption)
+   - m/39103'/1237'/0'/2/4 through m/39103'/1237'/0'/2/23 (delegation)
+
+4. Publish key advertisements for new unused keys
+```
+
+**Key Consumption:**
+```
+1. Client needs to sign an event
+2. Select next unused signing key from pool
+3. Sign event with selected key
+4. Mark key as "used" and remove from available pool
+5. If pool drops below threshold, generate and publish new keys
+```
+
+**Cross-Client Coordination:**
+```
+1. Client A uses signing key at index 16
+2. Client B queries and sees key 16 is now used
+3. Client B updates its local state and uses key 17 for next event
+4. Both clients coordinate through shared relay state
+```
 
 ## Test Vectors
 
