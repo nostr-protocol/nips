@@ -80,10 +80,12 @@ This NIP defines the following new event kinds:
 |------|-------------|
 | `39100` | Relay Identity Announcement |
 | `39101` | Trust Act |
-| `39102` | Group Tag Act |
+| `39102` | Group Tag Act (Registration) |
 | `39103` | Public Key Advertisement |
 | `39104` | Directory Event Replication Request |
 | `39105` | Directory Event Replication Response |
+| `39106` | Group Tag Transfer (Ownership Transfer) |
+| `39107` | Escrow Witness Completion Act |
 
 ### Relay Identity Announcement (Kind 39100)
 
@@ -95,11 +97,10 @@ Relay operators publish this event to announce their participation in the distri
   "content": "{\"name\":\"relay.example.com\",\"description\":\"Community relay\",\"contact\":\"admin@example.com\"}",
   "tags": [
     ["d", "relay-identity"],
-    ["relay", "wss://relay.example.com"],
+    ["relay", "wss://relay.example.com/"],
     ["signing_key", "<hex-encoded-public-key>"],
     ["encryption_key", "<hex-encoded-public-key>"],
-    ["version", "1"],
-    ["nip11_url", "https://relay.example.com/.well-known/nostr.json"]
+    ["version", "1"]
   ]
 }
 ```
@@ -110,16 +111,17 @@ Relay operators publish this event to announce their participation in the distri
 - `signing_key`: Public key for verifying acts from this relay (MAY be the same as identity key)
 - `encryption_key`: Public key for ECDH encryption
 - `version`: Protocol version number
-- `nip11_url`: URL to the relay's NIP-11 information document for identity verification
 
 **Identity Verification Process:**
 1. Other relays receive this announcement event
-2. They extract the `pubkey` field (relay identity key) and `nip11_url` 
-3. They fetch the NIP-11 document from the specified URL
+2. They extract the `pubkey` field (relay identity key) and `relay` URL
+3. They fetch the NIP-11 document by making an HTTP GET request to the relay URL with the `Accept: application/nostr+json` header
+   - For `wss://relay.example.com/` → HTTP GET `https://relay.example.com/` with header `Accept: application/nostr+json`
+   - For `ws://relay.example.com/` → HTTP GET `http://relay.example.com/` with header `Accept: application/nostr+json`
 4. They verify the NIP-11 signature using the extended verification process:
    - Extract `pubkey`, `nonce`, and `sig` from the NIP-11 document
    - Verify that the `pubkey` matches the announcement event's `pubkey`
-   - Extract the relay address from the `relay` tag or `nip11_url`
+   - Extract the relay address from the `relay` tag
    - Concatenate `pubkey + nonce + relay_address` and compute SHA256 hash
    - Verify the signature proves control of the private key AND address binding
 5. They verify that the announcement event is signed by the same key
@@ -135,7 +137,7 @@ Relay operators create trust acts toward other relays they wish to enter consens
   "content": "",
   "tags": [
     ["p", "<target-relay-pubkey>"],
-    ["trust_level", "high|medium|low"],
+    ["trust_level", "75"],
     ["relay", "<target-relay-url>"],
     ["expiry", "<unix-timestamp>"],
     ["reason", "manual|automatic|inherited"],
@@ -147,17 +149,115 @@ Relay operators create trust acts toward other relays they wish to enter consens
 
 **Tags:**
 - `p`: Public key of the target relay being attested
-- `trust_level`: Level of trust (high, medium, low)
+- `trust_level`: Replication percentage (0-100) indicating probability of replicating each event
 - `relay`: WebSocket URL of the target relay
 - `expiry`: Optional expiration timestamp for the act
 - `reason`: How this trust relationship was established
 - `K`: Comma-separated list of event kinds to replicate in near real-time (in addition to directory events)
 - `I`: Identity tag with npub, nonce, and proof-of-control signature (same format as Kind 39103)
 
-**Trust Levels:**
-- `high`: Full replication of all directory events plus all kinds specified in `K` tag
-- `medium`: Selective replication of directory events plus kinds specified in `K` tag based on additional criteria
-- `low`: Minimal replication of directory events only, `K` tag kinds may be filtered
+**Trust Level (Partial Replication):**
+
+The `trust_level` is a number from **0 to 100** representing the **percentage probability** that any given event will be replicated. This implements **partial replication** where events are randomly selected based on a dice-throw mechanism:
+
+- **100**: Full replication - ALL events replicated (100% probability)
+- **75**: High partial replication - 75% of events replicated on average
+- **50**: Medium partial replication - 50% of events replicated on average
+- **25**: Low partial replication - 25% of events replicated on average
+- **10**: Minimal partial replication - 10% of events replicated on average
+- **0**: No replication - effectively disables replication
+
+**Partial Replication Mechanism:**
+
+For each event received from a trusted relay:
+
+1. **Generate Random Number**: Create a cryptographically secure random number between 0-100
+2. **Compare to Threshold**: If random number ≤ trust_level, replicate the event
+3. **Otherwise Skip**: If random number > trust_level, discard without replication
+4. **Per-Event Decision**: Each event gets an independent random roll
+
+**Example:**
+```
+Trust Level: 50
+Event A arrives → Roll: 42 → 42 ≤ 50 → REPLICATE
+Event B arrives → Roll: 73 → 73 > 50 → SKIP
+Event C arrives → Roll: 18 → 18 ≤ 50 → REPLICATE
+Event D arrives → Roll: 91 → 91 > 50 → SKIP
+
+Result: ~50% of events replicated over time
+```
+
+**Partial Replication Benefits:**
+
+1. **Resource Management**: Reduce bandwidth, storage, and processing load proportionally
+2. **Probabilistic Coverage**: Events still propagate through the network via multiple paths
+3. **Network Resilience**: Different relays replicate different random subsets, providing redundancy
+4. **Tunable Trade-offs**: Operators can precisely balance resources vs. completeness
+5. **Graceful Degradation**: Network remains functional even with low trust levels across many peers
+
+**Network Propagation Example:**
+
+Consider a network where all relays use 50% trust level:
+```
+User publishes Event X
+  ↓
+Relay A receives → 50% chance → Replicates to Relays B, C, D
+  ↓
+Relay B (rolled yes) → 50% chance → Replicates to Relays E, F
+Relay C (rolled no) → Skips
+Relay D (rolled yes) → 50% chance → Replicates to Relays G, H
+
+Result: Event X reaches ~75-85% of network despite 50% replication rate
+        (due to multiple propagation paths)
+```
+
+**Trust Level Guidelines:**
+
+- **90-100**: Use for critical partners where near-complete coverage is essential
+  - Primary consortium members
+  - Paid backup services
+  - Legal/compliance requirements
+  
+- **60-89**: Use for important partners with good resources
+  - Secondary consortium members
+  - Established relay partnerships
+  - Balanced resource/coverage trade-off
+
+- **30-59**: Use for standard partnerships
+  - General peer relationships
+  - Resource-constrained but willing participants
+  - Acceptable coverage with good bandwidth savings
+
+- **10-29**: Use for exploratory or limited partnerships
+  - New/untrusted relays being evaluated
+  - Severely resource-constrained peers
+  - Experimental connectivity
+
+- **1-9**: Use for minimal sampling
+  - Network topology discovery
+  - Quality/spam assessment
+  - Proof-of-concept testing
+
+**Implementation Requirements:**
+
+Relays implementing partial replication MUST:
+
+1. **Use Cryptographic RNG**: Use cryptographically secure random number generation (e.g., `crypto/rand` in Go, `crypto.getRandomValues()` in JavaScript)
+2. **Per-Event Independence**: Each event must get an independent random roll
+3. **No Bias**: Random selection must be uniform and unbiased
+4. **Deterministic Recording**: Once decision is made, it must be consistent (no re-rolling)
+5. **Event Integrity**: Replicated events must be complete and unmodified
+
+**Optional Enhancements:**
+
+Relays MAY implement additional strategies:
+
+- **Priority Boosting**: Increase probability for directory events (Kinds 0, 3, 5, etc.)
+- **Kind-Specific Rates**: Apply different trust levels to different event kinds
+- **Time-Based Adjustment**: Vary trust level based on network load or time of day
+- **Reputation Weighting**: Boost probability for high-reputation users
+
+However, the base trust_level percentage MUST always be respected as the minimum probability.
 
 **Event Kind Replication:**
 - **Directory Events**: Always replicated regardless of `K` tag (kinds 0, 3, 5, 1984, 10002, 10000, 10050)
@@ -168,7 +268,29 @@ Relay operators create trust acts toward other relays they wish to enter consens
 
 ### Group Tag Act (Kind 39102)
 
-Relays can attest to arbitrary string values used as tags to create logical groups:
+Group Tag Acts establish ownership and control over arbitrary string tags, functioning as a first-come-first-served registration system akin to domain name registration. These tags form the foundation for permissioned structured groups that can span multiple relays while maintaining consistent state. They also constitute a name registration system akin to DNS, and could have IP adress routing information attached to it with events (best to be CRDT add/remove so it's idempotent).
+
+Since the uses of group identity names and webserver identity information (and it logically would include most of the same things you find in DNS records) tend to overlap, in that finding the group and going to their static content (such as structured long form documents and wikis) is the same place you want to go to read public messages and discover new friends. This allows progressive replication and redundancy for communities that enables the network to scale to larger userbases without a linear reduction in performance.
+
+**Registration Model:**
+- Group tags are **alienable** (transferable) and follow first-come-first-served registration
+- The first valid Group Tag Act for a given `group_id` establishes initial ownership
+- Ownership can be transferred through Group Tag Transfer events (Kind 39106) with optional escrow
+- Multiple signature schemes are supported for ownership control
+- Group tag names MUST use URL-safe character set (RFC 3986)
+
+**Group Tag Naming Rules:**
+
+Group tag identifiers MUST conform to URL path segment rules (RFC 3986):
+- **Allowed characters**: `a-z`, `A-Z`, `0-9`, `-`, `.`, `_`, `~`
+- **Forbidden characters**: `/`, `?`, `#`, `[`, `]`, `@`, `!`, `$`, `&`, `'`, `(`, `)`, `*`, `+`, `,`, `;`, `=`, `:`, spaces
+- **Length**: 1-255 characters
+- **Case sensitivity**: Group tags are case-sensitive
+- **Reserved prefixes**: Tags starting with `.` or `_` are reserved for system use
+
+**Examples:**
+- ✅ Valid: `bitcoin-discussion`, `nostr.community`, `tech_forum`, `cafe~network`
+- ❌ Invalid: `bitcoin/discussion`, `nostr community`, `tech#forum`, `café:network`
 
 ```json
 {
@@ -177,17 +299,369 @@ Relays can attest to arbitrary string values used as tags to create logical grou
   "tags": [
     ["d", "<group-identifier>"],
     ["group_tag", "<tag-name>", "<tag-value>"],
-    ["attestor", "<relay-pubkey>"],
-    ["confidence", "0-100"]
+    ["actor", "<relay-pubkey>"],
+    ["confidence", "0-100"],
+    ["owners", "<signature-scheme>", "<owner-pubkey-1>", "<owner-pubkey-2>", "..."],
+    ["created", "<unix-timestamp>"],
+    ["I", "<npub-identity>", "<hex-nonce>", "<hex-signature>"]
   ]
 }
 ```
 
 **Tags:**
-- `d`: Unique identifier for this group act
-- `group_tag`: The tag name and value being attested
+- `d`: Unique identifier for this group (the registered tag name, must be URL-safe)
+- `group_tag`: The tag name and value being registered
 - `actor`: Public key of the relay making the act
 - `confidence`: Confidence level (0-100) in this act
+- `owners`: Ownership control specification (see below)
+- `created`: Timestamp of group registration
+- `I`: Identity tag for proof-of-control (optional)
+
+**Ownership Schemes:**
+
+The `owners` tag specifies the signature requirements for group control:
+
+1. **Single Signature:**
+   ```
+   ["owners", "single", "<owner-pubkey>"]
+   ```
+   - Only one signature required for group operations
+   - Simplest ownership model
+
+2. **2-of-3 Multisig:**
+   ```
+   ["owners", "2-of-3", "<pubkey-1>", "<pubkey-2>", "<pubkey-3>"]
+   ```
+   - Requires 2 out of 3 owners to sign for group operations
+   - Provides redundancy and shared control
+
+3. **3-of-5 Multisig:**
+   ```
+   ["owners", "3-of-5", "<pubkey-1>", "<pubkey-2>", "<pubkey-3>", "<pubkey-4>", "<pubkey-5>"]
+   ```
+   - Requires 3 out of 5 owners to sign for group operations
+   - Maximum distributed control while maintaining operational flexibility
+
+**Use Cases:**
+
+Group Tag Acts enable various structured group scenarios:
+
+1. **Forum/Community Groups:**
+   - Register a group tag like "bitcoin-discussion"
+   - Anchor posts, moderation actions, and membership lists to this tag
+   - Users only need one working relay from the group's relay set to see current state
+
+2. **Permissioned Content Collections:**
+   - Create private or curated content spaces
+   - Owner(s) control membership and posting permissions
+   - Content can be distributed across multiple relays
+
+3. **Multi-Relay Coordination:**
+   - Group state spans multiple relays in the consortium
+   - Users see consistent group state regardless of which relay they connect to
+   - Ownership transfers maintain continuity across relay set
+
+4. **Administrative Hierarchies:**
+   - Multisig ownership enables distributed administration
+   - 2-of-3 or 3-of-5 schemes prevent single-point-of-failure
+   - Ownership can be transferred to new administrator sets
+
+5. **Domain Name Service Replacement:**
+   - Additional event kinds could be created that specify such things as a set of IP addresses that have servers that are replicas of the group or individual that owns and operates the relays.
+   - Additional types of services could be delivered, such as compositing compound multi-event document types into structured document formats for reading, so, subprotocols, like the differences between FTP and Gopher and HTTP, so the name service events can also include public metadata about the servers such as operating ports and the protocols available through them.
+
+**Registration Rules:**
+
+- **First Registration Wins:** The first valid Group Tag Act for a given `d` (group identifier) establishes ownership
+- **Timestamp Precedence:** If multiple registration attempts occur simultaneously, earliest `created_at` wins
+- **Conflict Resolution:** Relays MUST reject later registration attempts for the same group identifier
+- **Transfer Authority:** Only current owners (with valid signatures) can transfer ownership
+
+### Group Tag Transfer (Kind 39106)
+
+Group Tag Transfer events enable ownership transfer of registered group tags, functioning as a "deed of sale" mechanism. Transfers can be executed immediately or through a witness-based escrow process.
+
+**Direct Transfer (No Escrow):**
+
+```json
+{
+  "kind": 39106,
+  "content": "<transfer-reason-or-terms>",
+  "tags": [
+    ["d", "<group-identifier>"],
+    ["from_owners", "<signature-scheme>", "<old-owner-pubkey-1>", "..."],
+    ["to_owners", "<signature-scheme>", "<new-owner-pubkey-1>", "..."],
+    ["transfer_date", "<unix-timestamp>"],
+    ["signatures", "<sig-1>", "<sig-2>", "..."],
+    ["I", "<npub-identity>", "<hex-nonce>", "<hex-signature>"]
+  ]
+}
+```
+
+**Escrow Transfer (With Witnesses):**
+
+```json
+{
+  "kind": 39106,
+  "content": "<transfer-terms-and-conditions>",
+  "tags": [
+    ["d", "<group-identifier>"],
+    ["from_owners", "<signature-scheme>", "<old-owner-pubkey-1>", "..."],
+    ["to_owners", "<signature-scheme>", "<new-owner-pubkey-1>", "..."],
+    ["transfer_date", "<unix-timestamp>"],
+    ["escrow_id", "<unique-escrow-identifier>"],
+    ["seller_witness", "<witness-pubkey>"],
+    ["buyer_witness", "<witness-pubkey>"],
+    ["conditions", "<condition-hash>"],
+    ["signatures", "<sig-1>", "<sig-2>", "..."],
+    ["I", "<npub-identity>", "<hex-nonce>", "<hex-signature>"]
+  ]
+}
+```
+
+**Tags:**
+- `d`: The group identifier being transferred (must match existing Group Tag Act)
+- `from_owners`: Current ownership specification (must match existing Group Tag Act)
+- `to_owners`: New ownership specification after transfer
+- `transfer_date`: When the transfer takes effect
+- `escrow_id`: Unique identifier for this escrow transaction (required for escrow)
+- `seller_witness`: Pubkey of witness designated by seller (required for escrow)
+- `buyer_witness`: Pubkey of witness designated by buyer (required for escrow)
+- `conditions`: SHA256 hash of transfer conditions document (required for escrow)
+- `signatures`: Schnorr signatures from current owners (must meet threshold)
+- `I`: Identity tag for proof-of-control (optional)
+
+**Transfer Validation:**
+
+Relays MUST validate transfers according to these rules:
+
+1. **Group Existence:** A Group Tag Act (Kind 39102) must exist for the specified `d` identifier
+2. **Owner Match:** The `from_owners` tag must exactly match the current `owners` tag in the Group Tag Act
+3. **Signature Threshold:** 
+   - Single: 1 signature from the owner
+   - 2-of-3: 2 signatures from any of the 3 owners
+   - 3-of-5: 3 signatures from any of the 5 owners
+4. **Signature Verification:** All provided signatures must be valid Schnorr signatures
+5. **Chronological Order:** `transfer_date` must be after the group's `created` timestamp
+6. **Escrow Validation (if applicable):**
+   - Both `seller_witness` and `buyer_witness` must be specified
+   - `escrow_id` must be unique and not previously used
+   - `conditions` hash must be present
+   - Transfer is PENDING until both witnesses sign completion acts
+
+**Signature Generation:**
+
+For each owner signing the transfer:
+
+1. Concatenate: `group_id + from_owners_json + to_owners_json + transfer_date`
+2. Compute SHA256 hash of the concatenated string
+3. Sign the hash using the owner's private key
+4. Add signature to the `signatures` tag
+
+**Transfer Effect (Direct Transfer):**
+
+Once a valid non-escrow transfer is accepted:
+
+1. The Group Tag Act (Kind 39102) is considered superseded
+2. A new implicit Group Tag Act with updated `owners` is recognized
+3. All future group operations must use the new ownership specification
+4. Old owners lose control; new owners gain full control immediately
+
+**Transfer Effect (Escrow Transfer):**
+
+When an escrow transfer is initiated:
+
+1. Transfer enters PENDING state
+2. Old owners retain control until escrow completes
+3. Witnesses must sign Escrow Witness Completion Acts (Kind 39107)
+4. When BOTH witnesses sign, transfer completes automatically
+5. New owners gain control; old owners lose control
+
+### Escrow Witness Completion Act (Kind 39107)
+
+Escrow witnesses publish completion acts to authorize the finalization of an escrow transfer.
+
+```json
+{
+  "kind": 39107,
+  "content": "<witness-statement-or-report>",
+  "tags": [
+    ["escrow_id", "<escrow-identifier>"],
+    ["group_id", "<group-identifier>"],
+    ["witness_role", "seller_witness|buyer_witness"],
+    ["completion_status", "approved|rejected"],
+    ["reason", "<optional-reason-for-rejection>"],
+    ["verification_hash", "<hash-of-verified-conditions>"],
+    ["timestamp", "<unix-timestamp>"]
+  ]
+}
+```
+
+**Tags:**
+- `escrow_id`: The escrow transaction identifier (from Kind 39106)
+- `group_id`: The group identifier being transferred
+- `witness_role`: Role of this witness (`seller_witness` or `buyer_witness`)
+- `completion_status`: Whether witness approves (`approved`) or rejects (`rejected`)
+- `reason`: Optional explanation (required if rejected)
+- `verification_hash`: SHA256 hash of conditions document witness verified
+- `timestamp`: When witness completed verification
+
+**Escrow Protocol Flow:**
+
+1. **Initiation:**
+   - Seller creates Group Tag Transfer (Kind 39106) with escrow tags
+   - Both parties agree on witnesses and conditions
+   - Transfer enters PENDING state
+
+2. **Witness Designation:**
+   - Seller designates `seller_witness` (their chosen neutral party)
+   - Buyer designates `buyer_witness` (their chosen neutral party)
+   - Witnesses should be trusted relays or recognized arbiters
+
+3. **Condition Verification:**
+   - Witnesses independently verify transfer conditions are met
+   - Conditions document (hashed in `conditions` tag) specifies requirements
+   - Examples: payment received, ownership verified, legal requirements met
+
+4. **Witness Completion:**
+   - Each witness publishes Escrow Witness Completion Act (Kind 39107)
+   - Both witnesses must approve (`completion_status: approved`)
+   - If either witness rejects, transfer is cancelled
+
+5. **Transfer Finalization:**
+   - When BOTH witnesses sign with `approved` status
+   - Relays automatically recognize new owners
+   - HD keychains of new owners can modify group-tagged records
+   - Old owners immediately lose modification rights
+
+6. **Rejection Handling:**
+   - If ANY witness rejects (` completion_status: rejected`)
+   - Transfer is cancelled permanently
+   - Group remains with original owners
+   - New transfer must be initiated if parties wish to retry
+
+**Escrow Validation Rules:**
+
+Relays MUST validate escrow completion according to these rules:
+
+1. **Witness Verification:**
+   - Witness pubkey must match the designated witness in Kind 39106
+   - Witness signature must be valid
+   - Witness event timestamp must be after transfer initiation
+
+2. **Escrow ID Matching:**
+   - `escrow_id` in Kind 39107 must match Kind 39106
+   - `group_id` must match the transfer
+
+3. **Completion Requirements:**
+   - BOTH seller_witness AND buyer_witness must publish Kind 39107
+   - BOTH must have `completion_status: approved`
+   - If ANY witness rejects, transfer fails
+
+4. **Condition Hash Verification:**
+   - `verification_hash` should match `conditions` hash from Kind 39106
+   - Witnesses SHOULD verify conditions document before signing
+
+5. **Temporal Ordering:**
+   - Witness completion acts must come after transfer event
+   - Both completions must occur within reasonable timeframe (suggested: 30 days)
+
+**Witness Selection Guidelines:**
+
+Good witness candidates:
+- Established relays in the consortium with high trust scores
+- Professional escrow services recognized in the community
+- Legal entities or notaries (for high-value transfers)
+- Community-elected arbiters with reputation systems
+
+Poor witness candidates:
+- Parties involved in the transfer (conflict of interest)
+- Recently created identities with no history
+- Witnesses with financial stake in the outcome
+
+**Example Transfer Flow:**
+
+**Direct Transfer (No Escrow):**
+```
+Initial Registration (Kind 39102):
+  ["owners", "single", "alice-pubkey"]
+
+Direct Transfer (Kind 39106):
+  ["from_owners", "single", "alice-pubkey"]
+  ["to_owners", "2-of-3", "bob-pubkey", "carol-pubkey", "dave-pubkey"]
+  ["signatures", "alice-signature"]
+  # No escrow tags
+
+Result (Immediate):
+  Group now controlled by 2-of-3 multisig (Bob, Carol, Dave)
+```
+
+**Escrow Transfer:**
+```
+Initial Registration (Kind 39102):
+  ["owners", "single", "alice-pubkey"]
+  Group: "bitcoin-marketplace"
+
+Escrow Transfer Initiated (Kind 39106):
+  ["from_owners", "single", "alice-pubkey"]
+  ["to_owners", "single", "bob-pubkey"]
+  ["escrow_id", "escrow-2024-001"]
+  ["seller_witness", "relay-witness-1-pubkey"]
+  ["buyer_witness", "relay-witness-2-pubkey"]
+  ["conditions", "sha256-of-payment-terms"]
+  ["signatures", "alice-signature"]
+  
+Status: PENDING (Alice retains control)
+
+Seller's Witness Approves (Kind 39107):
+  ["escrow_id", "escrow-2024-001"]
+  ["witness_role", "seller_witness"]
+  ["completion_status", "approved"]
+  Signed by: relay-witness-1
+
+Status: PENDING (Waiting for buyer's witness)
+
+Buyer's Witness Approves (Kind 39107):
+  ["escrow_id", "escrow-2024-001"]
+  ["witness_role", "buyer_witness"]
+  ["completion_status", "approved"]
+  Signed by: relay-witness-2
+
+Result (Automatic upon both witnesses):
+  Group "bitcoin-marketplace" now controlled by Bob
+  Bob's HD keychain can modify all records tagged with this group
+  Alice's HD keychain loses modification rights
+```
+
+**Domain Name System Analogy:**
+
+Group Tag Acts function like DNS registrations:
+
+- **First-Come-First-Served:** Just as domain names are registered on a first-come basis
+- **Alienable:** Can be sold, transferred, or reassigned like domain ownership
+- **Globally Unique:** Each group identifier is unique within the consortium
+- **Decentralized Registry:** Distributed across consortium relays instead of central authority
+- **Transfer Mechanism:** Group Tag Transfer events are like domain transfer EPP codes
+- **Multi-Relay Consistency:** Like DNS propagation, but consensus-based
+
+**Group State Coordination:**
+
+Groups span multiple relays while maintaining consistency:
+
+1. **Relay Set:** A group may be active on relays A, B, C, D
+2. **User Connection:** User connects to relay B
+3. **State Visibility:** User sees complete group state from all relays via replication
+4. **Partial Connectivity:** Even if relays C and D are down, user sees state via A and B
+5. **Ownership Operations:** Transfer events replicate across all relays in the set
+6. **Consensus:** Relays validate ownership changes independently using same rules
+
+**Benefits:**
+
+- **Resilience:** Groups survive individual relay failures
+- **Portability:** Users can switch between relays in the group's relay set
+- **Consistency:** Ownership and membership state synchronized across relays
+- **Flexibility:** Ownership can evolve from single to multisig to new parties
+- **Transparency:** All transfers are publicly auditable on the relays
 
 ### Hierarchical Deterministic Key Derivation
 
