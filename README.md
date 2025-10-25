@@ -107,6 +107,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
 - [NIP-EE: E2EE Messaging using MLS Protocol](EE.md)
+- [NIP-XX: (draft) Distributed Directory Consensus using Replica Identity Keys and Web of Trust](XX.md)
 
 ## Event Kinds
 | kind          | description                     | NIP                                    |
