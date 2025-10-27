@@ -36,7 +36,7 @@ Content-addressed assets for web pages. All web assets (HTML, CSS, JavaScript, f
 
 **Required tags:**
 
-- `m` - MIME type (e.g., `text/html`, `text/css`, `text/javascript`, `application/wasm`, `font/woff2`)
+- `m` - MIME type (e.g., `text/html`, `text/css`, `text/javascript`, `application/wasm`, `font/woff2`, 'image/png', etc.)
 - `x` - Hex-encoded SHA-256 hash of the `content` field (for content deduplication)
 
 **Optional tags:**
@@ -89,6 +89,7 @@ Regular event that links assets for a specific page. Each page version is a sepa
     ["e", "<css-event-id-1>", "wss://relay.example.com"],
     ["e", "<css-event-id-2>", "wss://relay.example.com"],
     ["e", "<js-event-id>", "wss://relay.example.com"],
+    ["e","<image-event-id>", "wss://relay.example.com"]
     ["route", "/"],
     ["title", "Home"],
     ["description", "Welcome to my Nostr Web site"]
