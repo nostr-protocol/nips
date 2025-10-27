@@ -40,10 +40,10 @@ Examples:
 
 ### Record Value
 
-A space-separated key-value token string with the following format:
+A semicolon-separated key-value token string with the following format:
 
 ```
-v=<version> pk=<pubkey> relays=<relay1>[,<relay2>,<relay3>...]
+v=<version>;pk=<pubkey>;relays=<relay1>[,<relay2>,<relay3>...]
 ```
 
 | Component | Required | Description                                   |
@@ -57,13 +57,13 @@ v=<version> pk=<pubkey> relays=<relay1>[,<relay2>,<relay3>...]
 **Minimal record:**
 
 ```
-v=1 pk=npub1abc123... relays=wss://relay.example.com
+v=1;pk=npub1abc123...;relays=wss://relay.example.com
 ```
 
 **Multiple relays:**
 
 ```
-v=1 pk=5e56a2e48c4c5eb902e062bc30f92eabcf2e2fb96b5e7... relays=wss://relay1.example.com,wss://relay2.example.com,wss://relay3.example.com
+v=1;pk=5e56a2e48c4c5eb902e062bc30f92eabcf2e2fb96b5e7...;relays=wss://relay1.example.com,wss://relay2.example.com,wss://relay3.example.com
 ```
 
 ## Public Key Format
@@ -73,13 +73,13 @@ The `pk=` value accepts two formats:
 **npub (bech32):**
 
 ```
-v=1 pk=npub1abc123def456... relays=wss://relay.example.com
+v=1;pk=npub1abc123def456...;relays=wss://relay.example.com
 ```
 
 **Hex:**
 
 ```
-v=1 pk=5e56a2e48c4c5eb902e062bc30f92eabcf2e2fb96b5e7... relays=wss://relay.example.com
+v=1;pk=5e56a2e48c4c5eb902e062bc30f92eabcf2e2fb96b5e7...;relays=wss://relay.example.com
 ```
 
 Clients MUST support both formats.
@@ -96,7 +96,7 @@ Clients MUST support both formats.
 **Example:**
 
 ```
-v=1 pk=npub1... relays=wss://relay1.example.com,wss://relay2.example.com,wss://relay3.example.com
+v=1;pk=npub1...;relays=wss://relay1.example.com,wss://relay2.example.com,wss://relay3.example.com
 ```
 
 **Recommendations:**
@@ -104,7 +104,7 @@ v=1 pk=npub1... relays=wss://relay1.example.com,wss://relay2.example.com,wss://r
 - Include at least 3 relays for redundancy (don't include many relays to avoid bloat)
 - Use well-known public relays
 - Ensure relays support NIP-YY event kinds (1125, 1126, 31126, 11126)
-- No spaces allowed in relay URLs (or use percent-encoding)
+- Spaces after commas in relay list are allowed and will be trimmed during parsing
 
 ## Client Behavior
 
@@ -194,8 +194,10 @@ The tokenized format is simpler than JSON and works universally across DNS provi
 **Standard format:**
 
 ```
-v=1 pk=npub1... relays=wss://relay1.example.com,wss://relay2.example.com
+v=1;pk=npub1...;relays=wss://relay1.example.com,wss://relay2.example.com
 ```
+
+**No escaping required** - Semicolon-separated key-value tokens with comma-separated relay values are naturally supported by DNS TXT records.
 
 ### Record Length Limits
 
@@ -230,7 +232,7 @@ Clients SHOULD verify DNSSEC signatures when available.
 ```
 Type: TXT
 Name: _nweb
-Content: v=1 pk=npub1... relays=wss://relay.example.com
+Content: v=1;pk=npub1...;relays=wss://relay.example.com
 TTL: Auto or 3600 (DNS rarely needs updating)
 ```
 
@@ -239,7 +241,7 @@ TTL: Auto or 3600 (DNS rarely needs updating)
 ```
 Type: TXT
 Name: _nweb.example.com
-Value: "v=1 pk=npub1... relays=wss://relay.example.com"
+Value: "v=1;pk=npub1...;relays=wss://relay.example.com"
 TTL: 3600 (DNS rarely needs updating)
 ```
 
@@ -255,8 +257,8 @@ const data = await response.json();
 // Parse TXT record (remove quotes if present)
 const txtRecord = data.Answer?.[0]?.data.replace(/^"|"$/g, "");
 
-// Parse key-value tokens
-const tokens = txtRecord.split(/\s+/);
+// Parse key-value tokens (semicolon-separated)
+const tokens = txtRecord.split(";");
 const params = {};
 
 for (const token of tokens) {
@@ -277,7 +279,10 @@ if (!params.pk || !params.relays) {
 
 // Extract pubkey and relays
 const pubkey = params.pk;
-const relays = params.relays.split(",").filter((r) => r.startsWith("wss://"));
+const relays = params.relays
+  .split(",")
+  .map((r) => r.trim())
+  .filter((r) => r.startsWith("wss://"));
 
 if (relays.length === 0) {
   throw new Error("Invalid record: no valid relay URLs");
