@@ -102,28 +102,24 @@ Regular event that links assets for a specific page. Each page version is a sepa
 
 ### Site Index (31126)
 
-Addressable event that maps routes to their current page manifest IDs. The `d` tag uses a truncated hash (like Git short hashes) for content-addressed versioning.
+Addressable event that maps routes to their current page manifest IDs. The `d` tag is used for versioning.
 
 **Required tags:**
 
-- `d` - First 7-12 characters of the SHA-256 hash of the `content` field (e.g., `"a1b2c3d"`, `"a1b2c3d4e5f6"`)
-- `x` - Full hex-encoded SHA-256 hash of the `content` field (to verify the `d` tag is correctly derived)
+- `d` - Version identifier (e.g., `"v1.2.3"`, `"v1.0.0"`, `"main"`, `"staging"`)
+- `rt` - Route mapping: `["rt", "<route-path>", "<page-manifest-event-id>", "<relay-url, optional>", "<marker, optional>"]`
+  - One `rt` tag per route
+  - Route path (e.g., `"/"`, `"/about"`, `"/blog/post-1"`)
+  - Page manifest event ID (kind 1126)
+  - Optional relay URL hint
+  - Optional marker: `"default"` or `"404"` to indicate special routes
+  - If no route is marked as `"default"`, clients SHOULD use the `"/"` route as default
+  - If no route is marked as `"404"`, clients SHOULD display a generic error page
 
 **Optional tags:**
 
-- `alt` - Human-readable identifier (e.g., `"main"`, `"staging"`, `"v1.2.3"`) for convenience
-
-**Content:** JSON object with route mappings and optional metadata
-
-**Required fields:**
-
-- `routes` - Object mapping route paths to page manifest event IDs (kind 1126)
-
-**Optional fields:**
-
-- `version` - Semantic version string (e.g., `"1.2.3"`) for tracking site versions
-- `defaultRoute` - Default route to display when no specific route is requested (e.g., `"/"`)
-- `notFoundRoute` - Route to display for 404 errors (e.g., `"/404"`) or `null` if not specified
+- `title` - Site title
+- `description` - Site description
 
 **Example:**
 
@@ -133,20 +129,26 @@ Addressable event that maps routes to their current page manifest IDs. The `d` t
   "pubkey": "<site-pubkey>",
   "created_at": 1234567890,
   "tags": [
-    ["d", "a1b2c3d"],
-    ["x", "a1b2c3d4e5f6789...full-hash..."],
-    ["alt", "main"]
+    ["d", "v1.2.3"],
+    [
+      "rt",
+      "/",
+      "<page-manifest-event-id-1>",
+      "wss://relay1.example.com",
+      "default"
+    ],
+    ["rt", "/about", "<page-manifest-event-id-2>", "wss://relay1.example.com"],
+    [
+      "rt",
+      "/blog/post-1",
+      "<page-manifest-event-id-3>",
+      "wss://relay2.example.com"
+    ],
+    ["rt", "/404", "<page-manifest-event-id-4>", "", "404"],
+    ["title", "My Nostr Website"],
+    ["description", "A decentralized website on Nostr"]
   ],
-  "content": "{
-    \"routes\": {
-      \"/\": \"<page-manifest-event-id-1>\",
-      \"/about\": \"<page-manifest-event-id-2>\",
-      \"/blog/post-1\": \"<page-manifest-event-id-3>\"
-    },
-    \"version\": \"1.2.3\",
-    \"defaultRoute\": \"/\",
-    \"notFoundRoute\": \"/404\"
-  }",
+  "content": "",
   "id": "<event-id>",
   "sig": "<signature>"
 }
@@ -158,8 +160,8 @@ Replaceable event that points to the current site index. Only the latest event p
 
 **Required tags:**
 
-- `a` - Address coordinates to the current site index: `["a", "31126:<pubkey>:<d-tag-hash>", "<relay-url>"]`
-  - The `<d-tag-hash>` is the truncated hash used in the site index's `d` tag
+- `a` - Address coordinates to the current site index: `["a", "31126:<pubkey>:<d-tag>", "<relay-url>"]`
+  - The `<d-tag>` is the version identifier used in the site index's `d` tag (e.g., `"v1.2.3"`)
 
 **Example:**
 
@@ -168,7 +170,7 @@ Replaceable event that points to the current site index. Only the latest event p
   "kind": 11126,
   "pubkey": "<site-pubkey>",
   "created_at": 1234567890,
-  "tags": [["a", "31126:<site-pubkey>:a1b2c3d", "wss://relay.example.com"]],
+  "tags": [["a", "31126:<site-pubkey>:v1.2.3", "wss://relay1.example.com"]],
   "content": "",
   "id": "<event-id>",
   "sig": "<signature>"
@@ -182,8 +184,8 @@ Replaceable event that points to the current site index. Only the latest event p
 1. Generate asset events (kind 1125) with SHA-256 hashes and MIME types
 2. Publish assets to relays
 3. Create page manifest (1126) for each page, referencing asset event IDs
-4. Create/update site index (31126) with route-to-manifest mapping
-5. Update entrypoint (11126) to point to the current site index
+4. Create/update site index (31126) with route-to-manifest mapping using `rt` tags
+5. Update entrypoint (11126) to point to the current site index version
 6. Generate DNS TXT record (see NIP-ZZ)
 
 ### Fetching and Rendering
@@ -192,8 +194,13 @@ Replaceable event that points to the current site index. Only the latest event p
 2. Fetch entrypoint (11126) from relays: `{"kinds": [11126], "authors": ["<pubkey>"]}`
 3. Extract site index address from the `a` tag in entrypoint
 4. Fetch site index (31126) using the address coordinates
-5. Parse site index content to extract `routes`, `version`, `defaultRoute`, and `notFoundRoute` fields
-6. Get page manifest ID for requested route from `content.routes`
+5. Parse site index tags to extract routes (`rt`), identifying which route is marked as `"default"` and which is marked as `"404"`
+6. Get page manifest ID for requested route from the `rt` tags
+   - If route not found and a `"default"` route exists, use the default route
+   - If route not found and no `"default"` route exists, use the `"/"` route
+   - If the `"/"` route doesn't exist, display a 404 error
+   - If a `"404"` route exists, display the 404 page
+   - If no `"404"` route exists, display a generic client-generated error page
 7. Fetch page manifest (1126): `{"ids": ["<manifest-id>"]}`
 8. Fetch all referenced assets (kind 1125) by event ID
 9. Parse each asset's `m` tag to determine MIME type (HTML, CSS, JavaScript, etc.)
@@ -212,9 +219,9 @@ Replaceable event that points to the current site index. Only the latest event p
 - All assets (kind 1125) MUST include `x` tag with SHA-256 hash of the content
   - Enables content deduplication: relays MAY use the `x` tag to identify and deduplicate identical content
   - Allows content sharing: multiple sites can reference the same asset by its hash
-- Site indexes (31126) MUST include `x` tag with SHA-256 hash of the content
-  - The `x` tag is used to verify that the `d` tag (truncated hash) is correctly derived from the full hash
-  - Clients SHOULD verify that the first 7-12 characters of the `x` tag match the `d` tag
+- Site indexes (31126) use the `d` tag for versioning
+  - The `d` tag SHOULD follow semantic versioning (e.g., `"v1.2.3"`) or use environment identifiers (e.g., `"main"`, `"staging"`)
+  - Allows publishers to reference specific versions via the entrypoint
 
 **Content Security Policy:**
 
