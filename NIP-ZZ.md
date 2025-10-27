@@ -63,7 +63,7 @@ v=1 pk=npub1abc123... relays=wss://relay.example.com
 **Multiple relays:**
 
 ```
-v=1 pk=5e56a2e48c4c5eb902e062bc30f92eabcf2e2fb96b5e7... relays=wss://relay.example.com,wss://relay.example2.com,wss://relay.example3.com
+v=1 pk=5e56a2e48c4c5eb902e062bc30f92eabcf2e2fb96b5e7... relays=wss://relay1.example.com,wss://relay2.example.com,wss://relay3.example.com
 ```
 
 ## Public Key Format
@@ -96,7 +96,7 @@ Clients MUST support both formats.
 **Example:**
 
 ```
-v=1 pk=npub1... relays=wss://relay.example.com,wss://relay.example3.com,wss://relay.example2.com
+v=1 pk=npub1... relays=wss://relay1.example.com,wss://relay2.example.com,wss://relay3.example.com
 ```
 
 **Recommendations:**
@@ -194,7 +194,7 @@ The tokenized format is simpler than JSON and works universally across DNS provi
 **Standard format:**
 
 ```
-v=1 pk=npub1... relays=wss://relay.example.com,wss://relay.example2.com
+v=1 pk=npub1... relays=wss://relay1.example.com,wss://relay2.example.com
 ```
 
 ### Record Length Limits
