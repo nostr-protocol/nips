@@ -74,8 +74,6 @@ Regular event that links assets for a specific page. Each page version is a sepa
 
 - `title` - Page title
 - `description` - Page description
-- `route` - Page route/path for reference (e.g., `/`, `/about`)
-- `csp` - Content Security Policy directives to override the default CSP for this specific page
 
 **Example:**
 
@@ -89,8 +87,7 @@ Regular event that links assets for a specific page. Each page version is a sepa
     ["e", "<css-event-id-1>", "wss://relay.example.com"],
     ["e", "<css-event-id-2>", "wss://relay.example.com"],
     ["e", "<js-event-id>", "wss://relay.example.com"],
-    ["e","<image-event-id>", "wss://relay.example.com"]
-    ["route", "/"],
+    ["e", "<image-event-id>", "wss://relay.example.com"],
     ["title", "Home"],
     ["description", "Welcome to my Nostr Web site"]
   ],
@@ -205,7 +202,7 @@ Replaceable event that points to the current site index. Only the latest event p
 8. Fetch all referenced assets (kind 1125) by event ID
 9. Parse each asset's `m` tag to determine MIME type (HTML, CSS, JavaScript, etc.)
 10. Assemble HTML with CSS and JS references
-11. Render in sandboxed environment with CSP enforcement
+11. Render in sandboxed environment
 
 ### Security Considerations
 
@@ -223,21 +220,10 @@ Replaceable event that points to the current site index. Only the latest event p
   - The `d` tag SHOULD follow semantic versioning (e.g., `"v1.2.3"`) or use environment identifiers (e.g., `"main"`, `"staging"`)
   - Allows publishers to reference specific versions via the entrypoint
 
-**Content Security Policy:**
-
-- Default CSP: `default-src 'self'; script-src 'sha256-<hash>'`
-- Per-page CSP can be specified via the `csp` tag in Page Manifest (1126)
-- Custom CSP allows pages to:
-  - Allow specific external API connections (`connect-src`)
-  - Permit inline styles if needed (`style-src`)
-  - Control frame embedding (`frame-ancestors`)
-- Clients SHOULD enforce CSP to prevent code injection
-- If a page has a `csp` tag, it overrides the default CSP for that page only
-
 **Sandboxing:**
 
 - Content SHOULD be rendered in isolated environment (iframe sandbox)
-- Network requests outside Nostr/Blossom SHOULD be blocked
+- Network requests outside Nostr SHOULD be blocked
 
 ## Caching
 
