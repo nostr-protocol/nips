@@ -10,10 +10,10 @@ This NIP standardizes DNS TXT record format for bootstrapping Nostr Web Pages cl
 
 To make Nostr Web Pages accessible via traditional domain names, this NIP defines a DNS TXT record format at `_nweb.<domain>` that provides:
 
-- Site author's public key (for event verification)
+- Site public key (for event verification)
 - Relay URLs where site events are published
 
-The DNS record does NOT contain the site index event ID. Instead, clients query relays for the most recent entrypoint (kind 11126) from the specified pubkey, which points to the current site index (kind 31126), enabling automatic updates without DNS changes.
+Clients query relays for the entrypoint (kind 11126) from the specified pubkey, which points to the current site index (kind 31126), enabling automatic updates without DNS changes.
 
 ## Motivation
 
@@ -40,54 +40,46 @@ Examples:
 
 ### Record Value
 
-A single-line JSON string with the following fields:
+A space-separated key-value token string with the following format:
 
-| Field    | Type    | Required | Description                            |
-| -------- | ------- | -------- | -------------------------------------- |
-| `v`      | integer | Yes      | Schema version (currently `1`)         |
-| `pk`     | string  | Yes      | Site pubkey (npub or hex)              |
-| `relays` | array   | Yes      | WSS relay URLs (at least one)          |
-| `policy` | object  | No       | Client hints (reserved for future use) |
+```
+v=<version> pk=<pubkey> relays=<relay1>[,<relay2>,<relay3>...]
+```
+
+| Component | Required | Description                                   |
+| --------- | -------- | --------------------------------------------- |
+| `v=`      | Yes      | Schema version (currently `1`)                |
+| `pk=`     | Yes      | Site pubkey (npub or hex)                     |
+| `relays=` | Yes      | Comma-separated WSS relay URLs (at least one) |
 
 ### Example Records
 
 **Minimal record:**
 
-```json
-{
-  "v": 1,
-  "pk": "npub1abc123...",
-  "relays": ["wss://relay.damus.io"]
-}
+```
+v=1 pk=npub1abc123... relays=wss://relay.example.com
 ```
 
-**Complete record:**
+**Multiple relays:**
 
-```json
-{
-  "v": 1,
-  "pk": "5e56a2e48c4c5eb902e062bc30f92eabcf2e2fb96b5e7...",
-  "relays": ["wss://relay.damus.io", "wss://nos.lol", "wss://relay.nostr.band"],
-  "policy": {
-    "min_relays": 2
-  }
-}
+```
+v=1 pk=5e56a2e48c4c5eb902e062bc30f92eabcf2e2fb96b5e7... relays=wss://relay.example.com,wss://relay.example2.com,wss://relay.example3.com
 ```
 
 ## Public Key Format
 
-The `pk` field accepts two formats:
+The `pk=` value accepts two formats:
 
 **npub (bech32):**
 
-```json
-"pk": "npub1abc123def456..."
+```
+v=1 pk=npub1abc123def456... relays=wss://relay.example.com
 ```
 
 **Hex:**
 
-```json
-"pk": "5e56a2e48c4c5eb902e062bc30f92eabcf2e2fb96b5e7..."
+```
+v=1 pk=5e56a2e48c4c5eb902e062bc30f92eabcf2e2fb96b5e7... relays=wss://relay.example.com
 ```
 
 Clients MUST support both formats.
@@ -99,110 +91,20 @@ Clients MUST support both formats.
 - MUST use `wss://` scheme (WebSocket Secure)
 - MUST be valid WebSocket URLs
 - SHOULD be publicly accessible
+- Comma-separated in the `relays=` value
 
-**Examples:**
+**Example:**
 
-```json
-"relays": [
-  "wss://relay.damus.io",
-  "wss://relay.nostr.band",
-  "wss://nos.lol"
-]
+```
+v=1 pk=npub1... relays=wss://relay.example.com,wss://relay.example3.com,wss://relay.example2.com
 ```
 
 **Recommendations:**
 
-- Include at least 2-3 relays for redundancy
+- Include at least 3 relays for redundancy (don't include many relays to avoid bloat)
 - Use well-known public relays
 - Ensure relays support NIP-YY event kinds (1125, 1126, 31126, 11126)
-
-## Policy Object
-
-Reserved for future client hints:
-
-```json
-"policy": {
-  "min_relays": 2,
-  "ttl": 3600,
-  "cache_strategy": "aggressive"
-}
-```
-
-Current version ignores this field. Future NIPs may define standard policy fields.
-
-## Why No Site Index in DNS?
-
-**Design Decision:** The DNS record intentionally omits the site index event ID. This is a key architectural choice with significant benefits:
-
-### Benefits of Query-Based Discovery
-
-1. **Zero DNS Updates After Initial Setup**
-
-   - DNS is configured once with pubkey and relays
-   - All content updates happen via event publishing only
-   - No waiting for DNS propagation (which can take hours)
-   - No risk of DNS misconfiguration breaking updates
-
-2. **Instant Content Updates**
-
-   - Publishers republish by creating new events with fresh timestamps
-   - Clients query for latest event by `created_at`
-   - Updates visible immediately (relay propagation is seconds, not hours)
-
-3. **Supports Multiple Sites Per Pubkey**
-
-   - Multiple domains can point to the same pubkey
-   - Each site uses different `d` tags for site indices
-   - Clients distinguish sites by domain name, not just pubkey
-
-4. **Resilient to DNS Poisoning**
-
-   - Attacker can't point DNS to old/malicious site version
-   - DNS only contains pubkey (identity), not content pointer
-   - Latest content is always determined by on-chain timestamps
-
-5. **Simpler Publisher Workflow**
-   - No need to update DNS TXT record on every publish
-   - No need to wait for propagation to verify changes
-   - Reduces human error in DNS management
-
-### How It Works
-
-```
-┌─────────────┐
-│   Browser   │
-└──────┬──────┘
-       │
-       │ 1. User visits example.com
-       ▼
-┌─────────────────┐
-│   DNS Lookup    │ ◄─── Query _nweb.example.com
-│  (ONE TIME)     │      Returns: {pk, relays}
-└────────┬────────┘
-         │
-         │ 2. Connect to relays
-         ▼
-┌──────────────────┐
-│ Query Entrypoint │ ◄─── Filter: kind 11126, author=pk
-│  (EVERY VISIT)   │      Get latest replaceable event
-└────────┬─────────┘
-         │
-         │ 3. Extract site index address from 'a' tag
-         ▼
-┌──────────────────┐
-│ Fetch Site Index │ ◄─── Get addressable event: 31126:pk:d-hash
-│   (kind 31126)   │      Contains route mappings
-└────────┬─────────┘
-         │
-         │ 4. Got latest site index!
-         ▼
-┌──────────────────┐
-│  Load Site       │
-│  Content         │
-└──────────────────┘
-```
-
-Publishers republish → New entrypoint with newer timestamp → Points to new site index → Clients automatically fetch the new version.
+- No spaces allowed in relay URLs (or use percent-encoding)
 
 ## Client Behavior
 
@@ -210,16 +112,17 @@ Publishers republish → New entrypoint with newer timestamp → Points to new s
 
 1. User navigates to `example.com`
 2. Client checks for `_nweb.example.com` TXT record
-3. If found, parse JSON and validate schema
+3. If found, parse the tokenized string and validate
 4. If not found or invalid, handle as regular HTTP navigation
 
 ### Record Validation
 
 **Required checks:**
 
-- `v` field equals `1`
-- `pk` field is valid npub or hex pubkey
-- `relays` array has at least one valid `wss://` URL
+- Record contains `v=1` token (version check)
+- Record contains `pk=` token with valid npub or hex pubkey
+- Record contains `relays=` token with at least one `wss://` URL
+- Unknown parameters MUST be ignored for forward compatibility
 
 **If validation fails:**
 
@@ -275,7 +178,7 @@ This two-step approach (Entrypoint → Site Index) ensures clients always load t
 All fetched events MUST be authored by the pubkey from DNS record:
 
 ```javascript
-if (event.pubkey !== dnsRecord.pk) {
+if (event.pubkey !== parsedDnsRecord.pubkey) {
   throw new Error("Event author does not match DNS pubkey");
 }
 ```
@@ -284,23 +187,15 @@ This prevents relay impersonation attacks.
 
 ## DNS Provider Considerations
 
-### JSON Formatting
+### Token Formatting
 
-Some DNS providers require specific formatting:
+The tokenized format is simpler than JSON and works universally across DNS providers:
 
-**Single-line JSON:**
-
-```
-{"v":1,"pk":"npub1...","relays":["wss://relay.damus.io"]}
-```
-
-**Escaped quotes (automatic by some providers):**
+**Standard format:**
 
 ```
-{\"v\":1,\"pk\":\"npub1...\",\"relays\":[\"wss://relay.damus.io\"]}
+v=1 pk=npub1... relays=wss://relay.example.com,wss://relay.example2.com
 ```
-
-Verify the actual TXT record value resolves to valid JSON.
 
 ### Record Length Limits
 
@@ -311,9 +206,9 @@ TXT records have size limits:
 
 For large records, consider:
 
-- Using hex pubkey instead of npub (shorter)
-- Limiting relay array length
-- Omitting optional fields
+- Using hex pubkey instead of npub (slightly shorter)
+- Limiting the number of relay URLs
+- Prioritizing the most reliable relays
 
 ## DNSSEC
 
@@ -335,7 +230,7 @@ Clients SHOULD verify DNSSEC signatures when available.
 ```
 Type: TXT
 Name: _nweb
-Content: {"v":1,"pk":"npub1...","relays":["wss://relay.damus.io"]}
+Content: v=1 pk=npub1... relays=wss://relay.example.com
 TTL: Auto or 3600 (DNS rarely needs updating)
 ```
 
@@ -344,7 +239,7 @@ TTL: Auto or 3600 (DNS rarely needs updating)
 ```
 Type: TXT
 Name: _nweb.example.com
-Value: "{"v":1,"pk":"npub1...","relays":["wss://relay.damus.io"]}"
+Value: "v=1 pk=npub1... relays=wss://relay.example.com"
 TTL: 3600 (DNS rarely needs updating)
 ```
 
@@ -357,17 +252,39 @@ const response = await fetch(
 );
 const data = await response.json();
 
-// Parse TXT record
-const txtRecord = data.Answer?.[0]?.data;
-const nwebConfig = JSON.parse(txtRecord.replace(/^"|"$/g, ""));
+// Parse TXT record (remove quotes if present)
+const txtRecord = data.Answer?.[0]?.data.replace(/^"|"$/g, "");
 
-// Validate
-if (nwebConfig.v !== 1) throw new Error("Unsupported version");
-if (!nwebConfig.pk || !nwebConfig.relays) throw new Error("Invalid record");
+// Parse key-value tokens
+const tokens = txtRecord.split(/\s+/);
+const params = {};
+
+for (const token of tokens) {
+  const [key, value] = token.split("=");
+  if (key && value) {
+    params[key] = value;
+  }
+}
+
+// Validate format
+if (params.v !== "1") {
+  throw new Error("Unsupported version or invalid format");
+}
+
+if (!params.pk || !params.relays) {
+  throw new Error("Invalid record: missing pk or relays");
+}
+
+// Extract pubkey and relays
+const pubkey = params.pk;
+const relays = params.relays.split(",").filter((r) => r.startsWith("wss://"));
+
+if (relays.length === 0) {
+  throw new Error("Invalid record: no valid relay URLs");
+}
 
 // Use config
-const pubkey = parseNpub(nwebConfig.pk);
-const relays = nwebConfig.relays;
+const parsedPubkey = parseNpub(pubkey); // handles both npub and hex
 ```
 
 ## Security Considerations
@@ -419,9 +336,3 @@ If all listed relays censor content:
 - Use `created_at` timestamp to determine the most recent version
 - No DNS propagation delay for content updates
 - Publishers can update sites instantly by publishing new entrypoint events
-
-**Key Insight:** Separating DNS bootstrap (pubkey + relays) from content discovery (query latest entrypoint → site index) means:
-
-- DNS is configured once during initial setup
-- All subsequent site updates are instant (no DNS changes needed)
-- Clients automatically fetch the newest version from relays
