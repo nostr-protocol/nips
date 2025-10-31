@@ -11,11 +11,10 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [Message Types](#message-types)
   - [Client to Relay](#client-to-relay)
   - [Relay to Client](#relay-to-client)
-- [Standardized Tags](#standardized-tags)
+- [Common Tags](#common-tags)
 - [Criteria for acceptance of NIPs](#criteria-for-acceptance-of-nips)
 - [Is this repository a centralizing factor?](#is-this-repository-a-centralizing-factor)
 - [How this repository works](#how-this-repository-works)
-- [Breaking Changes](#breaking-changes)
 - [License](#license)
 
 ---
@@ -99,7 +98,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-90: Data Vending Machines](90.md)
 - [NIP-92: Media Attachments](92.md)
 - [NIP-94: File Metadata](94.md)
-- [NIP-96: HTTP File Storage Integration](96.md)
+- [NIP-96: HTTP File Storage Integration](96.md) --- **unrecommended**: replaced by blossom APIs
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
 - [NIP-A0: Voice Messages](A0.md)
@@ -161,6 +160,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1311`        | Live Chat Message               | [53](53.md)                            |
 | `1337`        | Code Snippet                    | [C0](C0.md)                            |
 | `1617`        | Patches                         | [34](34.md)                            |
+| `1618`        | Pull Requests                   | [34](34.md)                            |
+| `1619`        | Pull Request Updates            | [34](34.md)                            |
 | `1621`        | Issues                          | [34](34.md)                            |
 | `1622`        | Git Replies (deprecated)        | [34](34.md)                            |
 | `1630`-`1633` | Status                          | [34](34.md)                            |
@@ -206,7 +207,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
 | `10051`       | KeyPackage Relays List          | [EE](EE.md)                            |
 | `10063`       | User server list                | [Blossom][blossom]                     |
-| `10096`       | File storage server list        | [96](96.md)                            |
+| `10096`       | File storage server list        | [96](96.md) (deprecated)               |
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
 | `10312`       | Room Presence                   | [53](53.md)                            |
 | `10377`       | Proxy Announcement              | [Nostr Epoxy][nostr-epoxy]             |
@@ -312,12 +313,13 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `AUTH`   | used to send authentication challenges                  | [42](42.md) |
 | `COUNT`  | used to send requested event counts to clients          | [45](45.md) |
 
-## Standardized Tags
+## Common Tags
 
 | name              | value                                | other parameters                | NIP                                                |
 | ----------------- | ------------------------------------ | ------------------------------- | -------------------------------------------------- |
 | `a`               | coordinates to an event              | relay URL                       | [01](01.md)                                        |
 | `A`               | root address                         | relay URL                       | [22](22.md)                                        |
+| `c`               | commit id                            |                                 | [34](34.md)                                       |
 | `d`               | identifier                           | --                              | [01](01.md)                                        |
 | `e`               | event id (hex)                       | relay URL, marker, pubkey (hex) | [01](01.md), [10](10.md)                           |
 | `E`               | root event id                        | relay URL                       | [22](22.md)                                        |
@@ -346,6 +348,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `alt`             | summary                              | --                              | [31](31.md)                                        |
 | `amount`          | millisatoshis, stringified           | --                              | [57](57.md)                                        |
 | `bolt11`          | `bolt11` invoice                     | --                              | [57](57.md)                                        |
+| `branch-name`     | branch name suggestion               | --                              | [34](34.md)                                        |
 | `challenge`       | challenge string                     | --                              | [42](42.md)                                        |
 | `client`          | name, address                        | relay URL                       | [89](89.md)                                        |
 | `clone`           | git clone URL                        | --                              | [34](34.md)                                        |
@@ -359,6 +362,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `expiration`      | unix timestamp (string)              | --                              | [40](40.md)                                        |
 | `file`            | full path (string)                   | --                              | [35](35.md)                                        |
 | `goal`            | event id (hex)                       | relay URL                       | [75](75.md)                                        |
+| `merge-base`      | commit id                            |                                 | [34](34.md)                                        |
 | `HEAD`            | `ref: refs/heads/<branch-name>`      |                                 | [34](34.md)                                        |
 | `image`           | image URL                            | dimensions in pixels            | [23](23.md), [52](52.md), [58](58.md)              |
 | `imeta`           | inline metadata                      | --                              | [92](92.md)                                        |
@@ -407,10 +411,6 @@ There is a list of notable Nostr software developers who have commit access to t
 Standards may emerge in two ways: the first way is that someone starts doing something, then others copy it; the second way is that someone has an idea of a new standard that could benefit multiple clients and the protocol in general without breaking **backwards-compatibility** and the principle of having **a single way of doing things**, then they write that idea and submit it to this repository, other interested parties read it and give their feedback, then once most people reasonably agree we codify that in a NIP which client and relay developers that are interested in the feature can proceed to implement.
 
 These two ways of standardizing things are supported by this repository. Although the second is preferred, an effort will be made to codify standards emerged outside this repository into NIPs that can be later referenced and easily understood and implemented by others -- but obviously as in any human system discretion may be applied when standards are considered harmful.
-
-## Breaking Changes
-
-[Breaking Changes](BREAKING.md)
 
 ## License
 
