@@ -101,6 +101,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md) --- **unrecommended**: replaced by blossom APIs
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-101: UPlanet - Decentralized Identity & Geographic Coordination](101.md)
 - [NIP-A0: Voice Messages](A0.md)
 - [NIP-B0: Web Bookmarks](B0.md)
 - [NIP-B7: Blossom](B7.md)
@@ -245,16 +246,21 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30166`       | Relay Discovery                 | [66](66.md)                            |
 | `30267`       | App curation sets               | [51](51.md)                            |
 | `30311`       | Live Event                      | [53](53.md)                            |
-| `30312`       | Interactive Room                | [53](53.md)                            |
-| `30313`       | Conference Event                | [53](53.md)                            |
+| `30312`       | Interactive Room / ORE Meeting Space    | [53](53.md), [101](101.md)     |
+| `30313`       | Conference Event / ORE Verification     | [53](53.md), [101](101.md)     |
 | `30315`       | User Statuses                   | [38](38.md)                            |
 | `30388`       | Slide Set                       | [Corny Chat][cornychat-slideset]       |
 | `30402`       | Classified Listing              | [99](99.md)                            |
 | `30403`       | Draft Classified Listing        | [99](99.md)                            |
+| `30500`       | Permit Definition               | [101](101.md)                          |
+| `30501`       | Permit Request                  | [101](101.md)                          |
+| `30502`       | Permit Attestation              | [101](101.md)                          |
+| `30503`       | Permit Credential               | [101](101.md)                          |
 | `30617`       | Repository announcements        | [34](34.md)                            |
 | `30618`       | Repository state announcements  | [34](34.md)                            |
 | `30818`       | Wiki article                    | [54](54.md)                            |
 | `30819`       | Redirects                       | [54](54.md)                            |
+| `30800`       | DID Document                    | [101](101.md)                          |
 | `31234`       | Draft Event                     | [37](37.md)                            |
 | `31388`       | Link Set                        | [Corny Chat][cornychat-linkset]        |
 | `31890`       | Feed                            | [NUD: Custom Feeds][NUD: Custom Feeds] |
