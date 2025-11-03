@@ -201,6 +201,8 @@ This extension is backward compatible with standard NIP-71:
 }
 ```
 
+**Note:** Following NIP-71 standard, use `kind: 21` for normal videos and `kind: 22` for short videos (< 60 seconds).
+
 ## Notes on URL Construction
 
 This extension uses CID-only storage (`thumbnail_ipfs`, `gifanim_ipfs`) instead of full URLs. This is intentional:
