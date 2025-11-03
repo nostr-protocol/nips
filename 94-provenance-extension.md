@@ -88,11 +88,13 @@ When a file is re-uploaded, the following standard NIP tags are added:
   "tags": [
     ["url", "https://ipfs.io/ipfs/QmABC123.../file.pdf"],
     ["x", "sha256_hash_of_file"],
-    ["ox", "sha256_hash_of_file"],
-    ["m", "application/pdf"]
+    ["m", "application/pdf"],
+    ["info", "QmInfoCID"]
   ]
 }
 ```
+
+**Note:** Only the `x` tag is used. The `ox` tag (original file hash before transformation) is NOT included because `upload2ipfs.sh` does not transform files. According to NIP-94, `ox` should only be used when the server modifies the file (compression, resizing, format conversion, etc.). Since we store files as-is on IPFS, `ox` would be redundant with `x`.
 
 #### Re-Upload by Another User
 
@@ -104,7 +106,6 @@ When a file is re-uploaded, the following standard NIP tags are added:
   "tags": [
     ["url", "https://ipfs.io/ipfs/QmABC123.../file.pdf"],
     ["x", "sha256_hash_of_file"],
-    ["ox", "sha256_hash_of_file"],
     ["m", "application/pdf"],
     ["e", "original_event_id", "", "mention"],
     ["p", "alice_pubkey"],
@@ -126,7 +127,6 @@ When a file is re-uploaded, the following standard NIP tags are added:
   "tags": [
     ["url", "https://ipfs.io/ipfs/QmABC123.../file.pdf"],
     ["x", "sha256_hash_of_file"],
-    ["ox", "sha256_hash_of_file"],
     ["m", "application/pdf"],
     ["e", "original_event_id", "", "mention"],
     ["p", "alice_pubkey"],

@@ -78,47 +78,106 @@ Each uploaded file generates an `info.json` file that contains comprehensive met
 
 ## Thumbnail Support
 
-This extension supports two types of thumbnails for video content:
+This extension supports thumbnails for both video and image content:
 
-### Static Thumbnail (`thumbnail_ipfs`)
+### For Videos
+
+#### Static Thumbnail (`thumbnail_ipfs`)
 
 A single frame extracted from the video, typically at 1 second or 10% of the video duration (if longer than 10 seconds). Format: JPEG image stored on IPFS.
 
-### Animated GIF Thumbnail (`gifanim_ipfs`)
+#### Animated GIF Thumbnail (`gifanim_ipfs`)
 
 An animated GIF extracted from a 1.6-second segment of the video, starting at the golden ratio point (0.618 of video duration). This provides a dynamic preview that gives better context about the video content.
 
 Format: GIF animation stored on IPFS.
 
+### For Images
+
+#### JPG Thumbnail for Non-JPG Images (`thumbnail_ipfs`)
+
+When uploading images in formats other than JPEG (e.g., PNG, WebP, TIFF), a JPEG thumbnail is automatically generated with:
+- **Maximum dimension**: 1200px (aspect ratio preserved)
+- **Quality**: 85%
+- **EXIF data stripped** for privacy
+
+For JPEG images, no separate thumbnail is generated as the original can be used directly.
+
+**Benefits:**
+- **Faster loading**: JPG thumbnails are typically smaller than PNG/WebP originals
+- **Better compatibility**: JPG is universally supported across all browsers and platforms
+- **Bandwidth savings**: Thumbnails use significantly less bandwidth than original images
+- **Privacy**: EXIF metadata (including GPS location) is automatically removed
+
 ## NOSTR Event Tags
 
-### info.json Reference
+### Core Tags for Provenance and Deduplication
 
-The CID of the `info.json` file can be referenced in NOSTR events using custom tags:
+To enable provenance tracking and file deduplication (see [NIP-94 Provenance Extension](94-provenance-extension.md)), video events MUST include:
+
+```json
+{
+  "tags": [
+    ["url", "/ipfs/QmVideoCID/video.mp4"],
+    ["x", "sha256_hash_of_file"],
+    ["m", "video/mp4"],
+    ["info", "QmInfoJsonCID"],
+    ["imeta",
+      "dim 1920x1080",
+      "url /ipfs/QmVideoCID/video.mp4",
+      "m video/mp4",
+      "x sha256_hash_of_file",
+      "image /ipfs/QmThumbnailCID",
+      "gifanim /ipfs/QmGifanimCID"
+    ]
+  ]
+}
+```
+
+**Critical Tags:**
+
+- **`["x", "hash"]`**: Direct tag for file hash (SHA-256). This MUST be present as a direct tag (in addition to being in `imeta`) to enable `upload2ipfs.sh` to find existing uploads by hash for deduplication.
+- **`["info", "cid"]`**: Reference to `info.json` metadata file. This enables reusing complete metadata from previous uploads without re-extraction.
+- **`["upload_chain", "pubkey1,pubkey2,..."]`**: (Optional) Present only on re-uploads. Tracks all users who have shared this file.
+
+**Note on `ox` tag:** The `ox` tag (original file hash before transformation) is NOT used because files are stored as-is on IPFS without transformations. According to NIP-94, `ox` should only be included when the server modifies the file (compression, resizing, format conversion). Since we don't transform files, `ox` would be redundant with `x`.
+
+### Complete Example with Provenance
 
 ```json
 {
   "tags": [
     ["title", "Video Title"],
+    ["url", "/ipfs/QmVideoCID/video.mp4"],
+    ["m", "video/mp4"],
+    ["x", "sha256_hash_of_file"],
+    ["info", "QmInfoJsonCID"],
+    ["thumbnail_ipfs", "QmThumbnailCID"],
+    ["gifanim_ipfs", "QmGifanimCID"],
     ["imeta",
       "dim 1920x1080",
       "url /ipfs/QmVideoCID/video.mp4",
       "m video/mp4",
+      "x sha256_hash_of_file",
       "image /ipfs/QmThumbnailCID",
       "gifanim /ipfs/QmGifanimCID"
     ],
-    ["info", "QmInfoJsonCID"],
-    ["thumbnail_ipfs", "QmThumbnailCID"],
-    ["gifanim_ipfs", "QmGifanimCID"]
+    ["upload_chain", "alice_pubkey,bob_pubkey"],
+    ["e", "original_event_id", "", "mention"],
+    ["p", "alice_pubkey"]
   ]
 }
 ```
 
 ### Tag Descriptions
 
-- `info`: CID of the `info.json` file containing all metadata
-- `thumbnail_ipfs`: CID of the static thumbnail image (JPEG)
-- `gifanim_ipfs`: CID of the animated GIF thumbnail
+- **`x`**: SHA-256 hash of the file (REQUIRED for provenance). Must be present as a direct tag AND in `imeta`.
+- **`info`**: CID of the `info.json` file containing all metadata (REQUIRED for metadata reuse)
+- **`thumbnail_ipfs`**: CID of the static thumbnail image (JPEG for videos, JPG for non-JPG images)
+- **`gifanim_ipfs`**: CID of the animated GIF thumbnail (videos only)
+- **`upload_chain`**: Comma-separated list of public keys showing the distribution path (present only on re-uploads)
+- **`e`**: Reference to the original event (present only on re-uploads)
+- **`p`**: Mention of the original author (present only on re-uploads by different users)
 
 Note: The `imeta` tag `image` field can reference either the static thumbnail or animated GIF. Clients may implement preferences to choose which type to display.
 
@@ -126,21 +185,30 @@ Note: The `imeta` tag `image` field can reference either the static thumbnail or
 
 ### Upload Process
 
-1. User uploads video file via `/api/fileupload`
+1. User uploads video/image file via `/api/fileupload`
 2. File is processed by `upload2ipfs.sh`:
-   - File is added to IPFS
-   - Video metadata is extracted (duration, dimensions, codecs)
-   - Static thumbnail is generated and added to IPFS
-   - Animated GIF thumbnail is generated and added to IPFS
-   - `info.json` is created with all metadata
-   - `info.json` is added to IPFS
+   - **File hash is calculated FIRST** (SHA-256, before any IPFS operations)
+   - **Deduplication check**: Search for existing events with same hash
+   - If duplicate found:
+     - Reuse existing CID (skip IPFS upload)
+     - Download and pin existing metadata via `ipfs get`
+     - Extend upload chain
+   - If new file:
+     - File is added to IPFS
+     - Metadata is extracted (duration, dimensions, codecs for videos)
+     - For videos: Static thumbnail and animated GIF are generated
+     - For non-JPG images: JPG thumbnail is generated
+     - `info.json` is created with all metadata
+     - `info.json` is added to IPFS
 3. Backend returns JSON with:
-   - `cid`: Video file CID
+   - `cid`: Video/image file CID
    - `info`: info.json CID
-   - `thumbnail_ipfs`: Static thumbnail CID
-   - `gifanim_ipfs`: Animated GIF CID
-   - `duration`: Video duration in seconds
-   - `dimensions`: Video dimensions (e.g., "1920x1080")
+   - `fileHash`: SHA-256 hash of file
+   - `thumbnail_ipfs`: Static/JPG thumbnail CID
+   - `gifanim_ipfs`: Animated GIF CID (videos only)
+   - `duration`: Duration in seconds (videos only)
+   - `dimensions`: Dimensions (e.g., "1920x1080")
+   - `provenance`: Provenance information (if re-upload)
 
 ### Client Usage
 
@@ -183,25 +251,27 @@ This extension is backward compatible with standard NIP-71:
   "tags": [
     ["title", "My Awesome Video"],
     ["url", "/ipfs/QmVideoCID/video.mp4"],
+    ["x", "abc123def456..."],
     ["m", "video/mp4"],
+    ["info", "QmInfoJsonCID"],
+    ["thumbnail_ipfs", "QmThumbnailCID"],
+    ["gifanim_ipfs", "QmGifanimCID"],
     ["imeta",
       "dim 1920x1080",
       "url /ipfs/QmVideoCID/video.mp4",
       "m video/mp4",
+      "x abc123def456...",
       "duration 123.456",
       "image /ipfs/QmThumbnailCID",
       "gifanim /ipfs/QmGifanimCID"
     ],
-    ["info", "QmInfoJsonCID"],
-    ["thumbnail_ipfs", "QmThumbnailCID"],
-    ["gifanim_ipfs", "QmGifanimCID"],
     ["t", "VideoChannel"],
     ["t", "WebcamRecording"]
   ]
 }
 ```
 
-**Note:** Following NIP-71 standard, use `kind: 21` for normal videos and `kind: 22` for short videos (< 60 seconds).
+**Note:** Following NIP-71 standard, use `kind: 21` for normal videos and `kind: 22` for short videos (< 60 seconds). The direct `["x", "hash"]` tag is CRITICAL for enabling deduplication via provenance tracking.
 
 ## Notes on URL Construction
 
