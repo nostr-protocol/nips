@@ -350,7 +350,7 @@ Possible future enhancements:
 
 ## Authors
 
-- Evan Henshaw-Plath (Rabble) - Divine.Video Project
+- Evan Henshaw-Plath (Rabble)
 
 ## License
 
