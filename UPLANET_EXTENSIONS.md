@@ -24,6 +24,9 @@ Official Nostr Protocol Extensions for the UPlanet/Astroport.ONE Ecosystem
 - **IPFS Storage:** [96-ipfs-extension.md](96-ipfs-extension.md)
 - **Video Events:** [71-extension.md](71-extension.md)
 
+### Geographic & Social
+- **UMAP Chat Rooms:** [28-umap-extension.md](28-umap-extension.md)
+
 ### Documentation
 - **Full Documentation:** [DID_IMPLEMENTATION.md](../Astroport.ONE/DID_IMPLEMENTATION.md)
 - **ORE System:** [ORE_SYSTEM.md](../Astroport.ONE/docs/ORE_SYSTEM.md)
@@ -34,7 +37,7 @@ Official Nostr Protocol Extensions for the UPlanet/Astroport.ONE Ecosystem
 
 ## 📚 Complete Documentation
 
-This repository contains **7 official extensions** to the Nostr protocol for the UPlanet/Astroport.ONE ecosystem.
+This repository contains **8 official extensions** to the Nostr protocol for the UPlanet/Astroport.ONE ecosystem.
 
 ### 🎯 Overview
 
@@ -46,6 +49,7 @@ UPlanet extends Nostr with:
 - 🎫 **Peer-Validated Credentials** - Oracle system for competence verification
 - 🔄 **N² Synchronization** - Mesh network of relays for resilience
 - 🌱 **Environmental Registry** - ORE (Ecological Real Obligations) system
+- 💬 **Geographic Chat Rooms** - UMAP-based location discussion channels
 
 ---
 
@@ -108,6 +112,17 @@ UPlanet extends Nostr with:
   - **Discovery:** `/.well-known/nostr/nip96.json` with `extensions.ipfs: true`
   - **Innovation:** Native IPFS + provenance + Twin-Key authentication + `info.json`
   - **Response:** Extended NIP-96 format with `provenance` object
+
+### 💬 Social & Communication Extensions
+
+- **[NIP-28 UMAP Extension](28-umap-extension.md)** - Geographic Chat Rooms
+  - **Extends:** NIP-28 (Public Chat)
+  - **Kind:** 42 (channel messages)
+  - **New tags:** `g` (geographic coordinates), references UMAP DID npub in `e` tag
+  - **Innovation:** Location-based discussion rooms tied to UMAP DIDs (kind 30800)
+  - **Channel ID:** Uses UMAP DID's `npub` or fallback to `UMAP_<lat>_<lon>`
+  - **Use case:** Geographic coordination, ORE verification discussions, local community chat
+  - **Integration:** Works with ORE System (kind 30312/30313) for environmental compliance
 
 ---
 
@@ -176,6 +191,7 @@ Satellites (24)
 | **File Metadata** | NIP-94 | [94-provenance-extension.md](94-provenance-extension.md) | 1063 | ✅ Production |
 | **File Storage** | NIP-96 | [96-ipfs-extension.md](96-ipfs-extension.md) | - (HTTP API) | ✅ Production |
 | **Video Events** | NIP-71 | [71-extension.md](71-extension.md) | 21, 22 | ✅ Production |
+| **Geographic Chat** | NIP-28 | [28-umap-extension.md](28-umap-extension.md) | 42 | ✅ Production |
 | **Identity** | - | [NIP-101](101.md) | 30800 | ✅ Production |
 | **Relay Sync** | NIP-101 | [101-n2-constellation-sync-extension.md](101-n2-constellation-sync-extension.md) | 18 kinds | ✅ Production |
 
@@ -191,6 +207,7 @@ Satellites (24)
 | 7 | Reaction | Core | Like/reaction events |
 | 21 | Media | Core | Media attachments |
 | 22 | Comment | NIP-22 | Comment threads |
+| 42 | Channel Message | NIP-28 + UMAP | Geographic chat room messages |
 | 1063 | File Metadata | NIP-94 + Provenance | File metadata with upload chain |
 | 22242 | Auth | NIP-42 + Twin-Key | Authentication with UMAP keypair |
 | 30023 | Article | NIP-23 | Long-form content |
