@@ -59,7 +59,7 @@ Smart Widgets use addressable event kind `30033` with the following structure:
 **Components**:
 - Image (mandatory, maximum of one)
 - Input field (optional, maximum of one) 
-- Buttons (optional, maximum of six)
+- Buttons (optional, maximum of six, of the following available types : `redirect`,`nostr`,`zap`,`post`)
 
 **Use Cases**: Forms, dashboards, interactive content with multiple actions
 
