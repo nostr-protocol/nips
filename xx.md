@@ -8,7 +8,7 @@ Attestations, Sequencers, and Key Rotation
 
 By default nostr public keys solely represent a user's identity, which makes key management very important to get right, and impossible to recover from. This NIP offers a way to add alternative keys to a base identity, as well as invalidate any key within the group.
 
-All nostr pubkeys are members of a "key group", by default a set containing only the `root` pubkey itself. Key groups are identified by the `root` pubkey, and can be added or removed by any key in the group. The validity, order, and completeness of these "key group" events MUST be validated as defined in the [#Validation](validation) section of this page.
+All nostr pubkeys are members of a "key group", by default a set containing only the `root` pubkey itself. Key groups are identified by the `root` pubkey and organized hierarchically. The validity, order, and completeness of these "key group" events MUST be validated as defined in the [#Validation](validation) section of this page.
 
 ## Adding Keys
 
@@ -17,6 +17,12 @@ Any existing pubkey MAY add a key to the key group using a `kind ADD_KEY` event:
 - a `r` tag containing the `root` pubkey and a relay hint
 - a `p` tag containing a hex-encoded pubkey to add to the key group and a relay hint
 - an optional message in the `content` field
+
+This event is only valid if:
+
+- The signing key is a member of the `root` key group
+- It is matched by a `kind JOIN_GROUP` published by the target pubkey
+- The target pubkey hasn't previously been added to or removed from the group
 
 ```typescript
 {
@@ -38,6 +44,12 @@ If added to a key group, the target key MUST mutually join the group. It doesn't
 - a `p` tag containing a hex-encoded pubkey to add to the key group and a relay hint
 - an optional message in the `content` field
 
+This event is only valid if:
+
+- It is matched by a `kind ADD_KEY` published by the `root` pubkey
+- It is the first `kind JOIN_GROUP` event published by the pubkey
+- The key hasn't previously been added to or removed from the group
+
 ```typescript
 {
   // ... other fields
@@ -51,11 +63,17 @@ If added to a key group, the target key MUST mutually join the group. It doesn't
 
 ## Removing Keys
 
-Any key within a key group MAY remove any key from the group (including itself) using a `kind REMOVE_KEY` event:
+Keys can be removed from the group using a `kind REMOVE_KEY` event:
 
 - a `r` tag containing the `root` pubkey and a relay hint
-- a `p` tag containing a hex-encoded pubkey to add to the key group and a relay hint
+- a `p` tag containing a hex-encoded pubkey to add to remove from the group and a relay hint
 - an optional message in the `content` field
+
+This event is only valid if:
+
+- The author is currently a member of the group
+- The key being removed was originally added by this key or a descendant of it
+- The key hasn't previously been removed from the group
 
 ```typescript
 {
@@ -69,50 +87,33 @@ Any key within a key group MAY remove any key from the group (including itself) 
 }
 ```
 
-## Attestation Sequencing
+## Sequencing
 
-Because event timestamps can be forged, forks and forgeries in the key group chain MUST be resolved using attestations curated by an external sequencer.
+Because event timestamps can be forged, forks and forgeries in the key group chain MUST be resolved using a sequencer which is responsible for providing data that can be used to sort events in the order they actually occurred.
 
-An attestation is an 80 byte string which is the result of concatenating the `pubkey` used to sign an event (not the `root` pubkey) and the first 16 characters of the event's `id`:
+### OTS Sequencing
 
-`<event pubkey><first 16 characters of event id>`
-
-For example:
-
-`89a3953aff215478f9ae5d04f40c6ea0ba9b10f2337452cebd5b2269c0736c92aeab0c2de9b492e0`
-
-This format is designed so that it can be matched by prefix, to require 64 bits of work to forge an attestion (in the case of a leaked private key), and to fit within an `OP_RETURN`.
-
-Sequencers are responsible for maintaining a complete, ordered record of attestations for all key group events.
-
-Sequencers SHOULD also provide:
-
-- A timestamp for each attestation.
-- A signed copy of the event attested to.
-
-### OP_RETURN Sequencing
-
-Sequence records MAY be stored on the bitcoin blockchain using `OP_RETURN` data.
+Open Time Stamp attestations via `kind 1040` events as defined in [NIP 03](./03.md) should be published to the tagged pubkey's outbox relays.
 
 ### Trusted Sequencing
 
-Trusted sequencers MAY be used as an alternative or supplement to `OP_RETURN` (since they have the ability to store a copy of the attested event), but care should be taken to use multiple independent sequencers in order to avoid attacks related to attestation omission or re-ordering which can result in the loss or theft of an identity. Web-of-trust analysis MAY be used to select reliable sequencers. See [this PR to NIP 03](https://github.com/nostr-protocol/nips/pull/1737/files), or [this draft NIP](https://github.com/nostr-protocol/nips/pull/2113) for some ways that relays may be used as trusted sequencers.
+Trusted sequencers MAY be used as an alternative or supplement to OTS, but care should be taken to use multiple independent sequencers in order to avoid attacks related to attestation omission or re-ordering which can result in the loss or theft of an identity. See [this PR to NIP 03](https://github.com/nostr-protocol/nips/pull/1737/files), or [this draft NIP](https://github.com/nostr-protocol/nips/pull/2113) for some possibilities.
 
 ## Validation
 
 When attempting to link pubkeys, implementations must construct a validated sequence of state transitions for the given key group by linking together attestations and nostr events using the following process:
 
 1. Identify at least one `pubkey` in the group to bootstrap from.
-2. Fetch all attestations from trusted sequencer(s) with the first 64 characters matching the given pubkeys.
-4. Fetch all `kind ADD_KEY` and `kind REMOVE_KEY` events from known pubkeys' [outbox relays](./65.md).
-5. Repeat steps 1-4 for all newly discovered `root` or `p`-tagged pubkeys.
-6. Discard any events whose `pubkey` and `id` do not match an attestation.
-7. Iterate over all sorted attestations, matching each to an event by `pubkey` and `id`.
+2. Fetch all matching attestations from trusted sequencer(s) by `p` tag.
+4. Fetch all key group events from known pubkeys' [outbox relays](./65.md).
+5. Repeat steps 1-4 for all newly discovered `r`- or `p`-tagged pubkeys.
+6. Discard any events without a matching attestation.
+7. Sort key group events using data provided by attestations.
 8. Build a data structure recording key membership over time which can be used to validate events and build filters.
 
-Because attestations can be trivially forged in some sequencer systems, attestations without a corresponding event may be discarded. However, genuinely missing events **may** result in an invalid or incorrect chain. For this reason, users should be careful to store events where they are easily discoverable, or use a sequencer that provides its own copy of events.
+Because fake attestations can be created by third parties, attestations without a corresponding valid event may be discarded. However, genuinely missing events **may** result in an invalid or incorrect chain. For this reason, users should be careful to store events and attestations where they are easily discoverable. This protocol is *not* partition tolerant.
 
-When checking the validity of a given event against key group state, it's important to keep in mind that events' `created_at` field may be forged, and so can't be trusted without reservation (although key validity windows do reduce the amount of damage an attacker can do). When validating events based on timestamp, it's recommended to obtain an attestation for that event as well, either from a relay, using [OTS](/03.md), or an attestation service.
+When checking the validity of a given event against key group state, it's important to keep in mind that events' `created_at` field may be forged, and so can't be trusted without reservation (although key validity windows do reduce the amount of damage an attacker can do). When validating events based on timestamp, it's recommended to obtain an attestation for that event as well, either from a relay, or using [OTS](/03.md).
 
 ### Using multiple sequencers
 
@@ -120,16 +121,16 @@ Multiple sequencers MAY be used in tandem to reduce the amount of trust placed i
 
 ## Usage
 
-All keys in a group should be considered a single identity, identified by the `root`, i.e., the `pubkey` used to sign the first `kind ADD_KEY` event. This has two implications:
+All keys in a group should be considered a single identity, identified by the `root`, i.e., the `pubkey` used to sign the first `kind ADD_KEY` event. This has two implications for events not described in this spec:
 
 - All events published by any key during the period in which it was a valid member of the group SHOULD be treated as if they were signed by the `root` directly.
 - All references to any key published during the period in which the target key was a valid member of the group SHOULD be treated as if they were referencing the `root` directly.
 
-Implementations MAY choose to stop building the key group at any point (or choose not to implement this protocol at all), leaving keys unlinked. For this reason, when creating a `kind ADD_KEY` event the author SHOULD re-sign and publish important metadata events (especially kinds `0`, `10002`, `10050`, and any other events containing important routing information).
+Implementations MAY choose to stop building the key group at any point if it gets too complex (or choose not to implement this protocol at all), leaving keys unlinked. For this reason, when creating a `kind ADD_KEY` event the author SHOULD re-sign and publish important metadata events (especially kinds `0`, `10002`, `10050`, and any other events containing important routing information).
 
 Authors MAY also re-sign and publish other historical events (for example recent or pinned notes), however this should be done sparingly to prevent unnecessary duplicates from being downloaded.
 
-When fetching events for a given identity, all pubkeys in the group SHOULD be included in `authors` or `#p` filters. Filters SHOULD also include `since` and `until` filters matching periods when the key in question was a valid member of the group.
+When fetching events for a given identity, all pubkeys in the group SHOULD be included in `authors` or `#p` filters. Filters SHOULD also include `since` and `until` filters matching the periods when the key in question was a valid member of the group.
 
 Relays MAY implement key group validation and drop invalid events from their database.
 
@@ -216,3 +217,5 @@ Alice then realizes that the sticky she wrote the secret key for `B` on blew awa
 - Only the first join counts, keys can't be in multiple groups
 - Once removed, a key can't be added again?
 - Check that timestamps are in the same order as attestations. Actual value doesn't matter too much, and can be trusted for validating content events.
+
+This combines the best of HD keys with pablo's key rotation scheme, without a time delay. The benefit of HD keys is that you can have one in cold storage and use other ones for signing. The drawbacks are that you can't rotate your base key (which on nostr is already exposed for lots of people). Pablo's scheme allows for simple key rotation, but leaves an opening for an attacker to hijack the rotation, permanently locking the original user out. This scheme uses a key ratchet mechanism which has the storage benefits of HD keys (you put one key in cold storage while using the other), and allows for simple rotation without giving an attack the ability to hijack the key.
