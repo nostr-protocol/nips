@@ -145,9 +145,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `44`          | Channel Mute User               | [28](28.md)                            |
 | `62`          | Request to Vanish               | [62](62.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
-| `260`         | Create Ratchet Key              | [D8](D8.md)                            |
-| `261`         | Create Authorized Key           | [D8](D8.md)                            |
-| `260`         | Invalidate Authorized Key       | [D8](D8.md)                            |
+| `260`         | Create Migration Key            | [D8](D8.md)                            |
+| `261`         | Migrate Key                     | [D8](D8.md)                            |
 | `443`         | KeyPackage                      | [EE](EE.md)                            |
 | `444`         | Welcome Message                 | [EE](EE.md)                            |
 | `445`         | Group Event                     | [EE](EE.md)                            |
