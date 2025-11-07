@@ -1,45 +1,56 @@
 NIP-XX
 ======
 
-Attestations, Sequencers, and Key Rotation
-------------------------------------------
+Nostr Key Rotation
+------------------
 
 `draft` `optional`
 
-By default nostr public keys solely represent a user's identity, which makes it impossible to recover from key loss or compromise. This NIP defines a simple mechanism for key rotation that uses a key-based ratchet mechanism to protect users from attackers. This allows users to increase the security of their main key by creating a single-purpose key which can be stored more securely than a user's main key.
+By default nostr public keys solely represent a user's identity, which makes it impossible to recover from key loss or compromise.
+
+This NIP defines a simple mechanism for key rotation by introducing a ratchet mechanism involving the use of a single-purpose key which can be stored more securely than a user's main key.
 
 Some terms:
 
-- A `root` key is a user's initial nostr public key.
-- An `live` key is a nostr public key that should be treated as having the same identity as the `root` key. A user's `root` key serves both as a user's first `live` key, and as the persistent identifier for the user's identity on nostr.
-- A `dead` key is a nostr public key that has been invalidated.
-- A `master` key is a nostr public key authorized in advance as the only way to generate or invalidate `live` keys.
+- An `identity` key is a user's initial nostr public key and serves as the user's persistent identifier.
+- An `authorized` key is a nostr public key that can sign on behalf of a user's `identity` key. A user's `identity` key is itself an `authorized` key until it is invalidated.
+- A `ratchet` key is a nostr public key authorized in advance as the only way to generate or invalidate `authorized` keys.
 
-These keys, combined with the event kinds defined below form a tree of keys. The current state of this tree MUST be validated as described in the [validation](#Validation) section below.
+A tree of these keys is created using three new event kinds, defined below. The current state of this tree MUST be validated as described in the [validation](#Validation) section below.
 
-## Creating a Master Key
+## Creating a Ratchet Key
 
-To designate a `master` key, a user may sign a `kind ADD_MASTER` event with one of their `live` keys and include the following tags:
+Any `authorized` key can be used to sign a `kind 260` event with the following tags:
 
-- A `p` tag containing the `master` pubkey and a relay hint
-- A `proof` tag containing a schnorr signature of the `live` key by the user's `master` key
+- A `p` tag containing the new `ratchet` pubkey and a relay hint
+- A `proof` tag containing a schnorr signature of the `authorized` pubkey using the new `ratchet` key
 
-Only the first `master` key published by a given `live` key is valid. If multiple conflicting `kind ADD_MASTER` events exist, the first one published MUST be used. Master keys cannot be invalidated except by invalidating the corresponding `live` key.
+Only the first `ratchet` key published by a given `authorized` key is valid. If multiple conflicting `kind 260` events exist, the first one published MUST be used. Ratchet keys cannot be invalidated except by invalidating the corresponding `authorized` key.
 
-## Creating a Live Key
+Ratchet keys MUST NOT be used for anything other than creating and invalidating `authorized` keys
 
-Only a `master` key can create a new delegate `live` key. However, any number of delegate `live` keys MAY be created from a single `master` key using a `kind ADD_KEY` event with the following tags:
+## Creating an Authorized Key
 
-- A `p` tag containing the new `live` pubkey and a relay hint
-- A `proof` tag containing a schnorr signature of the `master` key by the new `live` key
+A new `authorized` key can be created using a `kind 261` event signed by a valid `ratchet` key with the following tags:
 
-## Invalidating a Live Key
+- A `p` tag containing the new `authorized` pubkey and a relay hint
+- A `proof` tag containing a schnorr signature of the `ratchet` pubkey using the new `authorized` key
 
-A `live` key can be converted to a `dead` key by publishing a `kind KILL_KEY` event using either the `master` key that created the `live` key, or a `master` key created by the `live` key. Killing a `live` key also invalidates any `master` key created by it.
+Only a `ratchet` key can create a new `authorized` key. Any number of `authorized` keys MAY be created from a single `ratchet` key.
 
-All events created by a `dead` key or its corresponding `master` key MUST be considered invalid.
+## Invalidating Keys
 
-Invalidating a key does not affect the identity of the user, which remains the original hex `root` pubkey.
+A `authorized` key can be invalidated by publishing a `kind 262` with the following tags:
+
+- A `p` tag containing the `authorized` pubkey being invalidated
+- An optional `as_of` tag containing a seconds-resolution timestamp for retroactive key invalidation.
+
+This event MUST be signed by either:
+
+- The `ratchet` key **that created** the `authorized` key being invalidated
+- A `ratchet` key **created by** the `authorized` key being invalidated
+
+Invalidating a `authorized` key also invalidates any `ratchet` key created by it. All events created by an `authorized` key or its corresponding `ratchet` key after invalidation MUST be ignored.
 
 ## Sequencing
 
@@ -52,136 +63,170 @@ Because event timestamps can be forged, a sequencer is required in order to esta
 Key state transitions MUST be validated according to the following process:
 
 1. Select a `target` pubkey to validate.
-2. Fetch all `kind ADD_MASTER` events signed by the `target` key.
-3. Fetch all `kind KILL_KEY` events signed by the `target`'s `master` key which `p`-tag the `target`. If any exist, events created by the `target` after that point are invalid and should be ignored.
-4. Fetch all `kind ADD_KEY` events `p`-tagging the `target`. If no valid ones exist, the `target` key is its own `root` identity.
-5. Fetch all `kind KILL_KEY` events `p`-tagging the `target`. If any valid ones exist, events created by the `target` after that point are invalid and should be ignored.
-6. Validate the authors of the `kind ADD_KEY` and `kind KILL_KEY` events found in the previous step by fetching all `kind ADD_MASTER` events `p`-tagging them, then repeating steps 2-6 for the author of that event.
+2. Fetch all `kind 260` events signed by the `target` key.
+3. Fetch all `kind 262` events signed by the `target`'s `ratchet` key which `p`-tag the `target`. If any exist, events created by the `target` after that point are invalid and should be ignored.
+4. Fetch all `kind 261` events `p`-tagging the `target`. If no valid ones exist, the `target` key is an `identity` key and is `authorized` on its own behalf.
+5. Fetch all `kind 262` events `p`-tagging the `target`. If any valid ones exist, events created by the `target` after that point are invalid and MUST be ignored.
+6. Validate the authors of the `kind 261` and `kind 262` events found in steps 4 and 5 by fetching all `kind 260` events `p`-tagging them, then repeating steps 2-6 for the author of that event.
 
 Because fake attestations can be created by third parties, attestations without a corresponding valid event may be discarded. However, genuinely missing events **may** result in an invalid or incorrect key state. For this reason, users should be careful to store events and attestations where they are easily discoverable. This protocol is *not* partition tolerant.
 
 When checking the validity of a given event, it's important to keep in mind that events' `created_at` field may be forged, and so can't be trusted without reservation (although key validity windows do reduce the amount of damage an attacker can do). When validating events based on timestamp, it's recommended to obtain an sequencer attestation for that event as well.
 
-## Usage
+## Usage Recommendations
 
-All keys in a tree should be considered a single identity, identified by the `root`, i.e., the `pubkey` used to sign the first `kind ADD_MASTER` event. This has two implications for events not described in this spec:
+### On Behalf Of Tag
 
-- All events published by any key during the period in which it was a valid member of the group SHOULD be treated as if they were signed by the `root` directly (except for the purposes of this sub-protocol).
-- All references to any key published during the period in which the target key was a valid member of the group SHOULD be treated as if they were referencing the `root` directly (except for the purposes of this sub-protocol).
+When using a `authorized` key that is not the user's `identity` key, an "on behalf of" tag (`=`)  containing the user's `identity` key SHOULD be included on events published by the user.
 
-Implementations MAY choose to stop validating key transitions at any point if it gets too complex, leaving keys unlinked. Implementations SHOULD validate up to 8 levels of delegation, and users SHOULD avoid creating more than 8 levels of delegation.
+This provides a simple way to filter events for all of a user's `authorized` keys without knowing them in advance (though they still need to be validated).
 
-In order to degrade gracefully when keys remain unlinked, when creating a `kind ADD_KEY` event the author SHOULD re-publish important metadata events under that key (especially kinds `0`, `10002`, `10050`, and any other events containing important routing information). Authors MAY also re-sign and publish other historical events (for example recent or pinned notes), however this should be done sparingly to prevent unnecessary duplicates from being downloaded.
+### Denial of Service Risk
 
-When fetching events for a given identity, all `live` keys in the group SHOULD be included in `authors` or `#p` filters. Filters SHOULD also include `since` and `until` filters matching the periods when the key in question was a valid member of the tree.
+Implementations MAY choose to stop validating key transitions at any point if it gets too complex, leaving keys unlinked.
 
-Relays MAY implement key state transition validation and drop invalid events from their database.
+Implementations SHOULD validate up to 8 levels of delegation, and users SHOULD avoid creating more than 8 levels of delegation. Users should also avoid using more than 32 `authorized` keys simultaneously.
+
+### Progressive Enhancement
+
+In order to degrade gracefully when keys remain unlinked, important metadata events MAY be re-published under a new `authorized` key (especially kinds `0`, `10002`, `10050`, and any other events containing important routing information).
+
+Authors MAY also re-publish other historical events under the new key (for example recent or pinned notes), however this should be done sparingly to prevent unnecessary duplicates from being downloaded.
+
+### Creating References
+
+When third parties tag a user, they SHOULD reference the user's `authorized` key, not the user's `identity` key. This allows implementations that do not support this NIP to understand notes in their immediate context. Clients that do support this NIP are responsible for mapping the `authorized` key to its `identity` key if necessary for their use case.
+
+### Threat Model
+
+That NIP relies on the assumption that `ratchet` keys are stored significantly more securely than `authorized` keys.
+
+- Current nostr users have already exposed their keys in many places. This NIP allows those users to upgrade their account's security, without immediate migration.
+- A general-purpose `authorized` key has to be stored on an internet-connected device in order to support frequent usage. A single-purpose `ratchet` key can be stored offline without compromising its value to users.
+- By allowing users to generate a `ratchet` key for their account at their leisure, the security provided by this NIP becomes a progressive enhancement, applicable when a user's account has enough reputation to be valuable, or when a user is competent to secure their keys.
+
+Even if an attacker gains control of a user's `identity` key, they can't do any permanent damage if the user has already generated and secured a `ratchet` key. However, if the user has not generated a `ratchet` key for their account, or their `ratchet` key has been compromised, an attacker can **lock the owner out of their account**, escalating key compromise to permanent account loss. For this reason, it is recommended that users generate a `ratchet` key early and store it securely.
+
+### Relay support
+
+Clients SHOULD implement key validation. Relays MAY implement key state validation and drop invalid events from their database.
 
 ## Example
 
 In this example, Alice creates three different keys:
 
-- Key `A` is her `root` key, since it's the first key she creates and where she begins her attestation chain.
-- Key `B` is added and later compromised and subsequently invalidated by `A`
-- Key `C` is added and later invalidates `A`
+- Key `A` is her `identity` key, since it's the first key she creates and where she begins her attestation chain. It is also by default an `authorized` key.
+- Key `A'` is her `ratchet` key, which is used in turn to create a new `authorized` key `B`.
+- Key `A` is later compromised and subsequently invalidated by `A'`
 
-Throughout, Bob interacts with Alice's account by building key group state, fetching events using filters, and detecting forgeries and forks.
+Throughout, Bob and Carol interact with Alice's account. Bob uses a client that lacks support for key rotation, while Carol uses a client that has it.
 
-First, Alice decides she would like a backup key that she can use, so she publishes a `kind ADD_MASTER` for key `B` from her `root` identity `A`:
+First, Alice decides she would like to opt-in to the ability to rotate her key without abandoning her original key, so she publishes a `kind 260` using her `identity` key `A`:
 
 ```json
 {
   "id": "<A.1>",
   "pubkey": "<A>",
-  "kind": ADD_MASTER,
+  "kind": 260,
   "tags": [
-    ["r", "<pubkey A>", "<url">],
-    ["p", "<pubkey B>", "<url">]
+    ["p", "<pubkey A'>", "<url">],
+    ["proof", "<A signed by A'>"]
   ]
 }
 ```
 
-This isn't valid unless it's accepted, so she then publishes a `kind JOIN_GROUP` from key `B`:
+She also requests a `kind 1040` OTS attestation which `e`-tags event `A.1` to be published to her inbox relays.
+
+At this point, nothing special needs to happen. Alice continues signing events with her `identity` key, and Bob and Carol carry on as usual. However, Alice's `identity` key eventually gets leaked and an attacker starts posting offensive memes.
+
+The attacker also attempts to publish a new `kind 260` event, `A.2` in an attempt to hijack Alice's key state and point people to key `X`. However, both Alice and Carol properly reject it based on OTS attestations, while Bob ignores it entirely.
+
+At this point, Alice needs to switch to a new key, so she creates a new `authorized` key `B` using a `kind 261` event signed by her `ratchet` key `A'`:
 
 ```json
 {
-  "id": "<B.1>",
-  "pubkey": "<B>",
-  "kind": JOIN_GROUP,
+  "id": "<A'.1>",
+  "pubkey": "<A'>",
+  "kind": 261,
   "tags": [
-    ["r", "<pubkey A>", "<url">]
+    ["p", "<pubkey B>", "<url">],
+    ["proof", "<A' signed by B>"]
   ]
 }
 ```
 
-In this example, we'll gloss over how attestations get to the sequencers (they may be specifically published by Alice, scraped by the sequencers, replicated, or generated by relays), but these are the attestation records that would have to be created to validate the two events above:
+She also requests a `kind 1040` OTS attestation which `e`-tags event `A'.1` to be published to her inbox relays.
 
-```text
-<pubkey A><event A.1>
-<pubkey B><event B.1>
-```
+Alice also decides to re-publish her `kind 10002`, `kind 10050`, and `kind 0` events under the new `authorized` key `B`. She then sends event `A.3`, a `kind 1` signed by key `A`, telling her followers that she has switched to key `B`, and event `B.1`, a `kind 1` signed by key `B` welcoming people to her new key. She adds a `=` tag to `B.1` pointing to her `identity` key, `A`.
 
-Alice also decides to re-publish her `kind 10002`, `kind 10050`, and `kind 0` events under the new key. She then sends a few `kind 1` events.
-
-Bob is already following Alice, and normally reads only from key `A`. In the background his client:
-
-- Picks up event `<A.1>`
-- Requests attestations for pubkey `A` and matches the one result to the event he has already
-- Because event `<A.1>` points to pubkey `B`, he requests attestations for pubkey `B`.
-- He receives one result `<B.1>` and fetches it.
-
-His key group for `A` now looks like this:
-
-```
-// Each entry is a list of time windows (since, until) where the given pubkey is valid in the group
-A: [[0, ∞]]
-B: [[<B.1.created_at>, ∞]]
-```
-
-Alice then realizes that the sticky she wrote the secret key for `B` on blew away, so now she wants to invalidate it:
+Alice also invalidates key `A` by publishing a `kind 262` event signed by key `A'`:
 
 ```json
 {
-  "id": "<A.2>",
-  "pubkey": "<A>",
-  "kind": REMOVE_KEY,
+  "id": "<A'.2>",
+  "pubkey": "<A'>",
+  "kind": 262,
   "tags": [
-    ["r", "<pubkey A>", "<url">],
-    ["p", "<pubkey B>", "<url">]
+    ["p", "<pubkey A>", "<url">]
   ]
 }
 ```
 
+She also requests a `kind 1040` OTS attestation which `e`-tags event `A'.2` to be published to her inbox relays. She opts not to include an `as_of` tag, since she wants her followers to see her `kind 1` post telling them to migrate.
 
-## Validation rules
+Bob is following Alice, and normally reads only from key `A`. He sees Alice's `kind 1` post (as well as several unfunny memes from the attacker), unfollows `A` and starts following `B`. Alice's profile loads fine, but their DM history and all her past notes are invisible to Bob.
 
-- Time delay is necessary to avoid attacker publishing a migration. Or we could structure things in trees such that only the parent can invalidate the child, and ratchet keys downwards (use the child, store the parent, then rotate to child/grandchild)
-- add/join must be mutual. Order doesn't matter
-- Only the first join counts, keys can't be in multiple groups
-- Once removed, a key can't be added again?
-- Check that timestamps are in the same order as attestations. Actual value doesn't matter too much, and can be trusted for validating content events.
+Carol is also following Alice, and because she's not a nostr protocol expert does the same thing as Bob - she unfollows `A` and follows `B`. However, because her client is smart, when she follows `B` her client actually adds `A` back in to her follows list.
+
+When Carol views Alice's profile, her client automatically picks up events `A.1`, `A.2` and `A'.1`, ignores `A.2` based on the corresponding OTS attestations, and marks key `B` as `authorized` to post on behalf of `A`. Her client then sends `REQ` like this:
+
+```typescript
+[{"kinds": [1], "authors": ["<A>"], until: <A.2.created_at>},
+ {"kinds": [1], "#=": ["<A>"]}]
+```
+
+This returns both of Alice's `kind 1` events, `A.3` (via the `authors` filter), and `B.1` (because of the `#=` filter), while successfully ignoring events created by the attacker after key invalidation took place.
+
+Finally, just in case this happens again, Alice publishes event `B.2`, which is a `kind 260` event designating key `B'` as her new `ratchet` key.
+
+At the end of the day, this is the state of Alice's keys:
+
+- `A` remains her `identity` key, but is no longer `authorized` as of `A.2.created_at`.
+- `A'` (her first `ratchet` key) is invalid as of `A.2.created_at`.
+- `B` is `authorized` to publish events on behalf of her `identity` key `A`.
+- `B'` is a valid `ratchet` key, able to invalidate `B` and create new `authorized` keys.
+- `X` is not and never was a valid `ratchet` key, because `A'` was created first. Any attempts by the attacker to created `authorized` keys will be ignored.
+
+## Comments
+
+- Compare with:
+  - https://github.com/nostr-protocol/nips/pull/829/files
+  - HD Keys
+  - Other key rotation proposals
+- Can I avoid ots by using a linked list?
 
 This combines the best of HD keys with pablo's key rotation scheme, without a time delay. The benefit of HD keys is that you can have one in cold storage and use other ones for signing. The drawbacks are that you can't rotate your base key (which on nostr is already exposed for lots of people). Pablo's scheme allows for simple key rotation, but leaves an opening for an attacker to hijack the rotation, permanently locking the original user out. This scheme uses a key ratchet mechanism which has the storage benefits of HD keys (you put one key in cold storage while using the other), and allows for simple rotation without giving an attack the ability to hijack the key.
+## Appendix: Ownership Proofs
+
+Kinds `260` and `261` require that users prove they own a given pubkey before designating it either as a `ratchet` key or an `authorized` key.
+
+This proof is deliberately designed **not to use common event signing APIs** in order to ensure that the user has direct access to their private key. This helps prevent a malicious signer or client from signing key rotation events via bunker URL or browser extension.
+
+Below is some example typescript code for creating and validating a key creation proof:
 
 ```typescript
 import { schnorr } from '@noble/curves/secp256k1'
 import { bytesToHex } from '@noble/hashes/utils'
 
-const makeKey = () => {
-  const secret = schnorr.utils.randomPrivateKey()
-  const pubkey = schnorr.getPublicKey(secret)
+// Generate our keys
+const parentSecret = schnorr.utils.randomPrivateKey()
+const parentPubkey = bytesToHex(schnorr.getPublicKey(parentSecret))
+const childSecret = schnorr.utils.randomPrivateKey()
+const childPubkey = bytesToHex(schnorr.getPublicKey(childSecret))
 
-  return {secret, pubkey}
-}
+// Prove that the user owns the child key
+const proof = bytesToHex(schnorr.sign(parentPubkey, childSecret))
 
-const active = makeKey()
-const rotation = makeKey()
-
-const event = signEvent(active.secret, {
-  kind: ADD_MASTER,
-  tags: [
-    ["p", bytesToHex(rotation.pubkey), "<relay url>"],
-    ["proof", schnorr.sign(bytesToHex(rotation.pubkey), active.secret)],
-  ],
-})
+// Verify the proof
+const valid = schnorr.verify(proof, parentPubkey, childPubkey)
 ```
