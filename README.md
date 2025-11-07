@@ -107,6 +107,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-B7: Blossom](B7.md)
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
+- [NIP-D8: Key Rotation](D8.md)
 - [NIP-EE: E2EE Messaging using MLS Protocol](EE.md)
 
 ## Event Kinds
@@ -144,6 +145,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `44`          | Channel Mute User               | [28](28.md)                            |
 | `62`          | Request to Vanish               | [62](62.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
+| `260`         | Create Ratchet Key              | [D8](D8.md)                            |
+| `261`         | Create Authorized Key           | [D8](D8.md)                            |
+| `260`         | Invalidate Authorized Key       | [D8](D8.md)                            |
 | `443`         | KeyPackage                      | [EE](EE.md)                            |
 | `444`         | Welcome Message                 | [EE](EE.md)                            |
 | `445`         | Group Event                     | [EE](EE.md)                            |
