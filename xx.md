@@ -8,48 +8,63 @@ Attestations, Sequencers, and Key Rotation
 
 By default nostr public keys solely represent a user's identity, which makes key management very important to get right, and impossible to recover from. This NIP offers a way to add alternative keys to a base identity, as well as invalidate any key within the group.
 
-All nostr pubkeys are members of a "key group", by default a set containing only the `root` pubkey itself. Key groups are identified by the `root` pubkey, and can be expanded using a `kind EXPAND` event signed by any key in the set, and contracted using a `kind CONTRACT`. The validity, order, and completeness of these "key group" events MUST be validated as defined in the [#Validation](validation) section of this page.
+All nostr pubkeys are members of a "key group", by default a set containing only the `root` pubkey itself. Key groups are identified by the `root` pubkey, and can be added or removed by any key in the group. The validity, order, and completeness of these "key group" events MUST be validated as defined in the [#Validation](validation) section of this page.
 
 ## Adding Keys
 
-Any existing pubkey MAY add a key to the key group using a `kind EXPAND` event:
+Any existing pubkey MAY add a key to the key group using a `kind ADD_KEY` event:
 
-- a `root` tag containing the `root` pubkey
-- an `e` tag containing an event id, a relay hint, and a pubkey hint
-- a `p` tag containing a hex-encoded pubkey to add to the key group
+- a `r` tag containing the `root` pubkey and a relay hint
+- a `p` tag containing a hex-encoded pubkey to add to the key group and a relay hint
 - an optional message in the `content` field
 
 ```typescript
 {
   // ... other fields
-  kind: EXPAND,
+  kind: ADD_KEY,
   content: "This is the key I buried in the forest",
   tags: [
-    ["root", "<root pubkey>"],
-    ["e", "<event id>", "<relay url>", "<pubkey hint>"],
-    ["p", "<hex pubkey>"]
+    ["r", "<root pubkey>", "<relay url>"],
+    ["p", "<hex pubkey>", "<relay url>"]
+  ]
+}
+```
+
+## Joining a Key Group
+
+If added to a key group, the target key MUST mutually join the group. It doesn't matter which event happens first, just that the relationship is mutual.
+
+- a `r` tag containing the `root` pubkey and a relay hint
+- a `p` tag containing a hex-encoded pubkey to add to the key group and a relay hint
+- an optional message in the `content` field
+
+```typescript
+{
+  // ... other fields
+  kind: JOIN_GROUP,
+  content: "Yes, I do control this key",
+  tags: [
+    ["r", "<root pubkey>", "<relay url>"],
   ]
 }
 ```
 
 ## Removing Keys
 
-Any key within a key group MAY remove any key from the group (including itself) using a `kind CONTRACT` event:
+Any key within a key group MAY remove any key from the group (including itself) using a `kind REMOVE_KEY` event:
 
-- a `root` tag containing the `root` pubkey
-- an `e` tag containing an event id, a relay hint, and a pubkey hint
-- a `p` tag containing a hex-encoded pubkey to add to the key group
+- a `r` tag containing the `root` pubkey and a relay hint
+- a `p` tag containing a hex-encoded pubkey to add to the key group and a relay hint
 - an optional message in the `content` field
 
 ```typescript
 {
   // ... other fields
-  kind: CONTRACT,
+  kind: REMOVE_KEY,
   content: "Someone dug up my key and used it to post bad memes :(",
   tags: [
-    ["root", "<root pubkey>"],
-    ["e", "<event id>", "<relay url>", "<pubkey hint>"],
-    ["p", "<hex pubkey>"]
+    ["r", "<root pubkey>", "<relay url>"],
+    ["p", "<hex pubkey>", "<relay url>"]
   ]
 }
 ```
@@ -81,7 +96,7 @@ Sequence records MAY be stored on the bitcoin blockchain using `OP_RETURN` data.
 
 ### Trusted Sequencing
 
-Trusted sequencers MAY be used as an alternative or supplement to `OP_RETURN` (since they have the ability to store a copy of the attested event), but care should be taken to use multiple independent sequencers in order to avoid attacks related to attestation omission or re-ordering which can result in the loss or theft of an identity. Web-of-trust analysis MAY be used to select reliable sequencers. See [This PR to NIP 03](https://github.com/nostr-protocol/nips/pull/1737/files) for some ways that relays may be used as trusted sequencers.
+Trusted sequencers MAY be used as an alternative or supplement to `OP_RETURN` (since they have the ability to store a copy of the attested event), but care should be taken to use multiple independent sequencers in order to avoid attacks related to attestation omission or re-ordering which can result in the loss or theft of an identity. Web-of-trust analysis MAY be used to select reliable sequencers. See [this PR to NIP 03](https://github.com/nostr-protocol/nips/pull/1737/files), or [this draft NIP](https://github.com/nostr-protocol/nips/pull/2113) for some ways that relays may be used as trusted sequencers.
 
 ## Validation
 
@@ -89,7 +104,7 @@ When attempting to link pubkeys, implementations must construct a validated sequ
 
 1. Identify at least one `pubkey` in the group to bootstrap from.
 2. Fetch all attestations from trusted sequencer(s) with the first 64 characters matching the given pubkeys.
-4. Fetch all `kind EXPAND` and `kind CONTRACT` events from known pubkeys' [outbox relays](./65.md).
+4. Fetch all `kind ADD_KEY` and `kind REMOVE_KEY` events from known pubkeys' [outbox relays](./65.md).
 5. Repeat steps 1-4 for all newly discovered `root` or `p`-tagged pubkeys.
 6. Discard any events whose `pubkey` and `id` do not match an attestation.
 7. Iterate over all sorted attestations, matching each to an event by `pubkey` and `id`.
@@ -105,15 +120,99 @@ Multiple sequencers MAY be used in tandem to reduce the amount of trust placed i
 
 ## Usage
 
-All keys in a group should be considered a single identity, identified by the `root`, i.e., the `pubkey` used to sign the first `kind EXPAND` event. This has two implications:
+All keys in a group should be considered a single identity, identified by the `root`, i.e., the `pubkey` used to sign the first `kind ADD_KEY` event. This has two implications:
 
 - All events published by any key during the period in which it was a valid member of the group SHOULD be treated as if they were signed by the `root` directly.
 - All references to any key published during the period in which the target key was a valid member of the group SHOULD be treated as if they were referencing the `root` directly.
 
-Implementations MAY choose to stop building the key group at any point (or choose not to implement this protocol at all), leaving keys unlinked. For this reason, when creating a `kind EXPAND` event the author SHOULD re-sign and publish important metadata events (especially kinds `0`, `10002`, `10050`, and any other events containing important routing information).
+Implementations MAY choose to stop building the key group at any point (or choose not to implement this protocol at all), leaving keys unlinked. For this reason, when creating a `kind ADD_KEY` event the author SHOULD re-sign and publish important metadata events (especially kinds `0`, `10002`, `10050`, and any other events containing important routing information).
 
 Authors MAY also re-sign and publish other historical events (for example recent or pinned notes), however this should be done sparingly to prevent unnecessary duplicates from being downloaded.
 
 When fetching events for a given identity, all pubkeys in the group SHOULD be included in `authors` or `#p` filters. Filters SHOULD also include `since` and `until` filters matching periods when the key in question was a valid member of the group.
 
 Relays MAY implement key group validation and drop invalid events from their database.
+
+## Example
+
+In this example, Alice creates three different keys:
+
+- Key `A` is her `root` key, since it's the first key she creates and where she begins her attestation chain.
+- Key `B` is added and later compromised and subsequently invalidated by `A`
+- Key `C` is added and later invalidates `A`
+
+Throughout, Bob interacts with Alice's account by building key group state, fetching events using filters, and detecting forgeries and forks.
+
+First, Alice decides she would like a backup key that she can use, so she publishes a `kind ADD_KEY` for key `B` from her `root` identity `A`:
+
+```json
+{
+  "id": "<A.1>",
+  "pubkey": "<A>",
+  "kind": ADD_KEY,
+  "tags": [
+    ["r", "<pubkey A>", "<url">],
+    ["p", "<pubkey B>", "<url">]
+  ]
+}
+```
+
+This isn't valid unless it's accepted, so she then publishes a `kind JOIN_GROUP` from key `B`:
+
+```json
+{
+  "id": "<B.1>",
+  "pubkey": "<B>",
+  "kind": JOIN_GROUP,
+  "tags": [
+    ["r", "<pubkey A>", "<url">]
+  ]
+}
+```
+
+In this example, we'll gloss over how attestations get to the sequencers (they may be specifically published by Alice, scraped by the sequencers, replicated, or generated by relays), but these are the attestation records that would have to be created to validate the two events above:
+
+```text
+<pubkey A><event A.1>
+<pubkey B><event B.1>
+```
+
+Alice also decides to re-publish her `kind 10002`, `kind 10050`, and `kind 0` events under the new key. She then sends a few `kind 1` events.
+
+Bob is already following Alice, and normally reads only from key `A`. In the background his client:
+
+- Picks up event `<A.1>`
+- Requests attestations for pubkey `A` and matches the one result to the event he has already
+- Because event `<A.1>` points to pubkey `B`, he requests attestations for pubkey `B`.
+- He receives one result `<B.1>` and fetches it.
+
+His key group for `A` now looks like this:
+
+```
+// Each entry is a list of time windows (since, until) where the given pubkey is valid in the group
+A: [[0, ∞]]
+B: [[<B.1.created_at>, ∞]]
+```
+
+Alice then realizes that the sticky she wrote the secret key for `B` on blew away, so now she wants to invalidate it:
+
+```json
+{
+  "id": "<A.2>",
+  "pubkey": "<A>",
+  "kind": REMOVE_KEY,
+  "tags": [
+    ["r", "<pubkey A>", "<url">],
+    ["p", "<pubkey B>", "<url">]
+  ]
+}
+```
+
+
+## Validation rules
+
+- Time delay is necessary to avoid attacker publishing a migration. Or we could structure things in trees such that only the parent can invalidate the child, and ratchet keys downwards (use the child, store the parent, then rotate to child/grandchild)
+- add/join must be mutual. Order doesn't matter
+- Only the first join counts, keys can't be in multiple groups
+- Once removed, a key can't be added again?
+- Check that timestamps are in the same order as attestations. Actual value doesn't matter too much, and can be trusted for validating content events.
