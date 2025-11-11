@@ -1,4 +1,4 @@
-NIP-XX
+NIP-BA
 ======
 
 Nostr BLE Communications Protocol
