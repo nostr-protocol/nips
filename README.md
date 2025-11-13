@@ -58,6 +58,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
 - [NIP-42: Authentication of clients to relays](42.md)
+- [NIP-43: Relay Access Metadata and Requests](43.md)
 - [NIP-44: Encrypted Payloads (Versioned)](44.md)
 - [NIP-45: Counting results](45.md)
 - [NIP-46: Nostr Remote Signing](46.md)
@@ -183,6 +184,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `7376`        | Cashu Wallet History            | [60](60.md)                            |
 | `7516`        | Geocache log                    | [geocaching][geocaching]               |
 | `7517`        | Geocache proof of find          | [geocaching][geocaching]               |
+| `8000`        | Add User                        | [43](43.md)                            |
+| `8001`        | Remove User                     | [43](43.md)                            |
 | `9000`-`9030` | Group Control Events            | [29](29.md)                            |
 | `9041`        | Zap Goal                        | [75](75.md)                            |
 | `9321`        | Nutzap                          | [61](61.md)                            |
@@ -214,6 +217,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10377`       | Proxy Announcement              | [Nostr Epoxy][nostr-epoxy]             |
 | `11111`       | Transport Method Announcement   | [Nostr Epoxy][nostr-epoxy]             |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
+| `13534`       | Membership Lists                | [43](43.md)                            |
 | `17375`       | Cashu Wallet Event              | [60](60.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
 | `22242`       | Client Authentication           | [42](42.md)                            |
@@ -222,6 +226,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `24133`       | Nostr Connect                   | [46](46.md)                            |
 | `24242`       | Blobs stored on mediaservers    | [Blossom][blossom]                     |
 | `27235`       | HTTP Auth                       | [98](98.md)                            |
+| `28934`       | Join Request                    | [43](43.md)                            |
+| `28935`       | Invite Request                  | [43](43.md)                            |
+| `28936`       | Leave Request                   | [43](43.md)                            |
 | `30000`       | Follow sets                     | [51](51.md)                            |
 | `30001`       | Generic lists                   | 51 (deprecated)                        |
 | `30002`       | Relay sets                      | [51](51.md)                            |
