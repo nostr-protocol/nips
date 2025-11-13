@@ -62,7 +62,8 @@ Voice messages can be published in two modes:
     ["p", "<recipient_pubkey_2>"],
     ["encrypted", "true"],
     ["encryption", "nip44"],
-    ["imeta", "duration 45"]  // Public metadata (optional)
+    ["imeta", "duration 45"],  // Public metadata (optional)
+    ["expiration", "1752600000"]  // NIP-40: Optional expiration timestamp
   ]
 }
 ```
@@ -96,6 +97,7 @@ Voice messages can be published in two modes:
    - `["encrypted", "true"]` to indicate encryption
    - `["encryption", "nip44"]` or `["encryption", "nip04"]` to specify method
    - Public metadata tags (duration, etc.) MAY be included for preview
+   - `["expiration", "<unix_timestamp>"]` MAY be included for NIP-40 expiration support
 
 ### Decryption Process
 
@@ -175,7 +177,8 @@ The audio file itself can be stored in two ways:
     ["p", "recipient_pubkey"],
     ["encrypted", "true"],
     ["encryption", "nip44"],
-    ["imeta", "duration 45"]
+    ["imeta", "duration 45"],
+    ["expiration", "1752600000"]  // NIP-40: Optional expiration timestamp
   ],
   "id": "...",
   "sig": "..."
@@ -195,7 +198,8 @@ The audio file itself can be stored in two ways:
     ["p", "recipient2_pubkey"],
     ["encrypted", "true"],
     ["encryption", "nip44"],
-    ["imeta", "duration 45"]
+    ["imeta", "duration 45"],
+    ["expiration", "1752600000"]  // NIP-40: Optional expiration timestamp
   ],
   "id": "...",
   "sig": "..."

@@ -219,6 +219,8 @@ Satellites (24)
 | 30502 | Permit Attestation | Oracle | Expert signature |
 | 30503 | Permit Credential | Oracle | W3C Verifiable Credential |
 | 30800 | DID Document | NIP-101 | Decentralized identity |
+| 10000 | Analytics | [10000-analytics-extension.md](10000-analytics-extension.md) | User analytics events (decentralized, unencrypted) |
+| 10001 | Encrypted Analytics | [10001-encrypted-analytics-extension.md](10001-encrypted-analytics-extension.md) | Encrypted user analytics events (private navigation history, NIP-44, two approaches: direct encryption or IPFS+CID) |
 | 21 | Video (Normal) | NIP-71 + IPFS | Normal videos (landscape, longer) |
 | 22 | Video (Short) | NIP-71 + IPFS | Short videos (portrait, < 60s) |
 
