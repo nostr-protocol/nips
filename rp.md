@@ -35,6 +35,7 @@ The following tags are used across the different kinds defined by this NIP:
 - `party_size`: number of people in the reservation.
 - `time`: inclusive reservation start Unix timestamp in seconds.
 - `tzid`: time zone of the reservation `time`, `earliest_time`, and `latest_time` Unix timestamps, as defined by the IANA Time Zone Database. e.g., `America/Costa_Rica`.
+- `duration`: duration of the reservation in seconds.
 - `name`: name of the requestor for the reservation.
 - `phone`: phone number of the requestor for the reservation.
 - `email`: email of the requestor for the reservation.
@@ -56,6 +57,7 @@ The following tags are used across the different kinds defined by this NIP:
     ["party_size", "<integer between 1 and 20>"],
     ["time", "<unix timestamp in seconds>"],
     ["tzid", "<IANA Time Zone Database identifier>"],
+    ["duration", <optional duration of reservation in seconds>"],
     ["name", "<optional string, max 200 chars>"],
     ["phone", "<optional string, max 64 chars>"],
     ["email", "<optional email>"],
@@ -63,7 +65,7 @@ The following tags are used across the different kinds defined by this NIP:
     ["latest_time", "<optional unix timestamp in seconds>"]
   ],
   "content": "<reservation request message in plain text>"
-  // Note: No signature field - this is an unsigned rumor
+  # Note: No signature field - this is an unsigned rumor
 }
 ```
 
@@ -84,10 +86,11 @@ The following tags are used across the different kinds defined by this NIP:
     ["status", "<confirmed|declined|cancelled>"],
     ["time", "<unix timestamp in seconds>"],
     ["tzid", "<IANA Time Zone Database identifier>"],
-    // Additional tags MAY be included
+    ["duration", <optional duration of reservation in seconds>"]
+    # Additional tags MAY be included
   ],
   "content": "<reservation response message in plain text>"
-  // Note: No signature field - this is an unsigned rumor
+  # Note: No signature field - this is an unsigned rumor
 }
 ```
 
@@ -108,12 +111,13 @@ The following tags are used across the different kinds defined by this NIP:
     ["party_size", "<integer between 1 and 20>"],
     ["time", "<unix timestamp in seconds>"],
     ["tzid", "<IANA Time Zone Database identifier>"],
+    ["duration", <optional duration of reservation in seconds>"],
     ["name", "<optional string, max 200 chars>"],
     ["phone", "<optional string, max 64 chars>"],
     ["email", "<optional email>"],
     ["earliest_time", "<optional unix timestamp in seconds>"],
     ["latest_time", "<optional unix timestamp in seconds>"]
-    // Additional tags MAY be included
+    # Additional tags MAY be included
   ],
   "content": "<reservation modification request message in plain text>"
   // Note: No signature field - this is an unsigned rumor
@@ -137,10 +141,11 @@ The following tags are used across the different kinds defined by this NIP:
     ["status", "<confirmed|declined|cancelled>"],
     ["time", "<unix timestamp in seconds>"],
     ["tzid", "<IANA Time Zone Database identifier>"],
-    // Additional tags MAY be included
+    ["duration", <optional duration of reservation in seconds>"],
+    # Additional tags MAY be included
   ],
   "content": "<creservation modification response message in plain text>"
-  // Note: No signature field - this is an unsigned rumor
+  # Note: No signature field - this is an unsigned rumor
 }
 ```
 ## Protocol Flow
@@ -224,7 +229,7 @@ The event is intended as a business transaction attestation token that the custo
     ["e", "<unsigned-9901-rumor.id>", "", "root"], # connects message to reservation thread
     ["time", "<unix timestamp in seconds>"],
     ["tzid", "<IANA Time Zone Database identifier>"],
-    ["qts_labels", "label1, label2, label3, ..., labelN"] # comma separated list of labels
+    ["qts_labels", "label1, label2, ..., labelN"] # comma separated list of labels
     
   ],
   "content": "<content-in-plain-text>",
@@ -251,10 +256,10 @@ When in conflict, the NIP-99 market specification addendum takes precedence over
   "tags": [
     ["d", "p:<businessPublicKey>"],
     ["rating", "<0 or 1>", "thumb"],  # Primary rating, 0 for thumbs down and 1 for thumbs up
-    // Optional rating categories
+    # Optional rating categories
     ["rating", "0.8", <label1-from-qts-labels-field-in-transaction-attestation-event], # rating between 0 and 1 with one decimal point.
-    ["rating", "1.0", <label1-from-qts-labels-field-in-transaction-attestation-event], # rating between 0 and 1 with one decimal point
-    ["rating", "0.6", <label1-from-qts-labels-field-in-transaction-attestation-event], # rating between 0 and 1 with one decimal point
+    ["rating", "1.0", <label2-from-qts-labels-field-in-transaction-attestation-event], # rating between 0 and 1 with one decimal point
+    ["rating", "0.6", <labelN-from-qts-labels-field-in-transaction-attestation-event], # rating between 0 and 1 with one decimal point
     # Add more labels as specified by the kind:9905 event.
     ["e", "<unsigned-9901-rumor.id>", "", "root"], # connects message to reservation thread
     ["verified", "<base64-encoded-transaction-attestation-event-kind-9905>"] 
