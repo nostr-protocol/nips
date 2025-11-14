@@ -105,6 +105,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-A0: Voice Messages](A0.md)
 - [NIP-B0: Web Bookmarks](B0.md)
 - [NIP-B7: Blossom](B7.md)
+- [NIP-BE: Nostr BLE Communications Protocol](BE.md)
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
 - [NIP-EE: E2EE Messaging using MLS Protocol](EE.md)
