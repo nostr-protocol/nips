@@ -343,7 +343,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md), [22](22.md)              |
 | `P`               | pubkey (hex)                         | --                              | [22](22.md), [57](57.md)                           |
 | `q`               | event id (hex)                       | relay URL, pubkey (hex)         | [18](18.md)                                        |
-| `r`               | a reference (URL, etc)               | --                              | [24](24.md), [25](25.md)                           |
+| `r`               | a reference (URL, etc)               | --                              | [24](24.md), [25](25.md), [xx](xx.md)                           |
 | `r`               | relay url                            | marker                          | [65](65.md)                                        |
 | `s`               | status                               | --                              | [69](69.md)                                        |
 | `t`               | hashtag                              | --                              | [24](24.md), [34](34.md), [35](35.md)              |
