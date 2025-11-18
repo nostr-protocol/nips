@@ -212,6 +212,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10051`       | KeyPackage Relays List          | [EE](EE.md)                            |
 | `10063`       | User server list                | [Blossom][blossom]                     |
 | `10096`       | File storage server list        | [96](96.md) (deprecated)               |
+| `10133`       | Payment Targets                 | [A3](A3.md)                            |
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
 | `10312`       | Room Presence                   | [53](53.md)                            |
 | `10377`       | Proxy Announcement              | [Nostr Epoxy][nostr-epoxy]             |
