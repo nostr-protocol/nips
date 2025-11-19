@@ -36,9 +36,9 @@ The following tags are used across the different kinds defined by this NIP:
 - `time`: inclusive reservation start Unix timestamp in seconds.
 - `tzid`: time zone of the reservation `time`, `earliest_time`, and `latest_time` Unix timestamps, as defined by the IANA Time Zone Database. e.g., `America/Costa_Rica`.
 - `duration`: duration of the reservation in seconds.
-- `name`: name of the requestor for the reservation.
-- `phone`: phone number of the requestor for the reservation.
-- `email`: email of the requestor for the reservation.
+- `name`: reservation holder.
+- `phone`: phone number for the reservation holder.
+- `email`: email for the reservation holder.
 - `earliest_time`: earliest start time Unix timestamp that the requestor would accept for the reservation.
 - `latest_time`: earliest time that the requestor would accept for the reservation.
 - `status`: status of the reservation as one of the following values `confirmed`, `declined`, or `cancelled`.
@@ -57,10 +57,10 @@ The following tags are used across the different kinds defined by this NIP:
     ["party_size", "<integer between 1 and 20>"],
     ["time", "<unix timestamp in seconds>"],
     ["tzid", "<IANA Time Zone Database identifier>"],
+    ["name", "<string, max 200 chars>"],
+    ["telephone", "<optional string, 'tel:' URI as per RFC 3966>"], # one of email or telephone must be included 
+    ["email", "<optional string, 'mailto:' URI as per RFC 6068>"],  # one of email or telephone must be included
     ["duration", <optional duration of reservation in seconds>"],
-    ["name", "<optional string, max 200 chars>"],
-    ["phone", "<optional string, max 64 chars>"],
-    ["email", "<optional email>"],
     ["earliest_time", "<optional unix timestamp in seconds>"],
     ["latest_time", "<optional unix timestamp in seconds>"]
   ],
@@ -86,7 +86,7 @@ The following tags are used across the different kinds defined by this NIP:
     ["status", "<confirmed|declined|cancelled>"],
     ["time", "<unix timestamp in seconds>"],
     ["tzid", "<IANA Time Zone Database identifier>"],
-    ["duration", <optional duration of reservation in seconds>"]
+    ["duration", <optional duration of reservation in seconds>"],
     # Additional tags MAY be included
   ],
   "content": "<reservation response message in plain text>"
@@ -110,17 +110,17 @@ The following tags are used across the different kinds defined by this NIP:
     ["e", "<unsigned-9901-rumor.id>", "", "root"], # connects message to reservation thread
     ["party_size", "<integer between 1 and 20>"],
     ["time", "<unix timestamp in seconds>"],
-    ["tzid", "<IANA Time Zone Database identifier>"],
+    ["tzid", "<IANA Time Zone Database identifier>"], 
+    ["name", "<optional string, max 200 chars>"],           
+    ["telephone", "<optional string, 'tel:' URI as per RFC 3966>"],  # must be included if present in reservation.request
+    ["email", "<optional string, 'mailto:' URI as per RFC 6068>"],   # must be included if present in reservation.request
     ["duration", <optional duration of reservation in seconds>"],
-    ["name", "<optional string, max 200 chars>"],
-    ["phone", "<optional string, max 64 chars>"],
-    ["email", "<optional email>"],
     ["earliest_time", "<optional unix timestamp in seconds>"],
     ["latest_time", "<optional unix timestamp in seconds>"]
     # Additional tags MAY be included
   ],
   "content": "<reservation modification request message in plain text>"
-  // Note: No signature field - this is an unsigned rumor
+  # Note: No signature field - this is an unsigned rumor
 }
 ```
 
@@ -183,14 +183,14 @@ The following tags are used across the different kinds defined by this NIP:
 
 ## Business Discovery 
 
-Businesses MUST advertise their capability to handle reservation messages by including in their `kind:0` profile event a NIP-32 label `reservations` within the namespace `com.synvya.merchant`.
+Businesses MUST advertise their support for the Reservation Protocol using an external content id tag for NIP-RP compliant with NIP-73. The value `rp` may be changed in the future for a number once a number is assigned to this NIP.
 
 ```yaml
 {
   "kind": 0,
   "tags": [
-    ["L", "com.synvya.merchant"],
-    ["l", "reservations", "com.synvya.merchant"],
+    ["i", "rp", "https://github.com/nostr-protocol/nips/blob/master/rp.md"],
+    ["k", "nip"],
     // additional tags
   ],
   // other fields...
@@ -232,7 +232,7 @@ The event is intended as a business transaction attestation token that the custo
     ["qts_labels", "label1, label2, ..., labelN"] # comma separated list of labels
     
   ],
-  "content": "<content-in-plain-text>",
+  "content": "",
   "sig": "<signed by businessPrivateKey>"
 }
 ```
