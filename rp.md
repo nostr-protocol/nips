@@ -36,12 +36,13 @@ The following tags are used across the different kinds defined by this NIP:
 - `time`: inclusive reservation start Unix timestamp in seconds.
 - `tzid`: time zone of the reservation `time`, `earliest_time`, and `latest_time` Unix timestamps, as defined by the IANA Time Zone Database. e.g., `America/Costa_Rica`.
 - `duration`: duration of the reservation in seconds.
-- `name`: reservation holder.
+- `name`: reservation holder. May be different from the party initiating the reservation flow.
 - `phone`: phone number for the reservation holder.
 - `email`: email for the reservation holder.
 - `earliest_time`: earliest start time Unix timestamp that the requestor would accept for the reservation.
 - `latest_time`: earliest time that the requestor would accept for the reservation.
 - `status`: status of the reservation as one of the following values `confirmed`, `declined`, or `cancelled`.
+- `broker`: set to `True` if the party initiating the reservation flow is not the reservation holder
 
 ### Reservation Request - Kind:9901
 
@@ -49,7 +50,7 @@ The following tags are used across the different kinds defined by this NIP:
 ```yaml
 {
   "id": "<32-byte hex of unsigned event hash>", # the thread id to be used by all other messages for this reservation
-  "pubkey": "<senderPublicKey>",
+  "pubkey": "<senderPublicKey>", # may be reservation holder or a broker acting on behalf of reservation holder
   "created_at": <unix timestamp in seconds>,
   "kind": 9901,
   "tags": [
@@ -60,9 +61,10 @@ The following tags are used across the different kinds defined by this NIP:
     ["name", "<string, max 200 chars>"],
     ["telephone", "<optional string, 'tel:' URI as per RFC 3966>"], # one of email or telephone must be included 
     ["email", "<optional string, 'mailto:' URI as per RFC 6068>"],  # one of email or telephone must be included
-    ["duration", <optional duration of reservation in seconds>"],
+    ["duration", <optional, duration of reservation in seconds>"],
     ["earliest_time", "<optional unix timestamp in seconds>"],
-    ["latest_time", "<optional unix timestamp in seconds>"]
+    ["latest_time", "<optional unix timestamp in seconds>"],
+    ["broker", "<optional boolean, `True` | 'False'>"] 
   ],
   "content": "<reservation request message in plain text>"
   # Note: No signature field - this is an unsigned rumor
@@ -86,7 +88,7 @@ The following tags are used across the different kinds defined by this NIP:
     ["status", "<confirmed|declined|cancelled>"],
     ["time", "<unix timestamp in seconds>"],
     ["tzid", "<IANA Time Zone Database identifier>"],
-    ["duration", <optional duration of reservation in seconds>"],
+    ["duration", <duration of reservation in seconds>"],
     # Additional tags MAY be included
   ],
   "content": "<reservation response message in plain text>"
@@ -114,7 +116,7 @@ The following tags are used across the different kinds defined by this NIP:
     ["name", "<optional string, max 200 chars>"],           
     ["telephone", "<optional string, 'tel:' URI as per RFC 3966>"],  # must be included if present in reservation.request
     ["email", "<optional string, 'mailto:' URI as per RFC 6068>"],   # must be included if present in reservation.request
-    ["duration", <optional duration of reservation in seconds>"],
+    ["duration", <optional, duration of reservation in seconds>"],
     ["earliest_time", "<optional unix timestamp in seconds>"],
     ["latest_time", "<optional unix timestamp in seconds>"]
     # Additional tags MAY be included
@@ -141,10 +143,10 @@ The following tags are used across the different kinds defined by this NIP:
     ["status", "<confirmed|declined|cancelled>"],
     ["time", "<unix timestamp in seconds>"],
     ["tzid", "<IANA Time Zone Database identifier>"],
-    ["duration", <optional duration of reservation in seconds>"],
+    ["duration", <duration of reservation in seconds>"],
     # Additional tags MAY be included
   ],
-  "content": "<creservation modification response message in plain text>"
+  "content": "<reservation modification response message in plain text>"
   # Note: No signature field - this is an unsigned rumor
 }
 ```
@@ -206,6 +208,7 @@ Once a reservation is fulfilled, for example when the restaurant check is closed
 - It's created before the review is written
 - Does not endorse the content of the review
 
+Businesses MUST only issue a token if the `reservation.request` - `kind:9901` message had no `broker` tag or the tag was set to `False`. A token MUST never be issued for a reservation when the `broker` tag is set to `True`.
 
 The verified business review follows the [QTS guidelines](https://habla.news/u/arkinox@arkinox.tech/DLAfzJJpQDS4vj3wSleum) with labels specified by the business to ensure review uniformity regardless of the application used by the customer to issue the review. 
 
