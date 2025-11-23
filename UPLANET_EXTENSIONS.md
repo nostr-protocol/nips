@@ -17,6 +17,7 @@ Official Nostr Protocol Extensions for the UPlanet/Astroport.ONE Ecosystem
 ### Core Systems
 - **Identity & DIDs:** [NIP-101](101.md) + [42-twin-key-extension.md](42-twin-key-extension.md)
 - **Oracle Permits:** [42-oracle-permits-extension.md](42-oracle-permits-extension.md)
+- **Oracle Badges:** [58-oracle-badges-extension.md](58-oracle-badges-extension.md) - Gamification NIP-58
 - **Relay Sync:** [101-n2-constellation-sync-extension.md](101-n2-constellation-sync-extension.md)
 
 ### File & Media Management
@@ -37,7 +38,7 @@ Official Nostr Protocol Extensions for the UPlanet/Astroport.ONE Ecosystem
 
 ## 📚 Complete Documentation
 
-This repository contains **8 official extensions** to the Nostr protocol for the UPlanet/Astroport.ONE ecosystem.
+This repository contains **9 official extensions** to the Nostr protocol for the UPlanet/Astroport.ONE ecosystem.
 
 ### 🎯 Overview
 
@@ -47,6 +48,7 @@ UPlanet extends Nostr with:
 - 📁 **IPFS Integration** - Content-addressed file storage
 - 🌐 **Provenance Tracking** - File attribution and deduplication
 - 🎫 **Peer-Validated Credentials** - Oracle system for competence verification
+- 🏅 **Badge Gamification** - NIP-58 badges for visual competence representation
 - 🔄 **N² Synchronization** - Mesh network of relays for resilience
 - 🌱 **Environmental Registry** - ORE (Ecological Real Obligations) system
 - 💬 **Geographic Chat Rooms** - UMAP-based location discussion channels
@@ -66,7 +68,7 @@ UPlanet extends Nostr with:
 - **[NIP-101 N² Constellation Sync Extension](101-n2-constellation-sync-extension.md)** - Astroport Relay Synchronization
   - **Extends:** NIP-101 (UPlanet Identity & Geographic Coordination)
   - **Architecture:** Hub (1) + Satellites (24) = N² synchronization matrix (600 sync paths)
-  - **Synchronized kinds:** 18 event types (0,1,3,5,6,7,21,22,30023,30024,30312,30313,30500,30501,30502,30503,30800)
+  - **Synchronized kinds:** 21 event types (0,1,3,5,6,7,8,21,22,30008,30009,30023,30024,30312,30313,30500,30501,30502,30503,30800)
   - **Innovation:** Automatic peer discovery + bidirectional sync + geographic hierarchical coordination
   - **Topology:** Hub-and-satellite with mesh network capabilities
   - **Resilience:** 25x event replication across constellation (zero data loss even if 24 relays fail)
@@ -88,6 +90,14 @@ UPlanet extends Nostr with:
   - **Flow:** Define permit → Request → N attestations → Auto-issue W3C VC → Add to DID
   - **Examples:** `PERMIT_ORE_V1` (5 sigs), `PERMIT_DRIVER` (12 sigs, WoT insurance mutual)
   - **Integration:** Enhanced NIP-42 auth with `permit` and `credential_id` tags
+
+- **[NIP-58 Oracle Badges Extension](58-oracle-badges-extension.md)** - Gamification of Competence Certification
+  - **Extends:** NIP-58 (Badges)
+  - **Kinds:** 30009 (badge definitions), 8 (badge awards), 30008 (profile badges)
+  - **Innovation:** Automatic badge emission when Oracle credentials (30503) are issued
+  - **Flow:** Credential issued → Badge definition created → Badge award emitted → Visible in profiles
+  - **Features:** Visual representation of validated competencies, WoTx2 level badges, ORE achievement badges
+  - **Integration:** Displayed in `/oracle`, `/wotx2`, `/plantnet` interfaces
 
 ### 📁 File Storage & Media Extensions
 
@@ -188,6 +198,7 @@ Satellites (24)
 |---------|-------------|-------------------|---------|--------|
 | **Authentication** | NIP-42 | [42-twin-key-extension.md](42-twin-key-extension.md) | 22242 | ✅ Production |
 | **Oracle Permits** | NIP-42 | [42-oracle-permits-extension.md](42-oracle-permits-extension.md) | 30500-30503 | ✅ Production |
+| **Oracle Badges** | NIP-58 | [58-oracle-badges-extension.md](58-oracle-badges-extension.md) | 30009, 8, 30008 | ✅ Production |
 | **File Metadata** | NIP-94 | [94-provenance-extension.md](94-provenance-extension.md) | 1063 | ✅ Production |
 | **File Storage** | NIP-96 | [96-ipfs-extension.md](96-ipfs-extension.md) | - (HTTP API) | ✅ Production |
 | **Video Events** | NIP-71 | [71-extension.md](71-extension.md) | 21, 22 | ✅ Production |
@@ -219,8 +230,8 @@ Satellites (24)
 | 30502 | Permit Attestation | Oracle | Expert signature |
 | 30503 | Permit Credential | Oracle | W3C Verifiable Credential |
 | 30800 | DID Document | NIP-101 | Decentralized identity |
-| 10000 | Analytics | [10000-analytics-extension.md](10000-analytics-extension.md) | User analytics events (decentralized, unencrypted) |
-| 10001 | Encrypted Analytics | [10001-encrypted-analytics-extension.md](10001-encrypted-analytics-extension.md) | Encrypted user analytics events (private navigation history, NIP-44, two approaches: direct encryption or IPFS+CID) |
+| 10000 | Analytics | [10000-analytics-extension.md](10000-analytics-extension.md) | User analytics events (decentralized, supports both encrypted and unencrypted via content/tags) |
+| 10001 | ~~Encrypted Analytics~~ (Deprecated) | [10001-encrypted-analytics-extension.md](10001-encrypted-analytics-extension.md) | **DEPRECATED**: Now reserved for NIP-51 playlists (pin list). Use kind 10000 for encrypted analytics. |
 | 21 | Video (Normal) | NIP-71 + IPFS | Normal videos (landscape, longer) |
 | 22 | Video (Short) | NIP-71 + IPFS | Short videos (portrait, < 60s) |
 
@@ -272,6 +283,7 @@ Eve becomes environmental verifier:
 - Requests PERMIT_ORE_V1 (kind 30501)
 - 5 experts attest her competence (kind 30502)
 - Oracle issues VC (kind 30503)
+- Badge NIP-58 automatically emitted (kind 30009 + kind 8)
 - Credential added to Eve's DID (kind 30800)
 - Eve receives 10 Ẑen reward
 

@@ -74,6 +74,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-56: Reporting](56.md)
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
+  - [NIP-58 Oracle Badges Extension](58-oracle-badges-extension.md) - UPlanet Oracle System integration
 - [NIP-59: Gift Wrap](59.md)
 - [NIP-60: Cashu Wallet](60.md)
 - [NIP-61: Nutzaps](61.md)
@@ -121,7 +122,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `5`           | Event Deletion Request          | [09](09.md)                            |
 | `6`           | Repost                          | [18](18.md)                            |
 | `7`           | Reaction                        | [25](25.md)                            |
-| `8`           | Badge Award                     | [58](58.md)                            |
+| `8`           | Badge Award                     | [58](58.md), [58-oracle](58-oracle-badges-extension.md) |
 | `9`           | Chat Message                    | [C7](C7.md)                            |
 | `10`          | Group Chat Threaded Reply       | 29 (deprecated)                        |
 | `11`          | Thread                          | [7D](7D.md)                            |
@@ -236,8 +237,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30004`       | Curation sets                   | [51](51.md)                            |
 | `30005`       | Video sets                      | [51](51.md)                            |
 | `30007`       | Kind mute sets                  | [51](51.md)                            |
-| `30008`       | Profile Badges                  | [58](58.md)                            |
-| `30009`       | Badge Definition                | [58](58.md)                            |
+| `30008`       | Profile Badges                  | [58](58.md), [58-oracle](58-oracle-badges-extension.md) |
+| `30009`       | Badge Definition                | [58](58.md), [58-oracle](58-oracle-badges-extension.md) |
 | `30015`       | Interest sets                   | [51](51.md)                            |
 | `30017`       | Create or update a stall        | [15](15.md)                            |
 | `30018`       | Create or update a product      | [15](15.md)                            |

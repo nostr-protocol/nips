@@ -4,6 +4,8 @@
 
 This NIP defines a standardized event kind (`kind: 10000`) for sending analytics data as NOSTR events. This allows analytics to be stored on decentralized NOSTR relays instead of centralized servers, providing users with control over their data and enabling queryable, verifiable analytics.
 
+**Both encrypted and unencrypted analytics use the same kind 10000.** The encryption status is determined by the content field and tags. Encrypted analytics have encrypted content (NIP-44) and may include `["t", "encrypted"]` tag.
+
 ## Motivation
 
 Traditional analytics systems rely on centralized servers that collect user data without user control. By using NOSTR events for analytics:
@@ -189,4 +191,5 @@ Analytics events can be queried using standard NOSTR filters:
 - [NIP-40](40.md): Expiration Timestamp
 - [NIP-101](101.md): DID Document
 - [UPLANET_EXTENSIONS.md](UPLANET_EXTENSIONS.md): UPlanet NIP Extensions Overview
+
 

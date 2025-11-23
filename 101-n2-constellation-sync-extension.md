@@ -10,7 +10,7 @@ This document describes the **N² (N-squared) constellation synchronization prot
 
 ## Overview
 
-The N² protocol extends [NIP-101](101.md) with a **peer-to-peer relay synchronization mechanism** that creates a "constellation" of interconnected Astroport nodes. Each relay automatically syncs **18 specific event kinds** across the network, ensuring data redundancy and censorship resistance.
+The N² protocol extends [NIP-101](101.md) with a **peer-to-peer relay synchronization mechanism** that creates a "constellation" of interconnected Astroport nodes. Each relay automatically syncs **21 specific event kinds** (including NIP-58 badges) across the network, ensuring data redundancy and censorship resistance.
 
 ## Motivation
 
@@ -115,7 +115,7 @@ Each Astroport node maintains a constellation registry:
       "umap": "43.60,1.44"
     }
   ],
-  "sync_event_kinds": [0, 1, 3, 5, 6, 7, 21, 22, 30023, 30024, 30312, 30313, 30500, 30501, 30502, 30503, 30800]
+  "sync_event_kinds": [0, 1, 3, 5, 6, 7, 8, 21, 22, 30008, 30009, 30023, 30024, 30312, 30313, 30500, 30501, 30502, 30503, 30800]
 }
 ```
 
@@ -199,7 +199,7 @@ Location: `~/.zen/tmp/${IPFSNODEID}/constellation.json`
     }
   ],
   "sync_config": {
-    "event_kinds": [0, 1, 3, 5, 6, 7, 21, 22, 30023, 30024, 30312, 30313, 30500, 30501, 30502, 30503, 30800],
+    "event_kinds": [0, 1, 3, 5, 6, 7, 8, 21, 22, 30008, 30009, 30023, 30024, 30312, 30313, 30500, 30501, 30502, 30503, 30800],
     "sync_interval": 900,
     "retry_attempts": 3,
     "retry_backoff": "exponential"
