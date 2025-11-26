@@ -109,6 +109,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
 - [NIP-EE: E2EE Messaging using MLS Protocol](EE.md)
+- [NIP-XXX: Encrypted Binary Attachments | DRAFT](nip-xxx-binary-attachments.md)
 
 ## Event Kinds
 | kind          | description                     | NIP                                    |
