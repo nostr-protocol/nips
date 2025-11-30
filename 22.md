@@ -1,0 +1,200 @@
+NIP-22
+======
+
+Comment
+-------
+
+`draft` `optional`
+
+A comment is a threading note always scoped to a root event or an [`I`-tag](73.md).
+
+It uses `kind:1111` with plaintext `.content` (no HTML, Markdown, or other formatting).
+
+Comments MUST point to the root scope using uppercase tag names (e.g. `K`, `E`, `A` or `I`)
+and MUST point to the parent item with lowercase ones (e.g. `k`, `e`, `a` or `i`).
+
+Comments MUST point to the authors when one is available (i.e. tagging a nostr event). `P` for the root scope
+and `p` for the author of the parent item.
+
+```jsonc
+{
+  "kind": 1111,
+  "content": "<comment>",
+  "tags": [
+    // root scope: event addresses, event ids, or I-tags.
+    ["<A, E, I>", "<address, id or I-value>", "<relay or web page hint>", "<root event's pubkey, if an E tag>"],
+    // the root item kind
+    ["K", "<root kind>"],
+
+    // pubkey of the author of the root scope event
+    ["P", "<root-pubkey>", "relay-url-hint"],
+
+    // parent item: event addresses, event ids, or i-tags.
+    ["<a, e, i>", "<address, id or i-value>", "<relay or web page hint>", "<parent event's pubkey, if an e tag>"],
+    // parent item kind
+    ["k", "<parent comment kind>"],
+
+    // parent item pubkey
+    ["p", "<parent-pubkey>", "relay-url-hint"]
+  ]
+  // other fields
+}
+```
+
+Tags `K` and `k` MUST be present to define the event kind of the root and the parent items.
+
+`I` and `i` tags create scopes for hashtags, geohashes, URLs, and other external identifiers.
+
+The possible values for `i` tags – and `k` tags, when related to an external identity – are listed on [NIP-73](73.md).
+Their uppercase versions use the same type of values but relate to the root item instead of the parent one.
+
+`q` tags MAY be used when citing events in the `.content` with [NIP-21](21.md).
+
+```json
+["q", "<event-id> or <event-address>", "<relay-url>", "<pubkey-if-a-regular-event>"]
+```
+
+`p` tags SHOULD be used when mentioning pubkeys in the `.content` with [NIP-21](21.md).
+
+Comments MUST NOT be used to reply to kind 1 notes. [NIP-10](10.md) should instead be followed.
+
+## Examples
+
+A comment on a blog post looks like this:
+
+```jsonc
+{
+  "kind": 1111,
+  "content": "Great blog post!",
+  "tags": [
+    // top-level comments scope to event addresses or ids
+    ["A", "30023:3c9849383bdea883b0bd16fece1ed36d37e37cdde3ce43b17ea4e9192ec11289:f9347ca7", "wss://example.relay"],
+    // the root kind
+    ["K", "30023"],
+    // author of root event
+    ["P", "3c9849383bdea883b0bd16fece1ed36d37e37cdde3ce43b17ea4e9192ec11289", "wss://example.relay"]
+
+    // the parent event address (same as root for top-level comments)
+    ["a", "30023:3c9849383bdea883b0bd16fece1ed36d37e37cdde3ce43b17ea4e9192ec11289:f9347ca7", "wss://example.relay"],
+    // when the parent event is replaceable or addressable, also include an `e` tag referencing its id
+    ["e", "5b4fc7fed15672fefe65d2426f67197b71ccc82aa0cc8a9e94f683eb78e07651", "wss://example.relay"],
+    // the parent event kind
+    ["k", "30023"],
+    // author of the parent event
+    ["p", "3c9849383bdea883b0bd16fece1ed36d37e37cdde3ce43b17ea4e9192ec11289", "wss://example.relay"]
+  ]
+  // other fields
+}
+```
+
+A comment on a [NIP-94](94.md) file looks like this:
+
+```jsonc
+{
+  "kind": 1111,
+  "content": "Great file!",
+  "tags": [
+    // top-level comments have the same scope and reply to addresses or ids
+    ["E", "768ac8720cdeb59227cf95e98b66560ef03d8bc9a90d721779e76e68fb42f5e6", "wss://example.relay", "3721e07b079525289877c366ccab47112bdff3d1b44758ca333feb2dbbbbe5bb"],
+    // the root kind
+    ["K", "1063"],
+    // author of the root event
+    ["P", "3721e07b079525289877c366ccab47112bdff3d1b44758ca333feb2dbbbbe5bb"],
+
+    // the parent event id (same as root for top-level comments)
+    ["e", "768ac8720cdeb59227cf95e98b66560ef03d8bc9a90d721779e76e68fb42f5e6", "wss://example.relay", "3721e07b079525289877c366ccab47112bdff3d1b44758ca333feb2dbbbbe5bb"],
+    // the parent kind
+    ["k", "1063"],
+    ["p", "3721e07b079525289877c366ccab47112bdff3d1b44758ca333feb2dbbbbe5bb"]
+  ]
+  // other fields
+}
+```
+
+A reply to a comment looks like this:
+
+```jsonc
+{
+  "kind": 1111,
+  "content": "This is a reply to \"Great file!\"",
+  "tags": [
+    // nip-94 file event id
+    ["E", "768ac8720cdeb59227cf95e98b66560ef03d8bc9a90d721779e76e68fb42f5e6", "wss://example.relay", "fd913cd6fa9edb8405750cd02a8bbe16e158b8676c0e69fdc27436cc4a54cc9a"],
+    // the root kind
+    ["K", "1063"],
+    ["P", "fd913cd6fa9edb8405750cd02a8bbe16e158b8676c0e69fdc27436cc4a54cc9a"],
+
+    // the parent event
+    ["e", "5c83da77af1dec6d7289834998ad7aafbd9e2191396d75ec3cc27f5a77226f36", "wss://example.relay", "93ef2ebaaf9554661f33e79949007900bbc535d239a4c801c33a4d67d3e7f546"],
+    // the parent kind
+    ["k", "1111"],
+    ["p", "93ef2ebaaf9554661f33e79949007900bbc535d239a4c801c33a4d67d3e7f546"]
+  ]
+  // other fields
+}
+```
+
+A comment on a website's url looks like this:
+
+```jsonc
+{
+  "kind": 1111,
+  "content": "Nice article!",
+  "tags": [
+    // referencing the root url
+    ["I", "https://abc.com/articles/1"],
+    // the root "kind": for an url
+    ["K", "web"],
+
+    // the parent reference (same as root for top-level comments)
+    ["i", "https://abc.com/articles/1"],
+    // the parent "kind": for an url
+    ["k", "web"]
+  ]
+  // other fields
+}
+```
+
+A podcast comment example:
+
+```jsonc
+{
+  "id": "80c48d992a38f9c445b943a9c9f1010b396676013443765750431a9004bdac05",
+  "pubkey": "252f10c83610ebca1a059c0bae8255eba2f95be4d1d7bcfa89d7248a82d9f111",
+  "kind": 1111,
+  "content": "This was a great episode!",
+  "tags": [
+    // podcast episode reference
+    ["I", "podcast:item:guid:d98d189b-dc7b-45b1-8720-d4b98690f31f", "https://fountain.fm/episode/z1y9TMQRuqXl2awyrQxg"],
+    // podcast episode type
+    ["K", "podcast:item:guid"],
+
+    // same value as "I" tag above, because it is a top-level comment (not a reply to a comment)
+    ["i", "podcast:item:guid:d98d189b-dc7b-45b1-8720-d4b98690f31f", "https://fountain.fm/episode/z1y9TMQRuqXl2awyrQxg"],
+    ["k", "podcast:item:guid"]
+  ]
+  // other fields
+}
+```
+
+A reply to a podcast comment:
+
+```jsonc
+{
+  "kind": 1111,
+  "content": "I'm replying to the above comment.",
+  "tags": [
+    // podcast episode reference
+    ["I", "podcast:item:guid:d98d189b-dc7b-45b1-8720-d4b98690f31f", "https://fountain.fm/episode/z1y9TMQRuqXl2awyrQxg"],
+    // podcast episode type
+    ["K", "podcast:item:guid"],
+
+    // this is a reference to the above comment
+    ["e", "80c48d992a38f9c445b943a9c9f1010b396676013443765750431a9004bdac05", "wss://example.relay", "252f10c83610ebca1a059c0bae8255eba2f95be4d1d7bcfa89d7248a82d9f111"],
+    // the parent comment kind
+    ["k", "1111"]
+    ["p", "252f10c83610ebca1a059c0bae8255eba2f95be4d1d7bcfa89d7248a82d9f111"]
+  ]
+  // other fields
+}
+```

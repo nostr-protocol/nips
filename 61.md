@@ -1,0 +1,125 @@
+NIP-61
+======
+
+Nutzaps
+-------
+
+`draft` `optional`
+
+A Nutzap is a P2PK Cashu token in which the payment itself is the receipt.
+
+## High-level flow
+Alice wants to nutzap 1 sat to Bob because of an event `event-id-1` she liked.
+
+### Alice nutzaps Bob
+1. Alice fetches event `kind:10019` from Bob to see the mints Bob trusts.
+2. She mints a token at that mint (or swaps some tokens she already had in that mint) P2PK-locked to the pubkey Bob has listed in his `kind:10019`.
+3. She publishes a `kind:9321` event to the relays Bob indicated with the proofs she minted.
+
+### Bob receives the nutzap
+1. At some point, Bob's client fetches `kind:9321` events p-tagging him from his relays.
+2. Bob's client swaps the token into his wallet.
+
+## Nutzap informational event
+```jsonc
+{
+    "kind": 10019,
+    "tags": [
+        [ "relay", "wss://relay1" ],
+        [ "relay", "wss://relay2" ],
+        [ "mint", "https://mint1", "usd", "sat" ],
+        [ "mint", "https://mint2", "sat" ],
+        [ "pubkey", "<p2pk-pubkey>" ]
+    ]
+}
+```
+
+* `kind:10019` is an event that is useful for others to know how to send money to the user.
+* `relay`: relays where the user will be reading token events from. If a user wants to send money to the user, they should write to these relays.
+* `mint`: mints the user is explicitly agreeing to use to receive funds on. Clients SHOULD not send money on mints not listed here or risk burning their money. Additional markers can be used to list the supported base units of the mint.
+* `pubkey`: Public key that MUST be used to P2PK-lock receiving nutzaps -- implementations MUST NOT use the target user's main Nostr public key. This public key corresponds to the `privkey` field encrypted in a user's [nip-60](60.md) _wallet event_.
+
+### Nutzap event
+Event `kind:9321` is a nutzap event published by the sender, p-tagging the recipient. The outputs are P2PK-locked to the public key the recipient indicated in their `kind:10019` event.
+
+Clients MUST prefix the public key they P2PK-lock with `"02"` (for nostr<>cashu compatibility).
+
+```jsonc
+{
+    "kind": 9321,
+    "content": "Thanks for this great idea.",
+    "pubkey": "<sender-pubkey>",
+    "tags": [
+        [ "proof", "{\"amount\":1,\"C\":\"02277c66191736eb72fce9d975d08e3191f8f96afb73ab1eec37e4465683066d3f\",\"id\":\"000a93d6f8a1d2c4\",\"secret\":\"[\\\"P2PK\\\",{\\\"nonce\\\":\\\"b00bdd0467b0090a25bdf2d2f0d45ac4e355c482c1418350f273a04fedaaee83\\\",\\\"data\\\":\\\"02eaee8939e3565e48cc62967e2fde9d8e2a4b3ec0081f29eceff5c64ef10ac1ed\\\"}]\"}" ],
+        [ "unit", "sat" ],
+        [ "u", "https://stablenut.umint.cash" ],
+        [ "e", "<nutzapped-event-id>", "<relay-hint>" ],
+        [ "k", "<nutzapped-kind>"],
+        [ "p", "e9fbced3a42dcf551486650cc752ab354347dd413b307484e4fd1818ab53f991" ], // recipient of nutzap
+    ]
+}
+```
+
+* `.content` is an optional comment for the nutzap
+* `.tags`:
+  * `proof` is one or more proofs P2PK-locked to the public key the recipient specified in their `kind:10019` event and including a DLEQ proof.
+  * `unit` the base unit the proofs are denominated in (eg: `sat`, `usd`, `eur`). Default: `sat` if omitted.
+  * `u` is the mint the URL of the mint EXACTLY as specified by the recipient's `kind:10019`.
+  * `p` is the Nostr identity public key of nutzap recipient.
+  * `e` is the event that is being nutzapped, if any.
+
+## Sending a nutzap
+
+* The sender fetches the recipient's `kind:10019`.
+* The sender mints/swaps ecash on one of the recipient's listed mints.
+* The sender P2PK-locks to the recipient's specified public key in their `kind:10019`
+
+## Receiving nutzaps
+
+Clients should REQ for nutzaps:
+* Filtering with `#u` for mints they expect to receive ecash from.
+  * this is to prevent even interacting with mints the user hasn't explicitly signaled.
+* Filtering with `since` of the most recent `kind:7376` event the same user has created.
+  * this can be used as a marker of the nutzaps that have already been swapped by the user -- clients might choose to use other kinds of markers, including internal state -- this is just a guidance of one possible approach.
+
+`{ "kinds": [9321], "#p": ["my-pubkey"], "#u": ["<mint-1>", "<mint-2>"], "since": <latest-created_at-of-kind-7376> }`.
+
+Upon receiving a new nutzap, the client should swap the tokens into a wallet the user controls, either a [NIP-60](60.md) wallet, their own LN wallet or anything else.
+
+### Updating nutzap-redemption history
+When claiming a token the client SHOULD create a `kind:7376` event and `e` tag the original nutzap event. This is to record that this token has already been claimed (and shouldn't be attempted again) and as signaling to the recipient that the ecash has been redeemed.
+
+Multiple `kind:9321` events can be tagged in the same `kind:7376` event.
+
+```jsonc
+{
+    "kind": 7376,
+    "content": nip44_encrypt([
+        [ "direction", "in" ], // in = received, out = sent
+        [ "amount", "1" ],
+        [ "unit", "sat" ],
+        [ "e", "<7375-event-id>", "<relay-hint>", "created" ] // new token event that was created
+    ]),
+    "tags": [
+        [ "e", "<9321-event-id>", "<relay-hint>", "redeemed" ], // nutzap event that has been redeemed
+        [ "p", "<sender-pubkey>" ] // pubkey of the author of the 9321 event (nutzap sender)
+    ]
+}
+```
+
+Events that redeem a nutzap SHOULD be published to the sender's [NIP-65](65.md) "read" relays.
+
+### Verifying a Cashu Zap
+When listing or counting zaps received by any given event, observer clients SHOULD:
+
+* check that the receiving user has issued a `kind:10019` tagging the mint where the cashu has been minted.
+* check that the token is locked to the pubkey the user has listed in their `kind:10019`.
+* look at the `u` tag and check that the token is issued in one of the mints listed in the `kind:10019`.
+* locally verify the DLEQ proof of the tokens being sent.
+
+All these checks can be done offline (as long as the observer has the receiver mints' keyset and their `kind:10019` event), so the process should be reasonably fast.
+
+### Final Considerations
+1. Clients SHOULD guide their users to use NUT-11 (P2PK) and NUT-12 (DLEQ proofs) compatible-mints in their `kind:10019` event to avoid receiving nutzaps anyone can spend.
+2. Clients SHOULD normalize and deduplicate mint URLs as described in NIP-65.
+3. A nutzap event MUST include proofs in one of the mints the recipient has listed in their `kind:10019` and published to the NIP-65 relays of the recipient, failure to do so may result in the recipient donating the tokens to the mint since the recipient might never see the event.

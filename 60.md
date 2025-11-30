@@ -1,0 +1,193 @@
+NIP-60
+======
+
+Cashu Wallets
+-------------
+
+`draft` `optional`
+
+This NIP defines the operations of a cashu-based wallet.
+
+A cashu wallet is a wallet which information is stored in relays to make it accessible across applications.
+
+The purpose of this NIP is:
+* ease-of-use: new users immediately are able to receive funds without creating accounts with other services.
+* interoperability: users' wallets follows them across applications.
+
+This NIP doesn't deal with users' *receiving* money from someone else, it's just to keep state of the user's wallet.
+
+## High-level flow
+1. A user has a `kind:17375` event that represents a wallet.
+2. A user has `kind:7375` events that represent the unspent proofs of the wallet. -- The proofs are encrypted with the user's private key.
+3. A user has `kind:7376` events that represent the spending history of the wallet -- This history is for informational purposes only and is completely optional.
+
+### Wallet Event
+```javascript
+{
+    "kind": 17375,
+    "content": nip44_encrypt([
+        [ "privkey", "hexkey" ],
+        [ "mint", "https://mint1" ],
+        [ "mint", "https://mint2" ]
+    ]),
+    "tags": []
+}
+```
+
+The wallet event is an replaceable event `kind:17375`.
+
+Tags:
+* `mint` - Mint(s) this wallet uses -- there MUST be one or more mint tags.
+* `privkey` - Private key used to unlock P2PK ecash. MUST be stored encrypted in the `.content` field. **This is a different private key exclusively used for the wallet, not associated in any way to the user's Nostr private key** -- This is only used for receiving [NIP-61](61.md) nutzaps.
+
+### Token Event
+Token events are used to record unspent proofs.
+
+There can be multiple `kind:7375` events for the same mint, and multiple proofs inside each `kind:7375` event.
+
+```javascript
+{
+    "kind": 7375,
+    "content": nip44_encrypt({
+        "mint": "https://stablenut.umint.cash",
+        "unit": "sat",
+        "proofs": [
+            // one or more proofs in the default cashu format
+            {
+                "id": "005c2502034d4f12",
+                "amount": 1,
+                "secret": "z+zyxAVLRqN9lEjxuNPSyRJzEstbl69Jc1vtimvtkPg=",
+                "C": "0241d98a8197ef238a192d47edf191a9de78b657308937b4f7dd0aa53beae72c46"
+            }
+        ],
+        // tokens that were destroyed in the creation of this token (helps on wallet state transitions)
+        "del": [ "token-event-id-1", "token-event-id-2" ]
+    }),
+    "tags": []
+}
+```
+
+ * `.content` is a [NIP-44](44.md) encrypted payload:
+   * `mint`: The mint the proofs belong to.
+   * `proofs`: unencoded proofs
+   * `unit` the base unit the proofs are denominated in (eg: `sat`, `usd`, `eur`). Default: `sat` if omitted.
+   * `del`: token-ids that were destroyed by the creation of this token. This assists with state transitions.
+
+When one or more proofs of a token are spent, the token event should be [NIP-09](09.md)-deleted and, if some proofs are unspent from the same token event, a new token event should be created rolling over the unspent proofs and adding any change outputs to the new token event (the change output should include a `del` field).
+
+The `kind:5` _delete event_ created in the [NIP-09](09.md) process MUST have a tag `["k", "7375"]` to allow easy filtering by clients interested in state transitions.
+
+### Spending History Event
+Clients SHOULD publish `kind:7376` events to create a transaction history when their balance changes.
+
+```javascript
+{
+    "kind": 7376,
+    "content": nip44_encrypt([
+        [ "direction", "in" ], // in = received, out = sent
+        [ "amount", "1" ],
+        [ "unit", "sat" ],
+        [ "e", "<event-id-of-created-token>", "", "created" ]
+    ]),
+    "tags": [
+        [ "e", "<event-id-of-created-token>", "", "redeemed" ]
+    ]
+}
+```
+
+* `direction` - The direction of the transaction; `in` for received funds, `out` for sent funds.
+* `unit` the base unit of the amount (eg: `sat`, `usd`, `eur`). Default: `sat` if omitted.
+
+Clients MUST add `e` tags to create references of destroyed and created token events along with the marker of the meaning of the tag:
+* `created` - A new token event was created.
+* `destroyed` - A token event was destroyed.
+* `redeemed` - A [NIP-61](61.md) nutzap was redeemed.
+
+All tags can be [NIP-44](44.md) encrypted. Clients SHOULD leave `e` tags with a `redeemed` marker unencrypted.
+
+Multiple `e` tags can be added, and should be encrypted, except for tags with the `redeemed` marker.
+
+## Flow
+A client that wants to check for user's wallets information starts by fetching `kind:10019` events from the user's relays, if no event is found, it should fall back to using the user's [NIP-65](65.md) relays.
+
+### Fetch wallet and token list
+From those relays, the client should fetch wallet and token events.
+
+`"kinds": [17375, 7375], "authors": ["<my-pubkey>"]`
+
+### Fetch proofs
+
+### Spending token
+If Alice spends 4 sats from this token event
+```javascript
+{
+    "kind": 7375,
+    "id": "event-id-1",
+    "content": nip44_encrypt({
+        "mint": "https://stablenut.umint.cash",
+        "unit": "sat",
+        "proofs": [
+            { "id": "1", "amount": 1 },
+            { "id": "2", "amount": 2 },
+            { "id": "3", "amount": 4 },
+            { "id": "4", "amount": 8 },
+        ]
+    }),
+    "tags": []
+}
+```
+
+Her client:
+* MUST roll over the unspent proofs:
+```javascript
+{
+    "kind": 7375,
+    "id": "event-id-2",
+    "content": nip44_encrypt({
+        "mint": "https://stablenut.umint.cash",
+        "unit": "sat",
+        "proofs": [
+            { "id": "1", "amount": 1 },
+            { "id": "2", "amount": 2 },
+            { "id": "4", "amount": 8 },
+        ],
+        "del": [ "event-id-1" ]
+    }),
+    "tags": []
+}
+```
+* MUST delete event `event-id-1`
+* SHOULD add the `event-id-1` to the `del` array of deleted token-ids.
+* SHOULD create a `kind:7376` event to record the spend
+```javascript
+{
+    "kind": 7376,
+    "content": nip44_encrypt([
+        [ "direction", "out" ],
+        [ "amount", "4" ],
+        [ "unit", "sat" ],
+        [ "e", "<event-id-1>", "", "destroyed" ],
+        [ "e", "<event-id-2>", "", "created" ],
+    ]),
+    "tags": []
+}
+```
+
+### Redeeming a quote (optional)
+When creating a quote at a mint, an event can be used to keep the state of the quote ID, which will be used to check when the quote has been paid. These events should be created with an expiration tag [NIP-40](40.md) of 2 weeks (which is around the maximum amount of time a Lightning payment may be in-flight).
+
+However, application developers SHOULD use local state when possible and only publish this event when it makes sense in the context of their application.
+
+```javascript
+{
+    "kind": 7374,
+    "content": nip44_encrypt("quote-id"),
+    "tags": [
+        [ "expiration", "<expiration-timestamp>" ],
+        [ "mint", "<mint-url>" ]
+    ]
+}
+```
+
+## Appendix 1: Validating proofs
+Clients can optionally validate proofs to make sure they are not working from an old state; this logic is left up to particular implementations to decide when and why to do it, but if some proofs are checked and deemed to have been spent, the client should delete the token and roll over any unspent proof.
