@@ -1,6 +1,8 @@
-# NIP-EE
+NIP-EE
+======
 
-## E2EE Messaging using the Messaging Layer Security (MLS) Protocol
+E2EE Messaging using the Messaging Layer Security (MLS) Protocol
+----------------------------------------------------------------
 
 `draft` `optional`
 
