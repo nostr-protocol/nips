@@ -10,10 +10,10 @@ This nip describes a method by which static websites can be hosted under public 
 
 ### Site Manifest Definition
 
-A site manifest event MUST be a replaceable event as defined in [NIP-01](01.md). There are two types of site manifest events:
+A site manifest event MUST be a replaceable or an addressable event as defined in [NIP-01](01.md). There are two types of site manifest event kinds:
 
-- **Root site**: Uses kind `15128` and MUST NOT include a `d` tag. This is a single replaceable event per pubkey.
-- **Identifier-specific sites**: Uses kind `35128` and MUST have a `d` tag containing the site identifier.
+- **Root site**: Uses kind `15128` and MUST NOT include a `d` tag. This is a single replaceable event per pubkey and serves as the root site for the pubkey.
+- **Named sites**: Uses kind `35128` and MUST have a `d` tag containing the site identifier. These can be smaller websites under a pubkey and can be throught of as sub-domains.
 
 The event MUST include one or more `path` tags that map absolute paths to sha256 hashes. Each `path` tag MUST have the format `["path", "/absolute/path", "sha256hash"]` where:
 - The first element is the literal string `"path"`
@@ -50,7 +50,7 @@ For example, a root site manifest:
 }
 ```
 
-And an identifier-specific site manifest:
+And a named site manifest:
 
 ```jsonc
 {
@@ -81,11 +81,11 @@ A host server is a HTTP server that is responsible for serving pubkey static web
 
 #### Resolving Pubkeys
 
-Host servers may choose to resolve a pubkey (and identifier for identifier-specific sites) however they see fit, NIP-05 ids, `npub` subdomains, hardcoded names, DNS records, or a single pubkey for the server
+Host servers may choose to resolve a pubkey (and identifier for named sites) however they see fit, NIP-05 ids, `npub` subdomains, hardcoded names, DNS records, or a single pubkey for the server
 
 However it is recommended to use the URL format `[identifier].<npub>.nsite-host.com` where:
 - The root site uses `<npub>.nsite-host.com` (no identifier)
-- Identifier-specific sites use `[identifier].<npub>.nsite-host.com` as subdomains under the npub site
+- Named sites use `[identifier].<npub>.nsite-host.com` as subdomains under the npub site
 
 This allows the host server to serve all pubkey sites while still keeping the pubkey in the URL, and enables multiple sites per pubkey through identifiers.
 
@@ -93,7 +93,7 @@ If the host server is using `npub` subdomains it MAY serve anything at its own r
 
 Example subdomains:
 - Root site: `npub10phxfsms72rhafrklqdyhempujs9h67nye0p67qe424dyvcx0dkqgvap0e.nsite-host.com`
-- Identifier-specific site: `blog.npub10phxfsms72rhafrklqdyhempujs9h67nye0p67qe424dyvcx0dkqgvap0e.nsite-host.com`
+- Named site: `blog.npub10phxfsms72rhafrklqdyhempujs9h67nye0p67qe424dyvcx0dkqgvap0e.nsite-host.com`
 
 #### Resolving Paths
 
@@ -107,7 +107,7 @@ The host server should query for the site manifest event:
 // For root site (kind 15128, no d tag)
 { "kinds": [15128], "authors": [<pubkey>] }
 
-// For identifier-specific site (kind 35128, with d tag)
+// For named site (kind 35128, with d tag)
 { "kinds": [35128], "authors": [<pubkey>], "#d": [<identifier>] }
 ```
 
@@ -136,6 +136,6 @@ If a host server is unable to find a site manifest event or a matching `path` ta
 
 Kind `34128` is marked as legacy/deprecated. This kind was used for individual static file events where each file was represented by a separate event with a `d` tag for the path and an `x` tag for the sha256 hash.
 
-Host servers MAY still support kind `34128` for backward compatibility with existing sites, but new sites SHOULD use kind `15128` (root site manifest) or kind `35128` (identifier-specific site manifest) instead.
+Host servers MAY still support kind `34128` for backward compatibility with existing sites, but new sites SHOULD use kind `15128` (root site manifest) or kind `35128` (named site manifest) instead.
 
 Read the [legacy version](https://github.com/hzrd149/nips/blob/41e77b45a1e8a8d170097e363f7d7254797cc5c5/nsite.md) for more details.
