@@ -108,7 +108,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-BE: Nostr BLE Communications Protocol](BE.md)
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
-- [NIP-EE: E2EE Messaging using MLS Protocol](EE.md)
+- [NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)
 
 ## Event Kinds
 | kind          | description                     | NIP                                    |
@@ -135,9 +135,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `21`          | Video Event                     | [71](71.md)                            |
 | `22`          | Short-form Portrait Video Event | [71](71.md)                            |
 | `30`          | internal reference              | [NKBIP-03]                             |
-| `31`          | external web reference          | [NKBIP-03]                            |
-| `32`          | hardcopy reference              | [NKBIP-03]                            |
-| `33`          | prompt reference                | [NKBIP-03]                            |
+| `31`          | external web reference          | [NKBIP-03]                             |
+| `32`          | hardcopy reference              | [NKBIP-03]                             |
+| `33`          | prompt reference                | [NKBIP-03]                             |
 | `40`          | Channel Creation                | [28](28.md)                            |
 | `41`          | Channel Metadata                | [28](28.md)                            |
 | `42`          | Channel Message                 | [28](28.md)                            |
@@ -145,9 +145,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `44`          | Channel Mute User               | [28](28.md)                            |
 | `62`          | Request to Vanish               | [62](62.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
-| `443`         | KeyPackage                      | [EE](EE.md)                            |
-| `444`         | Welcome Message                 | [EE](EE.md)                            |
-| `445`         | Group Event                     | [EE](EE.md)                            |
+| `443`         | KeyPackage                      | [Marmot](marmot)                       |
+| `444`         | Welcome Message                 | [Marmot](marmot)                       |
+| `445`         | Group Event                     | [Marmot](marmot)                       |
 | `818`         | Merge Requests                  | [54](54.md)                            |
 | `1018`        | Poll Response                   | [88](88.md)                            |
 | `1021`        | Bid                             | [15](15.md)                            |
@@ -209,7 +209,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10020`       | Media follows                   | [51](51.md)                            |
 | `10030`       | User emoji list                 | [51](51.md)                            |
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
-| `10051`       | KeyPackage Relays List          | [EE](EE.md)                            |
+| `10051`       | KeyPackage Relays List          | [Marmot](marmot)                       |
 | `10063`       | User server list                | [Blossom][blossom]                     |
 | `10096`       | File storage server list        | [96](96.md) (deprecated)               |
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
@@ -296,6 +296,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 [Tidal-nostr]: https://wikistr.com/tidal-nostr
 [geocaching]: https://nostrhub.io/naddr1qvzqqqrcvypzppscgyy746fhmrt0nq955z6xmf80pkvrat0yq0hpknqtd00z8z68qqgkwet0vdskx6rfdenj6etkv4h8guc6gs5y5
 [nostr-epoxy]: https://github.com/Origami74/nostr-epoxy-reverse-proxy
+[marmot]: https://github.com/marmot-protocol/marmot
+
 
 ## Message types
 
