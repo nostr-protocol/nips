@@ -1,10 +1,12 @@
+> __Warning__  `unrecommended`: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)
+
 NIP-EE
 ======
 
 E2EE Messaging using the Messaging Layer Security (MLS) Protocol
 ----------------------------------------------------------------
 
-`draft` `optional`
+`final` `unrecommended` `optional`
 
 This NIP standardizes how to use the [MLS Protocol](https://www.rfc-editor.org/rfc/rfc9420.html) with Nostr for efficient and E2EE (end-to-end encrypted) direct and group messaging.
 
