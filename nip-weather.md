@@ -57,7 +57,7 @@ Ephemeral events containing sensor readings. Since `kind:23415` is in the epheme
   "kind": 23415,
   "tags": [
     ["s", "<station-id>"],
-    ["a", "16428:<pubkey>", "<relay-url>"],
+    ["a", "16428:<pubkey>:", "<relay-url>"],
     ["temp", "22.5"],
     ["humidity", "65.2"],
     ["pm25", "12.3"]
@@ -68,7 +68,7 @@ Ephemeral events containing sensor readings. Since `kind:23415` is in the epheme
 
 Tags:
 - `s` (optional): Station identifier for filtering readings by station
-- `a` (optional): Reference to the metadata event (`16428:<pubkey>`)
+- `a` (optional): Reference to the metadata event (`16428:<pubkey>:` - note trailing colon for replaceable events)
 - `temp` (optional): Temperature in Celsius
 - `humidity` (optional): Relative humidity (0-100)
 - `pm25`, `pm10` (optional): Air quality in µg/m³
