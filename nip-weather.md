@@ -16,23 +16,23 @@ A replaceable event describing a weather station's configuration and capabilitie
 {
   "kind": 16428,
   "tags": [
+    ["name", "Backyard Station"],
+    ["location", "37.7749,-122.4194"],
+    ["elevation", "52"],
     ["sensor", "temp"],
     ["sensor", "humidity"],
     ["sensor", "pm25"]
   ],
-  "content": "{\"name\":\"Backyard Station\",\"location\":[37.7749,-122.4194],\"elevation\":52,\"sensors\":{\"temp\":{\"model\":\"DS18B20\"},\"pm25\":{\"model\":\"SDS011\"}}}"
+  "content": ""
 }
 ```
 
 Tags:
+- `name` (optional): Human-readable station name
+- `location` (optional): Comma-separated `latitude,longitude` in decimal degrees
+- `elevation` (optional): Elevation in meters above sea level
 - `sensor` (repeatable): Sensor types available. Used for filtering/discovery (relays can index these).
-
-Content: JSON object with optional fields. Not indexed by relays, but flexible for structured data:
-- `name`: Human-readable station name
-- `location`: Array `[latitude, longitude]` in decimal degrees
-- `elevation`: Elevation in meters above sea level
-- `sensors`: Object with detailed sensor information (model, calibration, etc.)
-- Other fields as needed
+- Other tags as needed
 
 To group multiple stations together, use [NIP-51](51.md) lists. `kind:30001` (generic lists) can be used with `p` tags referencing station pubkeys. Example:
 
@@ -50,27 +50,29 @@ To group multiple stations together, use [NIP-51](51.md) lists. `kind:30001` (ge
 
 ## Weather Station Readings (`kind:23415`)
 
-Ephemeral events containing sensor readings. Since `kind:23415` is in the ephemeral range (20000-29999), relays are not expected to store these events (though they may choose to). For persistent storage of readings, use a regular kind (1000-9999). Tags are used for relationships/filtering, content contains the actual sensor data.
+Ephemeral events containing sensor readings. Since `kind:23415` is in the ephemeral range (20000-29999), relays are not expected to store these events (though they may choose to). For persistent storage of readings, use a regular kind (1000-9999). All sensor data is stored in tags to avoid JSON parsing.
 
 ```jsonc
 {
   "kind": 23415,
   "tags": [
     ["s", "<station-id>"],
-    ["a", "16428:<pubkey>", "<relay-url>"]
+    ["a", "16428:<pubkey>", "<relay-url>"],
+    ["temp", "22.5"],
+    ["humidity", "65.2"],
+    ["pm25", "12.3"]
   ],
-  "content": "{\"temp\":22.5,\"humidity\":65.2,\"pm25\":12.3}"
+  "content": ""
 }
 ```
 
 Tags:
 - `s` (optional): Station identifier for filtering readings by station
 - `a` (optional): Reference to the metadata event (`16428:<pubkey>`)
-
-Content: JSON object with sensor readings. Fields are optional and depend on available sensors. Common fields:
-- `temp`: Temperature in Celsius
-- `humidity`: Relative humidity (0-100)
-- `pm25`, `pm10`: Air quality in µg/m³
+- `temp` (optional): Temperature in Celsius
+- `humidity` (optional): Relative humidity (0-100)
+- `pm25`, `pm10` (optional): Air quality in µg/m³
+- Other sensor tags as needed
 
 ## Open Questions
 
