@@ -8,13 +8,18 @@ Weather Data
 
 This NIP defines event types for publishing weather station metadata and sensor readings on Nostr.
 
-## Weather Station Metadata (`kind:16428`)
+## Event Kinds
 
-A replaceable event describing a weather station's configuration and capabilities. Since `kind:16428` is in the replaceable range (10000-19999), there is one metadata event per pubkey. Each station should have its own pubkey/identity.
+- `kind:10xxx` (replaceable, 10000-19999): Weather station metadata
+- `kind:xxxx` (regular, 1000-9999): Weather station readings
+
+## Weather Station Metadata (`kind:10xxx`)
+
+A replaceable event describing a weather station's configuration and capabilities. Since `kind:10xxx` is in the replaceable range (10000-19999), there is one metadata event per pubkey. Each station should have its own pubkey/identity.
 
 ```jsonc
 {
-  "kind": 16428,
+  "kind": 10xxx,
   "tags": [
     ["name", "Backyard Station"],
     ["location", "37.7749,-122.4194"],
@@ -48,16 +53,16 @@ To group multiple stations together, use [NIP-51](51.md) lists. `kind:30001` (ge
 }
 ```
 
-## Weather Station Readings (`kind:23415`)
+## Weather Station Readings (`kind:xxxx`)
 
-Ephemeral events containing sensor readings. Since `kind:23415` is in the ephemeral range (20000-29999), relays are not expected to store these events (though they may choose to). For persistent storage of readings, use a regular kind (1000-9999). All sensor data is stored in tags to avoid JSON parsing.
+Regular events containing sensor readings. In the regular range (1000-9999), all readings are stored by relays, enabling historical queries (e.g., last hour, last day). All sensor data is stored in tags.
 
 ```jsonc
 {
-  "kind": 23415,
+  "kind": xxxx,
   "tags": [
     ["s", "<station-id>"],
-    ["a", "16428:<pubkey>:", "<relay-url>"],
+    ["a", "10xxx:<pubkey>:", "<relay-url>"],
     ["temp", "22.5"],
     ["humidity", "65.2"],
     ["pm25", "12.3"]
@@ -68,14 +73,10 @@ Ephemeral events containing sensor readings. Since `kind:23415` is in the epheme
 
 Tags:
 - `s` (optional): Station identifier for filtering readings by station
-- `a` (optional): Reference to the metadata event (`16428:<pubkey>:` - note trailing colon for replaceable events)
+- `a` (optional): Reference to the metadata event (`10xxx:<pubkey>:` - note trailing colon for replaceable events)
 - `temp` (optional): Temperature in Celsius
 - `humidity` (optional): Relative humidity (0-100)
 - `pm25`, `pm10` (optional): Air quality in µg/m³
 - Other sensor tags as needed
 
-## Open Questions
-
-### Event Kind Range for Readings
-
-Currently `kind:23415` is ephemeral (20000-29999), meaning relays are not expected to store readings. Should readings use regular events (1000-9999) instead to enable historical data queries and trend analysis? Tradeoff: storage burden vs. historical value.
+Relays can implement retention policies (e.g., keep last 30 days) to manage storage burden while preserving recent historical data.
