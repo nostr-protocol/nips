@@ -103,6 +103,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
 - [NIP-A0: Voice Messages](A0.md)
+- [NIP-A4: Public Messages](A4.md)
 - [NIP-B0: Web Bookmarks](B0.md)
 - [NIP-B7: Blossom](B7.md)
 - [NIP-BE: Nostr BLE Communications Protocol](BE.md)
@@ -134,6 +135,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `20`          | Picture                         | [68](68.md)                            |
 | `21`          | Video Event                     | [71](71.md)                            |
 | `22`          | Short-form Portrait Video Event | [71](71.md)                            |
+| `24`          | Public Message                  | [A4](A4.md)                            |
 | `30`          | internal reference              | [NKBIP-03]                             |
 | `31`          | external web reference          | [NKBIP-03]                             |
 | `32`          | hardcopy reference              | [NKBIP-03]                             |
