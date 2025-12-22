@@ -10,8 +10,10 @@ This NIP defines event types for publishing weather station metadata and sensor 
 
 ## Event Kinds
 
-- `kind:10xxx` (replaceable, 10000-19999): Weather station metadata
-- `kind:xxxx` (regular, 1000-9999): Weather station readings
+- `kind:16158` (replaceable, 10000-19999): Weather station metadata
+- `kind:4223` (regular, 1000-9999): Weather station readings
+
+Note: These are temporary draft numbers. Final numbers will be assigned by maintainers upon acceptance.
 
 ## Weather Station Metadata (`kind:10xxx`)
 
