@@ -79,6 +79,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-60: Cashu Wallet](60.md)
 - [NIP-61: Nutzaps](61.md)
 - [NIP-62: Request to Vanish](62.md)
+- [NIP-63: Physical Space Rentals](63.md)
 - [NIP-64: Chess (PGN)](64.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-66: Relay Discovery and Liveness Monitoring](66.md)
@@ -272,7 +273,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31234`       | Draft Event                     | [37](37.md)                            |
 | `31388`       | Link Set                        | [Corny Chat][cornychat-linkset]        |
 | `31890`       | Feed                            | [NUD: Custom Feeds][NUD: Custom Feeds] |
-| `31922`       | Date-Based Calendar Event       | [52](52.md)                            |
+| `31922`       | Date-Based Calendar Event       | [52](52.md), [63](63.md)               |
 | `31923`       | Time-Based Calendar Event       | [52](52.md)                            |
 | `31924`       | Calendar                        | [52](52.md)                            |
 | `31925`       | Calendar Event RSVP             | [52](52.md)                            |
@@ -280,7 +281,12 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31990`       | Handler information             | [89](89.md)                            |
 | `32267`       | Software Application            |                                        |
 | `32388`       | User Room Favorites             | [Corny Chat][cornychat-roomfavorites]  |
-| `33000`       | Physical Location               | [42](42.md)                            |
+| `33000`       | Physical Location               | [41](41.md)                            |
+| `33001`       | Space Class                     | [63](63.md)                            |
+| `33002`       | Space                           | [63](63.md)                            |
+| `33003`       | Availability Snapshot           | [63](63.md)                            |
+| `33012`       | Pricing Configuration           | [63](63.md)                            |
+| `33013`       | Rental Policy                   | [63](63.md)                            |
 | `33388`       | High Scores                     | [Corny Chat][cornychat-highscores]     |
 | `34388`       | Sound Effects                   | [Corny Chat][cornychat-soundeffects]   |
 | `34550`       | Community Definition            | [72](72.md)                            |
