@@ -87,7 +87,7 @@ Sensor readings use 3-parameter tags: `[sensor_type, value, model]`. The third p
 
 Tags:
 - `t` (optional): Hashtag for discovery. SHOULD include `["t", "weather"]` for relay indexing.
-- `a` (optional): Reference to the metadata event (`10xxx:<pubkey>:` - note trailing colon for replaceable events)
+- `a` (optional): Reference to the station metadata event (`10xxx:<pubkey>:` - note trailing colon for replaceable events). This links the reading to its station.
 - Sensor reading tags (repeatable, 3-parameter format `[sensor_type, value, model]`):
   - `temp`: Temperature in Celsius (°C)
   - `humidity`: Relative humidity (0-100%)
