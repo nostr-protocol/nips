@@ -98,7 +98,7 @@ Relays can implement retention policies (e.g., keep last 30 days) to manage stor
 
 ## Discovery
 
-Clients SHOULD include `["t", "weather"]` hashtag in reading events to enable relay indexing and discovery of weather stations. This allows clients to discover weather data by querying for `{"#t": ["weather"]}`.
+The `["t", "weather"]` hashtag is optional but recommended in reading events to enable relay indexing and discovery of weather stations. Clients can discover weather data by querying for `{"#t": ["weather"]}`.
 
 ## Reference Implementation
 
