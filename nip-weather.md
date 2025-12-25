@@ -25,7 +25,10 @@ A replaceable event describing a weather station's configuration and capabilitie
   "tags": [
     ["name", "Backyard Station"],
     ["location", "37.7749,-122.4194"],
+    ["g", "9q5h"],
     ["elevation", "52"],
+    ["power", "mains"],
+    ["connectivity", "wifi"],
     ["sensor", "temp", "DHT11"],
     ["sensor", "humidity", "DHT11"],
     ["sensor", "pm25", "PMS5003"]
@@ -37,7 +40,10 @@ A replaceable event describing a weather station's configuration and capabilitie
 Tags:
 - `name` (optional): Human-readable station name
 - `location` (optional): Comma-separated `latitude,longitude` in decimal degrees
+- `g` (optional): Geohash for location indexing (see [NIP-52](52.md))
 - `elevation` (optional): Elevation in meters above sea level
+- `power` (optional): Power source type. Common values: `mains`, `solar`, `battery`, `solar_battery`, `usb`
+- `connectivity` (optional): Connectivity type. Common values: `wifi`, `cellular`, `ethernet`, `lora`, `satellite`
 - `sensor` (repeatable): Sensor types available with model identifier. Format: `["sensor", "<type>", "<model>"]`. Used for filtering/discovery (relays can index these).
 - `t` (optional): Hashtag for discovery. SHOULD include `["t", "weather"]` for relay indexing.
 - Other tags as needed
