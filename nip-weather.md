@@ -106,10 +106,9 @@ The `["t", "weather"]` hashtag is optional but recommended in reading events to 
 
 ## Reference Implementation
 
-- A working ESP8266-based weather station implementation is available at: https://github.com/samthomson/weather-station
+- A working weather station (supports ESP8266 & ESP32 boards + various sensors) implementation is available at: https://github.com/samthomson/weather-station
 - A simple client for viewing weather data is deployed here: https://weather.shakespeare.wtf/
 
 This WIP (changing frequently) implementation demonstrates:
 - Posting sensor readings to Nostr relays
 - Multi-sensor support (temperature, humidity, PM sensors, air quality)
-
