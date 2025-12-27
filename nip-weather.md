@@ -24,7 +24,6 @@ A replaceable event describing a weather station's configuration and capabilitie
   "kind": 10xxx,
   "tags": [
     ["name", "Backyard Station"],
-    ["location", "37.7749,-122.4194"],
     ["g", "9q5h"],
     ["elevation", "52"],
     ["power", "mains"],
@@ -39,7 +38,6 @@ A replaceable event describing a weather station's configuration and capabilitie
 
 Tags:
 - `name` (optional): Human-readable station name
-- `location` (optional): Comma-separated `latitude,longitude` in decimal degrees
 - `g` (optional): Geohash for location indexing (see [NIP-52](52.md))
 - `elevation` (optional): Elevation in meters above sea level
 - `power` (optional): Power source type. Common values: `mains`, `solar`, `battery`, `solar_battery`, `usb`
