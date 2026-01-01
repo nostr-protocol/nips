@@ -91,6 +91,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-77: Negentropy Syncing](77.md)
 - [NIP-78: Application-specific data](78.md)
 - [NIP-7D: Threads](7D.md)
+- [NIP-81: Contact Cards](81.md)
 - [NIP-84: Highlights](84.md)
 - [NIP-86: Relay Management API](86.md)
 - [NIP-87: Ecash Mint Discoverability](87.md)
@@ -203,6 +204,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10005`       | Public chats list               | [51](51.md)                            |
 | `10006`       | Blocked relays list             | [51](51.md)                            |
 | `10007`       | Search relays list              | [51](51.md)                            |
+| `10008`       | Event Set Names                 | [81](81.md)                            |
 | `10009`       | User groups                     | [51](51.md), [29](29.md)               |
 | `10012`       | Favorite relays list            | [51](51.md)                            |
 | `10013`       | Private event relay list        | [37](37.md)                            |
@@ -260,6 +262,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30312`       | Interactive Room                | [53](53.md)                            |
 | `30313`       | Conference Event                | [53](53.md)                            |
 | `30315`       | User Statuses                   | [38](38.md)                            |
+| `30382`       | Public Relationship Status      | [81](81.md)                            |
 | `30388`       | Slide Set                       | [Corny Chat][cornychat-slideset]       |
 | `30402`       | Classified Listing              | [99](99.md)                            |
 | `30403`       | Draft Classified Listing        | [99](99.md)                            |
@@ -268,6 +271,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30818`       | Wiki article                    | [54](54.md)                            |
 | `30819`       | Redirects                       | [54](54.md)                            |
 | `31234`       | Draft Event                     | [37](37.md)                            |
+| `31382`       | Private Contact Card            | [81](81.md)                            |
 | `31388`       | Link Set                        | [Corny Chat][cornychat-linkset]        |
 | `31890`       | Feed                            | [NUD: Custom Feeds][NUD: Custom Feeds] |
 | `31922`       | Date-Based Calendar Event       | [52](52.md)                            |
