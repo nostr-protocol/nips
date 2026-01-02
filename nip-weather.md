@@ -90,12 +90,41 @@ Sensor readings use 3-parameter tags: `[sensor_type, value, model]`. The third p
 Tags:
 - `t` (optional): Hashtag for discovery. SHOULD include `["t", "weather"]` for relay indexing.
 - `a` (optional): Reference to the station metadata event (`10xxx:<pubkey>:` - note trailing colon for replaceable events). This links the reading to its station.
-- Sensor reading tags (repeatable, 3-parameter format `[sensor_type, value, model]`):
-  - `temp`: Temperature in Celsius (°C)
-  - `humidity`: Relative humidity (0-100%)
-  - `pm1`, `pm25`, `pm10`: Particulate matter concentration in µg/m³
-  - `air_quality`: Raw analog sensor value (0-1023, uncalibrated)
-  - Other sensor tags as needed
+- Sensor reading tags (repeatable, 3-parameter format `[sensor_type, value, model]`). See table below.
+
+### Sensor Types
+
+| sensor_type | model | status |
+|-------------|-------|--------|
+| `temp` | DHT11 | 🟢 prototyped |
+| `humidity` | DHT11 | 🟢 prototyped |
+| `pm1` | PMS5003 | 🟢 prototyped |
+| | PMS7003 | 🟡 wip |
+| | SPS30 | 🟡 wip |
+| | SDS011 | 🟡 wip |
+| `pm25` | PMS5003 | 🟢 prototyped |
+| | PMS7003 | 🟡 wip |
+| | SPS30 | 🟡 wip |
+| | SDS011 | 🟡 wip |
+| `pm10` | PMS5003 | 🟢 prototyped |
+| | PMS7003 | 🟡 wip |
+| | SPS30 | 🟡 wip |
+| | SDS011 | 🟡 wip |
+| `air_quality` | MQ-135 | 🟢 prototyped |
+| `light` | BH1750 | 🟡 wip |
+| `co2` | MH-Z19 | 🟡 wip |
+| `gas` | SGP30 | 🟡 wip |
+| `carbon_monoxide` | MQ-7 | 🟡 wip |
+| `pressure` | BME280 | 🟡 wip |
+| | BME680 | 🟡 wip |
+| `rain` | MH-RD | 🟡 wip |
+| wind speed | | 🔵 proposed |
+| wind dir | | 🔵 proposed |
+| wave height | | 🔵 proposed |
+| wave period | | 🔵 proposed |
+| wave dir | | 🔵 proposed |
+
+Other sensor types can be added as needed.
 
 The third parameter (model) identifies the sensor model (e.g., "DHT11", "PMS5003", "MQ-135"), enabling:
 - Cross-station comparison of readings from the same sensor model
