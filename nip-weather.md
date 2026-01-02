@@ -46,11 +46,13 @@ Tags:
 - `t` (optional): Hashtag for discovery. SHOULD include `["t", "weather"]` for relay indexing.
 - Other tags as needed
 
-To group multiple stations together, use [NIP-51](51.md) lists. `kind:30001` (generic lists) can be used with `p` tags referencing station pubkeys. Example:
+### Weather station  / sets
+
+To group multiple stations together, use a custom [NIP-51](51.md) list / set. `kind:3****` (generic lists) can be used with `p` tags referencing station pubkeys. Example:
 
 ```jsonc
 {
-  "kind": 30001,
+  "kind": 3****,
   "tags": [
     ["d", "my-stations"],
     ["title", "My Weather Stations"],
@@ -59,6 +61,8 @@ To group multiple stations together, use [NIP-51](51.md) lists. `kind:30001` (ge
   ]
 }
 ```
+
+Note: Kind-30001 (generic lists?) was skipped since deprecated. A custom list type is better but TBD.
 
 ## Weather Station Readings (`kind:xxxx`)
 
@@ -112,3 +116,8 @@ The `["t", "weather"]` hashtag is optional but recommended in reading events to 
 This WIP (changing frequently) implementation demonstrates:
 - Posting sensor readings to Nostr relays
 - Multi-sensor support (temperature, humidity, PM sensors, air quality)
+
+
+## Todo
+
+- figure out the best way to group weather stations since nip-51 kind-30001 is deprecated in favor of specific list types. Maybe a new list/set type? In which I need to pick a number 3dk number I like.
