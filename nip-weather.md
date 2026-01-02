@@ -121,3 +121,4 @@ This WIP (changing frequently) implementation demonstrates:
 ## Todo
 
 - figure out the best way to group weather stations since nip-51 kind-30001 is deprecated in favor of specific list types. Maybe a new list/set type? In which I need to pick a number 3dk number I like.
+- add `alt` tag (NIP-31) to both event kinds for clients that don't understand weather events. Keep summaries short to avoid bloating frequent reading events (or just use a short literal definition/tag).
