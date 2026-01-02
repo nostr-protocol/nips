@@ -73,7 +73,6 @@ Sensor readings use 3-parameter tags: `[sensor_type, value, model]`. The third p
 {
   "kind": xxxx,
   "tags": [
-    ["a", "10xxx:<pubkey>:", "<relay-url>"],
     ["temp", "22.5", "DHT11"],
     ["humidity", "65.2", "DHT11"],
     ["pm1", "8", "PMS5003"],
@@ -86,7 +85,6 @@ Sensor readings use 3-parameter tags: `[sensor_type, value, model]`. The third p
 ```
 
 Tags:
-- `a` (optional): Reference to the station metadata event (`10xxx:<pubkey>:` - note trailing colon for replaceable events). This links the reading to its station.
 - Sensor reading tags (repeatable, 3-parameter format `[sensor_type, value, model]`). See table below.
 
 ### Sensor Types
