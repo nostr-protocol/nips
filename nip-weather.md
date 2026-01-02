@@ -150,3 +150,7 @@ This WIP (changing frequently) implementation demonstrates:
   - readings: a) omit tag, b) bull string `["temp", "null", "DHT11"]` - I thing A.
   - metadata status: a) extend sensor tag `["sensor", "temp", "DHT11", "ok"]`, b) separate `["sensor_status", "temp", "DHT11", "offline"]` - I think B.
 - timestamps for offline/batch publishing: add `observed_at` tag? a) always include, b) only if differs from `created_at`
+
+## Future Thoughts
+
+- Virtual/agreegate stations: a computed/aggregate station that averages readings from multiple real stations, using its own metadata kind to distinguish from physical stations. Useful to get, for example, the weather in a town where there are multiple stations and iron out any anomolies.
