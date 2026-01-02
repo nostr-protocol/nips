@@ -43,7 +43,6 @@ Tags:
 - `power` (optional): Power source type. Common values: `mains`, `solar`, `battery`, `solar_battery`, `usb`
 - `connectivity` (optional): Connectivity type. Common values: `wifi`, `cellular`, `ethernet`, `lora`, `satellite`
 - `sensor` (repeatable): Sensor types available with model identifier. Format: `["sensor", "<type>", "<model>"]`. Used for filtering/discovery (relays can index these).
-- `t` (optional): Hashtag for discovery. SHOULD include `["t", "weather"]` for relay indexing.
 - Other tags as needed
 
 ### Weather station  / sets
@@ -74,7 +73,6 @@ Sensor readings use 3-parameter tags: `[sensor_type, value, model]`. The third p
 {
   "kind": xxxx,
   "tags": [
-    ["t", "weather"],
     ["a", "10xxx:<pubkey>:", "<relay-url>"],
     ["temp", "22.5", "DHT11"],
     ["humidity", "65.2", "DHT11"],
@@ -88,7 +86,6 @@ Sensor readings use 3-parameter tags: `[sensor_type, value, model]`. The third p
 ```
 
 Tags:
-- `t` (optional): Hashtag for discovery. SHOULD include `["t", "weather"]` for relay indexing.
 - `a` (optional): Reference to the station metadata event (`10xxx:<pubkey>:` - note trailing colon for replaceable events). This links the reading to its station.
 - Sensor reading tags (repeatable, 3-parameter format `[sensor_type, value, model]`). See table below.
 
@@ -135,7 +132,7 @@ Relays can implement retention policies (e.g., keep last 30 days) to manage stor
 
 ## Discovery
 
-The `["t", "weather"]` hashtag is optional but recommended in reading events to enable relay indexing and discovery of weather stations. Clients can discover weather data by querying for `{"#t": ["weather"]}`.
+Clients can discover weather data by querying for the event kinds defined in this NIP.
 
 ## Reference Implementation
 
