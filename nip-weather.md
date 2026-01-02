@@ -154,3 +154,4 @@ This WIP (changing frequently) implementation demonstrates:
 - handling broken/faulty sensors:
   - readings: a) omit tag, b) bull string `["temp", "null", "DHT11"]` - I thing A.
   - metadata status: a) extend sensor tag `["sensor", "temp", "DHT11", "ok"]`, b) separate `["sensor_status", "temp", "DHT11", "offline"]` - I think B.
+- timestamps for offline/batch publishing: add `observed_at` tag? a) always include, b) only if differs from `created_at`
