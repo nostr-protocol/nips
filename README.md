@@ -279,6 +279,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `32267`       | Software Application            |                                        |
 | `32388`       | User Room Favorites             | [Corny Chat][cornychat-roomfavorites]  |
 | `33388`       | High Scores                     | [Corny Chat][cornychat-highscores]     |
+| `34235`       | Addressable Video Event         | [71](71.md)                            |
+| `34236`       | Addressable Short Video Event   | [71](71.md)                            |
 | `34388`       | Sound Effects                   | [Corny Chat][cornychat-soundeffects]   |
 | `34550`       | Community Definition            | [72](72.md)                            |
 | `38172`       | Cashu Mint Announcement         | [87](87.md)                            |
