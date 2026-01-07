@@ -519,13 +519,20 @@ proposed ──┬──► accepted ──► done
            └──► rejected
 ```
 
-### Key Setup
+### Key Setup (Ğ1 Central Bank)
 
-All stations must share the same key for constellation-wide memory:
+The `uplanet.G1.nostr` is the **Ğ1 Central Bank** key, shared by:
+- **Oracle System**: Signs credentials (kind 30503), NIP-42 auth
+- **N² Memory System**: Signs development recommendations (kind 31910)
+
+All stations must use the **same seed**: `${UPLANETNAME}.G1`
 
 ```bash
-# Generate from UPLANETNAME seed (same across all stations)
-$HOME/.zen/Astroport.ONE/tools/keygen -t nostr "${UPLANETNAME}N2" "${UPLANETNAME}N2" \
+# Recommended: Use UPLANET.init.sh (handles this automatically)
+./UPLANET.init.sh
+
+# Manual creation (same seed on all stations):
+$HOME/.zen/Astroport.ONE/tools/keygen -t nostr "${UPLANETNAME}.G1" "${UPLANETNAME}.G1" \
     > ~/.zen/game/uplanet.G1.nostr
 ```
 
