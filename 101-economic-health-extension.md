@@ -1,0 +1,536 @@
+# NIP-101 Economic Health Extension
+
+## Swarm Economic Status Broadcasting Protocol
+
+`draft` `extension` `optional`
+
+This document defines a **decentralized economic health broadcasting protocol** for UPlanet/Astroport constellation networks. It enables transparent, auditable, and legally compliant financial reporting across the swarm.
+
+## Overview
+
+The Economic Health Extension extends [NIP-101](101.md) with standardized events for broadcasting station and swarm-level economic data. This creates a **distributed ledger of economic health** that is:
+
+- ✅ **Transparent**: All economic data publicly auditable on NOSTR
+- ✅ **Decentralized**: No central authority controls the data
+- ✅ **Legally Compliant**: Follows SCIC accounting standards
+- ✅ **Real-time**: Weekly updates synchronized via N² constellation
+- ✅ **Aggregatable**: Swarm-level metrics computed from station data
+
+## Motivation
+
+Current challenges:
+- ❌ No standardized way to share economic health across constellation
+- ❌ Manual reporting for cooperative compliance
+- ❌ Lack of swarm-level economic visibility
+- ❌ No audit trail for economic decisions
+
+This extension solves these problems by:
+- ✅ Automatic weekly economic health broadcasts
+- ✅ Standardized event format for accounting
+- ✅ Aggregated swarm dashboards
+- ✅ Cryptographically signed financial reports
+
+## Event Kinds
+
+### Economic Health Report (kind: 30850)
+
+A weekly economic health snapshot published by each station.
+
+```jsonc
+{
+  "kind": 30850,
+  "pubkey": "<CAPTAIN_HEX>",
+  "created_at": 1736280000,
+  "tags": [
+    ["d", "economic-health-W02-2026"],
+    ["t", "uplanet"],
+    ["t", "economic-health"],
+    ["t", "weekly-report"],
+    ["week", "W02-2026"],
+    ["constellation", "UPlanetV1"],
+    ["station", "<IPFSNODEID>"],
+    ["g1pub", "<UPLANETG1PUB>"],
+    ["uplanetname", "ORIGIN"],
+    
+    // Wallet balances (in Ẑen)
+    ["balance:cash", "1250.50"],
+    ["balance:rnd", "890.25"],
+    ["balance:assets", "2100.00"],
+    ["balance:impot", "450.75"],
+    ["balance:capital", "480.00"],
+    ["balance:amortissement", "20.00"],
+    ["balance:node", "42.00"],
+    
+    // Revenue metrics
+    ["revenue:multipass", "125.00"],
+    ["revenue:zencard", "200.00"],
+    ["revenue:total", "325.00"],
+    
+    // Cost metrics
+    ["cost:paf", "14.00"],
+    ["cost:captain", "28.00"],
+    ["cost:total", "42.00"],
+    
+    // Allocation metrics
+    ["allocation:treasury", "94.33"],
+    ["allocation:rnd", "94.33"],
+    ["allocation:assets", "94.34"],
+    
+    // Capacity metrics
+    ["capacity:multipass_used", "85"],
+    ["capacity:multipass_total", "250"],
+    // ZenCard: distinguish between renters (pay weekly rent) and owners (sociétaires, no rent)
+    ["capacity:zencard_total", "12"],      // Total ZenCard users
+    ["capacity:zencard_renters", "9"],     // Locataires - pay weekly ZCARD rent
+    ["capacity:zencard_owners", "3"],      // Sociétaires - made capital contribution, no rent
+    ["capacity:zencard_capacity", "24"],   // Maximum capacity
+    
+    // Health indicators
+    ["health:status", "healthy"],  // healthy | warning | critical | bankrupt
+    ["health:weeks_runway", "45"],
+    ["health:bilan", "283.00"],
+    
+    // Fiscal provisions
+    ["provision:tva", "65.00"],
+    ["provision:is", "35.50"],
+    
+    // Depreciation
+    ["depreciation:machine_value", "500.00"],
+    ["depreciation:residual", "480.00"],
+    ["depreciation:percent", "4.00"]
+  ],
+  "content": "{
+    \"report_version\": \"1.0\",
+    \"report_type\": \"weekly_economic_health\",
+    \"generated_at\": \"2026-01-07T14:30:00Z\",
+    \"station\": {
+      \"ipfsnodeid\": \"12D3KooWABC...\",
+      \"uplanetname\": \"ORIGIN\",
+      \"relay_url\": \"wss://relay.copylaradio.com\",
+      \"captain_npub\": \"npub1abc...\",
+      \"captain_email\": \"captain@example.com\"
+    },
+    \"wallets\": {
+      \"g1_reserve\": { \"g1pub\": \"...\", \"balance_g1\": 126.05, \"balance_zen\": 1250.50 },
+      \"cash\": { \"g1pub\": \"...\", \"balance_g1\": 126.05, \"balance_zen\": 1250.50 },
+      \"rnd\": { \"g1pub\": \"...\", \"balance_g1\": 90.02, \"balance_zen\": 890.25 },
+      \"assets\": { \"g1pub\": \"...\", \"balance_g1\": 211.00, \"balance_zen\": 2100.00 },
+      \"impot\": { \"g1pub\": \"...\", \"balance_g1\": 46.08, \"balance_zen\": 450.75 },
+      \"capital\": { \"g1pub\": \"...\", \"balance_g1\": 49.00, \"balance_zen\": 480.00 },
+      \"amortissement\": { \"g1pub\": \"...\", \"balance_g1\": 3.00, \"balance_zen\": 20.00 },
+      \"node\": { \"g1pub\": \"...\", \"balance_g1\": 5.20, \"balance_zen\": 42.00 },
+      \"captain_dedicated\": { \"g1pub\": \"...\", \"balance_g1\": 15.00, \"balance_zen\": 140.00 }
+    },
+    \"revenue\": {
+      \"multipass\": { \"count\": 85, \"rate\": 1.0, \"total\": 85.00, \"tva\": 17.00 },
+      \"zencard\": { \"renters\": 9, \"rate\": 4.0, \"total\": 36.00, \"tva\": 7.20 },
+      \"note\": \"ZenCard owners (3) are sociétaires - no weekly rent (capital contribution instead)\",
+      \"total_ht\": 121.00,
+      \"total_tva\": 24.20,
+      \"total_ttc\": 145.20
+    },
+    \"costs\": {
+      \"paf_node\": 14.00,
+      \"captain_salary\": 28.00,
+      \"total\": 42.00
+    },
+    \"allocation\": {
+      \"surplus\": 91.00,
+      \"is_provision\": 22.75,
+      \"net_surplus\": 68.25,
+      \"treasury\": 22.75,
+      \"rnd\": 22.75,
+      \"assets\": 22.75
+    },
+    \"capacity\": {
+      \"multipass\": { \"used\": 85, \"total\": 250, \"percent\": 34 },
+      \"zencard\": { \"total\": 12, \"renters\": 9, \"owners\": 3, \"capacity\": 24, \"percent\": 50 }
+    },
+    \"health\": {
+      \"status\": \"healthy\",
+      \"bilan\": 283.00,
+      \"weeks_runway\": 45,
+      \"paf_coverage\": 6.7,
+      \"risk_level\": \"low\"
+    },
+    \"depreciation\": {
+      \"machine_value\": 500.00,
+      \"capital_date\": \"20251215143000\",
+      \"weeks_elapsed\": 3,
+      \"depreciation_weeks\": 156,
+      \"weekly_depreciation\": 3.21,
+      \"total_depreciated\": 9.63,
+      \"residual_value\": 490.37,
+      \"percent\": 1.93
+    },
+    \"compliance\": {
+      \"tva_provisioned\": 65.00,
+      \"is_provisioned\": 35.50,
+      \"audit_ready\": true,
+      \"last_allocation_date\": \"2026-01-06T00:00:00Z\"
+    }
+  }",
+  "id": "<event_id>",
+  "sig": "<signature>"
+}
+```
+
+### Swarm Economic Aggregate (kind: 30851)
+
+Aggregated economic health of the entire constellation, published by the Hub.
+
+```jsonc
+{
+  "kind": 30851,
+  "pubkey": "<HUB_CAPTAIN_HEX>",
+  "created_at": 1736280000,
+  "tags": [
+    ["d", "swarm-economy-W02-2026"],
+    ["t", "uplanet"],
+    ["t", "swarm-economy"],
+    ["t", "constellation-aggregate"],
+    ["week", "W02-2026"],
+    ["constellation", "UPlanetV1"],
+    
+    // Aggregate metrics
+    ["stations:total", "25"],
+    ["stations:healthy", "22"],
+    ["stations:warning", "2"],
+    ["stations:critical", "1"],
+    
+    // Total balances across swarm
+    ["total:cash", "31262.50"],
+    ["total:rnd", "22256.25"],
+    ["total:assets", "52500.00"],
+    
+    // Total capacity
+    ["total:multipass_used", "2125"],
+    ["total:multipass_capacity", "6250"],
+    ["total:zencard_total", "300"],       // All ZenCard users
+    ["total:zencard_renters", "225"],     // Pay weekly rent
+    ["total:zencard_owners", "75"],       // Sociétaires (no rent)
+    ["total:zencard_capacity", "600"],
+    
+    // Total revenue
+    ["total:revenue_weekly", "8125.00"],
+    ["total:tva_collected", "1625.00"],
+    
+    // Economic indicators
+    ["indicator:average_bilan", "7075.00"],
+    ["indicator:total_runway_weeks", "1125"],
+    ["indicator:network_health", "88"]
+  ],
+  "content": "{
+    \"report_version\": \"1.0\",
+    \"report_type\": \"swarm_aggregate\",
+    \"generated_at\": \"2026-01-07T15:00:00Z\",
+    \"constellation\": {
+      \"id\": \"UPlanetV1\",
+      \"hub_relay\": \"wss://relay.copylaradio.com\",
+      \"hub_ipfsnodeid\": \"12D3KooWABC...\"
+    },
+    \"stations\": [
+      {
+        \"ipfsnodeid\": \"12D3KooWABC...\",
+        \"uplanetname\": \"ORIGIN\",
+        \"status\": \"healthy\",
+        \"bilan\": 283.00,
+        \"capacity_percent\": 42,
+        \"event_id\": \"<30850_event_id>\"
+      }
+    ],
+    \"totals\": {
+      \"cash\": 31262.50,
+      \"rnd\": 22256.25,
+      \"assets\": 52500.00,
+      \"impot\": 11268.75,
+      \"revenue_weekly\": 8125.00
+    },
+    \"capacity\": {
+      \"multipass\": { \"used\": 2125, \"total\": 6250, \"percent\": 34 },
+      \"zencard\": { \"total\": 300, \"renters\": 225, \"owners\": 75, \"capacity\": 600, \"percent\": 50 }
+    },
+    \"health\": {
+      \"healthy_count\": 22,
+      \"warning_count\": 2,
+      \"critical_count\": 1,
+      \"bankrupt_count\": 0,
+      \"network_health_percent\": 88,
+      \"total_runway_weeks\": 1125
+    },
+    \"growth\": {
+      \"new_multipass_week\": 45,
+      \"new_zencard_week\": 8,
+      \"churn_rate\": 2.1
+    }
+  }",
+  "id": "<event_id>",
+  "sig": "<signature>"
+}
+```
+
+## ZenCard User Classification
+
+### Renters vs Owners (Sociétaires)
+
+ZenCard users are classified into two distinct categories for revenue calculation:
+
+#### Renters (Locataires) 🏠
+- **No `U.SOCIETY` file** in their player folder, OR
+- **Expired `U.SOCIETY.end`** date
+- **Pay weekly ZCARD rent** (default: 4 Ẑ/week HT)
+- Counted in `zencard_renters` field
+- Contribute to weekly revenue
+
+#### Owners (Sociétaires) 👑  
+- **Valid `U.SOCIETY` file** in player folder
+- **Active membership** (no end date OR end date not reached)
+- **Made one-time capital contribution** via `UPLANET.official.sh`
+- **No weekly rent** - they're co-owners, not renters
+- Counted in `zencard_owners` field
+- NOT counted in weekly rental revenue
+
+### Detection Logic
+
+```bash
+if [[ -s "${player_dir}U.SOCIETY" ]]; then
+    if [[ -s "${player_dir}U.SOCIETY.end" ]]; then
+        if [[ "$CURRENT_DATE" < "$USOCIETY_END" ]]; then
+            # Active membership - OWNER (no rent)
+            ZENCARD_OWNERS=$((ZENCARD_OWNERS + 1))
+        else
+            # Expired membership - now a RENTER
+            ZENCARD_RENTERS=$((ZENCARD_RENTERS + 1))
+        fi
+    else
+        # No end date = permanent membership - OWNER
+        ZENCARD_OWNERS=$((ZENCARD_OWNERS + 1))
+    fi
+else
+    # No U.SOCIETY file - RENTER (pays rent)
+    ZENCARD_RENTERS=$((ZENCARD_RENTERS + 1))
+fi
+```
+
+### Revenue Impact
+
+Only renters contribute to weekly rental revenue:
+
+```
+ZENCARD_REVENUE = ZENCARD_RENTERS × ZCARD_RATE
+```
+
+Not:
+```
+ZENCARD_REVENUE = ZENCARD_TOTAL × ZCARD_RATE  // WRONG!
+```
+
+## Synchronization
+
+### N² Constellation Sync
+
+Economic health events are synchronized across the constellation:
+
+```jsonc
+{
+  "sync_event_kinds": [
+    // ... existing kinds ...
+    30850,  // Station economic health
+    30851   // Swarm economic aggregate
+  ]
+}
+```
+
+### Publication Schedule
+
+| Event Kind | Publisher | Frequency | Timing |
+|------------|-----------|-----------|--------|
+| **30850** | Each Station | Weekly | After `ZEN.COOPERATIVE.3x1-3.sh` |
+| **30851** | Hub Only | Weekly | After collecting all 30850 events |
+
+## Query Patterns
+
+### Get Station Economic Health
+
+```javascript
+// Latest economic health for a station
+{
+  "kinds": [30850],
+  "authors": ["<CAPTAIN_HEX>"],
+  "limit": 1
+}
+
+// Economic health history (last 12 weeks)
+{
+  "kinds": [30850],
+  "authors": ["<CAPTAIN_HEX>"],
+  "#t": ["weekly-report"],
+  "limit": 12
+}
+```
+
+### Get Swarm Aggregate
+
+```javascript
+// Latest swarm aggregate
+{
+  "kinds": [30851],
+  "#constellation": ["UPlanetV1"],
+  "limit": 1
+}
+
+// All stations in constellation
+{
+  "kinds": [30850],
+  "#constellation": ["UPlanetV1"],
+  "#week": ["W02-2026"]
+}
+```
+
+### Get Stations by Health Status
+
+```javascript
+// Stations needing attention
+{
+  "kinds": [30850],
+  "#constellation": ["UPlanetV1"],
+  "#health:status": ["warning", "critical"]
+}
+```
+
+## Legal Compliance
+
+### Audit Trail
+
+Each economic health event provides:
+- **Cryptographic signature** by Captain (non-repudiation)
+- **Timestamp** (proof of reporting date)
+- **Wallet public keys** (verifiable on Ğ1 blockchain)
+- **Detailed breakdown** (accounting categories)
+
+### SCIC Compliance
+
+The event structure maps to SCIC accounting:
+
+| Tag Category | Accounting Purpose |
+|--------------|-------------------|
+| `balance:cash` | Compte 51 - Trésorerie |
+| `balance:assets` | Compte 20 - Immobilisations |
+| `balance:capital` | Compte 21 - Immobilisations corporelles |
+| `balance:amortissement` | Compte 28 - Amortissements |
+| `provision:tva` | Compte 4457 - TVA collectée |
+| `provision:is` | Compte 444 - IS à payer |
+| `revenue:*` | Compte 70 - Ventes |
+| `cost:*` | Compte 60-65 - Charges |
+| `allocation:*` | Compte 12 - Résultat |
+
+### Export Formats
+
+The content JSON can be transformed into:
+- **FEC (Fichier des Écritures Comptables)** for French tax authority
+- **CSV** for spreadsheet analysis
+- **XBRL** for standardized financial reporting
+
+## Dashboard Integration
+
+### economy.Swarm.html
+
+A new dashboard displaying swarm-level economics:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                  🌐 Constellation Economic Dashboard         │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  ┌──────────────────┐  ┌──────────────────┐                │
+│  │  25 Stations     │  │  Network Health  │                │
+│  │  ████████████░░  │  │  ████████████░░  │                │
+│  │  22 Healthy      │  │  88%             │                │
+│  └──────────────────┘  └──────────────────┘                │
+│                                                              │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │ Total Treasury: 31,262.50 Ẑ  │ Total R&D: 22,256.25 Ẑ │ │
+│  │ Total Assets:   52,500.00 Ẑ  │ Weekly Revenue: 8,125 Ẑ│ │
+│  └────────────────────────────────────────────────────────┘ │
+│                                                              │
+│  Station List:                                               │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │ 🟢 ORIGIN     │ Bilan: 283 Ẑ  │ 42% capacity │ W45  │   │
+│  │ 🟢 TOULOUSE   │ Bilan: 412 Ẑ  │ 67% capacity │ W52  │   │
+│  │ 🟡 BORDEAUX   │ Bilan: 28 Ẑ   │ 12% capacity │ W8   │   │
+│  │ 🔴 LYON       │ Bilan: -5 Ẑ   │ 5% capacity  │ W0   │   │
+│  └──────────────────────────────────────────────────────┘   │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Security Considerations
+
+### Data Integrity
+
+- All events signed by Captain's NOSTR keypair
+- Wallet balances verifiable on Ğ1 blockchain
+- Timestamps prevent backdating
+
+### Privacy
+
+- Wallet public keys are already public on Ğ1
+- Email addresses in `station` object are optional
+- Aggregated swarm data doesn't expose individual transactions
+
+### Sybil Prevention
+
+- Only registered stations (primo-transaction) can publish
+- Hub validates station membership before aggregation
+- G1 Web of Trust provides identity verification
+
+## Implementation
+
+### Reference Implementation
+
+- **Broadcast Script:** `Astroport.ONE/RUNTIME/ECONOMY.broadcast.sh`
+- **Dashboard:** `UPlanet/earth/economy.Swarm.html` (Direct NOSTR connection, no API required)
+
+### Integration with Existing Scripts
+
+```bash
+# In ZEN.COOPERATIVE.3x1-3.sh (after allocation)
+${MY_PATH}/ECONOMY.broadcast.sh
+
+# In UPLANET.refresh.sh (Hub only)
+${MY_PATH}/SWARM.aggregate.sh
+```
+
+## Future Enhancements
+
+### Phase 1: Basic Reporting (Current)
+- ✅ Kind 30850 station reports
+- ✅ Kind 30851 swarm aggregates
+- ✅ Weekly publication cycle
+
+### Phase 2: Real-Time Monitoring
+- ⏳ WebSocket push for balance changes
+- ⏳ Alert events (kind 30852) for critical status
+- ⏳ Trend analysis and projections
+
+### Phase 3: Advanced Analytics
+- ⏳ Historical trend charts
+- ⏳ Predictive modeling for runway
+- ⏳ Cross-station benchmarking
+
+## Compatibility
+
+This extension is compatible with:
+- ✅ [NIP-101](101.md) - UPlanet Identity & Geographic Coordination
+- ✅ [NIP-101 N² Constellation Sync](101-n2-constellation-sync-extension.md)
+- ✅ [NIP-10000 Analytics](10000-analytics-extension.md)
+- ✅ Standard NOSTR clients (queryable events)
+
+## License
+
+This specification is released under **AGPL-3.0**.
+
+## Authors
+
+- **papiche** - [github.com/papiche](https://github.com/papiche)
+- **CopyLaRadio SCIC** - Cooperative implementation
