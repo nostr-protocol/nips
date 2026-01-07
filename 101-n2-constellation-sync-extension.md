@@ -6,25 +6,76 @@ Astroport Relay Synchronization Protocol for UPlanet
 
 `draft` `extension` `optional`
 
-This document describes the **N² (N-squared) constellation synchronization protocol** used by UPlanet/Astroport relays to maintain a distributed, resilient network of Nostr relays with automatic event synchronization.
+This document describes the **N² (N-squared) constellation synchronization protocol** used by UPlanet/Astroport relays. The N² refers to the **social graph synchronization** (friends + friends-of-friends) that creates a **relativistic distribution** for each user.
 
 ## Overview
 
-The N² protocol extends [NIP-101](101.md) with a **peer-to-peer relay synchronization mechanism** that creates a "constellation" of interconnected Astroport nodes. Each relay automatically syncs **21 specific event kinds** (including NIP-58 badges) across the network, ensuring data redundancy and censorship resistance.
+The N² protocol extends [NIP-101](101.md) with three complementary synchronization mechanisms:
+
+1. **Swarm Sync** (`_12345.sh`) - Station metadata via IPFS/IPNS bootstrap network
+2. **Social Graph Sync** (`backfill_constellation.sh`) - N1+N2 event synchronization via `amisOfAmis.txt`
+3. **N² Memory System** (`todo.sh`) - Collective development memory via kind 31910 events
+
+## The Conway's Angel Game Foundation
+
+The N² architecture is mathematically grounded in **John Conway's Angel Problem** (2006 solution):
+
+> **"An angel of force 2 can always escape the demon."**
+
+### Mathematical Principle
+- The Angel can move to any cell within 2 squares (king's moves)
+- The Demon can block one cell per turn
+- With force ≥ 2, the Angel **always** has an escape path
+
+### Application to N² Protocol
+| Concept | Angel Game | N² Constellation |
+|---------|-----------|------------------|
+| Force 1 | Direct neighbors only | N1 = Direct friends (kind 3 contacts) |
+| Force 2 | Neighbors + their neighbors | N2 = Friends of friends (amisOfAmis.txt) |
+| Demon | Blocking agent | Centralization, censorship, partition |
+| Escape | Always possible | Decentralized coordination always works |
+
+**Result:** A constellation with N² social graph can **never** be partitioned or censored, because there's always an alternative path through the extended network.
+
+## The N² Social Graph Concept
+
+### N1 = Direct Friends
+For each registered MULTIPASS user, the relay fetches their **kind 3** (contacts) events:
+
+```bash
+# nostr_get_N1.sh
+./strfry scan '{"kinds":[3],"authors":["$HEX"]}' | \
+    jq -r '.tags[] | select(.[0]=="p") | .[1]'
+```
+
+### N2 = Friends of Friends
+When N1 contacts are shared across the swarm via `amisOfAmis.txt`, each station can see:
+- Its own users' friends (N1)
+- Friends collected by OTHER stations (N2 = friends of friends)
+
+### Relativistic Distribution
+Each user sees content from their **extended social network**, not a global firehose:
+
+```
+User A on Station 1
+├── A's friends (N1) → collected locally
+├── Friends of A's friends (N2) → via amisOfAmis.txt from other stations
+└── Result: Personalized, relevant content stream
+```
 
 ## Motivation
 
 Standard Nostr relay networks:
+- ❌ Show global content (information overload)
 - ❌ Require manual relay configuration per client
 - ❌ Have no automatic backup mechanism
 - ❌ Lack geographic coordination
-- ❌ Cannot guarantee data persistence
 
 The N² constellation protocol solves these problems by:
+- ✅ **Relativistic sync** - Each user sees their extended social network
 - ✅ Automatic peer discovery and synchronization
 - ✅ Geographic hierarchical coordination (UMAP/SECTOR/REGION)
 - ✅ Resilient data replication across nodes
-- ✅ Zero-configuration for end users
 
 ## Architecture
 
@@ -44,18 +95,43 @@ Satellites (24)
 └── Peer sync with other Satellites
 ```
 
-**Analogy:** Like a constellation of stars, where each node (relay) can see and communicate with multiple other nodes, creating redundancy and resilience.
+### Swarm IPFS Synchronization (`_12345.sh`)
 
-### N² Synchronization Matrix
+Station metadata is synchronized via IPFS/IPNS:
+- Each station publishes its state to `/ipns/${IPFSNODEID}`
+- Bootstrap nodes are scanned for swarm updates
+- `amisOfAmis.txt` files are collected from all stations
 
-For a constellation of N relays:
-- Each relay maintains connections to **N-1 peers**
-- Total synchronization paths: **N × (N-1) = N²**
-- Example: 25 relays (1 Hub + 24 Satellites) = **600 sync paths**
+### Social Graph Data Flow
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  Station 1                    Station 2                      │
+│  ┌─────────────────┐          ┌─────────────────┐           │
+│  │ MULTIPASS Users │          │ MULTIPASS Users │           │
+│  │  ├── User A     │          │  ├── User X     │           │
+│  │  └── User B     │          │  └── User Y     │           │
+│  └────────┬────────┘          └────────┬────────┘           │
+│           │ nostr_get_N1.sh            │ nostr_get_N1.sh    │
+│           ▼                            ▼                     │
+│  ┌─────────────────┐          ┌─────────────────┐           │
+│  │ amisOfAmis.txt  │◄────────►│ amisOfAmis.txt  │           │
+│  │  (A's friends)  │  IPFS    │  (X's friends)  │           │
+│  │  (B's friends)  │  Swarm   │  (Y's friends)  │           │
+│  └────────┬────────┘  Sync    └────────┬────────┘           │
+│           │                            │                     │
+│           ▼                            ▼                     │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │              backfill_constellation.sh                   ││
+│  │  Syncs events from: local users + all amisOfAmis.txt    ││
+│  │  Result: N1 (friends) + N2 (friends of friends)         ││
+│  └─────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────┘
+```
 
 ## Synchronized Event Kinds
 
-The N² protocol synchronizes **18 event types** across all constellation members:
+The N² protocol synchronizes **40 event types** across all constellation members:
 
 ### Core Events (NIP-01)
 - **Kind 0** - Profile metadata
@@ -87,7 +163,45 @@ The N² protocol synchronizes **18 event types** across all constellation member
 ### Video Events (NIP-71 extension)
 - **Kind 34235** - Video events with IPFS integration
 
-**Total:** 18 event kinds automatically synchronized across the constellation.
+### Economic Health (NIP-101 extension)
+- **Kind 30850** - Station Economic Health Report (weekly)
+- **Kind 30851** - Swarm Economic Aggregate (Hub only)
+
+### Channel Events (NIP-28)
+- **Kind 40** - Channel creation
+- **Kind 41** - Channel metadata
+- **Kind 42** - Channel messages
+- **Kind 44** - Channel mute list
+
+### File & Media (NIP-94/A0/32)
+- **Kind 1063** - File metadata with provenance
+- **Kind 1111** - Comments (NIP-22)
+- **Kind 1222** - Voice messages
+- **Kind 1244** - Voice message metadata
+- **Kind 1985** - User tags (NIP-32)
+- **Kind 1986** - TMDB enrichments
+
+### Lists & Status (NIP-51/38)
+- **Kind 30001** - Categorized lists
+- **Kind 30005** - Playlists
+- **Kind 10001** - Pin lists
+- **Kind 30315** - User statuses
+
+### Workflow & Analytics (NIP-101 extensions)
+- **Kind 31900** - Cookie workflow definition
+- **Kind 31901** - Cookie workflow instance
+- **Kind 31902** - Cookie workflow completion
+- **Kind 10000** - Decentralized analytics
+
+### N² Memory System (NIP-101 extension)
+- **Kind 31910** - N² Development Memory (AI recommendations, Captain TODOs, votes)
+
+### Badge System (NIP-58)
+- **Kind 8** - Badge awards
+- **Kind 30008** - Profile badge selections
+- **Kind 30009** - Badge definitions
+
+**Total:** 44 event kinds automatically synchronized across the constellation.
 
 ## Synchronization Protocol
 
@@ -277,7 +391,7 @@ ${MY_PATH}/ZEN.ECONOMY.sh
 - **Geographic priority:** ~5 minutes (same SECTOR)
 
 ### Bandwidth
-- **Per relay:** ~10-50 MB/day (18 event kinds)
+- **Per relay:** ~10-50 MB/day (40 event kinds)
 - **Hub (25 relays):** ~250-1250 MB/day
 - **Optimized:** Only syncs new events (incremental)
 
@@ -327,12 +441,114 @@ Standard Nostr clients can use constellation relays as normal relays (no special
 - **Hub Management:** `Astroport.ONE/RUNTIME/UPLANET.refresh.sh`
 - **Repository:** [github.com/papiche/Astroport.ONE](https://github.com/papiche/Astroport.ONE)
 
+## N² Memory System (Kind 31910)
+
+The N² Memory System enables **collective learning** across the constellation. AI-generated recommendations and human decisions are stored as NOSTR events, creating a shared development memory.
+
+### Principle: "AI proposes, Human disposes"
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  Station 1 (Captain A)              Station 2 (Captain B)      │
+│  ┌──────────────────┐               ┌──────────────────┐       │
+│  │   todo.sh        │               │   todo.sh        │       │
+│  │  ├── AI Analysis │               │  ├── AI Analysis │       │
+│  │  └── Recommends  │               │  └── Recommends  │       │
+│  └────────┬─────────┘               └────────┬─────────┘       │
+│           │                                   │                 │
+│           ▼                                   ▼                 │
+│  ┌─────────────────────────────────────────────────────────────┐│
+│  │                  Kind 31910 Events (NOSTR)                  ││
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         ││
+│  │  │ AI Rec #1   │  │ AI Rec #2   │  │ Captain TODO│         ││
+│  │  │ status:prop │  │ status:acc  │  │ status:done │         ││
+│  │  │ votes: 3    │  │ votes: 5    │  │ votes: 1    │         ││
+│  │  └─────────────┘  └─────────────┘  └─────────────┘         ││
+│  └─────────────────────────────────────────────────────────────┘│
+│           │                                   │                 │
+│           ▼                                   ▼                 │
+│  ┌──────────────────┐               ┌──────────────────┐       │
+│  │ Captain A votes  │               │ Captain B accepts│       │
+│  │ on Rec #1        │               │ Rec #2           │       │
+│  └──────────────────┘               └──────────────────┘       │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Event Structure (Kind 31910)
+
+```jsonc
+{
+  "kind": 31910,
+  "pubkey": "<uplanet.G1.nostr pubkey>",
+  "created_at": 1736252425,
+  "content": "{\"type\":\"n2_todo\",\"version\":\"2.0\",\"id\":\"ai_20260107143025_1_a3f2b1\",\"content\":\"Add kind 30851 sync to backfill_constellation.sh\",\"status\":\"proposed\",\"rec_type\":\"ai_recommendation\",\"priority\":\"high\",\"system\":\"NOSTR\",\"justification\":\"Economic aggregation between swarms\",\"station\":\"12D3KooWABC...\",\"captain\":\"captain@uplanet.org\",\"votes\":3,\"created_at\":\"2026-01-07T14:30:25Z\"}",
+  "tags": [
+    ["d", "ai_20260107143025_1_a3f2b1"],
+    ["t", "n2-todo"],
+    ["t", "ai_recommendation"],
+    ["status", "proposed"],
+    ["priority", "high"],
+    ["system", "NOSTR"],
+    ["station", "12D3KooWABC..."],
+    ["captain", "captain@uplanet.org"]
+  ]
+}
+```
+
+### Status Lifecycle
+
+```
+proposed ──┬──► accepted ──► done
+           │
+           └──► rejected
+```
+
+### Commands
+
+| Command | Description |
+|---------|-------------|
+| `todo.sh` | Analyze Git changes, generate AI recommendations |
+| `todo.sh --day` | Analyze last 24 hours |
+| `todo.sh --week` | Analyze last 7 days |
+| `todo.sh --last` | Analyze since last execution |
+| `todo.sh --add "My idea"` | Add Captain TODO |
+| `todo.sh --list` | List all N² Memory events |
+| `todo.sh --accept ID` | Accept recommendation |
+| `todo.sh --reject ID` | Reject recommendation |
+| `todo.sh --vote ID` | Vote for recommendation |
+| `todo.sh --done ID` | Mark as completed |
+
+### Collective Decision Making
+
+1. **AI generates recommendations** based on Git changes and N² context
+2. **Each recommendation is a separate NOSTR event** (kind 31910)
+3. **Captains across stations** can vote, accept, or reject
+4. **Votes are aggregated** via NOSTR sync
+5. **Most voted recommendations** guide development priorities
+
+### Integration with Sync
+
+The `backfill_constellation.sh` script synchronizes kind 31910 events, ensuring all stations share the same development memory.
+
+## Future Integrations
+
+### Radicle (Decentralized Code Forge)
+- Replace GitHub/GitLab with sovereign code hosting
+- Link Radicle COBs (issues/patches) to N² Memory events
+- Decentralized CI/CD triggered by kind 31910 status changes
+
+### NextGraph (Collaborative Documents)
+- CRDTs for conflict-free document collaboration
+- RDF/SPARQL semantic queries on N² data
+- Local-first, privacy-preserving document sync
+
 ## Future Enhancements
 
 ### Phase 1: Basic Sync (Current)
-- ✅ 18 event kinds synchronized
+- ✅ 44 event kinds synchronized
 - ✅ Hub-and-satellite topology
 - ✅ Periodic pull-based sync
+- ✅ N² Memory System (kind 31910)
 
 ### Phase 2: Real-Time Sync
 - ⏳ WebSocket-based push (instant propagation)
