@@ -481,16 +481,32 @@ The N² Memory System enables **collective learning** across the constellation. 
   "kind": 31910,
   "pubkey": "<uplanet.G1.nostr pubkey>",
   "created_at": 1736252425,
-  "content": "{\"type\":\"n2_todo\",\"version\":\"2.0\",\"id\":\"ai_20260107143025_1_a3f2b1\",\"content\":\"Add kind 30851 sync to backfill_constellation.sh\",\"status\":\"proposed\",\"rec_type\":\"ai_recommendation\",\"priority\":\"high\",\"system\":\"NOSTR\",\"justification\":\"Economic aggregation between swarms\",\"station\":\"12D3KooWABC...\",\"captain\":\"captain@uplanet.org\",\"votes\":3,\"created_at\":\"2026-01-07T14:30:25Z\"}",
+  "content": "{\"type\":\"n2_todo\",\"version\":\"2.1\",\"id\":\"ai_20260107143025_1_a3f2b1c7d4e8\",\"content\":\"Add kind 30851 sync to backfill_constellation.sh\",\"status\":\"proposed\",\"rec_type\":\"ai_recommendation\",\"priority\":\"high\",\"station\":\"12D3KooWABC...\",\"captain\":\"captain@uplanet.org\",\"votes\":0,\"created_at\":\"2026-01-07T14:30:25Z\"}",
   "tags": [
-    ["d", "ai_20260107143025_1_a3f2b1"],
+    ["d", "ai_20260107143025_1_a3f2b1c7d4e8"],
     ["t", "n2-todo"],
     ["t", "ai_recommendation"],
     ["status", "proposed"],
     ["priority", "high"],
-    ["system", "NOSTR"],
     ["station", "12D3KooWABC..."],
-    ["captain", "captain@uplanet.org"]
+    ["captain", "captain@uplanet.org"],
+    ["created", "20260107"]
+  ]
+}
+```
+
+### Vote Event (with Reference Tag)
+
+```jsonc
+{
+  "kind": 31910,
+  "content": "{\"type\":\"n2_todo\",\"version\":\"2.1\",\"id\":\"vote_...\",\"rec_type\":\"vote\",\"reference_id\":\"ai_20260107143025_1_a3f2b1c7d4e8\"}",
+  "tags": [
+    ["d", "vote_ai_20260107143025_1_a3f2b1c7d4e8_12D3Koo_20260107"],
+    ["t", "n2-todo"],
+    ["t", "vote"],
+    ["status", "vote"],
+    ["e", "ai_20260107143025_1_a3f2b1c7d4e8", "", "reply"]  // NIP-10 compliant reference
   ]
 }
 ```
@@ -501,6 +517,16 @@ The N² Memory System enables **collective learning** across the constellation. 
 proposed ──┬──► accepted ──► done
            │
            └──► rejected
+```
+
+### Key Setup
+
+All stations must share the same key for constellation-wide memory:
+
+```bash
+# Generate from UPLANETNAME seed (same across all stations)
+$HOME/.zen/Astroport.ONE/tools/keygen -t nostr "${UPLANETNAME}N2" "${UPLANETNAME}N2" \
+    > ~/.zen/game/uplanet.G1.nostr
 ```
 
 ### Commands
@@ -515,7 +541,7 @@ proposed ──┬──► accepted ──► done
 | `todo.sh --list` | List all N² Memory events |
 | `todo.sh --accept ID` | Accept recommendation |
 | `todo.sh --reject ID` | Reject recommendation |
-| `todo.sh --vote ID` | Vote for recommendation |
+| `todo.sh --vote ID` | Vote for recommendation (linked via ["e"] tag) |
 | `todo.sh --done ID` | Mark as completed |
 
 ### Collective Decision Making
