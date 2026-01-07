@@ -19,6 +19,7 @@ Official Nostr Protocol Extensions for the UPlanet/Astroport.ONE Ecosystem
 - **Oracle Permits:** [42-oracle-permits-extension.md](42-oracle-permits-extension.md)
 - **Oracle Badges:** [58-oracle-badges-extension.md](58-oracle-badges-extension.md) - Gamification NIP-58
 - **Relay Sync:** [101-n2-constellation-sync-extension.md](101-n2-constellation-sync-extension.md)
+- **Economic Health:** [101-economic-health-extension.md](101-economic-health-extension.md) - Swarm economic monitoring
 
 ### File & Media Management
 - **File Provenance:** [94-provenance-extension.md](94-provenance-extension.md)
@@ -49,7 +50,7 @@ UPlanet extends Nostr with:
 - 🌐 **Provenance Tracking** - File attribution and deduplication
 - 🎫 **Peer-Validated Credentials** - Oracle system for competence verification
 - 🏅 **Badge Gamification** - NIP-58 badges for visual competence representation
-- 🔄 **N² Synchronization** - Mesh network of relays for resilience
+- 🔄 **N² Synchronization** - Friends + friends-of-friends social graph sync (relativistic distribution)
 - 🌱 **Environmental Registry** - ORE (Ecological Real Obligations) system
 - 💬 **Geographic Chat Rooms** - UMAP-based location discussion channels
 
@@ -65,13 +66,14 @@ UPlanet extends Nostr with:
   - Oracle System (kinds 30500-30503)
   - ORE Environmental Registry (kinds 30312-30313)
 
-- **[NIP-101 N² Constellation Sync Extension](101-n2-constellation-sync-extension.md)** - Astroport Relay Synchronization
+- **[NIP-101 N² Constellation Sync Extension](101-n2-constellation-sync-extension.md)** - Social Graph Synchronization
   - **Extends:** NIP-101 (UPlanet Identity & Geographic Coordination)
-  - **Architecture:** Hub (1) + Satellites (24) = N² synchronization matrix (600 sync paths)
-  - **Synchronized kinds:** 21 event types (0,1,3,5,6,7,8,21,22,30008,30009,30023,30024,30312,30313,30500,30501,30502,30503,30800)
-  - **Innovation:** Automatic peer discovery + bidirectional sync + geographic hierarchical coordination
-  - **Topology:** Hub-and-satellite with mesh network capabilities
-  - **Resilience:** 25x event replication across constellation (zero data loss even if 24 relays fail)
+  - **N² Concept:** N1 (friends) + N2 (friends-of-friends) = Relativistic content distribution
+  - **Mechanism:** `nostr_get_N1.sh` → `amisOfAmis.txt` → `backfill_constellation.sh`
+  - **Innovation:** Each user sees content from their **extended social network**, not global firehose
+  - **Swarm Sync:** Station metadata via IPFS/IPNS (`_12345.sh`)
+  - **Event Sync:** 40 event types synchronized for N1+N2 pubkeys
+  - **Resilience:** Hub (1) + Satellites (24) with bidirectional sync
 
 ### 🔐 Authentication & Identity Extensions
 
@@ -155,7 +157,7 @@ UPlanet extends Nostr with:
 │  │   - Geographic event routing (UMAP/SECTOR)        │     │
 │  │   - DID resolution (kind 30800)                   │     │
 │  │   - Provenance tracking (NIP-94 extension)        │     │
-│  │   - N² constellation sync (18 event kinds)        │     │
+│  │   - N² social graph sync (N1+N2 pubkeys)          │     │
 │  └──────────────────────────────────────────────────┘     │
 │         │                  │                  │             │
 │         ▼                  ▼                  ▼             │
@@ -204,36 +206,63 @@ Satellites (24)
 | **Video Events** | NIP-71 | [71-extension.md](71-extension.md) | 21, 22 | ✅ Production |
 | **Geographic Chat** | NIP-28 | [28-umap-extension.md](28-umap-extension.md) | 42 | ✅ Production |
 | **Identity** | - | [NIP-101](101.md) | 30800 | ✅ Production |
-| **Relay Sync** | NIP-101 | [101-n2-constellation-sync-extension.md](101-n2-constellation-sync-extension.md) | 18 kinds | ✅ Production |
+| **Relay Sync** | NIP-101 | [101-n2-constellation-sync-extension.md](101-n2-constellation-sync-extension.md) | 40 kinds | ✅ Production |
 
 ### Event Kind Reference
 
 | Kind | Name | Extension | Purpose |
 |------|------|-----------|---------|
+| **Core Events** ||||
 | 0 | Profile | Core | User profile metadata |
 | 1 | Text Note | Core | Standard text posts |
 | 3 | Contacts | Core | Contact/follow lists |
 | 5 | Deletion | Core | Event deletion requests |
 | 6 | Repost | Core | Event reposts |
 | 7 | Reaction | Core | Like/reaction events |
-| 21 | Media | Core | Media attachments |
-| 22 | Comment | NIP-22 | Comment threads |
+| 8 | Badge Award | NIP-58 | Badge award events |
+| **Media Events** ||||
+| 21 | Video (Normal) | NIP-71 + IPFS | Normal videos (landscape, longer) |
+| 22 | Video (Short) / Comment | NIP-71 + NIP-22 | Short videos (< 60s) or comment threads |
+| **Channel Events** ||||
+| 40 | Channel Create | NIP-28 | Channel creation |
+| 41 | Channel Metadata | NIP-28 | Channel metadata update |
 | 42 | Channel Message | NIP-28 + UMAP | Geographic chat room messages |
+| 44 | Channel Mute | NIP-28 | Channel mute list |
+| **File & Media** ||||
 | 1063 | File Metadata | NIP-94 + Provenance | File metadata with upload chain |
-| 22242 | Auth | NIP-42 + Twin-Key | Authentication with UMAP keypair |
+| 1111 | Comment | NIP-22 | Threaded comments |
+| 1222 | Voice Message | NIP-A0 | Voice message audio |
+| 1244 | Voice Metadata | NIP-A0 | Voice message metadata |
+| 1985 | User Tags | NIP-32 | User-defined tags |
+| 1986 | TMDB Enrichment | NIP-71 ext | Movie/TV database enrichment |
+| **Lists & Status** ||||
+| 10001 | Pin List | NIP-51 | Bookmark/pin lists |
+| 30001 | Categorized List | NIP-51 | Categorized bookmark lists |
+| 30005 | Playlists | NIP-51 | Video/media playlists |
+| 30008 | Profile Badges | NIP-58 | User profile badge display |
+| 30009 | Badge Definition | NIP-58 | Badge type definition |
+| 30315 | User Status | NIP-38 | User status updates |
+| **Long-Form Content** ||||
 | 30023 | Article | NIP-23 | Long-form content |
 | 30024 | Draft | NIP-23 | Article drafts |
-| 30312 | ORE Space | NIP-101 | Geographic meeting room |
-| 30313 | ORE Verification | NIP-101 | Environmental validation |
+| **Identity & Oracle** ||||
 | 30500 | Permit Definition | Oracle | License type definition |
 | 30501 | Permit Request | Oracle | Application for permit |
 | 30502 | Permit Attestation | Oracle | Expert signature |
 | 30503 | Permit Credential | Oracle | W3C Verifiable Credential |
 | 30800 | DID Document | NIP-101 | Decentralized identity |
-| 10000 | Analytics | [10000-analytics-extension.md](10000-analytics-extension.md) | User analytics events (decentralized, supports both encrypted and unencrypted via content/tags) |
-| 10001 | ~~Encrypted Analytics~~ (Deprecated) | [10001-encrypted-analytics-extension.md](10001-encrypted-analytics-extension.md) | **DEPRECATED**: Now reserved for NIP-51 playlists (pin list). Use kind 10000 for encrypted analytics. |
-| 21 | Video (Normal) | NIP-71 + IPFS | Normal videos (landscape, longer) |
-| 22 | Video (Short) | NIP-71 + IPFS | Short videos (portrait, < 60s) |
+| 22242 | Auth | NIP-42 + Twin-Key | Authentication with UMAP keypair |
+| **ORE System** ||||
+| 30312 | ORE Space | NIP-101 | Geographic meeting room |
+| 30313 | ORE Verification | NIP-101 | Environmental validation |
+| **Economic Health** ||||
+| 30850 | Station Report | NIP-101 Economic | Weekly economic health (renters, owners, revenue) |
+| 30851 | Swarm Aggregate | NIP-101 Economic | Constellation economic aggregate |
+| **Workflows & Analytics** ||||
+| 31900 | Workflow Definition | NIP-101 Cookie | Cookie workflow definition |
+| 31901 | Workflow Instance | NIP-101 Cookie | Cookie workflow instance |
+| 31902 | Workflow Completion | NIP-101 Cookie | Cookie workflow completion |
+| 10000 | Analytics | [10000-analytics-extension.md](10000-analytics-extension.md) | Decentralized user analytics |
 
 ---
 
@@ -350,9 +379,10 @@ cd Astroport.ONE/tools
 - **Automatic thumbnails** (static + animated GIF)
 
 ### Network Resilience
-- **N² synchronization** (25 relays × 24 peers)
-- **Hub-and-satellite** topology
-- **18 event kinds** auto-synced
+- **N² social graph sync** (N1 friends + N2 friends-of-friends)
+- **Relativistic distribution** - each user sees their extended network
+- **Hub-and-satellite** topology with IPFS/IPNS swarm sync
+- **40 event kinds** auto-synced for N1+N2 pubkeys
 - **Zero single point of failure**
 
 ---
@@ -437,13 +467,21 @@ Rent: 1 Ẑ/week HT + 0.2 Ẑ TVA
 └── Capacity: 250 per Raspberry Pi station
 ```
 
-#### ZEN Card (Digital Apartment + Ownership)
+#### ZEN Card (Digital Apartment)
 ```
-Ownership: 50 Ẑ/year (one-time social shares purchase)
-├── Services: NextCloud 128GB + premium features
-├── Rights: Voting + profit sharing
-├── Script: PLAYER.refresh.sh
-└── Capacity: 24 per station
+Two user types:
+├── RENTERS (Locataires) 🏠
+│   └── Weekly rent: 4 Ẑ/week HT (counted in revenue)
+│
+└── OWNERS (Sociétaires) 👑
+    ├── One-time capital contribution: 50-540 Ẑ
+    ├── No weekly rent (co-owners, not tenants)
+    └── U.SOCIETY file in player folder
+
+Services: NextCloud 128GB + premium features
+Rights: Owners get voting + profit sharing
+Script: PLAYER.refresh.sh
+Capacity: 24 per station
 ```
 
 ### Automated Scripts
@@ -633,7 +671,7 @@ UPlanet extends Nostr to create a **complete decentralized society infrastructur
 ### Geographic Coordination
 - **Local communities** (UMAP neighborhoods)
 - **Regional organization** (SECTOR/REGION hierarchy)
-- **Global network** (N² constellation sync)
+- **Global network** (N² social graph sync via `amisOfAmis.txt`)
 
 ### Economic Integration
 - **Ẑen currency** (Ğ1 blockchain based)
