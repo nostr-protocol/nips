@@ -13,7 +13,7 @@ The Economic Health Extension extends [NIP-101](101.md) with standardized events
 - ✅ **Transparent**: All economic data publicly auditable on NOSTR
 - ✅ **Decentralized**: No central authority controls the data
 - ✅ **Legally Compliant**: Follows SCIC accounting standards
-- ✅ **Real-time**: Weekly updates synchronized via N² constellation
+- ✅ **Real-time**: Daily updates synchronized via N² constellation
 - ✅ **Aggregatable**: Swarm-level metrics computed from station data
 
 ## Motivation
@@ -25,7 +25,7 @@ Current challenges:
 - ❌ No audit trail for economic decisions
 
 This extension solves these problems by:
-- ✅ Automatic weekly economic health broadcasts
+- ✅ Automatic daily economic health broadcasts
 - ✅ Standardized event format for accounting
 - ✅ Aggregated swarm dashboards
 - ✅ Cryptographically signed financial reports
@@ -34,7 +34,7 @@ This extension solves these problems by:
 
 ### Economic Health Report (kind: 30850)
 
-A weekly economic health snapshot published by each station.
+A daily economic health snapshot published by each station.
 
 ```jsonc
 {
@@ -345,7 +345,7 @@ Economic health events are synchronized across the constellation:
 
 | Event Kind | Publisher | Frequency | Timing |
 |------------|-----------|-----------|--------|
-| **30850** | Each Station | Weekly | After `ZEN.COOPERATIVE.3x1-3.sh` |
+| **30850** | Each Station | Daily | After `ZEN.ECONOMY.sh` |
 | **30851** | Hub Only | Weekly | After collecting all 30850 events |
 
 ## Query Patterns
@@ -494,7 +494,7 @@ A new dashboard displaying swarm-level economics:
 ### Integration with Existing Scripts
 
 ```bash
-# In ZEN.COOPERATIVE.3x1-3.sh (after allocation)
+# In ZEN.ECONOMY.sh (daily, after cooperative allocation check)
 ${MY_PATH}/ECONOMY.broadcast.sh
 
 # In UPLANET.refresh.sh (Hub only)
@@ -506,7 +506,7 @@ ${MY_PATH}/SWARM.aggregate.sh
 ### Phase 1: Basic Reporting (Current)
 - ✅ Kind 30850 station reports
 - ✅ Kind 30851 swarm aggregates
-- ✅ Weekly publication cycle
+- ✅ Daily publication cycle
 
 ### Phase 2: Real-Time Monitoring
 - ⏳ WebSocket push for balance changes
