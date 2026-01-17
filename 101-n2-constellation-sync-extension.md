@@ -164,8 +164,7 @@ The N² protocol synchronizes **40 event types** across all constellation member
 - **Kind 34235** - Video events with IPFS integration
 
 ### Economic Health (NIP-101 extension)
-- **Kind 30850** - Station Economic Health Report (weekly)
-- **Kind 30851** - Swarm Economic Aggregate (Hub only)
+- **Kind 30850** - Station Economic Health Report (daily)
 
 ### Channel Events (NIP-28)
 - **Kind 40** - Channel creation
@@ -481,7 +480,7 @@ The N² Memory System enables **collective learning** across the constellation. 
   "kind": 31910,
   "pubkey": "<uplanet.G1.nostr pubkey>",
   "created_at": 1736252425,
-  "content": "{\"type\":\"n2_todo\",\"version\":\"2.1\",\"id\":\"ai_20260107143025_1_a3f2b1c7d4e8\",\"content\":\"Add kind 30851 sync to backfill_constellation.sh\",\"status\":\"proposed\",\"rec_type\":\"ai_recommendation\",\"priority\":\"high\",\"station\":\"12D3KooWABC...\",\"captain\":\"captain@uplanet.org\",\"votes\":0,\"created_at\":\"2026-01-07T14:30:25Z\"}",
+  "content": "{\"type\":\"n2_todo\",\"version\":\"2.1\",\"id\":\"ai_20260107143025_1_a3f2b1c7d4e8\",\"content\":\"Add kind 30850 economic health to dashboard\",\"status\":\"proposed\",\"rec_type\":\"ai_recommendation\",\"priority\":\"high\",\"station\":\"12D3KooWABC...\",\"captain\":\"captain@uplanet.org\",\"votes\":0,\"created_at\":\"2026-01-07T14:30:25Z\"}",
   "tags": [
     ["d", "ai_20260107143025_1_a3f2b1c7d4e8"],
     ["t", "n2-todo"],

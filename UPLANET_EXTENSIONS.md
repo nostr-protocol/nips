@@ -256,8 +256,7 @@ Satellites (24)
 | 30312 | ORE Space | NIP-101 | Geographic meeting room |
 | 30313 | ORE Verification | NIP-101 | Environmental validation |
 | **Economic Health** ||||
-| 30850 | Station Report | NIP-101 Economic | Weekly economic health (renters, owners, revenue) |
-| 30851 | Swarm Aggregate | NIP-101 Economic | Constellation economic aggregate |
+| 30850 | Station Report | NIP-101 Economic | Daily economic health (renters, owners, revenue) |
 | **Workflows & Analytics** ||||
 | 31900 | Workflow Definition | NIP-101 Cookie | Cookie workflow definition |
 | 31901 | Workflow Instance | NIP-101 Cookie | Cookie workflow instance |

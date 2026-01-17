@@ -47,7 +47,7 @@ A daily economic health snapshot published by each station.
     ["t", "economic-health"],
     ["t", "weekly-report"],
     ["week", "W02-2026"],
-    ["constellation", "UPlanetV1"],
+    ["constellation", "<UPLANETG1PUB>"],  // e.g. "AwdjhpJNqzQgmSrvpUk5Fd2GxBZMJVQkBQmXn4JQLr6z"
     ["station", "<IPFSNODEID>"],
     ["g1pub", "<UPLANETG1PUB>"],
     ["uplanetname", "ORIGIN"],
@@ -175,100 +175,6 @@ A daily economic health snapshot published by each station.
 }
 ```
 
-### Swarm Economic Aggregate (kind: 30851)
-
-Aggregated economic health of the entire constellation, published by the Hub.
-
-```jsonc
-{
-  "kind": 30851,
-  "pubkey": "<HUB_CAPTAIN_HEX>",
-  "created_at": 1736280000,
-  "tags": [
-    ["d", "swarm-economy-W02-2026"],
-    ["t", "uplanet"],
-    ["t", "swarm-economy"],
-    ["t", "constellation-aggregate"],
-    ["week", "W02-2026"],
-    ["constellation", "UPlanetV1"],
-    
-    // Aggregate metrics
-    ["stations:total", "25"],
-    ["stations:healthy", "22"],
-    ["stations:warning", "2"],
-    ["stations:critical", "1"],
-    
-    // Total balances across swarm
-    ["total:cash", "31262.50"],
-    ["total:rnd", "22256.25"],
-    ["total:assets", "52500.00"],
-    
-    // Total capacity
-    ["total:multipass_used", "2125"],
-    ["total:multipass_capacity", "6250"],
-    ["total:zencard_total", "300"],       // All ZenCard users
-    ["total:zencard_renters", "225"],     // Pay weekly rent
-    ["total:zencard_owners", "75"],       // Sociétaires (no rent)
-    ["total:zencard_capacity", "600"],
-    
-    // Total revenue
-    ["total:revenue_weekly", "8125.00"],
-    ["total:tva_collected", "1625.00"],
-    
-    // Economic indicators
-    ["indicator:average_bilan", "7075.00"],
-    ["indicator:total_runway_weeks", "1125"],
-    ["indicator:network_health", "88"]
-  ],
-  "content": "{
-    \"report_version\": \"1.0\",
-    \"report_type\": \"swarm_aggregate\",
-    \"generated_at\": \"2026-01-07T15:00:00Z\",
-    \"constellation\": {
-      \"id\": \"UPlanetV1\",
-      \"hub_relay\": \"wss://relay.copylaradio.com\",
-      \"hub_ipfsnodeid\": \"12D3KooWABC...\"
-    },
-    \"stations\": [
-      {
-        \"ipfsnodeid\": \"12D3KooWABC...\",
-        \"uplanetname\": \"ORIGIN\",
-        \"status\": \"healthy\",
-        \"bilan\": 283.00,
-        \"capacity_percent\": 42,
-        \"event_id\": \"<30850_event_id>\"
-      }
-    ],
-    \"totals\": {
-      \"cash\": 31262.50,
-      \"rnd\": 22256.25,
-      \"assets\": 52500.00,
-      \"impot\": 11268.75,
-      \"revenue_weekly\": 8125.00
-    },
-    \"capacity\": {
-      \"multipass\": { \"used\": 2125, \"total\": 6250, \"percent\": 34 },
-      \"zencard\": { \"total\": 300, \"renters\": 225, \"owners\": 75, \"capacity\": 600, \"percent\": 50 }
-    },
-    \"health\": {
-      \"healthy_count\": 22,
-      \"warning_count\": 2,
-      \"critical_count\": 1,
-      \"bankrupt_count\": 0,
-      \"network_health_percent\": 88,
-      \"total_runway_weeks\": 1125
-    },
-    \"growth\": {
-      \"new_multipass_week\": 45,
-      \"new_zencard_week\": 8,
-      \"churn_rate\": 2.1
-    }
-  }",
-  "id": "<event_id>",
-  "sig": "<signature>"
-}
-```
-
 ## ZenCard User Classification
 
 ### Renters vs Owners (Sociétaires)
@@ -335,8 +241,7 @@ Economic health events are synchronized across the constellation:
 {
   "sync_event_kinds": [
     // ... existing kinds ...
-    30850,  // Station economic health
-    30851   // Swarm economic aggregate
+    30850  // Station economic health
   ]
 }
 ```
@@ -346,7 +251,6 @@ Economic health events are synchronized across the constellation:
 | Event Kind | Publisher | Frequency | Timing |
 |------------|-----------|-----------|--------|
 | **30850** | Each Station | Daily | After `ZEN.ECONOMY.sh` |
-| **30851** | Hub Only | Weekly | After collecting all 30850 events |
 
 ## Query Patterns
 
@@ -369,20 +273,13 @@ Economic health events are synchronized across the constellation:
 }
 ```
 
-### Get Swarm Aggregate
+### Get All Stations in Constellation
 
 ```javascript
-// Latest swarm aggregate
-{
-  "kinds": [30851],
-  "#constellation": ["UPlanetV1"],
-  "limit": 1
-}
-
-// All stations in constellation
+// All stations in same swarm (identified by UPLANETG1PUB)
 {
   "kinds": [30850],
-  "#constellation": ["UPlanetV1"],
+  "#constellation": ["<UPLANETG1PUB>"],  // G1 wallet distributing usage tokens
   "#week": ["W02-2026"]
 }
 ```
@@ -393,7 +290,7 @@ Economic health events are synchronized across the constellation:
 // Stations needing attention
 {
   "kinds": [30850],
-  "#constellation": ["UPlanetV1"],
+  "#constellation": ["<UPLANETG1PUB>"],
   "#health:status": ["warning", "critical"]
 }
 ```
@@ -496,17 +393,14 @@ A new dashboard displaying swarm-level economics:
 ```bash
 # In ZEN.ECONOMY.sh (daily, after cooperative allocation check)
 ${MY_PATH}/ECONOMY.broadcast.sh
-
-# In UPLANET.refresh.sh (Hub only)
-${MY_PATH}/SWARM.aggregate.sh
 ```
 
 ## Future Enhancements
 
 ### Phase 1: Basic Reporting (Current)
 - ✅ Kind 30850 station reports
-- ✅ Kind 30851 swarm aggregates
 - ✅ Daily publication cycle
+- ✅ Client-side swarm aggregation (economy.Swarm.html)
 
 ### Phase 2: Real-Time Monitoring
 - ⏳ WebSocket push for balance changes
