@@ -29,17 +29,22 @@ Official Nostr Protocol Extensions for the UPlanet/Astroport.ONE Ecosystem
 ### Geographic & Social
 - **UMAP Chat Rooms:** [28-umap-extension.md](28-umap-extension.md)
 
+### Economic & Crowdfunding
+- **Crowdfunding:** [75-crowdfunding-extension.md](75-crowdfunding-extension.md) - Forest Garden Acquisition System
+
 ### Documentation
 - **Full Documentation:** [DID_IMPLEMENTATION.md](../Astroport.ONE/DID_IMPLEMENTATION.md)
 - **ORE System:** [ORE_SYSTEM.md](../Astroport.ONE/docs/ORE_SYSTEM.md)
 - **Oracle System:** [ORACLE_SYSTEM.md](../Astroport.ONE/docs/ORACLE_SYSTEM.md)
 - **Economy:** [ZEN.ECONOMY.readme.md](../Astroport.ONE/RUNTIME/ZEN.ECONOMY.readme.md)
+- **Crowdfunding:** [CROWDFUNDING_FORET_JARDIN.md](../Astroport.ONE/docs/CROWDFUNDING_FORET_JARDIN.md)
+- **Collaborative Commons:** [COLLABORATIVE_COMMONS_SYSTEM.md](../Astroport.ONE/docs/COLLABORATIVE_COMMONS_SYSTEM.md)
 
 ---
 
 ## 📚 Complete Documentation
 
-This repository contains **9 official extensions** to the Nostr protocol for the UPlanet/Astroport.ONE ecosystem.
+This repository contains **10 official extensions** to the Nostr protocol for the UPlanet/Astroport.ONE ecosystem.
 
 ### 🎯 Overview
 
@@ -53,6 +58,7 @@ UPlanet extends Nostr with:
 - 🔄 **N² Synchronization** - Friends + friends-of-friends social graph sync (relativistic distribution)
 - 🌱 **Environmental Registry** - ORE (Ecological Real Obligations) system
 - 💬 **Geographic Chat Rooms** - UMAP-based location discussion channels
+- 🏡 **Crowdfunding** - Forest Garden acquisition with multi-currency support (Ẑen/Ğ1/€)
 
 ---
 
@@ -135,6 +141,17 @@ UPlanet extends Nostr with:
   - **Channel ID:** Uses UMAP DID's `npub` or fallback to `UMAP_<lat>_<lon>`
   - **Use case:** Geographic coordination, ORE verification discussions, local community chat
   - **Integration:** Works with ORE System (kind 30312/30313) for environmental compliance
+
+### 🏡 Economic & Crowdfunding Extensions
+
+- **[NIP-75 Crowdfunding Extension](75-crowdfunding-extension.md)** - Forest Garden Acquisition System
+  - **Extends:** NIP-75 (Zap Goals)
+  - **New kinds:** 30904 (crowdfunding campaign), 9742 (contributions)
+  - **Innovation:** Multi-currency goals (Ẑen convertible/non-conv., Ğ1, €) for property acquisition
+  - **Owner modes:** `commons` (donation to CAPITAL) vs `cash` (€ payout from ASSETS)
+  - **Integration:** Links to kind 30023 collaborative documents for governance
+  - **CLI:** `CROWDFUNDING.sh` for captain management
+  - **Use case:** Collective acquisition of forest gardens with mixed owner intentions
 
 ---
 
