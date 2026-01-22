@@ -1,6 +1,6 @@
 # NIP-75 Crowdfunding Extension
 
-## UPlanet Forest Garden Acquisition System
+## UPlanet Commons Crowdfunding System
 
 **Extends:** NIP-75 (Zap Goals)
 
@@ -13,7 +13,7 @@
 ## Overview
 
 This extension adds support for **multi-currency crowdfunding goals** specifically designed for:
-- **Property acquisition** (forest gardens, shared spaces)
+- **Property acquisition** (land, buildings, equipment, shared spaces)
 - **Commons donations** (non-convertible Ẑen → CAPITAL)
 - **Cash sales** (convertible Ẑen/€ → ASSETS)
 - **Ğ1 (June)** donations to community wallets
@@ -31,14 +31,14 @@ While NIP-75's kind 9041 handles simple Lightning zap goals, kind **30904** exte
   "kind": 30904,
   "pubkey": "<UMAP_PUBKEY or CAPTAIN_PUBKEY>",
   "created_at": 1705920000,
-  "content": "# 🌳 Forêt Enchantée\n\nProjet de forêt jardin collaborative...",
+  "content": "# 🌳 Atelier Partagé\n\nProjet de bien commun collaboratif...",
   "tags": [
     ["d", "crowdfund-43.60-1.44-foret-enchantee"],
     ["title", "🌳 Forêt Enchantée"],
     ["t", "crowdfunding"],
     ["t", "UPlanet"],
     ["t", "commons"],
-    ["t", "foret-jardin"],
+    ["t", "communs"],
     ["g", "43.6047,1.4442"],
     ["p", "<UMAP_PUBKEY_HEX>", "", "umap"],
     
@@ -133,25 +133,24 @@ Used for contribution routing and verification.
 
 ---
 
-## Contribution Event: Kind 9742
+## Contribution Event: Kind 7 (Reaction)
 
-When users contribute to a crowdfunding campaign:
+Contributions to crowdfunding campaigns use **kind 7** (Reaction, NIP-25) with the `crowdfunding` tag. The ZEN amount is specified directly in the `content` field (e.g., "+100" sends 100 Ẑen).
 
 ```json
 {
-  "kind": 9742,
+  "kind": 7,
   "pubkey": "<CONTRIBUTOR_PUBKEY>",
   "created_at": 1705920100,
-  "content": "Contribution pour la Forêt Enchantée 🌳",
+  "content": "+100",
   "tags": [
     ["e", "<CROWDFUND_EVENT_ID>"],
-    ["a", "30904:<PUBKEY>:crowdfund-43.60-1.44-foret-enchantee"],
-    ["amount", "100"],
-    ["currency", "ZEN"],
+    ["p", "<BIEN_HEX_PUBKEY>"],
+    ["t", "crowdfunding"],
+    ["t", "UPlanet"],
+    ["project-id", "CF-20250120-A1B2"],
     ["target", "ZEN_CONVERTIBLE"],
-    ["tx_ref", "CF:CF-20250120-A1B2:ZEN"],
-    ["t", "crowdfunding-contribution"],
-    ["t", "UPlanet"]
+    ["i", "g1pub:<BIEN_G1PUB>"]
   ]
 }
 ```
@@ -160,12 +159,26 @@ When users contribute to a crowdfunding campaign:
 
 | Tag | Description |
 |-----|-------------|
-| `e` | Reference to the crowdfund event |
-| `a` | Addressable event coordinate |
-| `amount` | Contribution amount |
-| `currency` | `ZEN`, `G1`, or `EUR` |
-| `target` | Which goal this contributes to |
-| `tx_ref` | Blockchain transaction reference |
+| `e` | Reference to the crowdfund event (kind 30904) |
+| `p` | Bien pubkey (recipient wallet) |
+| `t` | Must include `"crowdfunding"` and `"UPlanet"` |
+| `project-id` | Campaign identifier (e.g., "CF-20250120-A1B2") |
+| `target` | Goal type: `ZEN_CONVERTIBLE`, `ZEN_COMMONS`, or `G1` |
+| `i` | Optional: G1 pubkey of the Bien wallet |
+
+### Content Format
+
+The `content` field contains the ZEN amount:
+- `"+100"` → Sends 100 Ẑen
+- `"+50"` → Sends 50 Ẑen
+- `"+"` → Sends 1 Ẑen (default)
+
+**Processing (via 7.sh filter):**
+1. Detects tag `["t", "crowdfunding"]`
+2. Extracts `project-id` and `BIEN_HEX`
+3. Validates sender balance
+4. Transfers ZEN: sender → BIEN_G1PUB wallet
+5. Records contribution
 
 ---
 
@@ -207,7 +220,7 @@ Crowdfunding campaigns can be linked to collaborative documents for detailed gov
 | `decision` | 🗳️ | Proposal to vote |
 | `garden` | 🌱 | Garden plan (ORE) |
 | `resource` | 📦 | Resource inventory |
-| **`crowdfund`** | 🏡 | **Crowdfunding campaign** (NEW) |
+| `crowdfund` | 🏡 | **Crowdfunding campaign** |
 
 ---
 
@@ -249,7 +262,7 @@ Crowdfunding campaigns can be linked to collaborative documents for detailed gov
   1. CRÉATION (CLI)              2. PUBLICATION               3. CONTRIBUTIONS
   ─────────────────             ─────────────────            ─────────────────
   • Captain crée projet         • kind 30904 publié          • Utilisateurs envoient
-  • Ajoute propriétaires        • kind 30023 lié             • kind 9742 publiés
+  • Ajoute propriétaires        • kind 30023 lié             • kind 7 (crowdfunding) publiés
   • Configure objectifs         • Visible sur UMAP           • Wallets mis à jour
         │                              │                              │
         └──────────────────────────────┴──────────────────────────────┘
@@ -288,9 +301,9 @@ Crowdfunding campaigns can be linked to collaborative documents for detailed gov
 ### Web Interface (crowdfunding.html)
 
 1. **List campaigns** from kind 30904 events filtered by `#t: crowdfunding`
-2. **Display progress** by aggregating kind 9742 contributions
+2. **Display progress** by aggregating kind 7 contributions with tag `crowdfunding`
 3. **Show detailed document** via linked kind 30023
-4. **Enable contributions** with QR codes and wallet addresses
+4. **Enable contributions** via kind 7 reactions with ZEN amount in content
 
 ### Collaborative Editor Integration
 
@@ -342,13 +355,13 @@ Coordonnées: (lat, lon)
 
 ---
 
-## Related Extensions
+## Related Extensions (for inspiration, but Ğ1 creates identity and equality)
 
 - **[NIP-75](75.md)** - Zap Goals (Lightning-based funding)
 - **[NIP-57](57.md)** - Lightning Zaps
 - **[NIP-28 UMAP Extension](28-umap-extension.md)** - Geographic chat rooms
 - **[NIP-101](101.md)** - UPlanet Identity & Geographic Coordination
-- **[COLLABORATIVE_COMMONS_SYSTEM.md](../Astroport.ONE/docs/COLLABORATIVE_COMMONS_SYSTEM.md)** - Document governance
+- **Astroport.ONE/docs/COLLABORATIVE_COMMONS_SYSTEM.md** - Document governance
 
 ---
 
@@ -356,10 +369,10 @@ Coordonnées: (lat, lon)
 
 - **v1.0.0** (2025-01-20): Initial specification
   - Kind 30904 for crowdfunding campaigns
-  - Kind 9742 for contributions
+  - Kind 7 (Reaction) with `crowdfunding` tag for contributions
   - Integration with collaborative documents
   - Multi-currency support (Ẑen, Ğ1, €)
 
 ---
 
-*Extension for UPlanet Crowdfunding - Forest Garden Commons Acquisition*
+*Extension for UPlanet Crowdfunding - Common Goods Acquisition*

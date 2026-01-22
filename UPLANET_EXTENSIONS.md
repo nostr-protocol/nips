@@ -30,14 +30,14 @@ Official Nostr Protocol Extensions for the UPlanet/Astroport.ONE Ecosystem
 - **UMAP Chat Rooms:** [28-umap-extension.md](28-umap-extension.md)
 
 ### Economic & Crowdfunding
-- **Crowdfunding:** [75-crowdfunding-extension.md](75-crowdfunding-extension.md) - Forest Garden Acquisition System
+- **Crowdfunding:** [75-crowdfunding-extension.md](75-crowdfunding-extension.md) - Commons Crowdfunding System
 
 ### Documentation
 - **Full Documentation:** [DID_IMPLEMENTATION.md](../Astroport.ONE/DID_IMPLEMENTATION.md)
 - **ORE System:** [ORE_SYSTEM.md](../Astroport.ONE/docs/ORE_SYSTEM.md)
 - **Oracle System:** [ORACLE_SYSTEM.md](../Astroport.ONE/docs/ORACLE_SYSTEM.md)
 - **Economy:** [ZEN.ECONOMY.readme.md](../Astroport.ONE/RUNTIME/ZEN.ECONOMY.readme.md)
-- **Crowdfunding:** [CROWDFUNDING_FORET_JARDIN.md](../Astroport.ONE/docs/CROWDFUNDING_FORET_JARDIN.md)
+- **Crowdfunding:** [CROWDFUNDING_COMMUNS.md](../Astroport.ONE/docs/CROWDFUNDING_COMMUNS.md)
 - **Collaborative Commons:** [COLLABORATIVE_COMMONS_SYSTEM.md](../Astroport.ONE/docs/COLLABORATIVE_COMMONS_SYSTEM.md)
 
 ---
@@ -58,7 +58,7 @@ UPlanet extends Nostr with:
 - 🔄 **N² Synchronization** - Friends + friends-of-friends social graph sync (relativistic distribution)
 - 🌱 **Environmental Registry** - ORE (Ecological Real Obligations) system
 - 💬 **Geographic Chat Rooms** - UMAP-based location discussion channels
-- 🏡 **Crowdfunding** - Forest Garden acquisition with multi-currency support (Ẑen/Ğ1/€)
+- 🏡 **Crowdfunding** - Commons acquisition with multi-currency support (Ẑen/Ğ1/€)
 
 ---
 
@@ -144,14 +144,15 @@ UPlanet extends Nostr with:
 
 ### 🏡 Economic & Crowdfunding Extensions
 
-- **[NIP-75 Crowdfunding Extension](75-crowdfunding-extension.md)** - Forest Garden Acquisition System
+- **[NIP-75 Crowdfunding Extension](75-crowdfunding-extension.md)** - Commons Crowdfunding System
   - **Extends:** NIP-75 (Zap Goals)
-  - **New kinds:** 30904 (crowdfunding campaign), 9742 (contributions)
+  - **New kinds:** 30904 (crowdfunding campaign)
+  - **Contributions:** Kind 7 (Reaction) with `crowdfunding` tag and ZEN amount in content
   - **Innovation:** Multi-currency goals (Ẑen convertible/non-conv., Ğ1, €) for property acquisition
   - **Owner modes:** `commons` (donation to CAPITAL) vs `cash` (€ payout from ASSETS)
   - **Integration:** Links to kind 30023 collaborative documents for governance
   - **CLI:** `CROWDFUNDING.sh` for captain management
-  - **Use case:** Collective acquisition of forest gardens with mixed owner intentions
+  - **Use case:** Collective acquisition of commons (land, buildings, equipment) with mixed owner intentions
 
 ---
 
