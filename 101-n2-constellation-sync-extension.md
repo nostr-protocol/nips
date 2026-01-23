@@ -107,6 +107,358 @@ Station metadata is synchronized via IPFS/IPNS:
 - Each station **reads other stations'** `amisOfAmis.txt` files to build N2 network
 - **Each `amisOfAmis.txt` remains unique to its generating station** - files are shared but not merged
 
+#### How Relay Discovery Works
+
+**Step 1: Swarm Discovery via IPNS**
+1. Each station runs `_12345.sh` which publishes its metadata to `/ipns/${IPFSNODEID}/12345.json`
+2. The `12345.json` file contains:
+   ```json
+   {
+     "ipfsnodeid": "QmXXX...",
+     "myRELAY": "ws://127.0.0.1:7777" or "wss://relay.example.com",
+     "captain": "captain@example.com",
+     "services": {...}
+   }
+   ```
+3. Bootstrap nodes (`A_boostrap_nodes.txt`) are scanned periodically
+4. Each station downloads other stations' `12345.json` files from IPNS
+5. These files are cached locally in `~/.zen/tmp/swarm/${IPFSNODEID}/12345.json`
+
+**Step 2: amisOfAmis.txt Location**
+- Each station stores its `amisOfAmis.txt` in `~/.zen/tmp/swarm/${IPFSNODEID}/amisOfAmis.txt`
+- This file is also published via IPNS at `/ipns/${IPFSNODEID}/amisOfAmis.txt`
+- Other stations read this file from IPNS and cache it locally in their swarm directory
+
+**Step 3: Relay URL Extraction**
+- `backfill_constellation.sh` scans `~/.zen/tmp/swarm/*/12345.json` files
+- Extracts `myRELAY` URL from each file
+- Determines if relay is:
+  - **Routable**: `wss://relay.example.com` → Direct connection
+  - **Localhost**: `ws://127.0.0.1:7777` → Requires P2P tunnel via `x_strfry.sh`
+
+#### Synchronization Process (`backfill_constellation.sh`)
+
+**Phase 1: Peer Discovery**
+```bash
+# 1. Scan swarm directory for 12345.json files
+~/.zen/tmp/swarm/*/12345.json
+
+# 2. Extract relay URLs and IPFSNODEIDs
+# 3. Identify localhost vs routable relays
+# 4. For localhost relays, check for x_strfry.sh tunnel script
+```
+
+**Phase 2: P2P Tunnel Creation (for localhost relays)**
+```bash
+# For each localhost relay:
+# 1. Execute x_strfry.sh to create IPFS P2P tunnel
+# 2. Tunnel maps: /x/strfry-${IPFSNODEID} → ws://127.0.0.1:7777
+# 3. Connect to tunnel endpoint: ws://127.0.0.1:9999
+```
+
+**Phase 3: amisOfAmis.txt Collection**
+```bash
+# 1. Read local amisOfAmis.txt from own station
+~/.zen/game/nostr/*/HEX  # Local users (N1)
+
+# 2. Read other stations' amisOfAmis.txt from swarm cache
+~/.zen/tmp/swarm/*/amisOfAmis.txt  # Friends of friends (N2)
+
+# 3. Combine all HEX pubkeys (N1 + N2)
+# 4. Remove duplicates
+```
+
+**Phase 4: Event Synchronization**
+
+This phase consists of 4 detailed functions:
+
+#### 4.1. Subscribe to Events from Last N Days (N1+N2 Pubkeys)
+
+**Function:** `execute_backfill_websocket_batch()`
+
+**Process:**
+1. **Collect HEX Pubkeys:**
+   - Local users (N1): `~/.zen/game/nostr/*/HEX`
+   - Friends of friends (N2): `~/.zen/tmp/swarm/*/amisOfAmis.txt`
+   - Combine and deduplicate all HEX pubkeys
+
+2. **Batch Processing:**
+   - Split HEX pubkeys into batches (default: 50-100 per batch)
+   - Adaptive batch size based on total count:
+     - < 50 HEX: Single batch
+     - 50-200 HEX: Batches of 50
+     - > 200 HEX: Batches of 100
+
+3. **Create NOSTR REQ Message:**
+   ```json
+   ["REQ", "backfill", {
+     "kinds": [...],  // 44 event kinds
+     "since": <timestamp_N_days_ago>,
+     "limit": 10000,
+     "authors": ["hex1", "hex2", ..., "hexN"]  // Batch of HEX pubkeys
+   }]
+   ```
+
+4. **WebSocket Connection:**
+   - Connect to peer relay (direct or via P2P tunnel)
+   - Send REQ message via `nostr_websocket_backfill.py`
+   - Receive events as JSON array
+   - Save response to temporary file: `~/.zen/strfry/backfill-response-${RANDOM}.json`
+
+5. **Retry Logic:**
+   - Up to 3 retry attempts per batch
+   - Exponential backoff: 2s, 4s, 6s
+   - Connection timeout: 30 seconds
+
+**Output:** JSON file containing array of events from peer relay
+
+---
+
+#### 4.2. Request 44 Event Kinds
+
+**Function:** `execute_backfill_websocket_batch()` (kinds array construction)
+
+**Event Kinds Synchronized (44 total):**
+
+**Core NOSTR (NIP-01):**
+- `0` - Profile metadata
+- `1` - Text notes
+- `3` - Contact lists
+- `5` - Event deletions
+- `6` - Reposts
+- `7` - Reactions (+ZEN, votes, likes)
+
+**Media (NIP-22, NIP-71, NIP-94, NIP-A0):**
+- `21` - Short videos
+- `22` - Long videos
+- `1063` - File metadata (IPFS)
+- `1111` - Comments
+- `1222` - Voice messages
+- `1244` - Voice message metadata
+
+**Content (NIP-23, NIP-32, NIP-38, NIP-51, NIP-58):**
+- `8` - Badge awards
+- `30008` - Profile badge selections
+- `30009` - Badge definitions
+- `30023` - Long-form articles
+- `30024` - Draft articles
+- `1985` - User tags
+- `1986` - TMDB enrichments
+- `30001` - Categorized lists
+- `30005` - Playlists
+- `10001` - Playlists (alternate)
+- `30315` - User statuses
+
+**Channels (NIP-28):**
+- `40` - Channel creation
+- `41` - Channel metadata
+- `42` - Channel messages
+- `44` - Channel mute list
+
+**UPlanet Identity & Systems (NIP-101):**
+- `30800` - DID Documents
+- `30500` - Permit Definitions (Oracle)
+- `30501` - Permit Requests
+- `30502` - Permit Attestations
+- `30503` - Permit Credentials
+
+**ORE Environmental (NIP-101):**
+- `30312` - ORE Meeting Space
+- `30313` - ORE Verification Meeting
+
+**Economic Health (NIP-101 extension):**
+- `30850` - Station Economic Health Report
+- `30851` - Economic Health (alternate)
+
+**Cookie Workflows (NIP-101 extension):**
+- `31900` - Cookie workflow start
+- `31901` - Cookie workflow progress
+- `31902` - Cookie workflow completion
+
+**N² Memory System (NIP-101 extension):**
+- `31910` - AI recommendations, Captain TODOs, votes
+
+**Calendar (NIP-52):**
+- `31922` - Calendar events
+- `31923` - Calendar metadata
+- `31924` - Calendar reminders
+- `31925` - Calendar timezones
+
+**Analytics (NIP-10000):**
+- `10000` - Decentralized analytics (encrypted/non-encrypted)
+
+**Optional (configurable):**
+- `4` - Direct messages (DMs) - Excluded by default, can be enabled with `--no-dms` flag
+
+**Filter Construction:**
+```bash
+# Build kinds array based on configuration
+if [[ "$INCLUDE_DMS" == "true" ]]; then
+    kinds_array="[0, 1, 3, 4, 5, 6, 7, 8, 21, 22, ...]"  # Include DMs
+else
+    kinds_array="[0, 1, 3, 5, 6, 7, 8, 21, 22, ...]"  # Exclude DMs
+fi
+```
+
+---
+
+#### 4.3. Import Events to Local strfry Database
+
+**Function:** `process_and_import_events()`
+
+**Process:**
+
+1. **Event Statistics:**
+   - Parse response JSON file using `jq`
+   - Count events by kind (profiles, text, videos, files, etc.)
+   - Log detailed statistics for monitoring
+
+2. **Filter Events:**
+   - **Remove "Hello NOSTR visitor." messages:** Filter out automated visitor greetings
+   - **Process deletion events (kind 5):** Extract deleted message IDs from tags
+   - **Exclude deleted messages:** Prevent re-importing messages marked for deletion
+   - Create filtered file: `${response_file}_filtered.json`
+
+3. **Convert to NDJSON Format:**
+   - Convert JSON array to NDJSON (one event per line)
+   - Required format for strfry import
+   - Save to: `${response_file}_import.ndjson`
+
+4. **Import to strfry:**
+   ```bash
+   cd ~/.zen/strfry
+   ./strfry import < import_file.ndjson
+   # OR with --no-verify for faster import (trusted constellation)
+   ./strfry import --no-verify < import_file.ndjson
+   ```
+
+5. **Verification Mode:**
+   - **Default:** `--no-verify` (faster, trusted constellation sources)
+   - **Optional:** Signature verification enabled with `--verify` flag
+   - Verification validates Schnorr signatures for each event
+
+6. **Database Update:**
+   - Events stored in LMDB database: `~/.zen/strfry/strfry-db/data.mdb`
+   - Automatic deduplication (strfry handles duplicate events)
+   - Indexed by event ID, pubkey, kind, and tags
+
+7. **Cleanup:**
+   - Remove temporary files (filtered, import, deletions)
+   - Keep only response file for debugging (if verbose)
+
+**Performance:**
+- Batch processing: Events imported in batches to avoid memory issues
+- Deduplication: strfry automatically skips duplicate events
+- Statistics: Detailed logging of imported events by kind
+
+---
+
+#### 4.4. Extract Profiles (Kind 0) for HEX Pubkeys
+
+**Function:** Profile extraction after successful backfill
+
+**Process:**
+
+1. **Trigger:**
+   - Only if backfill was successful (`success_count > 0`)
+   - Only if `EXTRACT_PROFILES=true` (default, can be disabled with `--no-profiles`)
+
+2. **Collect HEX Pubkeys:**
+   - Use cached constellation HEX pubkeys (N1 + N2)
+   - Create temporary file: `~/.zen/tmp/constellation_hex_$(date +%s).txt`
+
+3. **Profile Extraction Script:**
+   ```bash
+   ~/.zen/Astroport.ONE/tools/nostr_hex_to_profile.sh \
+       --file hex_file.txt \
+       --format json \
+       --no-relays
+   ```
+
+4. **Profile Lookup:**
+   - Script queries local strfry database for kind 0 events
+   - Matches HEX pubkeys to profile events
+   - Extracts profile metadata (name, display_name, picture, nip05, etc.)
+
+5. **Batch Profile Scan (Optimized):**
+   ```bash
+   # Single strfry scan for all HEX pubkeys (performance optimization)
+   cd ~/.zen/strfry
+   ./strfry scan '{
+     "kinds": [0],
+     "authors": ["hex1", "hex2", ..., "hexN"]
+   }'
+   ```
+   - **Before optimization:** N separate scans (one per HEX)
+   - **After optimization:** 1 single batch scan for all HEX
+   - **Performance gain:** ~100x faster for large constellations
+
+6. **Profile Storage:**
+   - Profiles saved to: `~/.zen/tmp/coucou/_NIP101.profiles.json`
+   - Format:
+     ```json
+     [
+       {
+         "hex": "60c1133d148ae0d2c4b42506fb4abacac903032680b178010c942bd538643f78",
+         "profile": {
+           "name": "Alice",
+           "display_name": "Alice Cooper",
+           "picture": "https://...",
+           "nip05": "alice@uplanet.com"
+         }
+       }
+     ]
+     ```
+
+7. **Statistics & Logging:**
+   - Total profiles found
+   - Profiles with names vs. HEX-only
+   - Sample profiles displayed in logs
+   - Missing profiles (HEX without kind 0 events)
+
+8. **Use Cases:**
+   - Display human-readable names in constellation dashboards
+   - Profile completion tracking
+   - Network visualization
+   - User discovery
+
+**Performance:**
+- Batch scan optimization: Single query instead of N queries
+- Cached HEX pubkeys: Reuse constellation cache
+- Parallel processing: Can be run asynchronously after backfill
+
+**Complete Workflow:**
+```
+┌─────────────────────────────────────────────────────────────┐
+│  Station A (IPFSNODEID: QmAAA...)                          │
+│                                                             │
+│  1. _12345.sh publishes:                                   │
+│     /ipns/QmAAA.../12345.json                              │
+│     /ipns/QmAAA.../amisOfAmis.txt                          │
+│                                                             │
+│  2. Station B scans bootstrap nodes                        │
+│     → Downloads /ipns/QmAAA.../12345.json                  │
+│     → Caches: ~/.zen/tmp/swarm/QmAAA.../12345.json        │
+│     → Downloads /ipns/QmAAA.../amisOfAmis.txt             │
+│     → Caches: ~/.zen/tmp/swarm/QmAAA.../amisOfAmis.txt    │
+│                                                             │
+│  3. backfill_constellation.sh on Station B:                │
+│     → Reads swarm/*/12345.json → Finds Station A's relay   │
+│     → Reads swarm/*/amisOfAmis.txt → Gets Station A's N1   │
+│     → Creates P2P tunnel if needed (x_strfry.sh)           │
+│     → Connects to Station A's relay                       │
+│     → Requests events for all N1+N2 pubkeys               │
+│     → Imports events to local strfry database              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Key Points:**
+- **No central registry**: Discovery is decentralized via IPNS bootstrap network
+- **Each station maintains its own swarm cache**: `~/.zen/tmp/swarm/${IPFSNODEID}/`
+- **amisOfAmis.txt files are read-only shared**: Each station keeps its own version
+- **P2P tunnels enable localhost relay access**: IPFS P2P protocol creates secure tunnels
+- **Synchronization is pull-based**: Each station actively pulls events from peers
+
 ### Social Graph Data Flow
 
 ```
