@@ -49,9 +49,11 @@ For each registered MULTIPASS user, the relay fetches their **kind 3** (contacts
 ```
 
 ### N2 = Friends of Friends
-When N1 contacts are shared across the swarm via `amisOfAmis.txt`, each station can see:
-- Its own users' friends (N1)
-- Friends collected by OTHER stations (N2 = friends of friends)
+Each station generates and maintains its **own** `amisOfAmis.txt` file containing the friends (N1) of its local MULTIPASS users. These files are then **shared via IPFS** across the swarm, allowing each station to:
+- See its own users' friends (N1) - from its own `amisOfAmis.txt`
+- See friends collected by OTHER stations (N2 = friends of friends) - by reading other stations' `amisOfAmis.txt` files
+
+**Important:** Each `amisOfAmis.txt` file is **unique to each station** and contains only the friends of that station's local users. The files are shared (read-only) but not merged - each station maintains its own version.
 
 ### Relativistic Distribution
 Each user sees content from their **extended social network**, not a global firehose:
@@ -100,7 +102,10 @@ Satellites (24)
 Station metadata is synchronized via IPFS/IPNS:
 - Each station publishes its state to `/ipns/${IPFSNODEID}`
 - Bootstrap nodes are scanned for swarm updates
-- `amisOfAmis.txt` files are collected from all stations
+- Each station **generates its own** `amisOfAmis.txt` from its local users' N1 contacts
+- Each station **shares its own** `amisOfAmis.txt` via IPFS (readable by other stations)
+- Each station **reads other stations'** `amisOfAmis.txt` files to build N2 network
+- **Each `amisOfAmis.txt` remains unique to its generating station** - files are shared but not merged
 
 ### Social Graph Data Flow
 
@@ -123,8 +128,11 @@ Station metadata is synchronized via IPFS/IPNS:
 │           ▼                            ▼                     │
 │  ┌─────────────────────────────────────────────────────────┐│
 │  │              backfill_constellation.sh                   ││
-│  │  Syncs events from: local users + all amisOfAmis.txt    ││
-│  │  Result: N1 (friends) + N2 (friends of friends)         ││
+│  │  Syncs events from:                                      ││
+│  │    - Local users (N1 from own amisOfAmis.txt)            ││
+│  │    - All other stations' amisOfAmis.txt (N2)              ││
+│  │  Result: N1 (own friends) + N2 (friends from other      ││
+│  │          stations' amisOfAmis.txt files)                 ││
 │  └─────────────────────────────────────────────────────────┘│
 └─────────────────────────────────────────────────────────────┘
 ```
