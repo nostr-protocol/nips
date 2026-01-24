@@ -192,7 +192,7 @@ This phase consists of 4 detailed functions:
 3. **Create NOSTR REQ Message:**
    ```json
    ["REQ", "backfill", {
-     "kinds": [...],  // 44 event kinds
+     "kinds": [...],  // 45 event kinds
      "since": <timestamp_N_days_ago>,
      "limit": 10000,
      "authors": ["hex1", "hex2", ..., "hexN"]  // Batch of HEX pubkeys
@@ -214,11 +214,11 @@ This phase consists of 4 detailed functions:
 
 ---
 
-#### 4.2. Request 44 Event Kinds
+#### 4.2. Request 45 Event Kinds
 
 **Function:** `execute_backfill_websocket_batch()` (kinds array construction)
 
-**Event Kinds Synchronized (44 total):**
+**Event Kinds Synchronized (45 total):**
 
 **Core NOSTR (NIP-01):**
 - `0` - Profile metadata
@@ -560,7 +560,7 @@ The N² protocol synchronizes **40 event types** across all constellation member
 - **Kind 30008** - Profile badge selections
 - **Kind 30009** - Badge definitions
 
-**Total:** 44 event kinds automatically synchronized across the constellation.
+**Total:** 45 event kinds automatically synchronized across the constellation.
 
 ## Synchronization Protocol
 
@@ -588,7 +588,7 @@ Each Astroport node maintains a constellation registry:
       "umap": "43.60,1.44"
     }
   ],
-  "sync_event_kinds": [0, 1, 3, 5, 6, 7, 8, 21, 22, 30008, 30009, 30023, 30024, 30312, 30313, 30500, 30501, 30502, 30503, 30800]
+  "sync_event_kinds": [0, 1, 3, 5, 6, 7, 8, 21, 22, 30008, 30009, 30023, 30024, 30312, 30313, 30500, 30501, 30502, 30503, 30800, 30850]
 }
 ```
 
@@ -672,7 +672,7 @@ Location: `~/.zen/tmp/${IPFSNODEID}/constellation.json`
     }
   ],
   "sync_config": {
-    "event_kinds": [0, 1, 3, 5, 6, 7, 8, 21, 22, 30008, 30009, 30023, 30024, 30312, 30313, 30500, 30501, 30502, 30503, 30800],
+    "event_kinds": [0, 1, 3, 5, 6, 7, 8, 21, 22, 30008, 30009, 30023, 30024, 30312, 30313, 30500, 30501, 30502, 30503, 30800, 30850],
     "sync_interval": 900,
     "retry_attempts": 3,
     "retry_backoff": "exponential"
@@ -937,7 +937,7 @@ The `backfill_constellation.sh` script synchronizes kind 31910 events, ensuring 
 ## Future Enhancements
 
 ### Phase 1: Basic Sync (Current)
-- ✅ 44 event kinds synchronized
+- ✅ 45 event kinds synchronized
 - ✅ Hub-and-satellite topology
 - ✅ Periodic pull-based sync
 - ✅ N² Memory System (kind 31910)
