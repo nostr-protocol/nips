@@ -34,7 +34,7 @@ This extension solves these problems by:
 
 ### Economic Health Report (kind: 30850)
 
-A daily economic health snapshot published by each station.
+Economic health snapshot published by each station. The `created_at` timestamp indicates when the report was published and represents the latest economic state at that time.
 
 ```jsonc
 {
@@ -42,11 +42,9 @@ A daily economic health snapshot published by each station.
   "pubkey": "<CAPTAIN_HEX>",
   "created_at": 1736280000,
   "tags": [
-    ["d", "economic-health-W02-2026"],
+    ["d", "economic-health"],  // Replaceable event ID - latest report per station
     ["t", "uplanet"],
     ["t", "economic-health"],
-    ["t", "weekly-report"],
-    ["week", "W02-2026"],
     ["constellation", "<UPLANETG1PUB>"],  // e.g. "AwdjhpJNqzQgmSrvpUk5Fd2GxBZMJVQkBQmXn4JQLr6z"
     ["station", "<IPFSNODEID>"],
     ["g1pub", "<UPLANETG1PUB>"],
@@ -100,8 +98,8 @@ A daily economic health snapshot published by each station.
     ["depreciation:percent", "4.00"]
   ],
   "content": "{
-    \"report_version\": \"1.0\",
-    \"report_type\": \"weekly_economic_health\",
+    \"report_version\": \"1.1\",
+    \"report_type\": \"daily_economic_health\",  // Published daily (was "weekly_economic_health" in old version)
     \"generated_at\": \"2026-01-07T14:30:00Z\",
     \"station\": {
       \"ipfsnodeid\": \"12D3KooWABC...\",
@@ -250,7 +248,9 @@ Economic health events are synchronized across the constellation:
 
 | Event Kind | Publisher | Frequency | Timing |
 |------------|-----------|-----------|--------|
-| **30850** | Each Station | Daily | After `ZEN.ECONOMY.sh` |
+| **30850** | Each Station | As needed | After `ZEN.ECONOMY.sh` |
+
+Each event represents the latest economic state at the time of publication (indicated by `created_at` timestamp).
 
 ## Query Patterns
 
@@ -264,12 +264,12 @@ Economic health events are synchronized across the constellation:
   "limit": 1
 }
 
-// Economic health history (last 12 weeks)
+// Economic health history (last 30 days - daily reports)
 {
   "kinds": [30850],
   "authors": ["<CAPTAIN_HEX>"],
-  "#t": ["weekly-report"],
-  "limit": 12
+  "since": <timestamp_30_days_ago>,
+  "limit": 30
 }
 ```
 
@@ -279,8 +279,14 @@ Economic health events are synchronized across the constellation:
 // All stations in same swarm (identified by UPLANETG1PUB)
 {
   "kinds": [30850],
-  "#constellation": ["<UPLANETG1PUB>"],  // G1 wallet distributing usage tokens
-  "#week": ["W02-2026"]
+  "#constellation": ["<UPLANETG1PUB>"]  // G1 wallet distributing usage tokens
+}
+
+// Get latest reports (use since to limit time range)
+{
+  "kinds": [30850],
+  "#constellation": ["<UPLANETG1PUB>"],
+  "since": <timestamp>
 }
 ```
 
