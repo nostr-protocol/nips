@@ -92,6 +92,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-78: Application-specific data](78.md)
 - [NIP-7D: Threads](7D.md)
 - [NIP-84: Highlights](84.md)
+- [NIP-85: Trusted Assertions](85.md)
 - [NIP-86: Relay Management API](86.md)
 - [NIP-87: Ecash Mint Discoverability](87.md)
 - [NIP-88: Polls](88.md)
@@ -260,6 +261,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30312`       | Interactive Room                | [53](53.md)                            |
 | `30313`       | Conference Event                | [53](53.md)                            |
 | `30315`       | User Statuses                   | [38](38.md)                            |
+| `30382`       | User Trusted Assertion          | [85](85.md)                            |
+| `30383`       | Event Trusted Assertion         | [85](85.md)                            |
+| `30384`       | Addressable Trusted Assertion   | [85](85.md)                            |
 | `30388`       | Slide Set                       | [Corny Chat][cornychat-slideset]       |
 | `30402`       | Classified Listing              | [99](99.md)                            |
 | `30403`       | Draft Classified Listing        | [99](99.md)                            |
