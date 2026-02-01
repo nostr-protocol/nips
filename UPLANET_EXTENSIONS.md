@@ -78,7 +78,7 @@ UPlanet extends Nostr with:
   - **Mechanism:** `nostr_get_N1.sh` → `amisOfAmis.txt` → `backfill_constellation.sh`
   - **Innovation:** Each user sees content from their **extended social network**, not global firehose
   - **Swarm Sync:** Station metadata via IPFS/IPNS (`_12345.sh`)
-  - **Event Sync:** 40 event types synchronized for N1+N2 pubkeys
+  - **Event Sync:** 45 event kinds synchronized for N1+N2 pubkeys (see [101-n2-constellation-sync-extension](101-n2-constellation-sync-extension.md))
   - **Resilience:** Hub (1) + Satellites (24) with bidirectional sync
 
 ### 🔐 Authentication & Identity Extensions
@@ -224,7 +224,7 @@ Satellites (24)
 | **Video Events** | NIP-71 | [71-extension.md](71-extension.md) | 21, 22 | ✅ Production |
 | **Geographic Chat** | NIP-28 | [28-umap-extension.md](28-umap-extension.md) | 42 | ✅ Production |
 | **Identity** | - | [NIP-101](101.md) | 30800 | ✅ Production |
-| **Relay Sync** | NIP-101 | [101-n2-constellation-sync-extension.md](101-n2-constellation-sync-extension.md) | 40 kinds | ✅ Production |
+| **Relay Sync** | NIP-101 | [101-n2-constellation-sync-extension.md](101-n2-constellation-sync-extension.md) | 45 kinds | ✅ Production |
 
 ### Event Kind Reference
 
@@ -399,7 +399,7 @@ cd Astroport.ONE/tools
 - **N² social graph sync** (N1 friends + N2 friends-of-friends)
 - **Relativistic distribution** - each user sees their extended network
 - **Hub-and-satellite** topology with IPFS/IPNS swarm sync
-- **40 event kinds** auto-synced for N1+N2 pubkeys
+- **45 event kinds** auto-synced for N1+N2 pubkeys (minimal set may be smaller; see [101-backfill-constellation-kinds-analysis](101-backfill-constellation-kinds-analysis.md))
 - **Zero single point of failure**
 
 ---

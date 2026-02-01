@@ -229,12 +229,12 @@ This phase consists of 4 detailed functions:
 - `7` - Reactions (+ZEN, votes, likes)
 
 **Media (NIP-22, NIP-71, NIP-94, NIP-A0):**
-- `21` - Short videos
-- `22` - Long videos
-- `1063` - File metadata (IPFS)
-- `1111` - Comments
-- `1222` - Voice messages
-- `1244` - Voice message metadata
+- `21` - Regular videos (NIP-71)
+- `22` - Short videos &lt; 60s (NIP-71)
+- `1063` - File metadata (IPFS, NIP-94)
+- `1111` - Comments / threaded replies (NIP-22)
+- `1222` - Voice messages root (NIP-A0)
+- `1244` - Voice message replies (NIP-A0)
 
 **Content (NIP-23, NIP-32, NIP-38, NIP-51, NIP-58):**
 - `8` - Badge awards
@@ -491,7 +491,7 @@ fi
 
 ## Synchronized Event Kinds
 
-The N² protocol synchronizes **40 event types** across all constellation members:
+The N² protocol synchronizes **45 event kinds** across all constellation members. See [101-backfill-constellation-kinds-analysis.md](101-backfill-constellation-kinds-analysis.md) for a canonical list and minimal vs full set.
 
 ### Core Events (NIP-01)
 - **Kind 0** - Profile metadata
@@ -501,13 +501,21 @@ The N² protocol synchronizes **40 event types** across all constellation member
 - **Kind 6** - Reposts
 - **Kind 7** - Reactions
 
-### Media Events (NIP-22)
-- **Kind 21** - Media attachments
-- **Kind 22** - Comments (NIP-22)
+### Media Events (NIP-71, NIP-22, NIP-94, NIP-A0)
+- **Kind 21** - Regular videos (NIP-71)
+- **Kind 22** - Short videos &lt; 60s (NIP-71)
 
 ### Long-Form Content (NIP-23)
 - **Kind 30023** - Long-form articles
 - **Kind 30024** - Draft articles
+
+### Files & Comments (NIP-94, NIP-22, NIP-A0, NIP-32)
+- **Kind 1063** - File metadata (IPFS)
+- **Kind 1111** - Comments (NIP-22)
+- **Kind 1222** - Voice messages (root)
+- **Kind 1244** - Voice message replies
+- **Kind 1985** - User tags (NIP-32)
+- **Kind 1986** - TMDB enrichments
 
 ### Identity & Credentials (NIP-101)
 - **Kind 30800** - DID Documents (UPlanet Identity)
@@ -520,9 +528,6 @@ The N² protocol synchronizes **40 event types** across all constellation member
 - **Kind 30312** - ORE Meeting Space (Persistent Geographic Space)
 - **Kind 30313** - ORE Verification Meeting
 
-### Video Events (NIP-71 extension)
-- **Kind 34235** - Video events with IPFS integration
-
 ### Economic Health (NIP-101 extension)
 - **Kind 30850** - Station Economic Health Report (daily)
 
@@ -531,14 +536,6 @@ The N² protocol synchronizes **40 event types** across all constellation member
 - **Kind 41** - Channel metadata
 - **Kind 42** - Channel messages
 - **Kind 44** - Channel mute list
-
-### File & Media (NIP-94/A0/32)
-- **Kind 1063** - File metadata with provenance
-- **Kind 1111** - Comments (NIP-22)
-- **Kind 1222** - Voice messages
-- **Kind 1244** - Voice message metadata
-- **Kind 1985** - User tags (NIP-32)
-- **Kind 1986** - TMDB enrichments
 
 ### Lists & Status (NIP-51/38)
 - **Kind 30001** - Categorized lists
@@ -555,12 +552,17 @@ The N² protocol synchronizes **40 event types** across all constellation member
 ### N² Memory System (NIP-101 extension)
 - **Kind 31910** - N² Development Memory (AI recommendations, Captain TODOs, votes)
 
+### Crowdfunding (NIP-75 extension)
+- **Kind 30904** - Crowdfunding campaign
+
 ### Badge System (NIP-58)
 - **Kind 8** - Badge awards
 - **Kind 30008** - Profile badge selections
 - **Kind 30009** - Badge definitions
 
 **Total:** 45 event kinds automatically synchronized across the constellation.
+
+**Minimal set:** Some deployments may sync a smaller set (e.g. core + UPlanet identity + Oracle + ORE + economic). The JSON example `sync_event_kinds` in this doc reflects a minimal set; the full list is in [101-backfill-constellation-kinds-analysis.md](101-backfill-constellation-kinds-analysis.md).
 
 ## Synchronization Protocol
 
@@ -591,6 +593,7 @@ Each Astroport node maintains a constellation registry:
   "sync_event_kinds": [0, 1, 3, 5, 6, 7, 8, 21, 22, 30008, 30009, 30023, 30024, 30312, 30313, 30500, 30501, 30502, 30503, 30800, 30850]
 }
 ```
+*(Minimal set; full 45-kind list: see [101-backfill-constellation-kinds-analysis.md](101-backfill-constellation-kinds-analysis.md).)*
 
 ### 2. Automatic Synchronization Flow
 
