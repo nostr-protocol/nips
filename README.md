@@ -94,6 +94,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-78: Application-specific data](78.md)
 - [NIP-7D: Threads](7D.md)
 - [NIP-84: Highlights](84.md)
+- [NIP-85: Trusted Assertions](85.md)
 - [NIP-86: Relay Management API](86.md)
 - [NIP-87: Ecash Mint Discoverability](87.md)
 - [NIP-88: Polls](88.md)
@@ -106,11 +107,13 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-99: Classified Listings](99.md)
 - [NIP-101: UPlanet - Decentralized Identity & Geographic Coordination](101.md)
 - [NIP-A0: Voice Messages](A0.md)
+- [NIP-A4: Public Messages](A4.md)
 - [NIP-B0: Web Bookmarks](B0.md)
 - [NIP-B7: Blossom](B7.md)
+- [NIP-BE: Nostr BLE Communications Protocol](BE.md)
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
-- [NIP-EE: E2EE Messaging using MLS Protocol](EE.md)
+- [NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)
 
 ## Event Kinds
 | kind          | description                     | NIP                                    |
@@ -136,10 +139,11 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `20`          | Picture                         | [68](68.md)                            |
 | `21`          | Video Event                     | [71](71.md)                            |
 | `22`          | Short-form Portrait Video Event | [71](71.md)                            |
+| `24`          | Public Message                  | [A4](A4.md)                            |
 | `30`          | internal reference              | [NKBIP-03]                             |
-| `31`          | external web reference          | [NKBIP-03]                            |
-| `32`          | hardcopy reference              | [NKBIP-03]                            |
-| `33`          | prompt reference                | [NKBIP-03]                            |
+| `31`          | external web reference          | [NKBIP-03]                             |
+| `32`          | hardcopy reference              | [NKBIP-03]                             |
+| `33`          | prompt reference                | [NKBIP-03]                             |
 | `40`          | Channel Creation                | [28](28.md)                            |
 | `41`          | Channel Metadata                | [28](28.md)                            |
 | `42`          | Channel Message                 | [28](28.md)                            |
@@ -147,9 +151,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `44`          | Channel Mute User               | [28](28.md)                            |
 | `62`          | Request to Vanish               | [62](62.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
-| `443`         | KeyPackage                      | [EE](EE.md)                            |
-| `444`         | Welcome Message                 | [EE](EE.md)                            |
-| `445`         | Group Event                     | [EE](EE.md)                            |
+| `443`         | KeyPackage                      | [Marmot](marmot)                       |
+| `444`         | Welcome Message                 | [Marmot](marmot)                       |
+| `445`         | Group Event                     | [Marmot](marmot)                       |
 | `818`         | Merge Requests                  | [54](54.md)                            |
 | `1018`        | Poll Response                   | [88](88.md)                            |
 | `1021`        | Bid                             | [15](15.md)                            |
@@ -211,7 +215,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10020`       | Media follows                   | [51](51.md)                            |
 | `10030`       | User emoji list                 | [51](51.md)                            |
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
-| `10051`       | KeyPackage Relays List          | [EE](EE.md)                            |
+| `10051`       | KeyPackage Relays List          | [Marmot](marmot)                       |
 | `10063`       | User server list                | [Blossom][blossom]                     |
 | `10096`       | File storage server list        | [96](96.md) (deprecated)               |
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
@@ -220,6 +224,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `11111`       | Transport Method Announcement   | [Nostr Epoxy][nostr-epoxy]             |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `13534`       | Membership Lists                | [43](43.md)                            |
+| `14388`       | User Sound Effect Lists         | [Corny Chat][cornychat-usersoundlist]  |
 | `17375`       | Cashu Wallet Event              | [60](60.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
 | `22242`       | Client Authentication           | [42](42.md)                            |
@@ -237,6 +242,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30003`       | Bookmark sets                   | [51](51.md)                            |
 | `30004`       | Curation sets                   | [51](51.md)                            |
 | `30005`       | Video sets                      | [51](51.md)                            |
+| `30006`       | Picture sets                    | [51](51.md)                            |
 | `30007`       | Kind mute sets                  | [51](51.md)                            |
 | `30008`       | Profile Badges                  | [58](58.md), [58-oracle](58-oracle-badges-extension.md) |
 | `30009`       | Badge Definition                | [58](58.md), [58-oracle](58-oracle-badges-extension.md) |
@@ -258,6 +264,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30312`       | Interactive Room / ORE Meeting Space    | [53](53.md), [101](101.md)     |
 | `30313`       | Conference Event / ORE Verification     | [53](53.md), [101](101.md)     |
 | `30315`       | User Statuses                   | [38](38.md)                            |
+| `30382`       | User Trusted Assertion          | [85](85.md)                            |
+| `30383`       | Event Trusted Assertion         | [85](85.md)                            |
+| `30384`       | Addressable Trusted Assertion   | [85](85.md)                            |
 | `30388`       | Slide Set                       | [Corny Chat][cornychat-slideset]       |
 | `30402`       | Classified Listing              | [99](99.md)                            |
 | `30403`       | Draft Classified Listing        | [99](99.md)                            |
@@ -280,6 +289,11 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31989`       | Handler recommendation          | [89](89.md)                            |
 | `31990`       | Handler information             | [89](89.md)                            |
 | `32267`       | Software Application            |                                        |
+| `32388`       | User Room Favorites             | [Corny Chat][cornychat-roomfavorites]  |
+| `33388`       | High Scores                     | [Corny Chat][cornychat-highscores]     |
+| `34235`       | Addressable Video Event         | [71](71.md)                            |
+| `34236`       | Addressable Short Video Event   | [71](71.md)                            |
+| `34388`       | Sound Effects                   | [Corny Chat][cornychat-soundeffects]   |
 | `34550`       | Community Definition            | [72](72.md)                            |
 | `38172`       | Cashu Mint Announcement         | [87](87.md)                            |
 | `38173`       | Fedimint Announcement           | [87](87.md)                            |
@@ -293,8 +307,12 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 [NUD: Custom Feeds]: https://wikifreedia.xyz/cip-01/
 [nostrocket]: https://github.com/nostrocket/NIPS/blob/main/Problems.md
 [lnpub]: https://github.com/shocknet/Lightning.Pub/blob/master/proto/autogenerated/client.md
+[cornychat-usersoundlist]: https://cornychat.com/datatypes#kind14388usersoundeffectslist
 [cornychat-slideset]: https://cornychat.com/datatypes#kind30388slideset
 [cornychat-linkset]: https://cornychat.com/datatypes#kind31388linkset
+[cornychat-roomfavorites]: https://cornychat.com/datatypes#kind32388roomfavorites
+[cornychat-highscores]: https://cornychat.com/datatypes#kind33388highscores
+[cornychat-soundeffects]: https://cornychat.com/datatypes#kind34388soundeffectsets
 [joinstr]: https://gitlab.com/1440000bytes/joinstr/-/blob/main/NIP.md
 [NKBIP-01]: https://wikistr.com/nkbip-01*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1
 [NKBIP-02]: https://wikistr.com/nkbip-02*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1
@@ -303,6 +321,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 [Tidal-nostr]: https://wikistr.com/tidal-nostr
 [geocaching]: https://nostrhub.io/naddr1qvzqqqrcvypzppscgyy746fhmrt0nq955z6xmf80pkvrat0yq0hpknqtd00z8z68qqgkwet0vdskx6rfdenj6etkv4h8guc6gs5y5
 [nostr-epoxy]: https://github.com/Origami74/nostr-epoxy-reverse-proxy
+[marmot]: https://github.com/marmot-protocol/marmot
+
 
 ## Message types
 
@@ -395,6 +415,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `repo`            | Reference to the origin repository   | --                              | [C0](C0.md)                                        |
 | `runtime`         | Runtime or environment specification | --                              | [C0](C0.md)                                        |
 | `server`          | file storage server url              | --                              | [96](96.md)                                        |
+| `sound`           | shortcode, sound url, image url      | --                              | [51](51.md)                                        |
 | `subject`         | subject                              | --                              | [14](14.md), [17](17.md), [34](34.md)              |
 | `summary`         | summary                              | --                              | [23](23.md), [52](52.md)                           |
 | `thumb`           | badge thumbnail                      | dimensions in pixels            | [58](58.md)                                        |
