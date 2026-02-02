@@ -582,7 +582,7 @@ Each Astroport node maintains a constellation registry:
   },
   "satellites": [
     {
-      "relay_url": "wss://satellite1.uplanet.org",
+      "relay_url": "wss://relay.copylaradio.com",
       "ipns": "k51qzi5uqu5dhj...",
       "ipfsnodeid": "12D3KooWDEF...",
       "g1pub": "7gTwfbYUtCeoaFL...",
@@ -843,7 +843,7 @@ The N² Memory System enables **collective learning** across the constellation. 
   "kind": 31910,
   "pubkey": "<uplanet.G1.nostr pubkey>",
   "created_at": 1736252425,
-  "content": "{\"type\":\"n2_todo\",\"version\":\"2.1\",\"id\":\"ai_20260107143025_1_a3f2b1c7d4e8\",\"content\":\"Add kind 30850 economic health to dashboard\",\"status\":\"proposed\",\"rec_type\":\"ai_recommendation\",\"priority\":\"high\",\"station\":\"12D3KooWABC...\",\"captain\":\"captain@uplanet.org\",\"votes\":0,\"created_at\":\"2026-01-07T14:30:25Z\"}",
+  "content": "{\"type\":\"n2_todo\",\"version\":\"2.1\",\"id\":\"ai_20260107143025_1_a3f2b1c7d4e8\",\"content\":\"Add kind 30850 economic health to dashboard\",\"status\":\"proposed\",\"rec_type\":\"ai_recommendation\",\"priority\":\"high\",\"station\":\"12D3KooWABC...\",\"captain\":\"captain@copylaradio.com\",\"votes\":0,\"created_at\":\"2026-01-07T14:30:25Z\"}",
   "tags": [
     ["d", "ai_20260107143025_1_a3f2b1c7d4e8"],
     ["t", "n2-todo"],
@@ -851,7 +851,7 @@ The N² Memory System enables **collective learning** across the constellation. 
     ["status", "proposed"],
     ["priority", "high"],
     ["station", "12D3KooWABC..."],
-    ["captain", "captain@uplanet.org"],
+    ["captain", "captain@copylaradio.com"],
     ["created", "20260107"]
   ]
 }
