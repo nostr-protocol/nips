@@ -260,9 +260,22 @@ Where `max_single_attester_share` is the fraction of total attestation weight co
 
 Implementations MAY discount trust scores with low diversity.
 
-## Integration with NIP-85 (Trusted Assertions)
+## Integration with NIP-85
 
-Trust scoring requires querying multiple relays and performing recursive computation, which may be impractical for lightweight clients. Service providers can publish pre-computed trust scores as [NIP-85](85.md) Trusted Assertions (`kind:30382`):
+This NIP and [NIP-85](85.md) are complementary and designed to work together:
+
+- **NIP-91 defines the attestation format** — `kind:1985` events in the `ai.wot` namespace are the raw trust signals. Any agent can publish them, and they live on standard Nostr relays.
+- **[NIP-85](85.md) defines the delivery mechanism** for computed trust scores — `kind:30382` (assertions), `kind:30383` (assertion feeds), and `kind:30384` (assertion graphs) events are how pre-computed results reach clients.
+
+In other words, NIP-91 attestations are the **raw input** and NIP-85 services are the **computation layer**.
+
+### How an NIP-85 Provider Works with ai.wot
+
+A trust scoring service operating as an [NIP-85](85.md) provider would:
+
+1. **Subscribe** to `kind:1985` events with `#L = ["ai.wot"]` across multiple relays
+2. **Aggregate** attestations per target pubkey, applying the scoring algorithm from this NIP (zap weighting, temporal decay, recursive attester trust, sybil/diversity checks, negative attestation gating)
+3. **Publish** computed trust scores as `kind:30382` Trusted Assertion events with `rank` tags:
 
 ```jsonc
 {
@@ -278,6 +291,10 @@ Trust scoring requires querying multiple relays and performing recursive computa
 }
 ```
 
+4. **Maintain** a `kind:30383` assertion feed listing all scored agents, and optionally a `kind:30384` assertion graph for bulk consumption
+
+### Published Score Format
+
 The `rank` tag contains the normalized 0–100 trust score. The `content` field MAY contain a JSON object with additional details:
 
 | Field | Type | Description |
@@ -289,7 +306,15 @@ The `rank` tag contains the normalized 0–100 trust score. The `content` field 
 | `diversity` | number | Diversity score (0.0–1.0) |
 | `algorithm` | string | Scoring algorithm identifier |
 
-Agents can declare their preferred trust scoring providers using `kind:10040` events as specified in [NIP-85](85.md).
+### Client Consumption
+
+Lightweight clients (mobile apps, browser extensions, other agents) consume NIP-85 assertions rather than computing WoT scores locally. This avoids the need to query multiple relays, fetch recursive attester data, and run the scoring algorithm on-device. A client simply:
+
+1. Queries `kind:30382` events from their preferred scoring provider(s)
+2. Reads the `rank` tag for the trust score
+3. Optionally inspects `content` for breakdown details (diversity, attestation counts)
+
+Agents can declare their preferred trust scoring providers using `kind:10040` events as specified in [NIP-85](85.md). This lets each agent choose which scoring services they trust, preserving the decentralized nature of the protocol — there is no single canonical scoring authority.
 
 ## Integration with NIP-90 (Data Vending Machines)
 
