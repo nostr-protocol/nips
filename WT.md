@@ -14,21 +14,23 @@ A NWT is not a JSON Web Token (JWT), but adopts its semantics where applicable.
 
 A NWT has a `kind 27519`, in reference to [REC-7519](https://datatracker.ietf.org/doc/html/rfc7519) that defines the JWT.
 
-Claims are represented as `tags`, following JWT naming and semantics where applicable. Tags names MUST be unique.
+Claims are represented as `tags`, following JWT naming conventions and semantics where applicable. Claims that allow a single value MUST appear only once; claims that allow multiple values are represented by repeated tags.
 
 ### Example
 
-```json
+```jsonc
 {
     "id": <32-bytes hex-encoded sha256>,
     "pubkey": <32-bytes hex-encoded public key>,
     "created_at": <unix timestamp in seconds>,
     "kind": 27519,
     "tags": [
-        ["aud", "blossom.example.com", "cdn.another.com", "cdn.last.one"],
+        ["aud", "blossom.example.com"],
+        ["aud", "cdn.another.com"],
+        ["aud", "cdn.last.one"],
         ["exp", "1710003600"],
         ["nbf", "1710000000"],
-        ["action", "upload"]                // custom claim
+        ["action", "upload"],               // custom claim
         ["payload", "b1674191a...dsad"]     // custom claim
     ],
     "content": "upload bitcoin.pdf",
@@ -71,7 +73,7 @@ This tag is OPTIONAL, but recommended. If not present, the audience of the NWT i
 
 The `iat` (issued at) claim identifies the time at which the NWT was
 issued.  
-This tag is OPTIONAL. If not present, the issued timestamp is assumed to be the timestamp of the Nostr event (`created_at`).
+This tag is OPTIONAL. If not present, the issued timestamp is assumed to be the timestamp of the Nostr event (`created_at`). If present, verifiers MUST use `iat` instead of `created_at`.
 
 #### Expiration `exp`
 
@@ -102,7 +104,7 @@ A verifier MUST:
 1. Verify the Nostr event id.
 2. Verify the Nostr event signature.
 3. Verify the event `kind` is `27519`
-4. Enforce `exp`, `nbf`, and `aud` claims.
+4. Enforce `exp`, `nbf`, and `aud` claims when present; apply default behaviors when absent.
 5. Validate issuer trust (application-defined)
 
 
