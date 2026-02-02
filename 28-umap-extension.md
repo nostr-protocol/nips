@@ -17,6 +17,10 @@ Each UMAP cell (0.01° × 0.01° geographic area, ~1.2 km²) can have its own:
 
 The UMAP DID's `pubkey` or `event_id` serves as the **channel identifier** for NIP-28 messages.
 
+### UPlanet identifier (uplanetId)
+
+Geographic DIDs (UMAP, SECTOR, REGION) include an **uplanetId** field set to the Ğ1 public key of the UPlanet station that published the DID (e.g. `$UPLANETG1PUB`). This allows clients to differentiate DIDs from different UPlanet instances (e.g. "UPlanet ẐEN" vs other planets). Filtering by `uplanetId` when resolving DIDs ensures consistency with a given UPlanet ecosystem.
+
 ## Architecture
 
 ```
@@ -67,7 +71,7 @@ Before creating chat messages, clients must discover the UMAP DID for a geograph
     ["d", "did"],
     ["g", "48.86,2.35"]
   ],
-  "content": "{\"@context\":[\"https://w3id.org/did/v1\"],\"id\":\"did:nostr:abc123...\",\"type\":\"UMAPGeographicCell\",\"geographicMetadata\":{\"coordinates\":{\"lat\":48.86,\"lon\":2.35}}}"
+  "content": "{\"@context\":[\"https://w3id.org/did/v1\"],\"id\":\"did:nostr:abc123...\",\"type\":\"UMAPGeographicCell\",\"uplanetId\":\"<G1_pubkey>\",\"geographicMetadata\":{\"coordinates\":{\"lat\":48.86,\"lon\":2.35}}}"
 }
 ```
 
@@ -261,6 +265,57 @@ UMAP coordinates use **2 decimal places** (0.01° precision):
 
 This creates consistent ~1.2 km² cells worldwide.
 
+## SECTOR and REGION (Extended Geographic Levels)
+
+The same NIP-28 pattern (kind 30800 DID + kind 42 channel messages) applies to **SECTOR** (0.1° ≈ 11 km) and **REGION** (1° ≈ 111 km) in the UPlanet hierarchy. This allows clients to discover and subscribe to SECTOR/REGION channels by coordinates.
+
+### SECTOR (0.1°)
+
+- **Precision**: 0.1° (~11 km). Center format: one decimal (e.g. `43.6,1.4` or `43.65,1.45`).
+- **DID type**: `SECTORGeographicCell`.
+- **Discovery**: Same as UMAP, with `#g` tag for sector center.
+  ```json
+  { "kinds": [30800], "#d": ["did"], "#g": ["43.65,1.45"], "#t": ["SECTOR"], "limit": 1 }
+  ```
+- **Content (kind 30800)**:
+  ```json
+  {
+    "@context": ["https://w3id.org/did/v1"],
+    "id": "did:nostr:<sector_pubkey_hex>",
+    "type": "SECTORGeographicCell",
+    "uplanetId": "<G1_pubkey>",
+    "geographicMetadata": {
+      "coordinates": { "lat": 43.65, "lon": 1.45 },
+      "precision": "0.1"
+    },
+    "ipfsChain": {
+      "current_cid": "<latest_sector_root_cid>",
+      "previous_cid": "<previous_sector_root_cid>"
+    }
+  }
+  ```
+  The **ipfsChain** field forms an information chain: `current_cid` is the latest IPFS root for the SECTOR content (manifest, journals); `previous_cid` is the prior root. Only these two CIDs are kept pinned; older CIDs are unpinned when the chain rolls.
+- **Tags**: `["d", "did"]`, `["g", "43.65,1.45"]`, `["t", "SECTOR"]`.
+- **Channel messages (kind 42)**: Same as UMAP; `e` tag references SECTOR DID npub, `g` tag = sector center.
+
+### REGION (1°)
+
+- **Precision**: 1° (~111 km). Center format: integer degrees (e.g. `44,2`).
+- **DID type**: `REGIONGeographicCell`.
+- **Discovery**: `#g` with region center (e.g. `44,2`), optional `#t`: `["REGION"]`.
+- **Content**: Same structure with `"type": "REGIONGeographicCell"`, `"precision": "1"`, `"uplanetId"`, and `"ipfsChain"` as for SECTOR.
+- **Tags**: `["d", "did"]`, `["g", "44,2"]`, `["t", "REGION"]`.
+
+### Summary
+
+| Level  | Precision | Type in DID content   | Example `g` tag   |
+|--------|-----------|------------------------|-------------------|
+| UMAP   | 0.01°     | UMAPGeographicCell     | 48.86,2.35        |
+| SECTOR | 0.1°      | SECTORGeographicCell   | 43.65,1.45        |
+| REGION | 1°        | REGIONGeographicCell   | 44,2              |
+
+SECTOR and REGION publications (kind 30023 articles, kind 3 contacts, etc.) SHOULD be anchored by publishing the corresponding kind 30800 DID so that NIP-28 clients can discover the channel by coordinates and subscribe to kind 42 messages.
+
 ## UI Best Practices
 
 ### Display Current UMAP
@@ -392,6 +447,7 @@ console.log('Message sent!');
 - **NIP-10**: Event References - https://github.com/nostr-protocol/nips/blob/master/10.md
 - **NIP-19**: bech32 Encoding - https://github.com/nostr-protocol/nips/blob/master/19.md
 - **ORE System**: `ORE_SYSTEM.md` in Astroport.ONE documentation
+- **This extension (NIP-101 branch)**: https://github.com/papiche/nostr-nips/blob/NIP-101/28-umap-extension.md
 
 ## License
 
