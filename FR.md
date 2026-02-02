@@ -4,7 +4,7 @@
 
 `draft` `optional`
 
-This NIP defines a mechanism for publishing encrypted notes visible only to a user-defined friends list using a shared symmetric ViewKey.
+This NIP defines a mechanism for publishing encrypted notes visible only to a user-defined friends list using a shared nostr secret: ViewKey.
 
 ## Motivation
 
@@ -71,7 +71,7 @@ The decrypted content is a JSON-encoded tags array:
 
 ```json
 [
-  ["viewKey", "<base64-encoded-viewkey>"],
+  ["viewKey", "hex-viewkey>"],
   ["p", "<friend-pubkey-1>"],
   ["p", "<friend-pubkey-2>"]
 ]
