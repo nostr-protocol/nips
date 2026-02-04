@@ -87,6 +87,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-71: Video Events](71.md)
 - [NIP-72: Moderated Communities](72.md)
 - [NIP-73: External Content IDs](73.md)
+- [NIP-74: Podcasts](74.md)
 - [NIP-75: Zap Goals](75.md)
 - [NIP-77: Negentropy Syncing](77.md)
 - [NIP-78: Application-specific data](78.md)
@@ -253,6 +254,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30040`       | Curated Publication Index       | [NKBIP-01]                             |
 | `30041`       | Curated Publication Content     | [NKBIP-01]                             |
 | `30063`       | Release artifact sets           | [51](51.md)                            |
+| `30074`       | Podcast Show                    | [74](74.md)                            |
+| `30075`       | Podcast Episode                 | [74](74.md)                            |
 | `30078`       | Application-specific Data       | [78](78.md)                            |
 | `30166`       | Relay Discovery                 | [66](66.md)                            |
 | `30267`       | App curation sets               | [51](51.md)                            |
@@ -445,3 +448,4 @@ All NIPs are public domain.
 <a align="center" href="https://github.com/nostr-protocol/nips/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=nostr-protocol/nips" />
 </a>
+
