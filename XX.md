@@ -12,8 +12,8 @@ This NIP extends [NIP-94](94.md) (File Metadata) to support multiple resolution 
 
 Modern devices have vastly different display capabilities:
 - Thumbnails in feeds need only ~128px width
-- Mobile phones typically display 512-768px images
-- Desktops benefit from 1280-1920px images
+- Mobile phones typically display 512-1024px images
+- Desktops benefit from 1536-2560px images
 - Original files may be 4000px+ from modern cameras
 
 Currently, Nostr clients either:
@@ -41,40 +41,37 @@ A responsive image set is represented by a kind `1063` event (per [NIP-94](94.md
 Each `imeta` tag MUST include:
 - `url` - Blossom URL for this variant
 - `x` - SHA-256 hash of this variant's file content
-- `m` - MIME type (same as original)
+- `m` - MIME type
 - `dim` - Dimensions as `<width>x<height>`
 - `variant` - Size category identifier
+- `size` - File size in bytes
+
+Each `imeta` tag MAY include:
+- `blurhash` - Blurhash placeholder string (recommended for `thumb` variant)
 
 The `variant` field identifies the resolution category:
 
-| Variant | Target Width | Use Case |
-|---------|--------------|----------|
-| `thumb` | 128px | Previews, galleries, feed thumbnails |
-| `mobile` | 512px | Mobile portrait viewing |
-| `mobile-lg` | 768px | Mobile landscape, small tablets |
-| `desktop` | 1280px | Laptops, small desktops |
-| `desktop-lg` | 1920px | Large displays, retina |
-| `original` | native | Full resolution, EXIF stripped |
+| Variant | Target Width | Quality | Use Case |
+|---------|--------------|---------|----------|
+| `thumb` | 128px | 70 | Previews, galleries, feed thumbnails |
+| `mobile-sm` | 512px | 75 | Small mobile, portrait viewing |
+| `mobile-lg` | 1024px | 80 | Large mobile, small tablets |
+| `desktop-sm` | 1536px | 85 | Laptops, small desktops |
+| `desktop-md` | 2048px | 88 | Standard desktop displays |
+| `desktop-lg` | 2560px | 90 | Large displays, HiDPI/Retina |
+| `original` | native | 92 | Full resolution, EXIF stripped |
 
 ### Variant Generation Rules
 
-1. **No upscaling**: Only generate variants smaller than the original image width
+1. **No upscaling**: Only generate variants with target widths smaller than the original image width
 2. **Preserve aspect ratio**: Scale height proportionally to maintain aspect ratio
-3. **Preserve format**: Output format MUST match input (JPEG→JPEG, PNG→PNG)
-4. **Strip metadata**: Remove all EXIF, IPTC, and XMP metadata from all variants
+3. **Format handling**: Preserve PNG (for transparency) and WebP. Convert GIF to PNG. Default to JPEG for all other formats
+4. **Strip metadata**: Remove all EXIF, IPTC, and XMP metadata from all variants (including the `original`)
 5. **Blurhash**: The `thumb` variant SHOULD include a `blurhash` for placeholder display
 
 ### Quality Settings
 
-Recommended JPEG quality settings per variant:
-- `thumb`: 70
-- `mobile`: 75
-- `mobile-lg`: 80
-- `desktop`: 85
-- `desktop-lg`: 90
-- `original`: 90
-
-For PNG images, use maximum compression without quality loss.
+Quality values are specified as integers (0-100) for use with JPEG and WebP encoding. For PNG images, use maximum compression without quality loss. The quality column in the variant table above gives the recommended values.
 
 ## Event Structure
 
@@ -93,50 +90,65 @@ All variants generated:
       "url https://blossom.example.com/abc123def456.jpg",
       "x abc123def456789...",
       "m image/jpeg",
-      "dim 4032x3024",
-      "variant original"
-    ],
-    ["imeta",
-      "url https://blossom.example.com/def456abc789.jpg",
-      "x def456abc789012...",
-      "m image/jpeg",
-      "dim 1920x1440",
-      "variant desktop-lg"
-    ],
-    ["imeta",
-      "url https://blossom.example.com/789abc123def.jpg",
-      "x 789abc123def345...",
-      "m image/jpeg",
-      "dim 1280x960",
-      "variant desktop"
-    ],
-    ["imeta",
-      "url https://blossom.example.com/012def456abc.jpg",
-      "x 012def456abc678...",
-      "m image/jpeg",
-      "dim 768x576",
-      "variant mobile-lg"
+      "dim 128x96",
+      "variant thumb",
+      "size 8432",
+      "blurhash eVF$^OI:${M{o#*0-nNFxakD"
     ],
     ["imeta",
       "url https://blossom.example.com/345abc789def.jpg",
       "x 345abc789def901...",
       "m image/jpeg",
       "dim 512x384",
-      "variant mobile"
+      "variant mobile-sm",
+      "size 42150"
+    ],
+    ["imeta",
+      "url https://blossom.example.com/012def456abc.jpg",
+      "x 012def456abc678...",
+      "m image/jpeg",
+      "dim 1024x768",
+      "variant mobile-lg",
+      "size 128900"
+    ],
+    ["imeta",
+      "url https://blossom.example.com/789abc123def.jpg",
+      "x 789abc123def345...",
+      "m image/jpeg",
+      "dim 1536x1152",
+      "variant desktop-sm",
+      "size 285000"
+    ],
+    ["imeta",
+      "url https://blossom.example.com/456def789abc.jpg",
+      "x 456def789abc012...",
+      "m image/jpeg",
+      "dim 2048x1536",
+      "variant desktop-md",
+      "size 512000"
+    ],
+    ["imeta",
+      "url https://blossom.example.com/def456abc789.jpg",
+      "x def456abc789012...",
+      "m image/jpeg",
+      "dim 2560x1920",
+      "variant desktop-lg",
+      "size 780000"
     ],
     ["imeta",
       "url https://blossom.example.com/678def012abc.jpg",
       "x 678def012abc234...",
       "m image/jpeg",
-      "dim 128x96",
-      "variant thumb",
-      "blurhash eVF$^OI:${M{o#*0-nNFxakD"
+      "dim 4032x3024",
+      "variant original",
+      "size 2450000"
     ],
     ["x", "abc123def456789..."],
-    ["x", "def456abc789012..."],
-    ["x", "789abc123def345..."],
-    ["x", "012def456abc678..."],
     ["x", "345abc789def901..."],
+    ["x", "012def456abc678..."],
+    ["x", "789abc123def345..."],
+    ["x", "456def789abc012..."],
+    ["x", "def456abc789012..."],
     ["x", "678def012abc234..."]
   ],
   "id": "<event-id>",
@@ -148,7 +160,7 @@ All variants generated:
 
 ### Example: Smaller Original (1000x750)
 
-Only smaller variants generated (no `desktop` or `desktop-lg`):
+Only smaller variants generated (no desktop variants):
 
 ```json
 {
@@ -158,34 +170,33 @@ Only smaller variants generated (no `desktop` or `desktop-lg`):
   "content": "Quick snapshot",
   "tags": [
     ["imeta",
-      "url https://blossom.example.com/small123.jpg",
-      "x small123456789...",
-      "m image/jpeg",
-      "dim 1000x750",
-      "variant original"
-    ],
-    ["imeta",
-      "url https://blossom.example.com/small456.jpg",
-      "x small456789012...",
-      "m image/jpeg",
-      "dim 768x576",
-      "variant mobile-lg"
-    ],
-    ["imeta",
-      "url https://blossom.example.com/small789.jpg",
-      "x small789012345...",
-      "m image/jpeg",
-      "dim 512x384",
-      "variant mobile"
-    ],
-    ["imeta",
       "url https://blossom.example.com/small012.jpg",
       "x small012345678...",
       "m image/jpeg",
       "dim 128x96",
       "variant thumb",
+      "size 6200",
       "blurhash eVF$^OI:${M{o#*0"
-    ]
+    ],
+    ["imeta",
+      "url https://blossom.example.com/small456.jpg",
+      "x small456789012...",
+      "m image/jpeg",
+      "dim 512x384",
+      "variant mobile-sm",
+      "size 35400"
+    ],
+    ["imeta",
+      "url https://blossom.example.com/small123.jpg",
+      "x small123456789...",
+      "m image/jpeg",
+      "dim 1000x750",
+      "variant original",
+      "size 195000"
+    ],
+    ["x", "small012345678..."],
+    ["x", "small456789012..."],
+    ["x", "small123456789..."]
   ],
   "id": "<event-id>",
   "sig": "<signature>"
@@ -197,11 +208,11 @@ Only smaller variants generated (no `desktop` or `desktop-lg`):
 ### Publishing Client
 
 1. Load the image file and extract pixel data (discarding EXIF)
-2. Determine which variants to generate based on original dimensions
-3. Generate each variant using canvas-based scaling
-4. Upload each variant to Blossom server(s)
-5. Collect SHA-256 hashes and URLs for each uploaded blob
-6. Publish kind 1063 event with all `imeta` tags
+2. Determine which variants to generate based on original dimensions (only generate variants with target width smaller than the original)
+3. Generate each variant using canvas-based scaling (or equivalent server-side resampling)
+4. Upload each variant to Blossom server(s) as content-addressed blobs
+5. Collect SHA-256 hashes, URLs, and file sizes for each uploaded blob
+6. Publish kind 1063 event with all `imeta` tags and corresponding `x` tags
 7. Reference the binding event in notes (via `e` tag or URL)
 
 ### Consuming Client
@@ -212,7 +223,7 @@ Only smaller variants generated (no `desktop` or `desktop-lg`):
    - Current viewport width
    - Device pixel ratio
    - Network conditions (optional)
-4. Display `blurhash` placeholder while loading
+4. Display `blurhash` placeholder while loading (if available)
 5. Load selected variant's URL
 6. On load failure, fall back to next larger variant
 7. Verify SHA-256 hash matches `x` tag (optional but recommended)
@@ -281,7 +292,7 @@ Publishing clients MUST strip EXIF and other metadata to protect user privacy. T
 
 ### Immutability
 
-Kind 1063 events are immutable. To update an image (e.g., add a missing variant), publish a new event and update references. Consider using addressable events (kind 31063 with `d` tag) if updates are needed frequently.
+Kind 1063 events are immutable. To update an image (e.g., add a missing variant), publish a new event and update references. Consider using addressable events (kind 30063 with `d` tag) if updates are needed frequently.
 
 ## Backward Compatibility
 
@@ -289,6 +300,11 @@ Kind 1063 events are immutable. To update an image (e.g., add a missing variant)
 - Clients that don't support responsive images can use any variant URL
 - The `original` variant ensures full-resolution access is always available
 - Existing NIP-94 clients will see the first `imeta` tag as the primary file
+
+## Implementations
+
+- [Smesh](https://git.mleku.dev/mleku/smesh) — React/TypeScript Nostr client with client-side variant generation
+- [ORLY](https://git.mleku.dev/mleku/next.orly.dev) — Go relay with server-side variant generation and Svelte web UI with client-side generation
 
 ## References
 
