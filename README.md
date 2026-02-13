@@ -57,6 +57,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-38: User Statuses](38.md)
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
+- [NIP-41: Physical Locations](41.md)
 - [NIP-42: Authentication of clients to relays](42.md)
 - [NIP-43: Relay Access Metadata and Requests](43.md)
 - [NIP-44: Encrypted Payloads (Versioned)](44.md)
@@ -78,6 +79,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-60: Cashu Wallet](60.md)
 - [NIP-61: Nutzaps](61.md)
 - [NIP-62: Request to Vanish](62.md)
+- [NIP-63: Physical Space Rentals](63.md)
 - [NIP-64: Chess (PGN)](64.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-66: Relay Discovery and Liveness Monitoring](66.md)
@@ -113,6 +115,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)
 
 ## Event Kinds
+
 | kind          | description                     | NIP                                    |
 | ------------- | ------------------------------- | -------------------------------------- |
 | `0`           | User Metadata                   | [01](01.md)                            |
@@ -274,7 +277,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31234`       | Draft Event                     | [37](37.md)                            |
 | `31388`       | Link Set                        | [Corny Chat][cornychat-linkset]        |
 | `31890`       | Feed                            | [NUD: Custom Feeds][NUD: Custom Feeds] |
-| `31922`       | Date-Based Calendar Event       | [52](52.md)                            |
+| `31922`       | Date-Based Calendar Event       | [52](52.md), [63](63.md)               |
 | `31923`       | Time-Based Calendar Event       | [52](52.md)                            |
 | `31924`       | Calendar                        | [52](52.md)                            |
 | `31925`       | Calendar Event RSVP             | [52](52.md)                            |
@@ -282,14 +285,20 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31990`       | Handler information             | [89](89.md)                            |
 | `32267`       | Software Application            |                                        |
 | `32388`       | User Room Favorites             | [Corny Chat][cornychat-roomfavorites]  |
+| `33000`       | Physical Location               | [41](41.md)                            |
+| `33001`       | Space Class                     | [63](63.md)                            |
+| `33002`       | Space                           | [63](63.md)                            |
+| `33003`       | Availability Snapshot           | [63](63.md)                            |
+| `33012`       | Pricing Configuration           | [63](63.md)                            |
+| `33013`       | Rental Policy                   | [63](63.md)                            |
 | `33388`       | High Scores                     | [Corny Chat][cornychat-highscores]     |
 | `34235`       | Addressable Video Event         | [71](71.md)                            |
 | `34236`       | Addressable Short Video Event   | [71](71.md)                            |
 | `34388`       | Sound Effects                   | [Corny Chat][cornychat-soundeffects]   |
 | `34550`       | Community Definition            | [72](72.md)                            |
+| `37516`       | Geocache listing                | [geocaching](geocaching)               |
 | `38172`       | Cashu Mint Announcement         | [87](87.md)                            |
 | `38173`       | Fedimint Announcement           | [87](87.md)                            |
-| `37516`       | Geocache listing                | [geocaching](geocaching)               |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
 | `39089`       | Starter packs                   | [51](51.md)                            |
@@ -314,7 +323,6 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 [geocaching]: https://nostrhub.io/naddr1qvzqqqrcvypzppscgyy746fhmrt0nq955z6xmf80pkvrat0yq0hpknqtd00z8z68qqgkwet0vdskx6rfdenj6etkv4h8guc6gs5y5
 [nostr-epoxy]: https://github.com/Origami74/nostr-epoxy-reverse-proxy
 [marmot]: https://github.com/marmot-protocol/marmot
-
 
 ## Message types
 
@@ -342,79 +350,79 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 
 ## Common Tags
 
-| name              | value                                | other parameters                | NIP                                                |
-| ----------------- | ------------------------------------ | ------------------------------- | -------------------------------------------------- |
-| `a`               | coordinates to an event              | relay URL                       | [01](01.md)                                        |
-| `A`               | root address                         | relay URL                       | [22](22.md)                                        |
-| `c`               | commit id                            |                                 | [34](34.md)                                       |
-| `d`               | identifier                           | --                              | [01](01.md)                                        |
-| `e`               | event id (hex)                       | relay URL, marker, pubkey (hex) | [01](01.md), [10](10.md)                           |
-| `E`               | root event id                        | relay URL                       | [22](22.md)                                        |
-| `f`               | currency code                        | --                              | [69](69.md)                                        |
-| `g`               | geohash                              | --                              | [52](52.md)                                        |
-| `h`               | group id                             | --                              | [29](29.md)                                        |
-| `i`               | external identity                    | proof, url hint                 | [35](35.md), [39](39.md), [73](73.md)              |
-| `I`               | root external identity               | --                              | [22](22.md)                                        |
-| `k`               | kind                                 | --                              | [18](18.md), [25](25.md), [72](72.md), [73](73.md) |
-| `K`               | root scope                           | --                              | [22](22.md)                                        |
-| `l`               | label, label namespace, language name| --                              | [32](32.md), [C0](C0.md)                           |
-| `L`               | label namespace                      | --                              | [32](32.md)                                        |
-| `m`               | MIME type                            | --                              | [94](94.md)                                        |
-| `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md), [22](22.md)              |
-| `P`               | pubkey (hex)                         | --                              | [22](22.md), [57](57.md)                           |
-| `q`               | event id (hex)                       | relay URL, pubkey (hex)         | [18](18.md)                                        |
-| `r`               | a reference (URL, etc)               | --                              | [24](24.md), [25](25.md)                           |
-| `r`               | relay url                            | marker                          | [65](65.md)                                        |
-| `s`               | status                               | --                              | [69](69.md)                                        |
-| `t`               | hashtag                              | --                              | [24](24.md), [34](34.md), [35](35.md)              |
-| `u`               | url                                  | --                              | [61](61.md), [98](98.md)                           |
-| `x`               | hash                                 | --                              | [35](35.md), [56](56.md)                           |
-| `y`               | platform                             | --                              | [69](69.md)                                        |
-| `z`               | order number                         | --                              | [69](69.md)                                        |
-| `-`               | --                                   | --                              | [70](70.md)                                        |
-| `alt`             | summary                              | --                              | [31](31.md)                                        |
-| `amount`          | millisatoshis, stringified           | --                              | [57](57.md)                                        |
-| `bolt11`          | `bolt11` invoice                     | --                              | [57](57.md)                                        |
-| `branch-name`     | branch name suggestion               | --                              | [34](34.md)                                        |
-| `challenge`       | challenge string                     | --                              | [42](42.md)                                        |
-| `client`          | name, address                        | relay URL                       | [89](89.md)                                        |
-| `clone`           | git clone URL                        | --                              | [34](34.md)                                        |
-| `content-warning` | reason                               | --                              | [36](36.md)                                        |
-| `delegation`      | pubkey, conditions, delegation token | --                              | [26](26.md)                                        |
-| `dep`             | Required dependency                  | --                              | [C0](C0.md)                                        |
-| `description`     | description                          | --                              | [34](34.md), [57](57.md), [58](58.md), [C0](C0.md) |
-| `emoji`           | shortcode, image URL                 | --                              | [30](30.md)                                        |
-| `encrypted`       | --                                   | --                              | [90](90.md)                                        |
-| `extension`       | File extension                       | --                              | [C0](C0.md)                                        |
-| `expiration`      | unix timestamp (string)              | --                              | [40](40.md)                                        |
-| `file`            | full path (string)                   | --                              | [35](35.md)                                        |
-| `goal`            | event id (hex)                       | relay URL                       | [75](75.md)                                        |
-| `merge-base`      | commit id                            |                                 | [34](34.md)                                        |
-| `HEAD`            | `ref: refs/heads/<branch-name>`      |                                 | [34](34.md)                                        |
-| `image`           | image URL                            | dimensions in pixels            | [23](23.md), [52](52.md), [58](58.md)              |
-| `imeta`           | inline metadata                      | --                              | [92](92.md)                                        |
-| `license`         | License of the shared content        | --                              | [C0](C0.md)                                        |
-| `lnurl`           | `bech32` encoded `lnurl`             | --                              | [57](57.md)                                        |
-| `location`        | location string                      | --                              | [52](52.md), [99](99.md)                           |
-| `name`            | name                                 | --                              | [34](34.md), [58](58.md), [72](72.md), [C0](C0.md) |
-| `nonce`           | random                               | difficulty                      | [13](13.md)                                        |
-| `preimage`        | hash of `bolt11` invoice             | --                              | [57](57.md)                                        |
-| `price`           | price                                | currency, frequency             | [99](99.md)                                        |
-| `proxy`           | external ID                          | protocol                        | [48](48.md)                                        |
-| `published_at`    | unix timestamp (string)              | --                              | [23](23.md), [B0](B0.md)                           |
-| `relay`           | relay url                            | --                              | [42](42.md), [17](17.md)                           |
-| `relays`          | relay list                           | --                              | [57](57.md)                                        |
-| `repo`            | Reference to the origin repository   | --                              | [C0](C0.md)                                        |
-| `runtime`         | Runtime or environment specification | --                              | [C0](C0.md)                                        |
-| `server`          | file storage server url              | --                              | [96](96.md)                                        |
-| `sound`           | shortcode, sound url, image url      | --                              | [51](51.md)                                        |
-| `subject`         | subject                              | --                              | [14](14.md), [17](17.md), [34](34.md)              |
-| `summary`         | summary                              | --                              | [23](23.md), [52](52.md)                           |
-| `thumb`           | badge thumbnail                      | dimensions in pixels            | [58](58.md)                                        |
-| `title`           | title                                | --                              | [23](23.md), [B0](B0.md)                           |
-| `tracker`         | torrent tracker URL                  | --                              | [35](35.md)                                        |
-| `web`             | webpage URL                          | --                              | [34](34.md)                                        |
-| `zap`             | pubkey (hex), relay URL              | weight                          | [57](57.md)                                        |
+| name              | value                                 | other parameters                | NIP                                                |
+| ----------------- | ------------------------------------- | ------------------------------- | -------------------------------------------------- |
+| `a`               | coordinates to an event               | relay URL                       | [01](01.md)                                        |
+| `A`               | root address                          | relay URL                       | [22](22.md)                                        |
+| `c`               | commit id                             |                                 | [34](34.md)                                        |
+| `d`               | identifier                            | --                              | [01](01.md)                                        |
+| `e`               | event id (hex)                        | relay URL, marker, pubkey (hex) | [01](01.md), [10](10.md)                           |
+| `E`               | root event id                         | relay URL                       | [22](22.md)                                        |
+| `f`               | currency code                         | --                              | [69](69.md)                                        |
+| `g`               | geohash                               | --                              | [52](52.md)                                        |
+| `h`               | group id                              | --                              | [29](29.md)                                        |
+| `i`               | external identity                     | proof, url hint                 | [35](35.md), [39](39.md), [73](73.md)              |
+| `I`               | root external identity                | --                              | [22](22.md)                                        |
+| `k`               | kind                                  | --                              | [18](18.md), [25](25.md), [72](72.md), [73](73.md) |
+| `K`               | root scope                            | --                              | [22](22.md)                                        |
+| `l`               | label, label namespace, language name | --                              | [32](32.md), [C0](C0.md)                           |
+| `L`               | label namespace                       | --                              | [32](32.md)                                        |
+| `m`               | MIME type                             | --                              | [94](94.md)                                        |
+| `p`               | pubkey (hex)                          | relay URL, petname              | [01](01.md), [02](02.md), [22](22.md)              |
+| `P`               | pubkey (hex)                          | --                              | [22](22.md), [57](57.md)                           |
+| `q`               | event id (hex)                        | relay URL, pubkey (hex)         | [18](18.md)                                        |
+| `r`               | a reference (URL, etc)                | --                              | [24](24.md), [25](25.md)                           |
+| `r`               | relay url                             | marker                          | [65](65.md)                                        |
+| `s`               | status                                | --                              | [69](69.md)                                        |
+| `t`               | hashtag                               | --                              | [24](24.md), [34](34.md), [35](35.md)              |
+| `u`               | url                                   | --                              | [61](61.md), [98](98.md)                           |
+| `x`               | hash                                  | --                              | [35](35.md), [56](56.md)                           |
+| `y`               | platform                              | --                              | [69](69.md)                                        |
+| `z`               | order number                          | --                              | [69](69.md)                                        |
+| `-`               | --                                    | --                              | [70](70.md)                                        |
+| `alt`             | summary                               | --                              | [31](31.md)                                        |
+| `amount`          | millisatoshis, stringified            | --                              | [57](57.md)                                        |
+| `bolt11`          | `bolt11` invoice                      | --                              | [57](57.md)                                        |
+| `branch-name`     | branch name suggestion                | --                              | [34](34.md)                                        |
+| `challenge`       | challenge string                      | --                              | [42](42.md)                                        |
+| `client`          | name, address                         | relay URL                       | [89](89.md)                                        |
+| `clone`           | git clone URL                         | --                              | [34](34.md)                                        |
+| `content-warning` | reason                                | --                              | [36](36.md)                                        |
+| `delegation`      | pubkey, conditions, delegation token  | --                              | [26](26.md)                                        |
+| `dep`             | Required dependency                   | --                              | [C0](C0.md)                                        |
+| `description`     | description                           | --                              | [34](34.md), [57](57.md), [58](58.md), [C0](C0.md) |
+| `emoji`           | shortcode, image URL                  | --                              | [30](30.md)                                        |
+| `encrypted`       | --                                    | --                              | [90](90.md)                                        |
+| `extension`       | File extension                        | --                              | [C0](C0.md)                                        |
+| `expiration`      | unix timestamp (string)               | --                              | [40](40.md)                                        |
+| `file`            | full path (string)                    | --                              | [35](35.md)                                        |
+| `goal`            | event id (hex)                        | relay URL                       | [75](75.md)                                        |
+| `merge-base`      | commit id                             |                                 | [34](34.md)                                        |
+| `HEAD`            | `ref: refs/heads/<branch-name>`       |                                 | [34](34.md)                                        |
+| `image`           | image URL                             | dimensions in pixels            | [23](23.md), [52](52.md), [58](58.md)              |
+| `imeta`           | inline metadata                       | --                              | [92](92.md)                                        |
+| `license`         | License of the shared content         | --                              | [C0](C0.md)                                        |
+| `lnurl`           | `bech32` encoded `lnurl`              | --                              | [57](57.md)                                        |
+| `location`        | location string                       | --                              | [52](52.md), [99](99.md)                           |
+| `name`            | name                                  | --                              | [34](34.md), [58](58.md), [72](72.md), [C0](C0.md) |
+| `nonce`           | random                                | difficulty                      | [13](13.md)                                        |
+| `preimage`        | hash of `bolt11` invoice              | --                              | [57](57.md)                                        |
+| `price`           | price                                 | currency, frequency             | [99](99.md)                                        |
+| `proxy`           | external ID                           | protocol                        | [48](48.md)                                        |
+| `published_at`    | unix timestamp (string)               | --                              | [23](23.md), [B0](B0.md)                           |
+| `relay`           | relay url                             | --                              | [42](42.md), [17](17.md)                           |
+| `relays`          | relay list                            | --                              | [57](57.md)                                        |
+| `repo`            | Reference to the origin repository    | --                              | [C0](C0.md)                                        |
+| `runtime`         | Runtime or environment specification  | --                              | [C0](C0.md)                                        |
+| `server`          | file storage server url               | --                              | [96](96.md)                                        |
+| `sound`           | shortcode, sound url, image url       | --                              | [51](51.md)                                        |
+| `subject`         | subject                               | --                              | [14](14.md), [17](17.md), [34](34.md)              |
+| `summary`         | summary                               | --                              | [23](23.md), [52](52.md)                           |
+| `thumb`           | badge thumbnail                       | dimensions in pixels            | [58](58.md)                                        |
+| `title`           | title                                 | --                              | [23](23.md), [B0](B0.md)                           |
+| `tracker`         | torrent tracker URL                   | --                              | [35](35.md)                                        |
+| `web`             | webpage URL                           | --                              | [34](34.md)                                        |
+| `zap`             | pubkey (hex), relay URL               | weight                          | [57](57.md)                                        |
 
 Please update these lists when proposing new NIPs.
 
