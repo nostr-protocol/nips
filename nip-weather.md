@@ -31,7 +31,10 @@ A replaceable event describing a weather station's configuration and capabilitie
     ["connectivity", "wifi"],
     ["sensor", "temp", "DHT11"],
     ["sensor", "humidity", "DHT11"],
-    ["sensor", "pm25", "PMS5003"]
+    ["sensor", "pm25", "PMS5003"],
+    ["sensor_status", "temp", "DHT11", "ok"],
+    ["sensor_status", "humidity", "DHT11", "ok"],
+    ["sensor_status", "pm25", "PMS5003", "ok"]
   ],
   "content": ""
 }
@@ -45,6 +48,7 @@ Tags:
 - `power` (optional): Power source type. Common values: `mains`, `solar`, `battery`, `solar_battery`, `usb`
 - `connectivity` (optional): Connectivity type. Common values: `wifi`, `cellular`, `ethernet`, `lora`, `satellite`
 - `sensor` (repeatable): Sensor types available with model identifier. Format: `["sensor", "<type>", "<model>"]`. Used for filtering/discovery (relays can index these).
+- `sensor_status` (repeatable): `["sensor_status", "<sensor_type>", "<model>", "<status>"]`. `<status>` is `"ok"` or `"418"` (sensor not returning valid data). One per (type, model) configured.
 - Other tags as needed
 
 ### Weather station  / sets
@@ -70,6 +74,8 @@ Note: Kind-30001 (generic lists?) was skipped since deprecated. A custom list ty
 Regular events containing sensor readings. In the regular range (1000-9999), all readings are stored by relays, enabling historical queries (e.g., last hour, last day). All sensor data is stored in tags.
 
 Sensor readings use 3-parameter tags: `[sensor_type, value, model]`. The third parameter identifies the sensor model, enabling cross-station comparison and supporting multi-sensor setups where the same sensor type may use different models.
+
+Include a reading tag only when the sensor produced a valid value; otherwise omit (no null or default values).
 
 ```jsonc
 {
@@ -148,9 +154,6 @@ This WIP (changing frequently) implementation demonstrates:
 
 - figure out the best way to group weather stations since nip-51 kind-30001 is deprecated in favor of specific list types. Maybe a new list/set type? In which I need to pick a number 3dk number I like.
 - add `alt` tag (NIP-31) to both event kinds for clients that don't understand weather events. Keep summaries short to avoid bloating frequent reading events (or just use a short literal definition/tag).
-- handling broken/faulty sensors:
-  - readings: a) omit tag, b) bull string `["temp", "null", "DHT11"]` - I thing A.
-  - metadata status: a) extend sensor tag `["sensor", "temp", "DHT11", "ok"]`, b) separate `["sensor_status", "temp", "DHT11", "offline"]` - I think B.
 - timestamps for offline/batch publishing: add `observed_at` tag? a) always include, b) only if differs from `created_at`
 - geohash `g` tag: include one tag per precision level to enable location queries at different granularities.
 
