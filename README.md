@@ -105,6 +105,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-99: Classified Listings](99.md)
 - [NIP-A0: Voice Messages](A0.md)
 - [NIP-A4: Public Messages](A4.md)
+- [NIP-AE: Agents](AE.md)
 - [NIP-B0: Web Bookmarks](B0.md)
 - [NIP-B7: Blossom](B7.md)
 - [NIP-BE: Nostr BLE Communications Protocol](BE.md)
@@ -178,6 +179,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `2003`        | Torrent                         | [35](35.md)                            |
 | `2004`        | Torrent Comment                 | [35](35.md)                            |
 | `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
+| `4129`        | Agent Lesson                    | [AE](AE.md)                            |
+| `4199`        | Agent Definition                | [AE](AE.md)                            |
+| `4201`        | Agent Nudge                     | [AE](AE.md)                            |
 | `4550`        | Community Post Approval         | [72](72.md)                            |
 | `5000`-`5999` | Job Request                     | [90](90.md)                            |
 | `6000`-`6999` | Job Result                      | [90](90.md)                            |
@@ -221,6 +225,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `11111`       | Transport Method Announcement   | [Nostr Epoxy][nostr-epoxy]             |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `13534`       | Membership Lists                | [43](43.md)                            |
+| `14199`       | Agent List                      | [AE](AE.md)                            |
 | `14388`       | User Sound Effect Lists         | [Corny Chat][cornychat-usersoundlist]  |
 | `17375`       | Cashu Wallet Event              | [60](60.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
