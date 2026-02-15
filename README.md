@@ -98,6 +98,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-88: Polls](88.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - [NIP-90: Data Vending Machines](90.md)
+- [NIP-91: AND filters](91.md)
 - [NIP-92: Media Attachments](92.md)
 - [NIP-94: File Metadata](94.md)
 - [NIP-96: HTTP File Storage Integration](96.md) --- **unrecommended**: replaced by blossom APIs
@@ -315,6 +316,17 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 [nostr-epoxy]: https://github.com/Origami74/nostr-epoxy-reverse-proxy
 [marmot]: https://github.com/marmot-protocol/marmot
 
+
+## Filters 
+
+| kind            | description                | NIP                      |
+| --------------- | -------------------------- | ------------------------ |
+| `authors`       | by pubkey                  | [01](01.md)              |
+| `ids`           | by ids                     | [01](01.md)              |
+| `kinds`         | by kinds                   | [01](01.md)              |
+| `#{}`           | by indexable tag (OR)      | [01](01.md)              |
+| `&{}`           | by indexable tag (AND)     | [91](91.md)              |
+| `search`        | by search times            | [50](50.md)              |
 
 ## Message types
 
