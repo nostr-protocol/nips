@@ -870,10 +870,10 @@ This document defines `ver: 1`; field names and meanings MUST NOT be redefined i
 the same major version.
 
 ## Implementations
-
-- **clawlet**: Web client (Next.js) with Rust runtime
-  - Web: https://github.com/klabo/clawlet
-  - Runtime: https://github.com/klabo/nostr-agent-runtime
+- **openclaw**: Open PR adding support to OpenClaw:
+  - PR: https://github.com/joelklabo/openclaw/pull/2
+- **clawlet**: Web client (Next.js) with (ZeroClaw) Rust runtime
+  - Web: https://github.com/joelklabo/clawlet
 
 ## Copyright
 
