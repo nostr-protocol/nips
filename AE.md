@@ -42,7 +42,8 @@ Execution platforms determine which lessons and comments to apply based on trust
     ["description", "<one-line-description>"],
     ["tool", "<tool-name>"],
     ["ver", "<version-number>"],
-    ["image", "<avatar-url>"]
+    ["image", "<avatar-url>"],
+    ["e", "<1063-event-id>", "<relay-hint>"]
   ],
   "content": ""
 }
@@ -58,6 +59,7 @@ Execution platforms determine which lessons and comments to apply based on trust
 - `tool` — Zero or more tags of tool names the agent expects to have
 - `ver` — Version number, defaults to `1`
 - `image` — Avatar URL
+- `e` — Reference to NIP-94 file metadata event (kind 1063). Execution platforms MAY provide access to these files.
 
 ---
 
