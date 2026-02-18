@@ -105,6 +105,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-99: Classified Listings](99.md)
 - [NIP-A0: Voice Messages](A0.md)
 - [NIP-A4: Public Messages](A4.md)
+- [NIP-AC: DVM Agent Coordination](AC.md)
 - [NIP-B0: Web Bookmarks](B0.md)
 - [NIP-B7: Blossom](B7.md)
 - [NIP-BE: Nostr BLE Communications Protocol](BE.md)
@@ -180,6 +181,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
 | `4550`        | Community Post Approval         | [72](72.md)                            |
 | `5000`-`5999` | Job Request                     | [90](90.md)                            |
+| `5117`        | DVM Workflow Chain               | [AC](AC.md)                            |
+| `5118`        | DVM Agent Swarm                  | [AC](AC.md)                            |
 | `6000`-`6999` | Job Result                      | [90](90.md)                            |
 | `7000`        | Job Feedback                    | [90](90.md)                            |
 | `7374`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
@@ -224,6 +227,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `14388`       | User Sound Effect Lists         | [Corny Chat][cornychat-usersoundlist]  |
 | `17375`       | Cashu Wallet Event              | [60](60.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
+| `21117`       | DVM Data Escrow                  | [AC](AC.md)                            |
 | `22242`       | Client Authentication           | [42](42.md)                            |
 | `23194`       | Wallet Request                  | [47](47.md)                            |
 | `23195`       | Wallet Response                 | [47](47.md)                            |
@@ -261,6 +265,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30312`       | Interactive Room                | [53](53.md)                            |
 | `30313`       | Conference Event                | [53](53.md)                            |
 | `30315`       | User Statuses                   | [38](38.md)                            |
+| `30333`       | DVM Agent Heartbeat              | [AC](AC.md)                            |
 | `30382`       | User Trusted Assertion          | [85](85.md)                            |
 | `30383`       | Event Trusted Assertion         | [85](85.md)                            |
 | `30384`       | Addressable Trusted Assertion   | [85](85.md)                            |
@@ -271,6 +276,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30618`       | Repository state announcements  | [34](34.md)                            |
 | `30818`       | Wiki article                    | [54](54.md)                            |
 | `30819`       | Redirects                       | [54](54.md)                            |
+| `31117`       | DVM Job Review                   | [AC](AC.md)                            |
 | `31234`       | Draft Event                     | [37](37.md)                            |
 | `31388`       | Link Set                        | [Corny Chat][cornychat-linkset]        |
 | `31890`       | Feed                            | [NUD: Custom Feeds][NUD: Custom Feeds] |
