@@ -178,6 +178,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `2003`        | Torrent                         | [35](35.md)                            |
 | `2004`        | Torrent Comment                 | [35](35.md)                            |
 | `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
+| `3063`        | Software Asset                  | [82](82.md)                            |
 | `4550`        | Community Post Approval         | [72](72.md)                            |
 | `5000`-`5999` | Job Request                     | [90](90.md)                            |
 | `6000`-`6999` | Job Result                      | [90](90.md)                            |
@@ -253,7 +254,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30030`       | Emoji sets                      | [51](51.md)                            |
 | `30040`       | Curated Publication Index       | [NKBIP-01]                             |
 | `30041`       | Curated Publication Content     | [NKBIP-01]                             |
-| `30063`       | Release artifact sets           | [51](51.md)                            |
+| `30063`       | Software Release                | [82](82.md)                            |
 | `30078`       | Application-specific Data       | [78](78.md)                            |
 | `30166`       | Relay Discovery                 | [66](66.md)                            |
 | `30267`       | App curation sets               | [51](51.md)                            |
@@ -279,6 +280,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `31924`       | Calendar                        | [52](52.md)                            |
 | `31925`       | Calendar Event RSVP             | [52](52.md)                            |
 | `31989`       | Handler recommendation          | [89](89.md)                            |
+| `31990`       | Handler information             | [89](89.md)                            |                         |
+| `32267`       | Software Application            | [82](82.md)                            |
 | `31990`       | Handler information             | [89](89.md)                            |
 | `32267`       | Software Application            |                                        |
 | `32388`       | User Room Favorites             | [Corny Chat][cornychat-roomfavorites]  |
