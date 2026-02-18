@@ -138,6 +138,32 @@ For any event type where a field is repeated in both encrypted content and a tag
 If a mirror tag is present and differs from the encrypted payload, implementations
 MAY reject the event as `INVALID_SCHEMA`.
 
+### Structured `text` envelope (compatibility profile)
+
+For compatibility with runtimes that currently emit telemetry as a compact text payload,
+implementations MAY encode structured metadata inside `text` using this format:
+
+- delimiter between fields: `|`
+- field shape: `key=value`
+- value encoding: percent-encoding (`encodeURIComponent` / URL-encoding)
+
+Example:
+
+```text
+event=tool|phase=start|name=web_fetch|call_id=call_123|target=https%3A%2F%2Fexample.com|ts=1771402416
+```
+
+When this envelope is used:
+
+- `event`, `phase`, and `ts` SHOULD be present.
+- consumers SHOULD ignore unknown keys.
+- producers SHOULD keep key names stable and lowercase snake_case.
+- if canonical JSON fields are present (for example `name`, `phase`, `arguments`), they
+  remain authoritative over mirrored envelope keys.
+
+This format is intended as a wire-compatibility strategy and does not replace canonical
+JSON fields when those fields are available.
+
 ### `ai.info` (kind 31340)
 
 Agent capability discovery event. This is a replaceable event (`kind 31340`).
@@ -292,6 +318,12 @@ Agent → client terminal response.
 }
 ```
 
+`text` MAY be plain response text, or MAY carry a compatibility envelope string such as:
+
+```text
+event=final|phase=end|finish_reason=stop|summary=Here%20is%20the%20answer...|run_id=abc123|ts=1771402425
+```
+
 ### Delta (kind 25801)
 
 Agent → client streaming fragment.
@@ -313,6 +345,12 @@ Agent → client streaming fragment.
   "text": "partial response text",
   "seq": 0
 }
+```
+
+`text` MAY alternatively carry a compatibility envelope string such as:
+
+```text
+event=thinking|phase=update|step=searching|summary=Looking%20up%20latest%20pricing|run_id=abc123|ts=1771402418
 ```
 
 `seq` MUST be strictly increasing by `1` within a run.
@@ -383,6 +421,16 @@ untrusted and avoid surfacing secrets.
   },
   "success": true,
   "duration_ms": 120
+}
+```
+
+Compatibility envelope form inside `text` is also allowed, for example:
+
+```json
+{
+  "ver": 1,
+  "text": "event=tool|phase=start|name=web_fetch|call_id=call_123|target=https%3A%2F%2Fexample.com|ts=1771402416",
+  "timestamp": 1771402416
 }
 ```
 
@@ -546,15 +594,25 @@ Error codes:
 {
   "$id": "https://example.com/nip-xx-tool-call.json",
   "type": "object",
-  "required": ["ver", "name", "phase"],
+  "required": ["ver"],
+  "oneOf": [
+    {
+      "required": ["text"]
+    },
+    {
+      "required": ["name", "phase"]
+    }
+  ],
   "properties": {
     "ver": { "const": 1 },
+    "text": { "type": "string", "minLength": 1 },
     "name": { "type": "string", "minLength": 1 },
     "phase": { "type": "string", "enum": ["start", "result"] },
     "arguments": { "type": "object" },
     "output": { "type": "object" },
     "success": { "type": "boolean" },
-    "duration_ms": { "type": "integer", "minimum": 0 }
+    "duration_ms": { "type": "integer", "minimum": 0 },
+    "timestamp": { "type": "integer", "minimum": 0 }
   }
 }
 ```
@@ -675,6 +733,22 @@ For `ai.delta` events (`kind 25801`):
   can display a soft placeholder (“streaming degraded”) until `ai.response` arrives.
 - Final render MUST be taken from `ai.response` text, not from the delta stream.
 - Clients MUST NOT apply deltas after a terminal event has been accepted for a run.
+
+### Envelope parsing helper (non-normative)
+
+```ts
+function parseTextEnvelope(text: string): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const part of text.split("|")) {
+    const idx = part.indexOf("=");
+    if (idx <= 0) continue;
+    const key = part.slice(0, idx).trim();
+    const value = part.slice(idx + 1);
+    out[key] = decodeURIComponent(value);
+  }
+  return out;
+}
+```
 
 ## Protocol Flow
 
