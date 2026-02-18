@@ -85,7 +85,7 @@ All protocol payloads in encrypted event kinds (`25800`, `25801`, `25802`, `2580
 All encrypted events in this NIP MUST include:
 
 ```text
-["encryption", "nip44_v2"]
+["encryption", "nip44"]
 ```
 
 If an agent and client both publish additional supported encryption schemes, senders
@@ -155,11 +155,27 @@ event=tool|phase=start|name=web_fetch|call_id=call_123|target=https%3A%2F%2Fexam
 
 When this envelope is used:
 
-- `event`, `phase`, and `ts` SHOULD be present.
+- `event`, `phase`, and `ts` MUST be present.
 - consumers SHOULD ignore unknown keys.
 - producers SHOULD keep key names stable and lowercase snake_case.
 - if canonical JSON fields are present (for example `name`, `phase`, `arguments`), they
   remain authoritative over mirrored envelope keys.
+
+Per-event required envelope keys:
+
+- `ai.response` (`25803`): `event=final`, `phase=end`, `text`
+- `ai.delta` (`25801`): `event=delta`, `phase`, and at least one of `text` or `block`
+- `ai.tool_call` (`25804`): `event=tool`, `phase`, and `text` or `name`
+- `ai.error` (`25805`): `event=error`, `phase=end`, `code`, `text`
+
+Recommended common keys for all envelope payloads:
+
+- `run_id` (or `runId`)
+- `session_id` (or `sessionId`)
+- `timestamp` (or `ts`)
+
+Canonical keys SHOULD use snake_case (`run_id`, `session_id`, `ts`).
+Implementations SHOULD also accept camelCase aliases for interoperability.
 
 This format is intended as a wire-compatibility strategy and does not replace canonical
 JSON fields when those fields are available.
@@ -189,7 +205,7 @@ refresh cached capabilities when capability entries change.
   "supports_streaming": true,
   "supports_nip59": true,
   "dvm_compatible": false,
-  "encryption": ["nip44_v2"],
+  "encryption": ["nip44"],
   "supported_models": ["gpt-4.1-mini", "llama-3.1-70b"],
   "default_model": "gpt-4.1-mini",
   "tool_names": ["web_fetch", "calculator"],
@@ -247,7 +263,7 @@ Client → agent invocation.
 | Tag        | Required | Description |
 |------------|----------|-------------|
 | p          | Yes      | Agent recipient pubkey |
-| encryption | Yes      | Must be `"nip44_v2"` |
+| encryption | Yes      | Must be `"nip44"` |
 | s          | No       | Session identifier |
 
 **Content (JSON, encrypted)**
@@ -279,7 +295,7 @@ events in that case.
 |------------|----------|-------------|
 | p          | Yes      | Agent recipient pubkey |
 | e          | Yes      | Prompt id (`#e` root) |
-| encryption | Yes      | Must be `"nip44_v2"` |
+| encryption | Yes      | Must be `"nip44"` |
 | s          | No       | Session identifier |
 
 **Content (JSON, encrypted)**
@@ -301,7 +317,7 @@ Agent → client terminal response.
 |------------|----------|-------------|
 | p          | Yes      | Client recipient pubkey |
 | e          | Yes      | Prompt id (`#e` root) |
-| encryption | Yes      | Must be `"nip44_v2"` |
+| encryption | Yes      | Must be `"nip44"` |
 | s          | No       | Session identifier |
 
 **Content (JSON, encrypted)**
@@ -321,7 +337,7 @@ Agent → client terminal response.
 `text` MAY be plain response text, or MAY carry a compatibility envelope string such as:
 
 ```text
-event=final|phase=end|finish_reason=stop|summary=Here%20is%20the%20answer...|run_id=abc123|ts=1771402425
+event=final|phase=end|text=Here%20is%20the%20answer...|finish_reason=stop|run_id=abc123|session_id=sender%3Aabc|ts=1771402425
 ```
 
 ### Delta (kind 25801)
@@ -334,7 +350,7 @@ Agent → client streaming fragment.
 |------------|----------|-------------|
 | p          | Yes      | Client recipient pubkey |
 | e          | Yes      | Prompt id (`#e` root) |
-| encryption | Yes      | Must be `"nip44_v2"` |
+| encryption | Yes      | Must be `"nip44"` |
 | s          | No       | Session identifier |
 
 **Content (JSON, encrypted)**
@@ -350,10 +366,10 @@ Agent → client streaming fragment.
 `text` MAY alternatively carry a compatibility envelope string such as:
 
 ```text
-event=thinking|phase=update|step=searching|summary=Looking%20up%20latest%20pricing|run_id=abc123|ts=1771402418
+event=delta|mode=thinking|status=update|phase=update|block=Looking%20up%20latest%20pricing|text=Looking%20up%20latest%20pricing|run_id=abc123|session_id=sender%3Aabc|ts=1771402418
 ```
 
-`seq` MUST be strictly increasing by `1` within a run.
+If `seq` is present, it MUST be strictly increasing by `1` within a run.
 
 ### Status (kind 25800)
 
@@ -365,7 +381,7 @@ Agent → client state updates.
 |------------|----------|-------------|
 | p          | Yes      | Client recipient pubkey |
 | e          | Yes      | Prompt id (`#e` root) |
-| encryption | Yes      | Must be `"nip44_v2"` |
+| encryption | Yes      | Must be `"nip44"` |
 | s          | No       | Session identifier |
 
 **Content (JSON, encrypted)**
@@ -399,7 +415,7 @@ untrusted and avoid surfacing secrets.
 |------------|----------|-------------|
 | p          | Yes      | Client recipient pubkey |
 | e          | Yes      | Prompt id (`#e` root) |
-| encryption | Yes      | Must be `"nip44_v2"` |
+| encryption | Yes      | Must be `"nip44"` |
 | s          | No       | Session identifier |
 | tool       | No       | Optional index hint |
 | phase      | No       | Optional index hint: `start`/`result` |
@@ -444,7 +460,7 @@ Terminal failure event.
 |------------|----------|-------------|
 | p          | Yes      | Client recipient pubkey |
 | e          | Yes      | Prompt id (`#e` root) |
-| encryption | Yes      | Must be `"nip44_v2"` |
+| encryption | Yes      | Must be `"nip44"` |
 | s          | No       | Session identifier |
 
 **Content (JSON, encrypted)**
@@ -563,11 +579,12 @@ Error codes:
 {
   "$id": "https://example.com/nip-xx-delta.json",
   "type": "object",
-  "required": ["ver", "text", "seq"],
+  "required": ["ver", "text"],
   "properties": {
     "ver": { "const": 1 },
     "text": { "type": "string" },
-    "seq": { "type": "integer", "minimum": 0 }
+    "seq": { "type": "integer", "minimum": 0 },
+    "timestamp": { "type": "integer", "minimum": 0 }
   }
 }
 ```
@@ -669,7 +686,7 @@ Error codes:
     "encryption": {
       "type": "array",
       "items": { "type": "string" },
-      "contains": { "const": "nip44_v2" }
+      "contains": { "const": "nip44" }
     },
     "supported_models": { "type": "array", "items": { "type": "string" } },
     "default_model": { "type": "string" },
@@ -708,7 +725,7 @@ Implementations MUST follow these validation and failure rules:
 - `e` tags on non-prompt events MUST reference an existing or referenced prompt event id.
 - Non-`ai.prompt` events MUST require `e` marker `root`.
 - `ai.delta` with non-monotonic `seq` for the same run MUST be treated as
-  `INVALID_SEQUENCE`.
+  `INVALID_SEQUENCE` when `seq` is present.
 - `ai.cancel` without matching active run MUST be ignored.
 - Duplicate `ai.cancel` for unfinished runs SHOULD be treated as idempotent and MUST NOT
   change accepted terminal selection.
@@ -726,9 +743,9 @@ For `ai.delta` events (`kind 25801`):
 
 - Clients MUST ignore deltas where `(e, p, encryption)` do not match the subscribed run and
   recipient.
-- `seq` MUST be contiguous starting at `0`.
-- Clients SHOULD collect deltas, sort by `(seq, created_at, id)` and render text in that order.
-- Clients MUST dedupe duplicates by `(event.id)` and by identical `(seq, text)`.
+- If `seq` is present, it MUST be contiguous starting at `0`.
+- Clients SHOULD collect deltas and order by `(seq, created_at, id)` when `seq` is present, otherwise by `(created_at, id)`.
+- Clients MUST dedupe duplicates by `(event.id)` and SHOULD dedupe identical `(seq, text)` tuples when `seq` is present.
 - If a gap is detected (missing `seq`), clients SHOULD continue best-effort rendering and
   can display a soft placeholder (“streaming degraded”) until `ai.response` arrives.
 - Final render MUST be taken from `ai.response` text, not from the delta stream.
@@ -758,7 +775,7 @@ function parseTextEnvelope(text: string): Record<string, string> {
    ```
    If no `ai.info` exists, clients SHOULD:
    - proceed with `supports_streaming = true`
-   - assume `encryption = ["nip44_v2"]`
+   - assume `encryption = ["nip44"]`
    - assume `tool_names = []`
    - disable tool-related UI
 2. If `supports_nip59` is true and stronger privacy is desired, client and agent SHOULD
@@ -767,7 +784,7 @@ function parseTextEnvelope(text: string): Record<string, string> {
    - `p` = agent pubkey
    - optional `s`
    - optional `model` and `tool_schema_version` matching `ai.info`
-   - `encryption = nip44_v2`
+   - `encryption = nip44`
    - encrypted JSON payload
 4. Agent subscribes to prompts:
    ```text
@@ -838,7 +855,7 @@ Prompt (25802, from client A to agent B)
   "tags": [
     ["p","B"],
     ["s","sender:A"],
-    ["encryption","nip44_v2"]
+    ["encryption","nip44"]
   ],
   "content": "<nip44-ciphertext>"
 }
@@ -850,7 +867,7 @@ Status (25800)
     ["p","A"],
     ["e","d5f...3a","", "root"],
     ["s","sender:A"],
-    ["encryption","nip44_v2"]
+    ["encryption","nip44"]
   ],
   "content": "<nip44-ciphertext>"
 }
@@ -861,7 +878,7 @@ Delta (25801, seq 0)
   "tags": [
     ["p","A"],
     ["e","d5f...3a","", "root"],
-    ["encryption","nip44_v2"]
+    ["encryption","nip44"]
   ],
   "content": "<nip44-ciphertext>"
 }
@@ -873,7 +890,7 @@ Delta (25801, seq 1)
     ["p","A"],
     ["e","d5f...3a","", "root"],
     ["s","sender:A"],
-    ["encryption","nip44_v2"]
+    ["encryption","nip44"]
   ],
   "content": "<nip44-ciphertext>"
 }
@@ -886,7 +903,7 @@ Tool call telemetry (25804)
     ["e","d5f...3a","", "root"],
     ["tool","calculator"],
     ["phase","start"],
-    ["encryption","nip44_v2"]
+    ["encryption","nip44"]
   ],
   "content": "<nip44-ciphertext>"
 }
@@ -898,7 +915,7 @@ Cancel request (25806)
     ["p","A"],
     ["e","d5f...3a","", "root"],
     ["s","sender:A"],
-    ["encryption","nip44_v2"]
+    ["encryption","nip44"]
   ],
   "content": "<nip44-ciphertext>"
 }
@@ -909,7 +926,7 @@ Response (25803)
   "tags": [
     ["p","A"],
     ["e","d5f...3a","", "root"],
-    ["encryption","nip44_v2"]
+    ["encryption","nip44"]
   ],
   "content": "<nip44-ciphertext>"
 }
