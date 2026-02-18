@@ -78,7 +78,7 @@ Clients MAY also use `["s","session:<opaque-hash>"]` for higher-level session ID
 ## Encryption
 
 All protocol payloads in encrypted event kinds (`25800`, `25801`, `25802`, `25803`,
-`25804`, `25805`, `25806`) MUST use [NIP-44](44.md) v2.
+`25804`, `25805`, `25806`) MUST use [NIP-44](44.md).
 
 ### Required tag
 
@@ -99,16 +99,16 @@ Encryption uses the sender’s private key and recipient’s public key.
 In nostr-tools this is:
 
 ```javascript
-const conversationKey = nip44.v2.utils.getConversationKey({
+const conversationKey = nip44.utils.getConversationKey({
   privateKey: senderPrivateKey,
   publicKey: recipientPublicKey
 })
-const encrypted = nip44.v2.encrypt(plaintext, conversationKey)
+const encrypted = nip44.encrypt(plaintext, conversationKey)
 ```
 
 The plaintext must be JSON with a `ver` field.
 
-Each message MUST use a fresh nonce as defined by NIP-44 v2.
+Each message MUST use a fresh nonce as defined by NIP-44.
 
 ### NIP-59 metadata privacy (optional)
 
