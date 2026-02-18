@@ -27,9 +27,7 @@ This NIP reserves the following kinds for AI Agent communication:
 | 25806 | ai.cancel              | Yes       |
 | 31340 | ai.info                | No        |
 
-Prompt events (`25802`) and response events (`25803`) are non-ephemeral, allowing
-durable prompt/response replay for state restoration and audit. Streaming/tooling
-telemetry (`25800`, `25801`, `25804`, `25805`, `25806`) remains ephemeral.
+Prompt events (`25802`), response events (`25803`), and AI info events (`31340`) are non-ephemeral, allowing durable prompt/response replay and capability discovery for state restoration and audit. Streaming/tooling telemetry (`25800`, `25801`, `25804`, `25805`, `25806`) remains ephemeral.
 
 ## Rationale
 
