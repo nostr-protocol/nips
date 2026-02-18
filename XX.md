@@ -23,11 +23,11 @@ This NIP reserves the following kinds for AI Agent communication:
 | 25802 | ai.prompt              | No        |
 | 25803 | ai.response            | No        |
 | 25804 | ai.tool_call           | Yes       |
-| 25805 | ai.error               | Yes       |
+| 25805 | ai.error               | No        |
 | 25806 | ai.cancel              | Yes       |
 | 31340 | ai.info                | No        |
 
-Prompt events (`25802`), response events (`25803`), and AI info events (`31340`) are non-ephemeral, allowing durable prompt/response replay and capability discovery for state restoration and audit. Streaming/tooling telemetry (`25800`, `25801`, `25804`, `25805`, `25806`) remains ephemeral.
+Prompt events (`25802`), terminal events (`25803`, `25805`), and AI info events (`31340`) are non-ephemeral, allowing durable replay and capability discovery for state restoration and audit. Streaming/tooling telemetry (`25800`, `25801`, `25804`, `25806`) remains ephemeral.
 
 ## Rationale
 
@@ -716,8 +716,7 @@ Error codes:
 Implementations MUST follow these validation and failure rules:
 
 - JSON parse failures in encrypted payloads MUST be reported with `code = PARSE_ERROR`.
-- Missing required tags (`p`, `e` where required, `encryption`, `d`) or malformed tag values
-  MUST be treated as `INVALID_SCHEMA`.
+- Missing required tags (`p`, `e` where required, `encryption`) or malformed tag values MUST be treated as `INVALID_SCHEMA`. The `d` tag is required only for `ai.info` (`31340`).
 - Invalid protocol content (for example unknown `state`/`thinking`/`code`) MUST be treated as
   `INVALID_SCHEMA`.
 - `e` tags on non-prompt events MUST reference an existing or referenced prompt event id.
