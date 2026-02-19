@@ -44,7 +44,7 @@ Execution platforms determine which lessons and comments to apply based on trust
     ["tool", "<tool-name>"],
     ["ver", "<version-number>"],
     ["image", "<avatar-url>"],
-    ["e", "<1063-event-id>", "<relay-hint>"]
+    ["e", "<1063-event-id>", "<relay-hint>", "file"]
   ],
   "content": "<markdown-description>"
 }
@@ -61,7 +61,24 @@ Execution platforms determine which lessons and comments to apply based on trust
 - `tool` — Zero or more tags of tool names the agent expects to have
 - `ver` — Version number, defaults to `1`
 - `image` — Avatar URL
-- `e` — Reference to NIP-94 file metadata event (kind 1063). Execution platforms MAY provide access to these files.
+- `e` — Event reference with marker (see below)
+
+### `e` Tag Markers
+
+The `e` tag uses markers to distinguish relationship types:
+
+| Marker | Description |
+|--------|-------------|
+| `file` | Reference to NIP-94 file metadata event (kind 1063). Execution platforms MAY provide access to these files. |
+| `fork` | Reference to a source agent definition this agent was forked from. |
+
+Example:
+```json
+["e", "<1063-event-id>", "<relay-hint>", "file"],
+["e", "<4199-event-id>", "<relay-hint>", "fork"]
+```
+
+Multiple `file` references are allowed. At most one `fork` reference SHOULD be present.
 
 ### Content
 
