@@ -35,6 +35,7 @@ Execution platforms determine which lessons and comments to apply based on trust
   "kind": 4199,
   "pubkey": "<publisher-pubkey>",
   "tags": [
+    ["d", "<agent-slug>"],
     ["title", "<agent-name>"],
     ["role", "<expertise-and-personality>"],
     ["instructions", "<operational-guidelines>"],
@@ -45,12 +46,13 @@ Execution platforms determine which lessons and comments to apply based on trust
     ["image", "<avatar-url>"],
     ["e", "<1063-event-id>", "<relay-hint>"]
   ],
-  "content": ""
+  "content": "<markdown-description>"
 }
 ```
 
 ### Tags
 
+- `d` — Agent slug. Groups versions of the same agent from the same author.
 - `title` — Agent name
 - `role` — Expertise, personality, approach
 - `instructions` — Operational guidelines
@@ -60,6 +62,10 @@ Execution platforms determine which lessons and comments to apply based on trust
 - `ver` — Version number, defaults to `1`
 - `image` — Avatar URL
 - `e` — Reference to NIP-94 file metadata event (kind 1063). Execution platforms MAY provide access to these files.
+
+### Content
+
+The `content` field MAY contain a markdown-formatted extended description of the agent.
 
 ---
 
