@@ -104,6 +104,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
 - [NIP-A0: Voice Messages](A0.md)
+- [NIP-A1: Testimonials](A1.md)
 - [NIP-A4: Public Messages](A4.md)
 - [NIP-B0: Web Bookmarks](B0.md)
 - [NIP-B7: Blossom](B7.md)
@@ -147,6 +148,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `43`          | Channel Hide Message            | [28](28.md)                            |
 | `44`          | Channel Mute User               | [28](28.md)                            |
 | `62`          | Request to Vanish               | [62](62.md)                            |
+| `63`          | Testimonial                     | [A1](A1.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
 | `443`         | KeyPackage                      | [Marmot](marmot)                       |
 | `444`         | Welcome Message                 | [Marmot](marmot)                       |
@@ -214,6 +216,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
 | `10051`       | KeyPackage Relays List          | [Marmot](marmot)                       |
 | `10063`       | User server list                | [Blossom][blossom]                     |
+| `10064`       | Testimonials List               | [A1](A1.md)                            |
 | `10096`       | File storage server list        | [96](96.md) (deprecated)               |
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
 | `10312`       | Room Presence                   | [53](53.md)                            |
