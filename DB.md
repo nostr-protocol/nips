@@ -38,7 +38,7 @@ interface IWindowNostrDB {
   supports(): Promise<string[]>;
 
   /** Get events by filters */
-  filters(filters: Filter[]): Promise<NostrEvent[]>;
+  query(filters: Filter[]): Promise<NostrEvent[]>;
 
   /** Subscribe to events in the database based on filters */
   subscribe(filters: Filter[], handlers: StreamHandlers): Subscription;
@@ -65,7 +65,6 @@ type StreamHandlers = {
 The `supports()` method allows web applications to check for optional features:
 
 - `"search"` - NIP-50 full-text search capabilities
-- `"subscribe"` - Real-time subscription support
 
 ### Implementation Requirements
 
@@ -96,7 +95,7 @@ const count = await window.nostrdb.count([{ kinds: [1] }]);
 
 ```javascript
 // Get events matching filters
-const events = await window.nostrdb.filters([{ kinds: [1] }]);
+const events = await window.nostrdb.query([{ kinds: [1] }]);
 console.log("Found events:", events);
 ```
 
@@ -123,11 +122,6 @@ const supportedFeatures = await window.nostrdb.supports();
 // Check for search support
 if (supportedFeatures.includes("search")) {
   // Use search functionality
-}
-
-// Check for subscription support
-if (supportedFeatures.includes("subscribe")) {
-  // Use real-time subscriptions
 }
 ```
 
