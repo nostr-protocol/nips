@@ -12,7 +12,7 @@ This spec covers public webxdc communication only. Private communication may be 
 
 ## Attachment
 
-A webxdc app is attached to any event by including the `.xdc` file URL in the content and an `imeta` tag with MIME type `application/vnd.webxdc+zip`.
+A webxdc app is attached to any event by including the `.xdc` file URL in the content and an `imeta` tag with MIME type `application/x-webxdc`.
 
 The `imeta` tag SHOULD include a `webxdc` property with a randomly generated unique string. This serves as the coordination identifier for state updates and realtime channels. If omitted, the app can still run but state won't work.
 
@@ -23,7 +23,7 @@ The `imeta` tag SHOULD include a `webxdc` property with a randomly generated uni
   "tags": [
     ["imeta",
       "url https://blossom.example.com/abc123.xdc",
-      "m application/vnd.webxdc+zip",
+      "m application/x-webxdc",
       "x a1b2c3d4e5f6...",
       "webxdc 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
     ]
@@ -39,7 +39,7 @@ A webxdc MAY also be published as a kind `1063` (NIP-94) file metadata event:
   "content": "A collaborative chess game. Play with friends over Nostr!",
   "tags": [
     ["url", "https://blossom.example.com/abc123.xdc"],
-    ["m", "application/vnd.webxdc+zip"],
+    ["m", "application/x-webxdc"],
     ["x", "a1b2c3d4e5f6..."],
     ["alt", "Webxdc app: Chess"],
     ["webxdc", "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"]
