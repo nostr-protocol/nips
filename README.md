@@ -105,6 +105,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md) --- **unrecommended**: replaced by blossom APIs
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-144: Service Authorization Protocol](144.md)
 - [NIP-A0: Voice Messages](A0.md)
 - [NIP-A4: Public Messages](A4.md)
 - [NIP-B0: Web Bookmarks](B0.md)
@@ -276,6 +277,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30819`       | Redirects                       | [54](54.md)                            |
 | `31234`       | Draft Event                     | [37](37.md)                            |
 | `31388`       | Link Set                        | [Corny Chat][cornychat-linkset]        |
+| `31440`       | Service Authorization           | [144](144.md)                          |
+| `31441`       | Service Authorization Ack       | [144](144.md)                          |
 | `31890`       | Feed                            | [NUD: Custom Feeds][NUD: Custom Feeds] |
 | `31922`       | Date-Based Calendar Event       | [52](52.md), [63](63.md)               |
 | `31923`       | Time-Based Calendar Event       | [52](52.md)                            |
