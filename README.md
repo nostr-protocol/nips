@@ -223,6 +223,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `13534`       | Membership Lists                | [43](43.md)                            |
 | `14388`       | User Sound Effect Lists         | [Corny Chat][cornychat-usersoundlist]  |
 | `17375`       | Cashu Wallet Event              | [60](60.md)                            |
+| `19004`       | Room Create Permission          | [29](29.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
 | `22242`       | Client Authentication           | [42](42.md)                            |
 | `23194`       | Wallet Request                  | [47](47.md)                            |
