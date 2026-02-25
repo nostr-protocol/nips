@@ -32,32 +32,17 @@ interface IWindowNostrDB {
   ): Promise<NostrEvent | undefined>;
 
   /** Count the number of events matching filters */
-  count(filters: Filter[]): Promise<number>;
+  count(filters: Filter | Filter[]): Promise<number>;
 
   /** Check if the database backend supports features */
   supports(): Promise<string[]>;
 
   /** Get events by filters */
-  query(filters: Filter[]): Promise<NostrEvent[]>;
+  query(filters: Filter | Filter[]): Promise<NostrEvent[]>;
 
   /** Subscribe to events in the database based on filters */
-  subscribe(filters: Filter[], handlers: StreamHandlers): Subscription;
+  subscribe(filters: Filter | Filter[]): AsyncGenerator<NostrEvent>;
 }
-```
-
-### Supporting Types
-
-```typescript
-/** Generic type for a subscription */
-type Subscription = {
-  close: () => void;
-};
-
-type StreamHandlers = {
-  event?: (event: NostrEvent) => void;
-  error?: (error: Error) => void;
-  complete?: () => void;
-};
 ```
 
 ### Feature Detection
@@ -88,7 +73,7 @@ const event = await window.nostrdb.event(eventId);
 const profile = await window.nostrdb.replaceable(0, pubkey);
 
 // Count events
-const count = await window.nostrdb.count([{ kinds: [1] }]);
+const count = await window.nostrdb.count({ kinds: [1] });
 ```
 
 #### Getting Events
@@ -102,15 +87,10 @@ console.log("Found events:", events);
 #### Subscribing to Events
 
 ```javascript
-// Subscribe to events with handlers
-const subscription = window.nostrdb.subscribe([{ kinds: [1] }], {
-  event: (event) => console.log("New event:", event),
-  error: (error) => console.error("Stream error:", error),
-  complete: () => console.log("Stream complete"),
-});
-
-// Clean up subscription
-subscription.close();
+// Subscribe to events using an async iterator
+for await (const event of window.nostrdb.subscribe([{ kinds: [1] }])) {
+  console.log("New event:", event);
+}
 ```
 
 #### Feature Detection
@@ -122,6 +102,7 @@ const supportedFeatures = await window.nostrdb.supports();
 // Check for search support
 if (supportedFeatures.includes("search")) {
   // Use search functionality
+  const notes = await window.nostrdb.query({ kinds: [1], search: "nostr" });
 }
 ```
 
