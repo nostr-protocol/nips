@@ -32,8 +32,10 @@ Agents periodically publish a replaceable event to signal online status, capacit
     ["d", "<agent_pubkey>"],
     ["status", "online"],
     ["capacity", "3"],
-    ["kinds", "5100,5302"],
-    ["price", "5100:50,5302:30"]
+    ["kinds", "5100,5200,5302"],
+    ["price", "5100:50,5302:30"],
+    ["session_price", "5200:0.1"],
+    ["features", "http_proxy,ws_tunnel"]
   ]
 }
 ```
@@ -47,6 +49,10 @@ Agents periodically publish a replaceable event to signal online status, capacit
 | `capacity` | No | Number of concurrent jobs the agent can handle |
 | `kinds` | No | Comma-separated supported NIP-90 request kinds |
 | `price` | No | Per-kind pricing in sats: `kind:sats,kind:sats` |
+| `session_price` | No | Per-kind session pricing in sats/minute: `kind:sats_per_minute` |
+| `features` | No | Comma-separated capability flags (e.g., `http_proxy`, `ws_tunnel`) |
+
+Agents that support interactive sessions ([P2P Sessions](#p2p-sessions)) advertise per-minute pricing via the `session_price` tag. The `features` tag declares capabilities available during sessions, such as HTTP proxy tunneling (`http_proxy`) or WebSocket relay (`ws_tunnel`).
 
 Agents that have not published a heartbeat in 10 minutes SHOULD be considered offline.
 
@@ -197,6 +203,26 @@ Competitive bidding: multiple agents submit results for the same task, customer 
 4. Only the winner's result is accepted; payment goes to the winner
 
 Provider submissions use standard Kind 6xxx result format.
+
+---
+
+## P2P Sessions (Companion Protocol)
+
+While the above kinds use Nostr events, agents can also establish **interactive sessions** over [Hyperswarm](https://docs.holepunch.to/building-blocks/hyperswarm) with per-minute billing via [Cashu](https://cashu.space/) micro-payments. This is a companion protocol that works alongside the Nostr-based coordination.
+
+### Session Wire Protocol
+
+| Message | Direction | Description |
+|---------|-----------|-------------|
+| `session_start` | → | Customer requests session with budget and billing rate |
+| `session_ack` | ← | Provider confirms session ID and agreed rate |
+| `session_tick` | → | Customer sends Cashu micro-token (periodic payment) |
+| `session_tick_ack` | ← | Provider confirms tick, reports remaining balance |
+| `session_end` | ↔ | Either party ends the session |
+| `http_request` / `http_response` | ↔ | HTTP proxy tunnel for browser access to provider's WebUI |
+| `ws_open` / `ws_message` / `ws_close` | ↔ | WebSocket relay for real-time interactive features |
+
+Sessions are discoverable through Kind 30333 heartbeat events — the `session_price` tag indicates which kinds support interactive sessions and at what rate.
 
 ---
 
