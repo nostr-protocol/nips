@@ -103,6 +103,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md) --- **unrecommended**: replaced by blossom APIs
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-100: Decentralized Stars & Reviews](100.md)
 - [NIP-A0: Voice Messages](A0.md)
 - [NIP-A4: Public Messages](A4.md)
 - [NIP-B0: Web Bookmarks](B0.md)
@@ -208,6 +209,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10012`       | Favorite relays list            | [51](51.md)                            |
 | `10013`       | Private event relay list        | [37](37.md)                            |
 | `10015`       | Interests list                  | [51](51.md)                            |
+| `30016`       | Star Ratings                    | [100](100.md)                          |
 | `10019`       | Nutzap Mint Recommendation      | [61](61.md)                            |
 | `10020`       | Media follows                   | [51](51.md)                            |
 | `10030`       | User emoji list                 | [51](51.md)                            |
