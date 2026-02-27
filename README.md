@@ -105,6 +105,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-99: Classified Listings](99.md)
 - [NIP-A0: Voice Messages](A0.md)
 - [NIP-A4: Public Messages](A4.md)
+- [NIP-A7: Spells](A7.md)
 - [NIP-B0: Web Bookmarks](B0.md)
 - [NIP-B7: Blossom](B7.md)
 - [NIP-BE: Nostr BLE Communications Protocol](BE.md)
@@ -151,6 +152,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `443`         | KeyPackage                      | [Marmot](marmot)                       |
 | `444`         | Welcome Message                 | [Marmot](marmot)                       |
 | `445`         | Group Event                     | [Marmot](marmot)                       |
+| `777`         | Spell                           | [A7](A7.md)                            |
 | `818`         | Merge Requests                  | [54](54.md)                            |
 | `1018`        | Poll Response                   | [88](88.md)                            |
 | `1021`        | Bid                             | [15](15.md)                            |
