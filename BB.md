@@ -32,7 +32,7 @@ The Cover is an addressable event that represents the book's metadata. Every boo
 
 ## Index
 
-The Index is an addressable event used to map an Episode or Chapter to its position within a book. To improve efficiency, clients SHOULD fetch Index events to construct the table of contents before downloading full episode content. The `rank` uses a base62 (0-9, A-Z, a-z) lexicographical fractional index to determine the position.
+The Index is an addressable event used to map an Episode or Chapter to its position within a book. The `rank` uses a base62 (0-9, A-Z, a-z) lexicographical fractional index to determine the position. To improve efficiency, clients SHOULD fetch Index events to construct the table of contents before downloading full episode content. 
 
 ```jsonc
 {
