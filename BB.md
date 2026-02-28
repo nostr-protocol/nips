@@ -6,7 +6,7 @@ Book
 
 `draft` `optional`
 
-This NIP defines a protocol for publishing books on Nostr. It utilizes lexicographical fractional indexing for ordering chapters and episodes.
+This NIP defines a protocol for publishing books on Nostr. It utilizes [lexicographical fractional indexing](https://observablehq.com/@dgreensp/implementing-fractional-indexing) for ordering chapters and episodes.
 
 ## Cover
 
@@ -32,7 +32,7 @@ The Cover is an addressable event that represents the book's metadata. Every boo
 
 ## Index
 
-The Index is an addressable event used to map an Episode or Chapter to its position within a book. To improve efficiency, clients SHOULD fetch Index events to construct the table of contents before downloading full episode content.
+The Index is an addressable event used to map an Episode or Chapter to its position within a book. To improve efficiency, clients SHOULD fetch Index events to construct the table of contents before downloading full episode content. The `rank` uses a base62 (0-9, A-Z, a-z) lexicographical fractional index to determine the position.
 
 ```jsonc
 {
