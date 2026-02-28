@@ -21,8 +21,10 @@ The Cover is an addressable event that represents the book's metadata. Every boo
 		["title", "<title>"],
 		["subtitle", "<subtitle>"], // optional
 		["image", "<cover image URL>"], // optional
-		["lang","<IETF BCP 47 language tag>"],
-		["license", "<name e.g. CC BY-SA 4.0>", "<URL e.g. https://creativecommons.org/licenses/by-sa/4.0/>"],
+        ["L", "license"],
+        ["l", "<e.g. CC BY-SA 4.0>", "license"],
+        ["L", "IETF-BCP-47"],
+        ["l", "<e.g. en>", "IETF-BCP-47"],
 		["status", "completed"] // optional
 	],
 }
