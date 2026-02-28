@@ -57,6 +57,7 @@ The Chapter is an addressable event that serves as a structural header or summar
 	"kind": "30302",
 	"content": "<chapter summary>",
 	"tags": [
+        ["d", "<id>"],
 		["image", "<chapter image URL>"] // optional
 	],
 }
@@ -71,6 +72,7 @@ The Episode is an addressable event that contains the actual prose of the book. 
 	"kind": "30303",
 	"content": "<prose content>",
 	"tags": [
+        ["d", "<id>"],
 		["image", "<illustration image URL>", "<position: start|middle|end>", "<alt text>"] // optional, multiple allowed
 	],
 }
