@@ -78,6 +78,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-60: Cashu Wallet](60.md)
 - [NIP-61: Nutzaps](61.md)
 - [NIP-62: Request to Vanish](62.md)
+- [NIP-XX: AI Agent Messages](XX.md)
 - [NIP-64: Chess (PGN)](64.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-66: Relay Discovery and Liveness Monitoring](66.md)
@@ -229,6 +230,13 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `23195`       | Wallet Response                 | [47](47.md)                            |
 | `24133`       | Nostr Connect                   | [46](46.md)                            |
 | `24242`       | Blobs stored on mediaservers    | [Blossom][blossom]                     |
+| `25800`       | AI Status (ephemeral)         | [XX](XX.md)                            |
+| `25801`       | AI Delta (ephemeral)          | [XX](XX.md)                            |
+| `25802`       | AI Prompt                     | [XX](XX.md)                            |
+| `25803`       | AI Response                   | [XX](XX.md)                            |
+| `25804`       | AI Tool Call                  | [XX](XX.md)                            |
+| `25805`       | AI Error                      | [XX](XX.md)                            |
+| `25806`       | AI Cancel                     | [XX](XX.md)                            |
 | `27235`       | HTTP Auth                       | [98](98.md)                            |
 | `28934`       | Join Request                    | [43](43.md)                            |
 | `28935`       | Invite Request                  | [43](43.md)                            |
@@ -272,6 +280,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30818`       | Wiki article                    | [54](54.md)                            |
 | `30819`       | Redirects                       | [54](54.md)                            |
 | `31234`       | Draft Event                     | [37](37.md)                            |
+| `31340`       | AI Info                      | [XX](XX.md)                            |
 | `31388`       | Link Set                        | [Corny Chat][cornychat-linkset]        |
 | `31890`       | Feed                            | [NUD: Custom Feeds][NUD: Custom Feeds] |
 | `31922`       | Date-Based Calendar Event       | [52](52.md)                            |
@@ -367,6 +376,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `r`               | a reference (URL, etc)               | --                              | [24](24.md), [25](25.md)                           |
 | `r`               | relay url                            | marker                          | [65](65.md)                                        |
 | `s`               | status                               | --                              | [69](69.md)                                        |
+| `s`               | session identifier                   | --                              | [XX](XX.md)                                        |
 | `t`               | hashtag                              | --                              | [24](24.md), [34](34.md), [35](35.md)              |
 | `u`               | url                                  | --                              | [61](61.md), [98](98.md)                           |
 | `x`               | hash                                 | --                              | [35](35.md), [56](56.md)                           |
@@ -386,6 +396,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `description`     | description                          | --                              | [34](34.md), [57](57.md), [58](58.md), [C0](C0.md) |
 | `emoji`           | shortcode, image URL                 | --                              | [30](30.md)                                        |
 | `encrypted`       | --                                   | --                              | [90](90.md)                                        |
+| `encryption`     | encryption schemes                   | --                              | [47](47.md), [XX](XX.md)                           |
 | `extension`       | File extension                       | --                              | [C0](C0.md)                                        |
 | `expiration`      | unix timestamp (string)              | --                              | [40](40.md)                                        |
 | `file`            | full path (string)                   | --                              | [35](35.md)                                        |
