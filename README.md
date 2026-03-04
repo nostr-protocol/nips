@@ -48,7 +48,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-28: Public Chat](28.md)
 - [NIP-29: Relay-based Groups](29.md)
 - [NIP-30: Custom Emoji](30.md)
-- [NIP-31: Dealing with Unknown Events](31.md)
+- [NIP-31: Dealing with Unknown Events](31.md) --- **unrecommended**: adds verbosity for little gain
 - [NIP-32: Labeling](32.md)
 - [NIP-34: `git` stuff](34.md)
 - [NIP-35: Torrents](35.md)
@@ -373,7 +373,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `y`               | platform                             | --                              | [69](69.md)                                        |
 | `z`               | order number                         | --                              | [69](69.md)                                        |
 | `-`               | --                                   | --                              | [70](70.md)                                        |
-| `alt`             | summary                              | --                              | [31](31.md)                                        |
+| `alt`             | summary                              | --                              | [31](31.md) (deprecated)                           |
 | `amount`          | millisatoshis, stringified           | --                              | [57](57.md)                                        |
 | `bolt11`          | `bolt11` invoice                     | --                              | [57](57.md)                                        |
 | `branch-name`     | branch name suggestion               | --                              | [34](34.md)                                        |
