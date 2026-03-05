@@ -22,7 +22,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 ## List
 
 - [NIP-01: Basic protocol flow description](01.md)
-- [NIP-02: Follow List](02.md)
+- [NIP-02: Follow List](02.md) --- **unrecommended**: deprecated in favor of [NIP-EB](eb.md)
 - [NIP-03: OpenTimestamps Attestations for Events](03.md)
 - [NIP-04: Encrypted Direct Message](04.md) --- **unrecommended**: deprecated in favor of [NIP-17](17.md)
 - [NIP-05: Mapping Nostr keys to DNS-based internet identifiers](05.md)
@@ -364,7 +364,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `p`               | pubkey (hex)                         | relay URL, petname              | [01](01.md), [02](02.md), [22](22.md)              |
 | `P`               | pubkey (hex)                         | --                              | [22](22.md), [57](57.md)                           |
 | `q`               | event id (hex)                       | relay URL, pubkey (hex)         | [18](18.md)                                        |
-| `r`               | a reference (URL, etc)               | --                              | [24](24.md), [25](25.md)                           |
+| `r`               | a reference (URL, etc)               | --                              | [24](24.md), [25](25.md), [xx](xx.md)                           |
 | `r`               | relay url                            | marker                          | [65](65.md)                                        |
 | `s`               | status                               | --                              | [69](69.md)                                        |
 | `t`               | hashtag                              | --                              | [24](24.md), [34](34.md), [35](35.md)              |
