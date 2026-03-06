@@ -205,6 +205,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10006`       | Blocked relays list             | [51](51.md)                            |
 | `10007`       | Search relays list              | [51](51.md)                            |
 | `10009`       | User groups                     | [51](51.md), [29](29.md)               |
+| `10011`       | External Identities             | [39](39.md)                            |
 | `10012`       | Favorite relays list            | [51](51.md)                            |
 | `10013`       | Private event relay list        | [37](37.md)                            |
 | `10015`       | Interests list                  | [51](51.md)                            |
