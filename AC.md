@@ -231,10 +231,10 @@ Newline-delimited JSON over the encrypted Hyperswarm connection. Every message h
 |------|-----------|------------|-------------|
 | `skill_request` | C -> P | `kind` | Query provider's capability manifest |
 | `skill_response` | P -> C | `skill` | Provider's full capability descriptor (models, params, etc.) |
-| `session_start` | C -> P | `budget`, `sats_per_minute`, `payment_method`, `pubkey`? | Start session with budget and preferred payment method |
-| `session_ack` | P -> C | `session_id`, `sats_per_minute`, `payment_method`, `pubkey`? | Session accepted with confirmed payment method |
-| `session_tick` | **P -> C** | `session_id`, `amount`, `bolt11`? | Provider requests payment (includes invoice in Lightning mode) |
-| `session_tick_ack` | **C -> P** | `session_id`, `amount`, `cashu_token`? / `preimage`? | Customer sends payment proof |
+| `session_start` | C -> P | `budget`, `sats_per_minute`, `payment_method`, `pubkey`? | Start session with budget |
+| `session_ack` | P -> C | `session_id`, `sats_per_minute`, `payment_method`, `pubkey`? | Session accepted |
+| `session_tick` | **P -> C** | `session_id`, `amount`, `bolt11` | Provider requests payment with Lightning invoice |
+| `session_tick_ack` | **C -> P** | `session_id`, `amount`, `preimage` | Customer sends payment proof (Lightning preimage) |
 | `session_end` | C/P | `session_id`, `duration_s`, `total_sats` | Either party ends the session |
 | `request` | C -> P | `session_id`, `input`, `params` | In-session compute command |
 | `result` | P -> C | `output` | Compute result |
@@ -245,26 +245,20 @@ Newline-delimited JSON over the encrypted Hyperswarm connection. Every message h
 | `ws_message` | C/P | `ws_id`, `data`, `ws_frame_type` | WebSocket frame relay |
 | `ws_close` | C/P | `ws_id`, `ws_code`, `ws_reason` | Close WebSocket tunnel |
 
-### Payment Methods
+### Payment
 
-Two payment modes, negotiated at session start via the `payment_method` field:
+Sessions use **Lightning invoices** for per-minute billing. The provider MUST have a Lightning Address (`lud16`) to generate invoices.
 
-| | Cashu (default) | Lightning Invoice |
-|---|---|---|
-| Customer sends | Cashu eCash token | Lightning preimage |
-| Provider needs | Nothing | Lightning Address (`lud16`) |
-| Verification | Provider swaps token at mint | preimage proves payment |
-| Latency | <1ms (local proof split) | 1-10s (Lightning routing) |
+| | Lightning Invoice |
+|---|---|
+| Customer needs | NWC wallet ([NIP-47](47.md)) or any Lightning wallet |
+| Provider needs | Lightning Address (`lud16`) |
+| Verification | preimage proves payment |
+| Billing interval | 1 minute |
 
-**Cashu flow:**
+**Flow:**
 
-1. Provider sends `session_tick { amount }` every 1 minute
-2. Customer splits local Cashu proofs, sends `session_tick_ack { cashu_token }`
-3. Provider swaps token at the mint to verify (anti-double-spend)
-
-**Lightning invoice flow:**
-
-1. Provider generates bolt11 invoice, sends `session_tick { amount, bolt11 }`
+1. Provider generates bolt11 invoice, sends `session_tick { amount, bolt11 }` every 1 minute
 2. Customer pays via NWC ([NIP-47](47.md)) or any Lightning wallet
 3. Customer sends `session_tick_ack { preimage }`
 
