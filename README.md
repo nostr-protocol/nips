@@ -357,7 +357,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `h`               | group id                             | --                              | [29](29.md)                                        |
 | `i`               | external identity                    | proof, url hint                 | [35](35.md), [39](39.md), [73](73.md)              |
 | `I`               | root external identity               | --                              | [22](22.md)                                        |
-| `k`               | kind                                 | --                              | [18](18.md), [25](25.md), [72](72.md), [73](73.md) |
+| `k`               | kind                                 | --                              | [18](18.md), [25](25.md), [72](72.md), [73](73.md), [29](29.md) |
 | `K`               | root scope                           | --                              | [22](22.md)                                        |
 | `l`               | label, label namespace, language name| --                              | [32](32.md), [C0](C0.md)                           |
 | `L`               | label namespace                      | --                              | [32](32.md)                                        |
