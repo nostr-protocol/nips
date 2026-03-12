@@ -25,7 +25,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-02: Follow List](02.md)
 - [NIP-03: OpenTimestamps Attestations for Events](03.md)
 - [NIP-04: Encrypted Direct Message](04.md) --- **unrecommended**: deprecated in favor of [NIP-17](17.md)
-- [NIP-05: Mapping Nostr keys to DNS-based internet identifiers](05.md)
+- [NIP-05: DNS-based identifiers](05.md)
 - [NIP-06: Basic key derivation from mnemonic seed phrase](06.md)
 - [NIP-07: `window.nostr` capability for web browsers](07.md)
 - [NIP-08: Handling Mentions](08.md) --- **unrecommended**: deprecated in favor of [NIP-27](27.md)
