@@ -230,11 +230,11 @@ Newline-delimited JSON over the encrypted Hyperswarm connection. Every message h
 | Type | Direction | Key Fields | Description |
 |------|-----------|------------|-------------|
 | `skill_request` | C -> P | `kind` | Query provider's capability manifest |
-| `skill_response` | P -> C | `skill` | Provider's full capability descriptor (models, params, etc.) |
-| `session_start` | C -> P | `budget`, `sats_per_minute`, `payment_method`, `pubkey`? | Start session with budget |
-| `session_ack` | P -> C | `session_id`, `sats_per_minute`, `payment_method`, `pubkey`? | Session accepted |
+| `skill_response` | P -> C | `skill` | Provider's full capability descriptor (models, pricing, etc.) |
+| `session_start` | C -> P | `budget`, `sats_per_minute`, `payment_method` (`"invoice"`), `pubkey`? | Start session; `payment_method` MUST be `"invoice"` |
+| `session_ack` | P -> C | `session_id`, `sats_per_minute`, `payment_method` (`"invoice"`), `pubkey`? | Session accepted; first billing tick follows immediately |
 | `session_tick` | **P -> C** | `session_id`, `amount`, `bolt11` | Provider requests payment with Lightning invoice |
-| `session_tick_ack` | **C -> P** | `session_id`, `amount`, `preimage` | Customer sends payment proof (Lightning preimage) |
+| `session_tick_ack` | **C -> P** | `session_id`, `amount`, `preimage` | Customer confirms payment with Lightning preimage |
 | `session_end` | C/P | `session_id`, `duration_s`, `total_sats` | Either party ends the session |
 | `request` | C -> P | `session_id`, `input`, `params` | In-session compute command |
 | `result` | P -> C | `output` | Compute result |
@@ -247,20 +247,21 @@ Newline-delimited JSON over the encrypted Hyperswarm connection. Every message h
 
 ### Payment
 
-Sessions use **Lightning invoices** for per-minute billing. The provider MUST have a Lightning Address (`lud16`) to generate invoices.
+Sessions use **Lightning invoices** for per-minute billing. `payment_method` MUST be `"invoice"` — no other payment methods are currently specified. The provider MUST have a Lightning Address (`lud16`) in their Kind 0 profile to generate invoices.
 
 | | Lightning Invoice |
 |---|---|
 | Customer needs | NWC wallet ([NIP-47](47.md)) or any Lightning wallet |
-| Provider needs | Lightning Address (`lud16`) |
+| Provider needs | Lightning Address (`lud16` in Kind 0) |
 | Verification | preimage proves payment |
 | Billing interval | 1 minute |
 
 **Flow:**
 
-1. Provider generates bolt11 invoice, sends `session_tick { amount, bolt11 }` every 1 minute
-2. Customer pays via NWC ([NIP-47](47.md)) or any Lightning wallet
-3. Customer sends `session_tick_ack { preimage }`
+1. Provider sends `session_ack`; the **first `session_tick` is sent immediately** (not after 1 minute)
+2. Provider generates bolt11 invoice, sends `session_tick { amount, bolt11 }` every 1 minute thereafter
+3. Customer pays via NWC ([NIP-47](47.md)) or any Lightning wallet
+4. Customer sends `session_tick_ack { preimage }` with the Lightning payment preimage
 
 Session ends automatically when: customer sends `session_end`, budget is exhausted, or a payment fails.
 
