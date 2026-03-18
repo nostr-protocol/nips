@@ -16,7 +16,7 @@ The biggest barrier to Nostr adoption is key management. Asking non-technical us
 
 A standard file format enables:
 
-- **Download-on-signup**: clients generate a keypair, encrypt it, and offer a file download — the user never sees or handles a raw `nsec`.
+- **Download-on-signup**: once a keypair is generated, clients encrypt it and offer a file download — the user never sees or handles a raw `nsec`.
 - **Upload-to-login**: clients accept a file upload and a password, decrypt locally, and start a session — no key material is pasted or stored in the browser.
 - **Portability**: a key file produced by one client can be used to log in to any other client that implements this NIP.
 - **Offline backup**: the file can be stored on a USB drive, in a password manager, or printed as a QR code.
