@@ -105,12 +105,12 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-99: Classified Listings](99.md)
 - [NIP-A0: Voice Messages](A0.md)
 - [NIP-A4: Public Messages](A4.md)
+- [NIP-A5: Agent Service Agreements](A5.md)
 - [NIP-B0: Web Bookmarks](B0.md)
 - [NIP-B7: Blossom](B7.md)
 - [NIP-BE: Nostr BLE Communications Protocol](BE.md)
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
-- [NIP-A5: Agent Service Agreements](A5.md)
 - [NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)
 
 ## Event Kinds
@@ -384,17 +384,20 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `bolt11`          | `bolt11` invoice                     | --                              | [57](57.md)                                        |
 | `budget`          | budget amount                        | unit                            | [A5](A5.md)                                        |
 | `branch-name`     | branch name suggestion               | --                              | [34](34.md)                                        |
+| `capacity`        | rate limit or throughput             | unit                            | [A5](A5.md)                                        |
 | `challenge`       | challenge string                     | --                              | [42](42.md)                                        |
 | `client`          | name, address                        | relay URL                       | [89](89.md)                                        |
 | `clone`           | git clone URL                        | --                              | [34](34.md)                                        |
 | `content-warning` | reason                               | --                              | [36](36.md)                                        |
 | `delegation`      | pubkey, conditions, delegation token | --                              | [26](26.md)                                        |
+| `deadline`        | unix timestamp (string)              | --                              | [A5](A5.md)                                        |
 | `dep`             | Required dependency                  | --                              | [C0](C0.md)                                        |
 | `description`     | description                          | --                              | [34](34.md), [57](57.md), [58](58.md), [C0](C0.md) |
 | `emoji`           | shortcode, image URL                 | --                              | [30](30.md)                                        |
 | `encrypted`       | --                                   | --                              | [90](90.md)                                        |
+| `endpoint`        | API endpoint URL                     | HTTP method                     | [A5](A5.md)                                        |
 | `extension`       | File extension                       | --                              | [C0](C0.md)                                        |
-| `expiration`      | unix timestamp (string)              | --                              | [40](40.md)                                        |
+| `expiration`      | unix timestamp (string)              | --                              | [40](40.md), [A5](A5.md)                           |
 | `file`            | full path (string)                   | --                              | [35](35.md)                                        |
 | `goal`            | event id (hex)                       | relay URL                       | [75](75.md)                                        |
 | `merge-base`      | commit id                            |                                 | [34](34.md)                                        |
@@ -410,7 +413,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `nonce`           | random                               | difficulty                      | [13](13.md)                                        |
 | `preimage`        | hash of `bolt11` invoice             | --                              | [57](57.md)                                        |
 | `price`           | price                                | currency, frequency             | [99](99.md), [A5](A5.md)                           |
-| `proof`           | payment preimage hash                | --                              | [A5](A5.md)                                        |
+| `proof`           | Lightning payment_hash (hex)         | --                              | [A5](A5.md)                                        |
 | `proxy`           | external ID                          | protocol                        | [48](48.md)                                        |
 | `published_at`    | unix timestamp (string)              | --                              | [23](23.md), [B0](B0.md)                           |
 | `rating`          | numeric rating (1-5)                 | --                              | [A5](A5.md)                                        |
@@ -418,6 +421,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `relays`          | relay list                           | --                              | [57](57.md)                                        |
 | `repo`            | Reference to the origin repository   | --                              | [C0](C0.md)                                        |
 | `runtime`         | Runtime or environment specification | --                              | [C0](C0.md)                                        |
+| `schema`          | JSON Schema or OpenAPI spec URL      | --                              | [A5](A5.md)                                        |
 | `server`          | file storage server url              | --                              | [96](96.md)                                        |
 | `sound`           | shortcode, sound url, image url      | --                              | [51](51.md)                                        |
 | `status`          | agreement status                     | --                              | [A5](A5.md)                                        |
@@ -427,6 +431,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `terms`           | agreement terms                      | value, unit                     | [A5](A5.md)                                        |
 | `title`           | title                                | --                              | [23](23.md), [B0](B0.md)                           |
 | `tracker`         | torrent tracker URL                  | --                              | [35](35.md)                                        |
+| `uptime`          | self-reported uptime ratio           | --                              | [A5](A5.md)                                        |
 | `web`             | webpage URL                          | --                              | [34](34.md)                                        |
 | `zap`             | pubkey (hex), relay URL              | weight                          | [57](57.md)                                        |
 
