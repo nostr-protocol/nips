@@ -90,11 +90,11 @@ A host server is a HTTP server that is responsible for serving pubkey static web
 For interoperability, host servers SHOULD use the following canonical URL formats:
 
 - Root site: `<npub>.nsite-host.com`
-- Named site: `<pubkeyB32><dTag>.nsite-host.com`
+- Named site: `<pubkeyB36><dTag>.nsite-host.com`
 
-`pubkeyB32` is the author's raw 32-byte pubkey encoded with RFC 4648 base32 (lowercase, no padding) and is always exactly 52 characters.
+`pubkeyB36` is the author's raw 32-byte pubkey encoded with base36 (lowercase, digits `0-9` then letters `a-z`, no padding) and is always exactly 50 characters.
 
-`dTag` is the site identifier (`d` tag value) as plain text. It is appended directly after `pubkeyB32` with no separator.
+`dTag` is the site identifier (`d` tag value) as plain text. It is appended directly after `pubkeyB36` with no separator.
 
 For canonical named-site URLs, `dTag` MUST match `^[a-z0-9]{1,11}$`.
 
@@ -106,7 +106,7 @@ If the host server is using subdomain routing it MAY serve anything at its own r
 
 Example subdomains:
 - Root site: `npub10phxfsms72rhafrklqdyhempujs9h67nye0p67qe424dyvcx0dkqgvap0e.nsite-host.com`
-- Named site: `<52-char-pubkeyB32><dTag>.nsite-host.com`
+- Named site: `<50-char-pubkeyB36><dTag>.nsite-host.com`
 
 #### Resolving Paths
 
@@ -115,10 +115,10 @@ When the host server receives a request and is able to determine the pubkey and 
 For canonical subdomain formats, the host server MUST parse the left-most DNS label as follows:
 
 1. If the label is a valid `npub`, decode it and query for the root site manifest.
-2. Otherwise, if the label matches `^[a-z2-7]{52}[a-z0-9]{1,11}$`, treat it as a named-site label where:
-   - `pubkeyB32` is the first 52 characters
+2. Otherwise, if the label matches `^[0-9a-z]{50}[a-z0-9]{1,11}$`, treat it as a named-site label where:
+   - `pubkeyB36` is the first 50 characters
    - `dTag` is the remaining 1-11 characters
-   - decode `pubkeyB32` to a 32-byte pubkey
+   - decode `pubkeyB36` to a 32-byte pubkey
    - use `dTag` as the identifier (`d` tag value)
 
 If parsing fails, the host server MUST treat the site as not found.
