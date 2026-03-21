@@ -96,9 +96,9 @@ For interoperability, host servers SHOULD use the following canonical URL format
 
 `dTag` is the site identifier (`d` tag value) as plain text. It is appended directly after `pubkeyB36` with no separator.
 
-For canonical named-site URLs, `dTag` MUST match `^[a-z0-9]{1,11}$`.
+For canonical named-site URLs, `dTag` MUST match `^[a-z0-9-]{1,13}$` and MUST NOT end with `-`.
 
-Because DNS labels are limited to 63 characters, `dTag` MUST be 1-11 characters.
+Because DNS labels are limited to 63 characters and `pubkeyB36` uses 50 of them, `dTag` MUST be 1-13 characters.
 
 This single-label format avoids wildcard certificate limitations with multi-level subdomains.
 
@@ -115,9 +115,9 @@ When the host server receives a request and is able to determine the pubkey and 
 For canonical subdomain formats, the host server MUST parse the left-most DNS label as follows:
 
 1. If the label is a valid `npub`, decode it and query for the root site manifest.
-2. Otherwise, if the label matches `^[0-9a-z]{50}[a-z0-9]{1,11}$`, treat it as a named-site label where:
+2. Otherwise, if the label matches `^[0-9a-z]{50}[a-z0-9-]{1,13}$` and does not end with `-`, treat it as a named-site label where:
    - `pubkeyB36` is the first 50 characters
-   - `dTag` is the remaining 1-11 characters
+   - `dTag` is the remaining 1-13 characters
    - decode `pubkeyB36` to a 32-byte pubkey
    - use `dTag` as the identifier (`d` tag value)
 
