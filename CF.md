@@ -40,7 +40,7 @@ Each listing MUST reference a [NIP-XX](XX.md) site manifest via an `a` tag, link
 | `d`    | `["d", "<identifier>"]`                   | App identifier (1-7 chars, `[a-z0-9]`)|
 | `a`    | `["a", "35128:<pubkey>:<site-d-tag>"]`    | Reference to the [NIP-XX](XX.md) named site manifest containing the app's files. |
 | `name` | `["name", "<display name>", "<lang>?"]`   | Human-readable app name. Optional ISO 639-1 language code in third element. |
-| `icon` | `["icon", "<sha256>"]`                    | App icon. `sha256` is the hash of the icon blob stored on the author's [Blossom](https://github.com/hzrd149/blossom) servers. If absent, clients SHOULD use the `/favicon.ico` path from the referenced site manifest. |
+| `icon` | `["icon", "<sha256>", "<mime>"]`                    | App icon. `sha256` is the hash of the icon blob stored on the author's [Blossom](https://github.com/hzrd149/blossom) servers. If absent, clients SHOULD use the `/favicon.ico` path from the referenced site manifest. |
 | `c`    | `["c", "<country or *>"]`                 | ISO 3166-1 alpha-2 uppercase country code or `*` for global availability. May appear multiple times. |
 
 Both `name` and `icon` MUST be present for a listing to be considered complete. Clients SHOULD NOT display incomplete listings in app directories.
