@@ -42,6 +42,7 @@ The event follows the standard Nostr event format.
 {
   "kind": 1842,
   "tags": [
+    ["E", "<root-checkpoint-id>", "<relay-hint>"],
     ["e", "<previous-checkpoint-id>", "<relay-hint>"],
     ["commit", "sha256", "<hex-secret-commitment>"],
     ["reveal", "<secret-string>"],
@@ -59,9 +60,25 @@ The `content` field is optional and is used for human-readable explanations.
 
 ## Tags
 
-### Previous checkpoint reference
+### Root and previous checkpoint references
 
-When a checkpoint claims continuity from an earlier checkpoint, it SHOULD include exactly one `e` tag referencing the immediately previous checkpoint.
+This draft follows the root/direct-parent threading convention from [NIP-22](22.md). When a checkpoint claims continuity from an earlier checkpoint, it SHOULD include exactly one uppercase `E` tag referencing the root checkpoint of the lineage and exactly one lowercase `e` tag referencing the immediately previous checkpoint.
+
+### Root checkpoint reference
+
+Format:
+
+```json
+["E", "<root-checkpoint-id>", "<relay-hint>"]
+```
+
+Rules:
+
+- a root checkpoint does not include this tag
+- a linked checkpoint SHOULD include one root-checkpoint `E` tag
+- the referenced event SHOULD be the first checkpoint in the lineage
+
+### Previous checkpoint reference
 
 Format:
 
@@ -73,7 +90,19 @@ Rules:
 
 - a root checkpoint does not include this tag
 - a linked checkpoint SHOULD include one previous-checkpoint `e` tag
-- observers MAY trace earlier checkpoints recursively to find the root
+- the referenced event SHOULD be the immediately previous checkpoint in the lineage
+
+The uppercase `E` tag identifies the lineage root, and the lowercase `e` tag identifies the direct parent.
+
+### Root discovery tag
+
+To support efficient discovery of lineage starting points while keeping a single event kind, a root checkpoint SHOULD include:
+
+```json
+["t", "root"]
+```
+
+This tag is a discovery hint for querying root checkpoints. It does not define rootness by itself. A checkpoint is a root checkpoint because it has no direct-parent `e` tag.
 
 ## Embedded Evidence
 
@@ -146,11 +175,12 @@ Suggested flow:
 
 1. fetch kind `1842` events for the pubkey
 2. inspect the latest relevant checkpoint
-3. if it contains an `e` tag, fetch the referenced previous checkpoint
-4. recursively trace the lineage as needed
-5. inspect reactions to each checkpoint
-6. inspect OTS attestations for each checkpoint
-7. optionally inspect related kind `0`, kind `3`, and snapshot events for corroboration
+3. if it contains an `E` tag, use it to identify the root checkpoint
+4. if it contains an `e` tag, fetch the referenced previous checkpoint
+5. recursively trace earlier checkpoints as needed
+6. inspect reactions to each checkpoint
+7. inspect OTS attestations for each checkpoint
+8. optionally inspect related kind `0`, kind `3`, and snapshot events for corroboration
 
 ## Verification Guidance
 
@@ -195,6 +225,7 @@ Clients implementing this draft:
   "kind": 1842,
   "content": "Publishing a continuity checkpoint for this identity.",
   "tags": [
+    ["t", "root"],
     ["commit", "sha256", "9f2c6f8e7c4af0d0d5ec2d5a0cefa1c1d7d8d7c54f5119d3d5b2f7c5d0b8a123"],
     ["alt", "Identity continuity checkpoint"]
   ]
@@ -208,7 +239,8 @@ Clients implementing this draft:
   "kind": 1842,
   "content": "This is my new identity after compromise of the previous key.",
   "tags": [
-    ["e", "<root-checkpoint-id>", "wss://relay.example"],
+    ["E", "<root-checkpoint-id>", "wss://relay.example"],
+    ["e", "<previous-checkpoint-id>", "wss://relay.example"],
     ["commit", "sha256", "ef9610122f56f8e50aee8e4029fd74470ddc48add51c13c311633203e06efd8a"], // Commiting to a new secret for future reveal
     ["reveal", "my-dog:Rufus"],
     ["alt", "Identity continuity checkpoint"]
