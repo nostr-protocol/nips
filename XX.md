@@ -8,18 +8,36 @@ It does not create an authoritative key rotation mechanism. It provides a common
 
 In decentralized systems such as Nostr, there is no universal authority or mechanism that can conclusively determine identity continuity after key loss or compromise. This draft therefore standardizes claims and evidence, not truth, and assumes evaluation will remain probabilistic and observer-dependent.
 
-## Goals
+## Motivation
+
+In Nostr, users may lose keys, rotate keys, suffer compromise, or otherwise need to make continuity claims about identity over time. Today, these claims are often absent or expressed through other means like for example short text notes. That makes them harder for clients and observers to discover, interpret, and compare consistently.
+
+This draft introduces a minimal checkpoint primitive so users can publish continuity attestations in a common event shape. The checkpoint itself does not prove identity continuity. Instead, it creates a durable protocol artifact around which evidence can accumulate over time, including embedded evidence, social responses, external attestations, and historical context.
+
+## Goals and Non-Goals
+
+Goals:
 
 - define one simple checkpoint event shape for both root and linked checkpoints
 - keep checkpoints immutable by using a regular kind
 - standardize a minimal set of machine-readable tags
 - support optional embedded continuity evidence directly in the checkpoint event
 - allow open-ended corroborating evidence without defining a scoring formula
+- make continuity claims easier for clients and users to discover and inspect
 - avoid automatic client-side identity reassignment
+
+Non-goals:
+
+- defining an authoritative key rotation mechanism
+- defining deterministic identity recovery
+- forcing clients to accept a continuity claim
+- defining a universal scoring or trust algorithm
 
 ## Event Kind
 
 This draft uses regular kind `1842` because checkpoints are immutable historical assertions rather than replaceable state, and a single kind keeps discovery simple.
+
+A dedicated kind is used so continuity claims can be discovered, indexed, and evaluated consistently across clients instead of being buried in profile text or application-specific conventions.
 
 ## Semantics
 
@@ -63,6 +81,8 @@ The `content` field is optional and is used for human-readable explanations.
 ### Root and previous checkpoint references
 
 This draft follows the root/direct-parent threading convention from [NIP-22](22.md). When a checkpoint claims continuity from an earlier checkpoint, it SHOULD include exactly one uppercase `E` tag referencing the root checkpoint of the lineage and exactly one lowercase `e` tag referencing the immediately previous checkpoint.
+
+These references describe the structure of related continuity claims. They do not, by themselves, establish an authoritative truth about identity.
 
 ### Root checkpoint reference
 
@@ -184,6 +204,8 @@ Suggested flow:
 
 ## Verification Guidance
 
+This draft does not define a deterministic verification algorithm. Implementations may assist users in evaluating continuity claims, but any conclusion remains local to the observer and based on the evidence they choose to trust.
+
 Applications and users may consider:
 
 - checkpoint lineage coherence
@@ -200,6 +222,7 @@ Evidence is cumulative and may conflict. Continuity evaluation is inherently pro
 
 Clients implementing this draft:
 
+- SHOULD present checkpoints as claims requiring evaluation, not as confirmed identity migration
 - SHOULD display checkpoint lineage and supporting signals clearly
 - SHOULD distinguish embedded evidence from external corroboration
 - SHOULD surface conflicting evidence when present
@@ -210,6 +233,8 @@ Clients implementing this draft:
 
 - This draft does not create a canonical truth source for identity recovery; competing claims may exist.
 - An attacker controlling a compromised key may publish misleading checkpoints or supporting signals.
+- Poor client UX or local policy may overstate the meaning of checkpoints and create de facto migration behavior not defined by this draft.
+- Different applications may weigh evidence differently and therefore reach different conclusions from the same checkpoints.
 - If the old key is lost, continuity depends on prior evidence and later corroboration.
 - Nostr timestamps alone are not sufficient to establish trustworthy chronology; OTS is strongly recommended.
 - This draft does not solve Sybil resistance; endorsements from unrelated pubkeys may be weak evidence.
