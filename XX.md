@@ -163,7 +163,7 @@ Rules:
 
 The secret string MUST be encoded as UTF-8 before hashing and treated as opaque, byte-exact, and case-sensitive. Implementations MUST NOT trim, normalize, lower-case, upper-case, or otherwise transform it before hashing or verification. Applications SHOULD preserve the user-entered value exactly and warn that changing capitalization, spacing, or punctuation changes the commitment.
 
-Any passphrase, sentence, or random string works. Because the secret may later be revealed publicly, users SHOULD avoid putting sensitive personal information in it.
+Any passphrase, sentence, or random string works. Because the secret may later be revealed publicly, users SHOULD avoid putting sensitive personal information in it. Secrets used for commitments SHOULD be high-entropy and randomly generated when stronger resistance to offline guessing is desired. Low-entropy or human-memorable secrets may be guessable offline.
 
 ### Alt tag
 
