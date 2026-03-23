@@ -55,7 +55,7 @@ Both `name` and `icon` MUST be present for a listing to be considered complete. 
 | `self`        | `["self", "<pubkey>"]`                          | The app's own Nostr profile pubkey. |
 | `auto`        | `["auto", "<field>"]`                           | Marks a field (`name`, `summary`, or `icon`) as auto-derived (e.g. extracted from HTML metadata). Clients updating the listing SHOULD overwrite auto-derived fields but SHOULD NOT overwrite manually-set fields. |
 | `description` | `["description", "<text>", "<lang>?"]`          | Long description. Optional ISO 639-1 language code. |
-| `key-art`     | `["key-art", "<sha256>"]`                       | Main image (e.g. to show on an app card). |
+| `key-art`     | `["key-art", "<sha256>", "<mime>"]`                       | Main image (e.g. to show on an app card). |
 | `screenshot`  | `["screenshot", "<sha256>", "<mime>"]`                    | Screenshot image. May appear multiple times. |
 
 #### Example
