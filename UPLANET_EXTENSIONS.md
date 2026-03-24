@@ -273,8 +273,9 @@ Satellites (24)
 | **ORE System** ||||
 | 30312 | ORE Space | NIP-101 | Geographic meeting room |
 | 30313 | ORE Verification | NIP-101 | Environmental validation |
-| **Economic Health** ||||
-| 30850 | Station Report | NIP-101 Economic | Daily economic health (renters, owners, revenue) |
+| **Economic Health & Love Ledger** ||||
+| 30305 | DU TrocZen Love Ledger | TrocZen Fraternité | `[["d","du-DATE"],["amount","XX.XX"]]` — 1❤️=1DU, Bénévolat Capitaine → Bon fondant TrocZen 28j |
+| 30850 | Station Report | NIP-101 Economic | Daily economic health (renters, owners, revenue, resilience_level, love_ledger) |
 | **Workflows & Analytics** ||||
 | 31900 | Workflow Definition | NIP-101 Cookie | Cookie workflow definition |
 | 31901 | Workflow Instance | NIP-101 Cookie | Cookie workflow instance |

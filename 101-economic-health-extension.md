@@ -83,10 +83,15 @@ Economic health snapshot published by each station. The `created_at` timestamp i
     ["capacity:zencard_owners", "3"],      // Sociétaires - made capital contribution, no rent
     ["capacity:zencard_capacity", "24"],   // Maximum capacity
     
-    // Health indicators
-    ["health:status", "healthy"],  // healthy | warning | critical | bankrupt
+    // Health indicators (Resilience Levels — pas de "faillite", seulement de la résilience)
+    ["health:status", "healthy"],  // healthy | assets_solidarity | rnd_solidarity | volunteer
+    ["health:resilience_level", "0"],  // 0=Abondance | 1=Solidarité ASSETS | 2=Solidarité R&D | 3=Bénévolat Actif
     ["health:weeks_runway", "45"],
     ["health:bilan", "283.00"],
+    
+    // Love Ledger — bénévolat comptabilisé (Ğ1=Liberté, Ẑen=Égalité, ❤️=Fraternité)
+    ["love_ledger:total_zen", "0"],   // Total Ẑen offerts aux Communs (≈ € de sacrifice)
+    ["love_ledger:weeks", "0"],        // Nombre de semaines de bénévolat
     
     // Fiscal provisions
     ["provision:tva", "65.00"],
