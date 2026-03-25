@@ -108,6 +108,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-A4: Public Messages](A4.md)
 - [NIP-B0: Web Bookmarks](B0.md)
 - [NIP-B7: Blossom](B7.md)
+- [NIP-B9: Zap Poll Events](B9.md)
 - [NIP-BE: Nostr BLE Communications Protocol](BE.md)
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
@@ -182,6 +183,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `4550`        | Community Post Approval         | [72](72.md)                            |
 | `5000`-`5999` | Job Request                     | [90](90.md)                            |
 | `6000`-`6999` | Job Result                      | [90](90.md)                            |
+| `6969`        | Zap Poll                        | [B9](B9.md)                            |
 | `7000`        | Job Feedback                    | [90](90.md)                            |
 | `7374`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
 | `7375`        | Cashu Wallet Tokens             | [60](60.md)                            |
