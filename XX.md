@@ -19,7 +19,7 @@ Radio stations are published as addressable events of `kind:31237`. These events
   "tags": [
     ["d", "<station-identifier>"],
     ["name", "<station-name>"],
-    ["t", "<genre>"],
+    ["c", "<category>", "<facet>"],
     ["l", "<ISO-639-1-code>"],
     ["countryCode", "<ISO-3166-2-code>"],
     ["location", "<human-readable-location>"],
@@ -78,7 +78,7 @@ Each stream object MUST include:
 
 ### Recommended Tags
 
-- `t`: Genre/category tags (multiple allowed)
+- `c`: Category tags (multiple allowed). The third value indicates the facet, e.g. `["c", "jazz", "genre"]`.
 - `l`: ISO 639-1 language codes (multiple allowed)
 - `countryCode`: ISO 3166-2 country code
 - `location`: Human-readable location string
@@ -97,15 +97,15 @@ Each stream object MUST include:
   "tags": [
     ["d", "a7f9d2e1b8c3"],
     ["name", "FIP Radio"],
-    ["t", "jazz"],
-    ["t", "world"],
-    ["t", "electronic"],
+    ["c", "jazz", "genre"],
+    ["c", "world", "genre"],
+    ["c", "electronic", "genre"],
     ["l", "fr"],
     ["countryCode", "FR"],
     ["location", "Paris, France"],
     ["g", "u09tvw0"],
     ["thumbnail", "https://example.com/fip-logo.png"],
-    ["website", "https://www.radiofrance.fr/fip"]
+    ["website", "https://www.radio.net/s/fip"]
   ]
 }
 ```
@@ -138,7 +138,7 @@ Persistent discussion threads use existing comment protocols such as [NIP-22](22
 
 ### Content Indexing
 
-- Use `t` tags for genre/category filtering
+- Use `c` tags for category filtering (e.g. `["c", "jazz", "genre"]`)
 - Include `l` tags for internationalization
 - Add `g` tags with geohash for precise geographical discovery
 
