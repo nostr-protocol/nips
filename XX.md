@@ -46,7 +46,7 @@ Event Structure
     ["p", "<subject-pubkey>", "<relay-hint>"],
     ["t", "<context>"],
     ["expiration", "<unix-timestamp>"],
-    ["v", "1"],
+    ["v", "2"],
     ["consistency_window", "<start-unix-timestamp>", "<end-unix-timestamp>"]
   ],
   "content": "<JSON-stringified attestation object>"
@@ -113,15 +113,49 @@ Types are extensible. New types MAY be defined by clients without requiring a NI
 
 Negative attestations (ratings 1-2) serve the role of rejection signals. A separate negative attestation mechanism is unnecessary -- the rating scale encodes valence directly. This simplifies the protocol while preserving the rejection capability required for convergent inference (see [Convergence Properties](#convergence-properties)).
 
-#### Context Domains
+#### Context Domains (Open Namespace)
 
-The `context` field MUST be one of the following defined values. Additional contexts MAY be defined in future NIPs.
+The `context` field uses a dot-separated namespace convention. No fixed enumeration — domains emerge from usage.
+
+**Core domains** (RECOMMENDED as starting vocabulary):
 
 | Context | Description |
 |---------|-------------|
 | `reliability` | Does the agent complete tasks as promised? |
 | `accuracy` | Is the agent's output correct and truthful? |
 | `responsiveness` | Does the agent respond in a timely manner? |
+
+**Extended domains** use hierarchical dot-notation (convention, not enforced):
+
+| Context | Description |
+|---------|-------------|
+| `task/code-review` | Code review quality |
+| `task/translation` | Translation accuracy and fluency |
+| `task/payment-routing` | Payment routing reliability |
+| `task/data-extraction` | Data extraction completeness |
+
+Clients SHOULD normalize context strings to lowercase. New domains MAY be introduced by any attestor without protocol changes.
+
+#### Task-Type Tags
+
+Attestations MAY include a `task-type` tag that categorizes the specific work performed:
+
+```jsonc
+["task-type", "task/code-review", "requester-confirmed"]
+```
+
+The third element indicates confirmation status:
+
+| Status | Meaning |
+|--------|---------|
+| `attestor-proposed` | Attestor suggested this categorization. Provisional. |
+| `requester-confirmed` | Requester validated the categorization. Canonical. |
+
+**Mechanism:** The attestor proposes a task type when publishing the attestation. If the requester (the entity who requested the work) publishes their own attestation for the same interaction, they either confirm or override the type.
+
+**Scoring implications:** Unconfirmed (`attestor-proposed`) task-type tags SHOULD decay at 2x the normal rate for their domain class. This makes provisional claims expire faster, incentivizing confirmation.
+
+**Convention emergence:** Once a task-type accumulates sufficient requester confirmations across the network, it becomes a de facto standard. No registry or governance is needed — categories that describe real work persist; categories that don't, decay away.
 
 Tags
 ----
@@ -132,8 +166,9 @@ Tags
 | `p` | MUST | Subject's pubkey. Enables querying all attestations for a given agent via `{"#p": [...]}` filters. |
 | `t` | MUST | Context category. Enables querying attestations by domain via `{"#t": [...]}` filters. |
 | `expiration` | MUST | Unix timestamp after which this attestation SHOULD be considered expired. Relays MAY discard expired events per [NIP-40](40.md). |
-| `v` | SHOULD | Schema version. Clients use this to determine which evidence types and scoring rules apply. Current version: `1`. |
+| `v` | SHOULD | Schema version. Clients use this to determine which evidence types and scoring rules apply. Current version: `2`. Events with `v=1` remain valid and are processed with backward-compatible defaults. |
 | `consistency_window` | RECOMMENDED | Unix timestamps defining the observation period for this attestation. Format: `["consistency_window", "<start-unix>", "<end-unix>"]`. Allows scoring algorithms to distinguish a 2-week snapshot from a 3-month track record. When present, clients SHOULD weight attestations with longer observation windows higher (all else equal). |
+| `task-type` | MAY | Task category with confirmation status. Format: `["task-type", "<type>", "<status>"]` where status is `attestor-proposed` or `requester-confirmed`. See Task-Type Tags above. |
 
 > **Note:** The `expiration` tag is REQUIRED, not optional. This is a deliberate design choice addressing the temporal decay gap identified in attack scenario analysis. Attestations without expiration tags MUST be rejected by compliant clients.
 
@@ -150,7 +185,7 @@ Tags
     ["p", "d4e5f6...subject", "wss://relay.example.com"],
     ["t", "reliability"],
     ["expiration", "1718928000"],
-    ["v", "1"],
+    ["v", "2"],
     ["consistency_window", "1703376000", "1711152000"]
   ],
   "content": "{\"subject\":\"d4e5f6...subject\",\"rating\":4,\"context\":\"reliability\",\"confidence\":0.85,\"evidence\":\"Completed 12 task delegations without failure over 30 days\"}"
@@ -189,6 +224,29 @@ decay(t) = 2^(-(now - created_at) / half_life)
 ```
 
 An attestation created 90 days ago has weight 0.5. At 180 days, weight 0.25. Clients SHOULD use a half-life between 30 and 180 days. The default SHOULD be 90 days.
+
+#### Domain-Dependent Decay
+
+Different attestation domains degrade at different rates. Skill-based competence drifts slowly; operational reliability changes fast. A single decay constant compresses two orthogonal degradation processes.
+
+Three decay classes are defined:
+
+| Class | Half-life | Example domains | Rationale |
+|-------|-----------|-----------------|-----------|
+| `slow` | 180 days | `task/code-review`, `task/translation`, skill-based domains | Competence drifts gradually |
+| `standard` | 90 days | `reliability`, `accuracy`, general domains | Default for unclassified contexts |
+| `fast` | 30 days | `task/payment-routing`, `responsiveness`, operational domains | Performance depends on current network/system state |
+
+Clients MUST maintain a namespace-to-class mapping. When a namespace is not in the mapping, the `standard` class (90-day half-life) MUST be used as fallback. The mapping is observer-configurable — different clients MAY classify the same namespace differently.
+
+The decay function becomes:
+
+```
+half_life = half_life_for(context)  // 180d, 90d, or 30d
+decay(t) = 2^(-(now - created_at) / half_life)
+```
+
+This is backward-compatible: clients that ignore decay classes use the 90-day default, which was the previous single value.
 
 #### Tier 1: Weighted Average
 
@@ -382,7 +440,7 @@ event = {
         ["p", attestation["subject"], preferred_relay],
         ["t", attestation["context"]],
         ["expiration", str(now() + 90 * 86400)],  # 90-day TTL
-        ["v", "1"]
+        ["v", "2"]
     ],
     "content": json.dumps(attestation)
 }
@@ -393,26 +451,45 @@ sign_and_publish(event)
 #### Computing Tier 1 Score
 
 ```python
-HALF_LIFE = 90 * 86400  # 90 days in seconds
+DECAY_CLASSES = {
+    "slow": 180 * 86400,
+    "standard": 90 * 86400,
+    "fast": 30 * 86400,
+}
+
+NAMESPACE_MAP = {
+    "task/code-review": "slow",
+    "task/translation": "slow",
+    "task/payment-routing": "fast",
+    "responsiveness": "fast",
+}
+
+def half_life_for(context):
+    cls = NAMESPACE_MAP.get(context, "standard")
+    return DECAY_CLASSES[cls]
 
 def tier1_score(subject, context, events):
+    half_life = half_life_for(context)
     numerator = 0.0
     denominator = 0.0
 
     for event in events:
         att = json.loads(event["content"])
-
-        # Validate
         if att["subject"] != subject: continue
         if att["context"] != context: continue
         if att["rating"] < 1 or att["rating"] > 5: continue
         if att["confidence"] < 0.0 or att["confidence"] > 1.0: continue
-        if event["pubkey"] == subject: continue  # no self-attestation
+        if event["pubkey"] == subject: continue
 
         age = now() - event["created_at"]
-        decay = 2 ** (-age / HALF_LIFE)
+        decay = 2 ** (-age / half_life)
+        
+        # Unconfirmed task-type tags decay at 2x rate
+        task_type_tag = get_tag(event, "task-type")
+        if task_type_tag and len(task_type_tag) >= 3 and task_type_tag[2] == "attestor-proposed":
+            decay *= 0.5
+        
         weight = att["confidence"] * decay
-
         numerator += att["rating"] * weight
         denominator += weight
 
