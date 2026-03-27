@@ -801,9 +801,17 @@ Interoperability
 
 NIP-XX connects to the emerging Nostr agent ecosystem through several complementary NIPs. These connections are recommendations, not requirements. Each NIP operates independently.
 
-#### NIP-A5 (Service Agreements)
+#### NIP-A5 (Service Agreements) — Settlement-Anchored Complement
 
-Post-service attestations (kind `38403`) can feed NIP-XX scoring. After completing a NIP-A5 service agreement, the requester MAY publish a kind `30085` attestation referencing the agreement event as evidence using the `nostr_event_ref` evidence type. This creates a verifiable link between a completed service and a reputation signal.
+NIP-A5 defines a *settlement-anchored* trust model: reputation derives from completed economic transactions with cryptographic payment proof (L402/Lightning). NIP-XX defines a *social-anchored* model: reputation derives from attestation graph structure and scoring algorithms. These two approaches are complementary, not competing.
+
+Post-service attestations (kind `38403`) can feed NIP-XX scoring. After completing a NIP-A5 service agreement, the requester MAY publish a kind `30085` attestation referencing the agreement event as evidence using the `nostr_event_ref` evidence type, and including a `lightning_preimage` evidence entry from the L402 settlement. This creates a verifiable link between a completed service and a reputation signal.
+
+**Evidence weighting:** Attestations backed by settlement proof (Lightning payment hash/preimage) carry stronger evidence than social-only attestations. Clients implementing Tier 1 scoring SHOULD apply a weight multiplier to the `confidence` value when `lightning_preimage` evidence is present and verified. A recommended multiplier is 1.2× (capped at confidence 1.0).
+
+##### Cross-Protocol Query Pattern
+
+To join NIP-A5 and NIP-XX data by task category, clients can: (1) query kind `38403` events filtered by NIP-A5's task categorization, (2) query kind `30085` events filtered by `#t` tag for the corresponding context domain. The `task-type` tag in NIP-XX events MAY be used for finer-grained matching but is not relay-indexed — clients perform this join locally. Implementers who need relay-level `task-type` filtering SHOULD request relay support for custom tag indexing per NIP-01's extensible filter mechanism.
 
 #### NIP-AC (DVM Coordination)
 
@@ -867,3 +875,4 @@ Revision History
 | 2026-03-24 | Replaced closed context enum with open namespace system. Attestation types are now freeform with dot-namespaced convention. Tier 2 scores computed per-namespace. | `e0e247e9514f` |
 | 2026-03-24 | Added Tier 1.5: Attestor Quality via Peer Prediction (DMI mechanism) for computed attestor reliability replacing self-reported confidence. Graceful degradation from sparse to dense networks. | `e0e247e9514f` |
 | 2026-03-26 | v5.3: Domain-dependent decay (slow/standard/fast half-life classes), open context namespace with extended domains, task-type tags with attestor-proposed/requester-confirmed status, schema version bumped to v=2. | — |
+| 2026-03-27 | v5.5: Enhanced NIP-A5 interoperability — settlement vs social anchoring, evidence weighting, cross-protocol query pattern | `e0e247e9514f` |
