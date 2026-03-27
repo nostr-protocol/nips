@@ -884,29 +884,6 @@ A new agent has zero attestations and undefined reputation. This section address
 
 > **Note:** The protocol deliberately does NOT include a "vouch" or "introduce" mechanism. Introduction without interaction history is the gateway to Sybil attacks. Trust must be earned through bilateral interaction that produces attestation evidence.
 
-Privacy Considerations
-----------------------
-
-#### Public attestation graph
-
-All kind `30085` events are public. The attestation graph reveals social relationships — who trusts whom, in what contexts, and with what frequency. Agents and users should be aware that publishing attestations discloses their evaluation relationships. There is no "private attestation" mechanism in this protocol.
-
-#### Pseudonymity preservation
-
-Attestations reference pubkeys, not real-world identities. The protocol does not require or encourage identity linking. However, behavioral patterns in attestation timing, context domains, and rating distributions may enable correlation attacks against pseudonymous participants. Implementers SHOULD NOT add metadata (IP addresses, timestamps beyond NIP-01 `created_at`, geolocation) that would weaken pseudonymity.
-
-#### Negative attestation sensitivity
-
-Publishing negative attestations (rating ≤ 2) makes disagreement visible on the public relay network. Clients SHOULD warn users before publishing negative attestations, as they are permanent public records until replaced by a new parameterized replaceable event with the same `d` tag. The replaceable-event mechanism means the *latest* attestation for a given subject-context pair overwrites the previous one, but relays and caches may retain historical versions.
-
-#### Observer independence as privacy feature
-
-Because scores are computed locally from the observer's own relay set, no single entity can see all reputation scores. Different observers querying different relays see different attestation subsets and therefore compute different scores. This provides natural information compartmentalization — there is no central reputation database to surveil or subpoena.
-
-#### Relay-level visibility
-
-Relays that store kind `30085` events can observe the full attestation graph for their stored events, including who attests to whom and how ratings change over time. Users who require greater privacy SHOULD distribute attestations across multiple relays to prevent any single relay operator from reconstructing the complete graph of their evaluation relationships.
-
 Computational Complexity
 ------------------------
 
