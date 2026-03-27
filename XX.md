@@ -101,6 +101,34 @@ The `evidence` field SHOULD contain a JSON-stringified array of typed evidence o
 
 Types are extensible. New types MAY be defined by clients without requiring a NIP update. Clients MUST NOT reject attestations containing unknown evidence types.
 
+#### Commitment Classes
+
+Evidence types vary in their Sybil resistance — the cost an attacker must incur to fabricate a false attestation. This section formalizes that variation as **commitment classes**, a property of the evidence accompanying an attestation, not the attestation itself.
+
+| Class | Evidence Examples | Sybil Cost | Description |
+|-------|-------------------|------------|-------------|
+| **Self-assertion** | `free_text` | Near zero | Attestor claims something happened. No external verification possible. Unlimited generation at negligible cost. |
+| **Reference** | `nostr_event_ref`, `dvm_job_id` | Low | Attestor references a verifiable Nostr event or job. Fabrication requires creating the referenced event, but this is free on Nostr. |
+| **Computational proof** | `nip90_result_hash` | Medium | Attestor proves they received and can reference a specific work output. Fabrication requires performing or simulating the computation. |
+| **Economic settlement** | `lightning_preimage` | High | Attestor proves a Lightning payment occurred. Fabrication requires spending real sats. Cost is bounded below by the payment amount. |
+| **Staked commitment** | *(reserved)* | Very high | Attestor locks funds that can be slashed for misbehavior. Not yet implemented in any NIP but reserved for future payment channel or DLC-based mechanisms. |
+
+**Scoring implications:** Clients implementing Tier 1 scoring SHOULD apply commitment-class multipliers to the base `confidence` value. Recommended multipliers:
+
+| Class | Multiplier | Rationale |
+|-------|------------|-----------|
+| Self-assertion | 1.0× | Baseline. No adjustment. |
+| Reference | 1.0× | References are easy to create; no premium. |
+| Computational proof | 1.1× | Modest premium for demonstrated work evaluation. |
+| Economic settlement | 1.2× | Significant premium for cryptographic payment proof. |
+| Staked commitment | 1.3× | Highest premium for funds-at-risk. (Reserved.) |
+
+Multipliers are applied BEFORE capping at confidence 1.0. Multiple evidence types in the same attestation use the highest applicable class — they do not stack.
+
+**Determining commitment class:** Clients inspect the `evidence` array and assign the attestation's commitment class based on the highest-class evidence type present. Unknown evidence types default to the Self-assertion class.
+
+> **Design note:** Commitment classes formalize an insight from cross-protocol analysis: NIP-A5's settlement-anchored attestations (kind `38403` with payment proof) carry fundamentally different trust weight than social-only attestations. Rather than hard-coding this for one protocol, commitment classes provide a general framework that any future economic proof mechanism can plug into.
+
 #### Rating Semantics
 
 | Rating | Meaning | Classification |
@@ -876,3 +904,4 @@ Revision History
 | 2026-03-24 | Added Tier 1.5: Attestor Quality via Peer Prediction (DMI mechanism) for computed attestor reliability replacing self-reported confidence. Graceful degradation from sparse to dense networks. | `e0e247e9514f` |
 | 2026-03-26 | v5.3: Domain-dependent decay (slow/standard/fast half-life classes), open context namespace with extended domains, task-type tags with attestor-proposed/requester-confirmed status, schema version bumped to v=2. | — |
 | 2026-03-27 | v5.5: Enhanced NIP-A5 interoperability — settlement vs social anchoring, evidence weighting, cross-protocol query pattern | `e0e247e9514f` |
+| 2026-03-27 | v5.6: Added commitment class taxonomy — formalized evidence-strength hierarchy (self-assertion → reference → computational proof → economic settlement → staked commitment) with scoring multipliers. Cross-protocol design from NIP-A5 collaboration. | `refined-element` |
