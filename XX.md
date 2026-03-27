@@ -132,48 +132,18 @@ Multipliers are applied BEFORE capping at confidence 1.0. Multiple evidence type
 
 ##### Theoretical Foundation: Costly Signaling
 
-The commitment class hierarchy instantiates Zahavi's handicap principle (1975) in protocol design. Honest signaling emerges as a stable equilibrium when signal cost is differentially higher for dishonest signalers — Grafen's single-crossing condition (1990).
+The commitment class hierarchy is not arbitrary — it instantiates the *handicap principle* from biological signaling theory (Zahavi 1975). Honest signals must be costly to produce, and the cost must differ between honest and dishonest signalers (Grafen 1990). This differential cost — the *single-crossing condition* — is what prevents cheap mimicry.
 
-###### Formal Derivation
+Each commitment class corresponds to a signal cost regime:
 
-Consider two agent types: legitimate (L) and Sybil (S). For each commitment class *c*, define:
+- **Self-assertion/Reference** (cost ≈ 0): Equivalent to "cheap talk" in signaling games. Any agent can produce unlimited attestations at negligible cost. No separating equilibrium exists — honest and dishonest agents are indistinguishable from evidence alone.
+- **Computational proof** (cost = work): Fabrication requires performing or simulating computation. The cost is bounded below by the computational work, creating a weak separating condition: large-scale Sybil attestation requires proportional compute expenditure.
+- **Economic settlement** (cost = sats): Lightning payment proofs impose monetary cost on fabrication. The single-crossing condition holds if legitimate agents transact anyway (the attestation is a byproduct of real economic activity) while attackers must spend specifically to create false evidence.
+- **Staked commitment** (cost = locked capital + slashing risk): The strongest separating condition. Attackers face not just expenditure but potential loss exceeding their stake, creating super-linear cost for dishonest signaling.
 
-- P(c|L) ≈ 1 — legitimate agents naturally produce evidence through real interactions
-- P(c|S) = fabrication probability — depends on the cost of producing class *c* evidence without genuine interaction
+The recommended multipliers (1.0×–1.3×) are deliberately conservative — they encode ordinal ranking (higher cost → higher weight) rather than attempting to derive exact values from equilibrium conditions. Implementers with domain-specific cost data MAY adjust multipliers, provided the monotonic ordering is preserved: self-assertion ≤ reference ≤ computational proof ≤ economic settlement ≤ staked commitment.
 
-The likelihood ratio LR(c) = P(c|L) / P(c|S) measures how informative a signal of class *c* is about agent legitimacy.
-
-| Class | P(c\|S) estimate | LR(c) | ln(LR) |
-|-------|------------------|--------|---------|
-| Self-assertion | ~1.0 | 1.0 | 0 |
-| Reference | ~0.95 | 1.05 | 0.05 |
-| Computational proof | ~0.3 | 3.3 | 1.2 |
-| Economic settlement | ~0.05–0.1 | 10–20 | 2.3–3.0 |
-| Staked commitment | ~0.01 | 100 | 4.6 |
-
-The optimal Bayesian weight adjustment for aggregation scoring is the log-scaled likelihood ratio:
-
-**m(c) = 1 + α · ln(LR(c))**
-
-where α ∈ (0, 1) is a conservatism parameter. The log-scaling prevents high-LR classes from dominating the score while preserving the monotonic ordering that the single-crossing condition guarantees.
-
-**Bounds on α:** For bounded amplification m(c) ≤ m_max with LR_max ≈ 100: α ≤ (m_max − 1) / ln(LR_max). With m_max = 1.5: α ≤ 0.109.
-
-**Recommended default: α = 0.065**, which yields:
-
-| Class | Derived multiplier | Recommended (rounded) |
-|-------|-------------------|----------------------|
-| Self-assertion | 1.000 | 1.0× |
-| Reference | 1.003 | 1.0× |
-| Computational proof | 1.078 | 1.1× |
-| Economic settlement | 1.150–1.195 | 1.2× |
-| Staked commitment | 1.299 | 1.3× |
-
-The recommended multipliers (1.0×–1.3×) are derived from the log-likelihood ratio formula m(c) = 1 + α·ln(LR(c)) with conservatism parameter α = 0.065. The values are rounded for simplicity. Implementers with domain-specific cost data MAY estimate P(c|S) for their context and derive adjusted multipliers, provided the monotonic ordering is preserved.
-
-The derivation provides three benefits: (1) the multiplier ordering is guaranteed by the single-crossing condition, not chosen ad hoc; (2) implementers with domain-specific cost data can estimate P(c|S) for their context and derive adjusted multipliers; (3) the conservatism parameter α is explicit and tunable.
-
-See also: Donath (2007, "Signals in Social Supernets") for the conceptual bridge between biological signaling and online identity; Spence (1973) for the economic signaling analogue.
+> **Research note:** The formal connection between Grafen's (1990) signaling equilibrium model and digital commitment mechanisms is developed in Donath (2007, "Signals in Social Supernets"). The composition property — that multi-class evidence provides multiplicative rather than additive Sybil resistance — follows from the independence of cost channels. This area remains underexplored; protocol designers are encouraged to derive commitment weights from empirical cost data rather than theoretical equilibrium alone.
 
 #### Rating Semantics
 
@@ -914,6 +884,29 @@ A new agent has zero attestations and undefined reputation. This section address
 
 > **Note:** The protocol deliberately does NOT include a "vouch" or "introduce" mechanism. Introduction without interaction history is the gateway to Sybil attacks. Trust must be earned through bilateral interaction that produces attestation evidence.
 
+Privacy Considerations
+----------------------
+
+#### Public attestation graph
+
+All kind `30085` events are public. The attestation graph reveals social relationships — who trusts whom, in what contexts, and with what frequency. Agents and users should be aware that publishing attestations discloses their evaluation relationships. There is no "private attestation" mechanism in this protocol.
+
+#### Pseudonymity preservation
+
+Attestations reference pubkeys, not real-world identities. The protocol does not require or encourage identity linking. However, behavioral patterns in attestation timing, context domains, and rating distributions may enable correlation attacks against pseudonymous participants. Implementers SHOULD NOT add metadata (IP addresses, timestamps beyond NIP-01 `created_at`, geolocation) that would weaken pseudonymity.
+
+#### Negative attestation sensitivity
+
+Publishing negative attestations (rating ≤ 2) makes disagreement visible on the public relay network. Clients SHOULD warn users before publishing negative attestations, as they are permanent public records until replaced by a new parameterized replaceable event with the same `d` tag. The replaceable-event mechanism means the *latest* attestation for a given subject-context pair overwrites the previous one, but relays and caches may retain historical versions.
+
+#### Observer independence as privacy feature
+
+Because scores are computed locally from the observer's own relay set, no single entity can see all reputation scores. Different observers querying different relays see different attestation subsets and therefore compute different scores. This provides natural information compartmentalization — there is no central reputation database to surveil or subpoena.
+
+#### Relay-level visibility
+
+Relays that store kind `30085` events can observe the full attestation graph for their stored events, including who attests to whom and how ratings change over time. Users who require greater privacy SHOULD distribute attestations across multiple relays to prevent any single relay operator from reconstructing the complete graph of their evaluation relationships.
+
 Computational Complexity
 ------------------------
 
@@ -952,4 +945,3 @@ Revision History
 | 2026-03-27 | v5.5: Enhanced NIP-A5 interoperability — settlement vs social anchoring, evidence weighting, cross-protocol query pattern | `e0e247e9514f` |
 | 2026-03-27 | v5.6: Added commitment class taxonomy — formalized evidence-strength hierarchy (self-assertion → reference → computational proof → economic settlement → staked commitment) with scoring multipliers. Cross-protocol design from NIP-A5 collaboration. | `refined-element` |
 | 2026-03-27 | v5.7: Added theoretical foundation for commitment classes — Zahavian costly signaling theory, Grafen single-crossing condition, Donath bridge to digital identity. Multiplier ordering grounded in signal cost regimes. | `kai` |
-| 2026-03-27 | v5.8: Formal derivation of commitment class weights from Grafen signaling equilibrium — Bayesian likelihood ratio analysis, conservatism parameter α = 0.065, derived multipliers match recommended defaults. | `kai` |
