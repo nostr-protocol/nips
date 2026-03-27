@@ -112,6 +112,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
 - [NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)
+- [NIP-XX: Dual Encryption and ECDH Delegated Access](XX.md)
 
 ## Event Kinds
 | kind          | description                     | NIP                                    |
@@ -179,6 +180,10 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `2003`        | Torrent                         | [35](35.md)                            |
 | `2004`        | Torrent Comment                 | [35](35.md)                            |
 | `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
+| `2100`        | Publisher Key Grant             | [XX](XX.md)                            |
+| `2101`        | Recipient Key Grant             | [XX](XX.md)                            |
+| `2102`        | Member Roster                   | [XX](XX.md)                            |
+| `2103`        | Service Agent Grant             | [XX](XX.md)                            |
 | `4550`        | Community Post Approval         | [72](72.md)                            |
 | `5000`-`5999` | Job Request                     | [90](90.md)                            |
 | `6000`-`6999` | Job Result                      | [90](90.md)                            |
@@ -380,6 +385,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `-`               | --                                   | --                              | [70](70.md)                                        |
 | `alt`             | summary                              | --                              | [31](31.md)                                        |
 | `amount`          | millisatoshis, stringified           | --                              | [57](57.md)                                        |
+| `authored-by`     | member pubkey, display name          | --                              | [XX](XX.md)                                        |
 | `bolt11`          | `bolt11` invoice                     | --                              | [57](57.md)                                        |
 | `branch-name`     | branch name suggestion               | --                              | [34](34.md)                                        |
 | `challenge`       | challenge string                     | --                              | [42](42.md)                                        |
@@ -390,11 +396,13 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `dep`             | Required dependency                  | --                              | [C0](C0.md)                                        |
 | `description`     | description                          | --                              | [34](34.md), [57](57.md), [58](58.md), [C0](C0.md) |
 | `emoji`           | shortcode, image URL                 | --                              | [30](30.md)                                        |
+| `enc`             | encryption scheme                    | --                              | [XX](XX.md)                                        |
 | `encrypted`       | --                                   | --                              | [90](90.md)                                        |
 | `extension`       | File extension                       | --                              | [C0](C0.md)                                        |
 | `expiration`      | unix timestamp (string)              | --                              | [40](40.md)                                        |
 | `file`            | full path (string)                   | --                              | [35](35.md)                                        |
 | `goal`            | event id (hex)                       | relay URL                       | [75](75.md)                                        |
+| `grant`           | grant type                           | --                              | [XX](XX.md)                                        |
 | `merge-base`      | commit id                            |                                 | [34](34.md)                                        |
 | `HEAD`            | `ref: refs/heads/<branch-name>`      |                                 | [34](34.md)                                        |
 | `image`           | image URL                            | dimensions in pixels            | [23](23.md), [52](52.md), [58](58.md)              |
@@ -408,11 +416,13 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `price`           | price                                | currency, frequency             | [99](99.md)                                        |
 | `proxy`           | external ID                          | protocol                        | [48](48.md)                                        |
 | `published_at`    | unix timestamp (string)              | --                              | [23](23.md), [B0](B0.md)                           |
+| `recipient-content` | NIP-44 ciphertext                  | --                              | [XX](XX.md)                                        |
 | `relay`           | relay url                            | --                              | [42](42.md), [17](17.md)                           |
 | `relays`          | relay list                           | --                              | [57](57.md)                                        |
 | `repo`            | Reference to the origin repository   | --                              | [C0](C0.md)                                        |
 | `runtime`         | Runtime or environment specification | --                              | [C0](C0.md)                                        |
 | `server`          | file storage server url              | --                              | [96](96.md)                                        |
+| `service`         | service identifier                   | --                              | [XX](XX.md)                                        |
 | `sound`           | shortcode, sound url, image url      | --                              | [51](51.md)                                        |
 | `subject`         | subject                              | --                              | [14](14.md), [17](17.md), [34](34.md)              |
 | `summary`         | summary                              | --                              | [23](23.md), [52](52.md)                           |
