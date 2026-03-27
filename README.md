@@ -276,6 +276,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30819`       | Redirects                       | [54](54.md)                            |
 | `31234`       | Draft Event                     | [37](37.md)                            |
 | `31388`       | Link Set                        | [Corny Chat][cornychat-linkset]        |
+| `31402`       | Paid API Service Announcement   | [XX](XX.md)                            |
 | `31890`       | Feed                            | [NUD: Custom Feeds][NUD: Custom Feeds] |
 | `31922`       | Date-Based Calendar Event       | [52](52.md)                            |
 | `31923`       | Time-Based Calendar Event       | [52](52.md)                            |
