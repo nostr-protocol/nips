@@ -256,7 +256,62 @@ For a subject `S` in context `C`, collect all valid, non-expired attestation eve
 score_T1 = sum(rating_i * confidence_i * decay_i) / sum(confidence_i * decay_i)
 ```
 
-Result is a value in `[1.0, 5.0]`. If no valid attestations exist, the score is undefined (not zero).
+Result is a value in `[1.0, 5.0]`. If no valid attestations exist, the score is undefined (not zero). Clients MAY aggregate across a domain prefix (e.g., all `payment.*` namespaces) for summary display, but per-namespace scores are the canonical unit.
+
+**Asymmetric negative weighting:** Negative attestations (rating <= 2) carry a 2x weight multiplier. This reflects the higher cost of producing negative signals (burning a relationship with the subject) and ensures that a small number of credible negative attestations can meaningfully counteract a larger volume of positive ones. The multiplier is capped at 2x to prevent reputation weaponization — a single negative attestation cannot dominate arbitrarily many positive ones.
+
+#### Tier 1.5: Attestor Quality via Peer Prediction (Optional)
+
+Tier 1.5 replaces self-reported `confidence` with computed attestor reliability using peer prediction — specifically the Determinant Mutual Information (DMI) mechanism. Self-reported confidence is exploitable (rational attestors always report 1.0). DMI provides dominant-strategy incentive-compatible scoring: truthful reporting maximizes expected payoff without requiring ground truth.
+
+**Prerequisites:**
+
+Tier 1.5 activates when sufficient data density exists. For each attestor pair `(A, B)` in context `C`, DMI requires at least `2c` shared subjects (subjects both `A` and `B` have attested in context `C`), where `c` is the number of rating categories. For a 5-point scale, this means ≥10 shared subjects per pair.
+
+**Algorithm:**
+
+1. For attestor pair `(A, B)` in context `C`, collect all subjects `S` that both `A` and `B` have attested.
+2. If `|S| < 2c` (where `c = 5`), skip this pair — insufficient data for DMI. Fall back to raw `confidence` values.
+3. Build the `c × c` joint distribution matrix `M`, where `M[i][j]` = fraction of shared subjects where `A` rated `i` and `B` rated `j`.
+4. Compute `det(M)`. The determinant factorizes through the strategy matrix:
+
+```
+det(M) = det(Strategy_A) × det(Strategy_B) × det(TrueDistribution)
+```
+
+If either attestor uses an uninformative strategy (constant ratings, random ratings, or any rank-deficient strategy), their strategy matrix has `det = 0`, making `det(M) = 0`. Only informative, truthful strategies produce positive determinant.
+
+5. Compute DMI score for attestor `A`:
+
+```
+dmi_score(A, C) = mean(det(M_AB) for all eligible pairs (A, B) in context C)
+```
+
+6. Normalize DMI scores across all attestors in context `C` to `[0.0, 1.0]`:
+
+```
+reliability(A, C) = dmi_score(A, C) / max(dmi_score(*, C))
+```
+
+If `max = 0` (no eligible pairs), all attestors fall back to raw `confidence`.
+
+7. In the Tier 1 formula, replace `confidence_i` with `reliability(attestor_i, C)` when Tier 1.5 is active:
+
+```
+weight_i = reliability_i * decay_i * neg_multiplier(rating_i) * burst_decay(attestor_i)
+```
+
+**Graceful degradation:** In sparse networks (few shared subjects), Tier 1.5 is inactive and Tier 1 uses raw confidence. As network density grows and attestor pairs accumulate shared subjects, DMI activates automatically. This progression requires no configuration:
+
+| Network state | Scoring |
+|---------------|---------|
+| Sparse (< 10 shared subjects per pair) | Tier 1 with raw confidence |
+| Moderate (≥ 10 shared subjects for some pairs) | Tier 1.5 for eligible pairs, raw confidence for others |
+| Dense (≥ 10 shared subjects for most pairs) | Full Tier 1.5 replaces confidence |
+
+> **Rationale:** The namespace system provides the multi-task structure DMI requires. Attestors rating different subjects within `payment.reliability` naturally accumulate the shared observations needed for DMI computation. The mechanism rewards attestors who provide genuinely informative ratings and penalizes those who rubber-stamp or randomize — without any authority deciding who is trustworthy.
+
+> **Agent advantage:** Software attestors can be programmed to follow the dominant strategy that DMI assumes. The comprehension barrier — the primary practical failure mode in human peer prediction deployments — is structurally absent in agent-to-agent systems. This means DMI, which has zero production deployments with human participants, may be viable specifically in agent reputation contexts.
 
 #### Tier 2: Graph Diversity Metric
 
@@ -281,30 +336,36 @@ score_T2 = diversity * score_T1
 
 When `diversity = 1.0` (every attestor is in its own component, maximally independent), Tier 2 equals Tier 1. When `diversity -> 0` (all attestors in one cluster), Tier 2 approaches zero regardless of ratings.
 
-#### Tier 1.5: Economic Commitment (Optional)
-
-Nostr identity creation cost is zero -- generating a keypair is free, making it the most Sybil-vulnerable identity system in production. This means Tier 1 scores are trivially inflatable and Tier 2 graph analysis is expensive. Tier 1.5 bridges this gap using a Nostr-native commitment device: Lightning Network channel capacity.
-
-An attestor MAY include a `lightning_node` evidence type in their attestation, referencing their Lightning node pubkey. Clients MAY look up that node's public channel capacity (via LN gossip or a routing graph snapshot) and weight the attestation accordingly. Locked sats in channels represent non-zero, verifiable economic stake -- they cannot be faked without actual capital commitment.
-
-**Weighting (optional, client-defined):**
-
-Clients implementing Tier 1.5 SHOULD define a capacity-to-weight function. A simple example:
-
-```
-ln_weight(capacity_sats) = min(1.0, log2(1 + capacity_sats / 100000) / 10)
-```
-
-This produces diminishing returns: 100k sats ≈ 0.1, 1M sats ≈ 0.33, 10M sats ≈ 0.67. The exact function is observer-defined -- this NIP does not mandate a specific curve.
-
-**Constraints:**
-
-- Tier 1.5 is NOT mandatory. Clients MAY implement it. It is a signal, not a gate.
-- An attestation without `lightning_node` evidence is not penalized -- it simply receives no economic commitment bonus.
-- The Lightning node pubkey in evidence MUST be independently verifiable via LN gossip protocol. Clients MUST NOT trust the claimed pubkey without verification.
-- This tier does not replace Tier 2 graph analysis. It supplements Tier 1 by making Sybil attacks more expensive (attacker must lock real capital per fake identity).
-
 > **Interpretation:** A sockpuppet flood with 100 fake attestors in a single connected component produces `diversity = 1/100 = 0.01`. Even with all ratings at 5 and confidence at 1.0, the Tier 2 score is `0.01 * 5.0 = 0.05`. The star topology is structurally penalized.
+
+#### Temporal Burst Rate-Limiting
+
+To penalize attestors who publish many attestations in a short window (carpet-bombing), observers SHOULD apply a confidence decay factor per attestor based on their recent attestation velocity.
+
+**Parameters (configurable by observer):**
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `window` | 86400 (24h) | Sliding window in seconds. |
+| `threshold` | 5 | Maximum attestations in the window before decay applies. |
+
+**Algorithm:**
+
+For each attestor `A`, count the number of kind `30085` events published by `A` within the sliding window ending at `now`. Let `count` = number of events in the window. If `count > threshold`:
+
+```
+burst_decay(A) = 1 / sqrt(count)
+```
+
+If `count <= threshold`, `burst_decay(A) = 1.0` (no penalty).
+
+The `burst_decay` factor is applied multiplicatively to each attestation's weight in the Tier 1 and Tier 2 scoring formulas:
+
+```
+weight_i = confidence_i * decay_i * neg_multiplier(rating_i) * burst_decay(attestor_i)
+```
+
+> **Rationale:** An attestor publishing 25 attestations in 24 hours has their weight reduced to `1/sqrt(25) = 0.2`. This penalizes carpet-bombing without blocking legitimate high-volume attestors who space their work across multiple windows. Observers compute this locally — no protocol-level enforcement is needed.
 
 Observer Independence
 ---------------------
@@ -324,25 +385,7 @@ The attestation protocol is designed to satisfy the conditions for convergent de
 2. **Rejection capability.** Negative ratings (1-2) provide the rejection channel. Without them, the naming game is biased toward acceptance and cannot converge. This is why the rating scale includes negative values rather than using a separate mechanism.
 3. **Temporal coherence.** The mandatory `expiration` tag and decay function ensure the posterior is continuously updated. Stale observations are automatically discounted.
 
-When these three conditions hold, the acceptance probability for attestations follows the Metropolis-Hastings criterion: the community's collective attestation behavior converges toward accurate shared beliefs about agent trustworthiness, as if all observers were performing coordinated Bayesian inference -- without any central coordinator.
-
-Applicability: When NOT to Use This Protocol
-----------------------------------------------
-
-The cheapest trust mechanism wins. In order of preference: direct test > Tier 1 self-attestation > Tier 2 graph analysis. Reputation is a proxy -- it substitutes past behavior for future prediction -- and proxies always lose to direct evidence.
-
-**When reputation is overhead:**
-
-- If verifying an agent costs less than looking up its reputation, just verify directly. An agent that answers a $0.001 test query does not need a reputation score -- the test *is* the reputation.
-- For stateless, idempotent interactions (e.g., "translate this sentence"), the cost of failure is bounded and retryable. Reputation adds latency without reducing risk.
-
-**When reputation is justified:**
-
-- Multi-step workflows where early failure is expensive. Example: an agent takes 4 hours on a complex task and fails at step 3. You cannot retroactively escrow that time. Reputation scoring before delegation is the only pre-commitment signal available.
-- Delegations involving irreversible side effects (sending payments, publishing content, making API calls). The cost of a bad agent exceeds the cost of attestation lookup.
-- High-fan-out orchestration where an orchestrator delegates to N agents simultaneously. Checking reputation for each is O(N) lookups; testing each is O(N) full executions.
-
-**The core heuristic:** Reputation scoring is justified ONLY when verification cost exceeds attestation lookup cost. This protocol is a 3-step proxy (identity → past behavior → assumed future behavior). When you can eliminate any of those inference steps by testing directly, do so.
+When these three conditions hold, the acceptance probability for attestations follows the Metropolis-Hastings criterion: the community's collective attestation behavior converges toward accurate shared beliefs about agent trustworthiness, as if all observers were performing coordinated Bayesian inference — without any central coordinator.
 
 Security Considerations
 -----------------------
@@ -377,7 +420,7 @@ Six attack scenarios have been analyzed in detail. Summary of defenses:
 
 *Tier 2:* Partially fooled (bridge nodes inflate diversity score).
 
-*Mitigation:* Bridge activity minimums -- bridge nodes must have verifiable bilateral interactions, not just graph presence.
+*Mitigation:* Bridge activity minimums — bridge nodes must have verifiable bilateral interactions, not just graph presence.
 
 #### 4. Temporal Burst
 
@@ -403,7 +446,26 @@ Six attack scenarios have been analyzed in detail. Summary of defenses:
 
 *Mitigation:* Observer relay diversity. Clients MUST query multiple independent relay sets. At 10+ independent relays, eclipse cost exceeds most agents' reputation value.
 
-> **Fundamental limitation:** Cluster collusion and eclipse attacks exploit the same structural ambiguity -- legitimate community endorsement is topologically identical to coordinated deception. No reputation protocol can distinguish them without external information. This NIP makes the limitation explicit: Tier 2 flags concentration but cannot determine whether concentration implies collusion or community.
+> **Fundamental limitation:** Cluster collusion and eclipse attacks exploit the same structural ambiguity — legitimate community endorsement is topologically identical to coordinated deception. No reputation protocol can distinguish them without external information. This NIP makes the limitation explicit: Tier 2 flags concentration but cannot determine whether concentration implies collusion or community.
+
+When NOT to Use
+---------------
+
+Reputation is overhead. When direct verification is cheaper than trust, use direct verification.
+
+**Use reputation when:**
+
+- Multi-step workflows where early failure is expensive (agent chains, payment pipelines).
+- Repeated interactions where historical reliability is a meaningful signal.
+- Agent discovery in large networks where testing every option is impractical.
+
+**Do NOT use reputation when:**
+
+- The interaction is cheap to verify directly (query a DVM, check the result, done).
+- Anonymity plus diversification is sufficient (try multiple agents, keep the ones that work).
+- The cost of maintaining attestation infrastructure exceeds the cost of occasional failure.
+
+> **Design principle:** The cheapest trust mechanism wins. Reputation is justified only when verification cost exceeds interaction cost. For many agent interactions, "try and see" with diversification is more efficient than "check reputation first."
 
 Relay Behavior
 --------------
@@ -427,7 +489,7 @@ Full working implementation in Python (zero dependencies):
 attestation = {
     "subject": "d4e5f6...subject",
     "rating": 4,
-    "context": "reliability",
+    "context": "payment.reliability",
     "confidence": 0.85,
     "evidence": "Completed 12 delegations over 30 days"
 }
@@ -439,8 +501,7 @@ event = {
         ["d", attestation["subject"] + ":" + attestation["context"]],
         ["p", attestation["subject"], preferred_relay],
         ["t", attestation["context"]],
-        ["expiration", str(now() + 90 * 86400)],  # 90-day TTL
-        ["v", "2"]
+        ["expiration", str(now() + 90 * 86400)]  # 90-day TTL
     ],
     "content": json.dumps(attestation)
 }
@@ -498,10 +559,311 @@ def tier1_score(subject, context, events):
     return numerator / denominator
 ```
 
+Test Vectors
+------------
+
+The following test vectors allow implementers to validate their scoring implementation against known-correct results. All vectors use `2026-04-01T00:00:00Z` (unix `1743465600`) as "now" and a half-life of 90 days (`7776000` seconds) for deterministic output.
+
+**Pubkey conventions:**
+
+- Subject: `aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`
+- Attestor A: `bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb`
+- Attestor B: `cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc`
+- Attestor C: `dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd`
+- Attestor D: `eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee`
+
+#### Test Vector 1: Basic Tier 1 Scoring
+
+Three attestations for subject `aaaa...` in context `payment.reliability`:
+
+**Attestor A** (rating 5, confidence 0.9, created 10 days ago):
+
+```jsonc
+{
+  "kind": 30085,
+  "pubkey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "created_at": 1742601600,
+  "tags": [
+    ["d", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:payment.reliability"],
+    ["p", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
+    ["t", "payment.reliability"],
+    ["expiration", "1751241600"]
+  ],
+  "content": "{\"subject\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"rating\":5,\"context\":\"payment.reliability\",\"confidence\":0.9,\"evidence\":\"Test vector\"}"
+}
+```
+
+**Attestor B** (rating 4, confidence 0.7, created 45 days ago):
+
+```jsonc
+{
+  "kind": 30085,
+  "pubkey": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "created_at": 1739577600,
+  "tags": [
+    ["d", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:payment.reliability"],
+    ["p", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
+    ["t", "payment.reliability"],
+    ["expiration", "1751241600"]
+  ],
+  "content": "{\"subject\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"rating\":4,\"context\":\"payment.reliability\",\"confidence\":0.7,\"evidence\":\"Test vector\"}"
+}
+```
+
+**Attestor C** (rating 2, confidence 0.8, created 5 days ago — negative):
+
+```jsonc
+{
+  "kind": 30085,
+  "pubkey": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "created_at": 1743033600,
+  "tags": [
+    ["d", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:payment.reliability"],
+    ["p", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
+    ["t", "payment.reliability"],
+    ["expiration", "1751241600"]
+  ],
+  "content": "{\"subject\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"rating\":2,\"context\":\"payment.reliability\",\"confidence\":0.8,\"evidence\":\"Test vector\"}"
+}
+```
+
+**Expected computation:**
+
+```
+half_life = 7776000
+
+Attestor A:
+  age        = 1743465600 - 1742601600 = 864000 seconds (10 days)
+  decay      = 2^(-864000 / 7776000)   = 2^(-0.111111) = 0.925875
+  neg_mult   = 1.0  (rating 5 > 2)
+  weight     = 0.9 * 0.925875 * 1.0    = 0.833287
+  numerator  = 5 * 0.833287            = 4.166436
+
+Attestor B:
+  age        = 1743465600 - 1739577600 = 3888000 seconds (45 days)
+  decay      = 2^(-3888000 / 7776000)  = 2^(-0.5)      = 0.707107
+  neg_mult   = 1.0  (rating 4 > 2)
+  weight     = 0.7 * 0.707107 * 1.0    = 0.494975
+  numerator  = 4 * 0.494975            = 1.979899
+
+Attestor C:
+  age        = 1743465600 - 1743033600 = 432000 seconds (5 days)
+  decay      = 2^(-432000 / 7776000)   = 2^(-0.055556) = 0.962224
+  neg_mult   = 2.0  (rating 2 <= 2)
+  weight     = 0.8 * 0.962224 * 2.0    = 1.539558
+  numerator  = 2 * 1.539558            = 3.079116
+
+score_T1 = (4.166436 + 1.979899 + 3.079116) / (0.833287 + 0.494975 + 1.539558)
+         = 9.225451 / 2.867820
+         = 3.216886
+```
+
+An implementer whose Tier 1 score for this vector does not round to `3.2169` (four decimal places) has a bug.
+
+#### Test Vector 2: Self-Attestation Rejection
+
+The following event MUST be discarded because `pubkey` equals the `subject` field in the content:
+
+```jsonc
+{
+  "kind": 30085,
+  "pubkey": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "created_at": 1743033600,
+  "tags": [
+    ["d", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:payment.reliability"],
+    ["p", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
+    ["t", "payment.reliability"],
+    ["expiration", "1751241600"]
+  ],
+  "content": "{\"subject\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"rating\":5,\"context\":\"payment.reliability\",\"confidence\":1.0,\"evidence\":\"Self-attestation test\"}"
+}
+```
+
+Expected result: Event is rejected at validation step 9. It MUST NOT contribute to any score computation.
+
+#### Test Vector 3: Burst Rate-Limiting
+
+Attestor D (`eeee...`) publishes 25 kind `30085` events within a 24-hour window. Default burst parameters: `window = 86400`, `threshold = 5`.
+
+```
+count = 25  (> threshold of 5)
+burst_decay = 1 / sqrt(25) = 1 / 5 = 0.2
+```
+
+Each of Attestor D's attestations has its weight multiplied by `0.2`. For example, if Attestor D has a single attestation with rating 5, confidence 1.0, and decay 1.0:
+
+```
+weight_without_burst = 1.0 * 1.0 * 1.0           = 1.000
+weight_with_burst    = 1.0 * 1.0 * 1.0 * 0.2     = 0.200
+contribution         = 5 * 0.200                   = 1.000
+```
+
+The burst penalty reduces Attestor D's effective influence by 80%.
+
+#### Test Vector 4: Tier 2 Diversity
+
+Four attestors (A, B, C, D) attest to subject `aaaa...` in context `payment.reliability`. The attestor interaction graph has the following structure:
+
+- A and B share a common attestation target (other than `aaaa...`) — **connected**
+- C has no edges to any other attestor — **independent**
+- D has no edges to any other attestor — **independent**
+
+Connected components: `{A, B}`, `{C}`, `{D}` — `cluster_count = 3`
+
+```
+total_attestors = 4
+cluster_count   = 3
+diversity       = 3 / 4 = 0.75
+```
+
+Using the Tier 1 score from Test Vector 1 as an example:
+
+```
+score_T1 = 3.216886
+score_T2 = diversity * score_T1 = 0.75 * 3.216886 = 2.412665
+```
+
+A maximally independent set (4 components out of 4 attestors) would produce `diversity = 1.0` and `score_T2 = score_T1`. A fully connected set (1 component) would produce `diversity = 0.25` and `score_T2 = 0.804222`.
+
+Privacy Considerations
+----------------------
+
+The public attestation graph created by kind `30085` events has inherent privacy implications that implementers and users should understand.
+
+**Social graph exposure.** Every attestation event links an attestor pubkey to a subject pubkey in a specific context domain. The aggregate set of attestations constitutes a directed, weighted, timestamped social graph. Anyone with relay access can reconstruct who trusts whom, in what domains, and how that trust evolved over time. This is a feature for reputation computation but a cost for privacy.
+
+**Temporal correlation.** Attestation timestamps can be used to deanonymize attestors through correlation with external activity. If an attestor publishes attestations at times that correlate with known behavioral patterns (timezone, work hours, event attendance), the attestor's identity may be inferred even when using a pseudonymous pubkey.
+
+**Persistent conflict records.** Negative attestations (ratings 1-2) create visible records of conflict or distrust. Unlike private reputation systems where negative signals are hidden, Nostr attestations are public events that persist on relays until expiration. This may discourage honest negative attestations — a chilling effect that weakens the convergence properties described in this NIP.
+
+**Relay-side graph observation.** Relay operators can build complete attestor-subject graphs from the events they store and forward. A relay that handles a significant fraction of kind `30085` traffic has a comprehensive view of the reputation network topology, including which agents are controversial (many negative attestations) and which attestors are influential (high volume, high confidence).
+
+**Mitigations:**
+
+- Clients SHOULD query multiple independent relays when fetching attestations, to avoid giving any single relay operator a complete view of the client's reputation queries. This also serves the eclipse attack defense described in Security Considerations.
+- Attestors MAY use purpose-specific keypairs dedicated to attestation activity, separating their reputation-giving identity from their primary Nostr identity. This limits social graph leakage to the attestation-specific pubkey.
+- The mandatory `expiration` tag provides eventual data minimization. Expired attestation events MAY be deleted by relays per [NIP-40](40.md), reducing the long-term persistence of the social graph. Attestors SHOULD set expiration periods no longer than necessary for the context domain.
+- Clients SHOULD NOT display raw attestor pubkeys in user interfaces when showing reputation scores. Aggregated scores reveal less about individual relationships than itemized attestation lists.
+
+Backward Compatibility
+----------------------
+
+Kind `30085` is a new event kind introduced by this NIP. Clients that do not implement NIP-XX will ignore these events per standard Nostr behavior. There are no backward compatibility issues with existing event kinds.
+
+#### Relationship to NIP-32 (Labeling)
+
+Attestations complement labels. [NIP-32](32.md) labels classify content; NIP-XX attestations rate agents over time. Clients MAY interpret existing NIP-32 `"positive"` / `"negative"` labels as informal attestations but MUST NOT mix them in scoring algorithms. Label events lack the structured fields (confidence, decay class, evidence) required for Tier 1 computation, and including them would compromise score semantics.
+
+#### Relationship to NIP-56 (Reporting)
+
+[NIP-56](56.md) reports are one-shot flags indicating content violations. NIP-XX attestations are ongoing assessments of agent behavior over time. The two are complementary, not conflicting. A report says "this event is bad"; an attestation says "this agent's performance in this domain, over this period, is rated X."
+
+#### Schema Versioning
+
+The current schema version is `v=2`. Clients encountering `v=1` events SHOULD apply the following defaults for missing v2 fields:
+
+- `task-type`: absent (omit from scoring; treat as untyped attestation)
+- `decay` class: `standard` (90-day half-life)
+
+Future schema versions MUST increment the `v` tag value. Clients encountering an unrecognized version SHOULD ignore the event rather than attempting partial parsing.
+
+Client Implementation Levels
+----------------------------
+
+Implementations of this NIP fall into three levels. Each level builds on the previous.
+
+#### Minimal (MUST)
+
+Parse and validate kind `30085` events per the validation rules in this NIP. Compute Tier 1 scores using standard 90-day decay. Display per-namespace scores to the user.
+
+#### Standard (SHOULD)
+
+Domain-dependent decay classes (slow, standard, fast). Tier 2 graph diversity scoring. Burst rate-limiting with sliding window. Task-type tag processing and filtering.
+
+#### Full (MAY)
+
+Tier 1.5 DMI peer prediction for attestor quality weighting. Cross-namespace aggregation display. Attestor interaction graph visualization. Custom decay class mappings.
+
+| Spec Section | Minimal | Standard | Full |
+|-------------|---------|----------|------|
+| Event format & validation | ✓ | ✓ | ✓ |
+| Tier 1 scoring (standard decay) | ✓ | ✓ | ✓ |
+| Domain-dependent decay classes | | ✓ | ✓ |
+| Burst rate-limiting | | ✓ | ✓ |
+| Task-type tags | | ✓ | ✓ |
+| Tier 2 graph diversity | | ✓ | ✓ |
+| Tier 1.5 DMI peer prediction | | | ✓ |
+| Cross-namespace aggregation | | | ✓ |
+| Attestor graph visualization | | | ✓ |
+
+Interoperability
+----------------
+
+NIP-XX connects to the emerging Nostr agent ecosystem through several complementary NIPs. These connections are recommendations, not requirements. Each NIP operates independently.
+
+#### NIP-A5 (Service Agreements)
+
+Post-service attestations (kind `38403`) can feed NIP-XX scoring. After completing a NIP-A5 service agreement, the requester MAY publish a kind `30085` attestation referencing the agreement event as evidence using the `nostr_event_ref` evidence type. This creates a verifiable link between a completed service and a reputation signal.
+
+#### NIP-AC (DVM Coordination)
+
+Job reviews (kind `31117`) from NIP-AC are domain-specific evaluations that map naturally to attestation contexts. Clients MAY compute NIP-XX scores from NIP-AC review events as input signals. The `task-type` tag aligns with NIP-AC's job type taxonomy.
+
+#### NIP-AA (Agent Citizenship)
+
+NIP-AA defines agent identity and autonomy levels but defers its reputation algorithm. NIP-XX could serve as that module. NIP-AA's autonomy levels could map to trust tier thresholds — for example, a Tier 1 score >= 4.0 required for AL-3 (fully autonomous) operations.
+
+#### NIP-90 (Data Vending Machines)
+
+DVM result hashes are already supported as the `nip90_result_hash` evidence type in this NIP. DVM interactions — job requests, results, and payments — provide natural attestation opportunities where both requester and provider can attest to the other's behavior.
+
+Cold-Start Bootstrapping
+-------------------------
+
+A new agent has zero attestations and undefined reputation. This section addresses that cold-start problem.
+
+> **Important:** Clients MUST treat undefined reputation as "unknown", NOT as "zero" or "bad". Penalizing agents for having no history creates a barrier that only established agents can overcome, concentrating trust in incumbents.
+
+**Recommended bootstrapping path:**
+
+1. Agents complete low-stakes tasks to accumulate initial attestations.
+2. First attestations carry full weight — no minimum threshold is required for score computation.
+3. Clients SHOULD distinguish three states in their UI: *unknown* (no data), *controversial* (mixed positive and negative data), and *trusted* (consistently positive data).
+
+> **Note:** The protocol deliberately does NOT include a "vouch" or "introduce" mechanism. Introduction without interaction history is the gateway to Sybil attacks. Trust must be earned through bilateral interaction that produces attestation evidence.
+
+Computational Complexity
+------------------------
+
+Cost analysis for implementers. Let *n* = number of attestations for a subject in a context, *a* = number of distinct attestors, *s* = number of shared subjects between attestor pairs.
+
+| Tier | Complexity | Notes |
+|------|------------|-------|
+| Tier 1 | O(*n*) | Single pass through attestation set. One weighted-average computation. |
+| Tier 1.5 (DMI) | O(*a*² × *s*) | Dominated by pairwise attestor comparisons across shared subjects. For 100 attestors with 50 shared subjects: ~500,000 operations. SHOULD be cached and updated incrementally. |
+| Tier 2 | O(*a*² + *a*) | Dominated by building attestor interaction graph (pairwise check) + connected components via union-find. For 100 attestors: ~10,000 operations. |
+
+#### Storage
+
+Each kind `30085` event is approximately 500 bytes. A representative deployment of 1,000 attestors × 10 subjects × 5 contexts produces 50,000 events ≈ 25 MB. This is well within the capacity of a standard relay.
+
 Related NIPs
 ------------
 
 - [NIP-01](01.md): Base protocol. Defines parameterized replaceable events (kind 30000-39999).
-- [NIP-32](32.md): Labeling. Complementary -- labels classify content, attestations assess agents.
+- [NIP-32](32.md): Labeling. Complementary — labels classify content, attestations assess agents.
 - [NIP-40](40.md): Expiration timestamp. This NIP requires the `expiration` tag defined there.
-- [NIP-56](56.md): Reporting. Complementary -- reports flag content, attestations rate agents over time.
+- [NIP-56](56.md): Reporting. Complementary — reports flag content, attestations rate agents over time.
+
+Revision History
+----------------
+
+| Date | Change | Reviewer |
+|------|--------|----------|
+| 2026-03-23 | Added structured evidence types (`lightning_preimage`, `dvm_job_id`, `nostr_event_ref`, `free_text`) with extensibility. Evidence field now accepts typed JSON array. | `aec9180edbe1` |
+| 2026-03-24 | Added `nip90_result_hash` evidence type for proving DVM result delivery. | `aec9180edbe1` |
+| 2026-03-23 | Added asymmetric negative attestation weighting (2x multiplier for ratings <= 2) to Tier 1 scoring. | `aec9180edbe1` |
+| 2026-03-23 | Added temporal burst rate-limiting with configurable sliding window and sqrt-based confidence decay. | `aec9180edbe1` |
+| 2026-03-24 | Replaced closed context enum with open namespace system. Attestation types are now freeform with dot-namespaced convention. Tier 2 scores computed per-namespace. | `e0e247e9514f` |
+| 2026-03-24 | Added Tier 1.5: Attestor Quality via Peer Prediction (DMI mechanism) for computed attestor reliability replacing self-reported confidence. Graceful degradation from sparse to dense networks. | `e0e247e9514f` |
+| 2026-03-26 | v5.3: Domain-dependent decay (slow/standard/fast half-life classes), open context namespace with extended domains, task-type tags with attestor-proposed/requester-confirmed status, schema version bumped to v=2. | — |
