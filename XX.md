@@ -129,6 +129,22 @@ Multipliers are applied BEFORE capping at confidence 1.0. Multiple evidence type
 
 > **Design note:** Commitment classes formalize an insight from cross-protocol analysis: NIP-A5's settlement-anchored attestations (kind `38403` with payment proof) carry fundamentally different trust weight than social-only attestations. Rather than hard-coding this for one protocol, commitment classes provide a general framework that any future economic proof mechanism can plug into.
 
+
+##### Theoretical Foundation: Costly Signaling
+
+The commitment class hierarchy is not arbitrary — it instantiates the *handicap principle* from biological signaling theory (Zahavi 1975). Honest signals must be costly to produce, and the cost must differ between honest and dishonest signalers (Grafen 1990). This differential cost — the *single-crossing condition* — is what prevents cheap mimicry.
+
+Each commitment class corresponds to a signal cost regime:
+
+- **Self-assertion/Reference** (cost ≈ 0): Equivalent to "cheap talk" in signaling games. Any agent can produce unlimited attestations at negligible cost. No separating equilibrium exists — honest and dishonest agents are indistinguishable from evidence alone.
+- **Computational proof** (cost = work): Fabrication requires performing or simulating computation. The cost is bounded below by the computational work, creating a weak separating condition: large-scale Sybil attestation requires proportional compute expenditure.
+- **Economic settlement** (cost = sats): Lightning payment proofs impose monetary cost on fabrication. The single-crossing condition holds if legitimate agents transact anyway (the attestation is a byproduct of real economic activity) while attackers must spend specifically to create false evidence.
+- **Staked commitment** (cost = locked capital + slashing risk): The strongest separating condition. Attackers face not just expenditure but potential loss exceeding their stake, creating super-linear cost for dishonest signaling.
+
+The recommended multipliers (1.0×–1.3×) are deliberately conservative — they encode ordinal ranking (higher cost → higher weight) rather than attempting to derive exact values from equilibrium conditions. Implementers with domain-specific cost data MAY adjust multipliers, provided the monotonic ordering is preserved: self-assertion ≤ reference ≤ computational proof ≤ economic settlement ≤ staked commitment.
+
+> **Research note:** The formal connection between Grafen's (1990) signaling equilibrium model and digital commitment mechanisms is developed in Donath (2007, "Signals in Social Supernets"). The composition property — that multi-class evidence provides multiplicative rather than additive Sybil resistance — follows from the independence of cost channels. This area remains underexplored; protocol designers are encouraged to derive commitment weights from empirical cost data rather than theoretical equilibrium alone.
+
 #### Rating Semantics
 
 | Rating | Meaning | Classification |
@@ -905,3 +921,4 @@ Revision History
 | 2026-03-26 | v5.3: Domain-dependent decay (slow/standard/fast half-life classes), open context namespace with extended domains, task-type tags with attestor-proposed/requester-confirmed status, schema version bumped to v=2. | — |
 | 2026-03-27 | v5.5: Enhanced NIP-A5 interoperability — settlement vs social anchoring, evidence weighting, cross-protocol query pattern | `e0e247e9514f` |
 | 2026-03-27 | v5.6: Added commitment class taxonomy — formalized evidence-strength hierarchy (self-assertion → reference → computational proof → economic settlement → staked commitment) with scoring multipliers. Cross-protocol design from NIP-A5 collaboration. | `refined-element` |
+| 2026-03-27 | v5.7: Added theoretical foundation for commitment classes — Zahavian costly signaling theory, Grafen single-crossing condition, Donath bridge to digital identity. Multiplier ordering grounded in signal cost regimes. | `kai` |
