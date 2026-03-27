@@ -125,6 +125,14 @@ Evidence types vary in their Sybil resistance — the cost an attacker must incu
 
 Multipliers are applied BEFORE capping at confidence 1.0. Multiple evidence types in the same attestation use the highest applicable class — they do not stack.
 
+> **Optional enhancement: Adaptive multipliers.** Under Sybil pressure, fixed commitment multipliers do not adapt — an attacker's low-cost attestations receive the same discount regardless of attack intensity. Implementations MAY use adaptive multipliers that increase the value of high-commitment evidence when the network appears to be under attack:
+>
+> ```
+> multiplier(class, t) = base_multiplier × (1 + α × sybil_pressure(t))
+> ```
+>
+> where `sybil_pressure(t)` is an observer-local estimate — for example, the ratio of low-diversity attestations (Tier 2 diversity below a threshold) to high-diversity attestations in the observer's recent window. The sensitivity parameter `α` is configurable (recommended range: 0.1–0.5). This makes higher-commitment evidence MORE valuable precisely when the network is under attack, dynamically widening the gap between cheap and costly signals. The monotonic ordering of commitment classes MUST be preserved at all times.
+
 **Determining commitment class:** Clients inspect the `evidence` array and assign the attestation's commitment class based on the highest-class evidence type present. Unknown evidence types default to the Self-assertion class.
 
 > **Design note:** Commitment classes formalize an insight from cross-protocol analysis: NIP-A5's settlement-anchored attestations (kind `38403` with payment proof) carry fundamentally different trust weight than social-only attestations. Rather than hard-coding this for one protocol, commitment classes provide a general framework that any future economic proof mechanism can plug into.
@@ -292,6 +300,18 @@ decay(t) = 2^(-(now - created_at) / half_life)
 
 This is backward-compatible: clients that ignore decay classes use the 90-day default, which was the previous single value.
 
+##### Principled Half-Life Derivation
+
+The half-life values (30/90/180 days) can be derived from first principles rather than chosen ad hoc. The appropriate half-life for a domain approximates the geometric mean of two timescales: (1) the **characteristic interaction timescale** — how often agents in this domain typically interact — and (2) the **strategy-switch detection timescale** — how quickly defection from cooperation can be observed by peers. A multiplier accounts for the number of interactions needed for statistical confidence in detecting a strategy change.
+
+| Domain class | Interaction timescale | Detection timescale | Geometric mean | Confidence multiplier | Derived half-life |
+|-------------|----------------------|--------------------|-----------------|-----------------------|-------------------|
+| `fast` (payment routing) | ~1 day | ~7 days | √(1×7) ≈ 2.6 days | ×10 | ≈ 26 days ≈ **30 days** |
+| `standard` (general reliability) | ~7 days | ~30 days | √(7×30) ≈ 14.5 days | ×6 | ≈ 87 days ≈ **90 days** |
+| `slow` (skill-based competence) | ~14 days | ~90 days | √(14×90) ≈ 35.5 days | ×5 | ≈ 178 days ≈ **180 days** |
+
+The confidence multiplier decreases for slower domains because agents in those domains have longer track records per interaction, requiring fewer observations for statistical significance. This derivation grounds the half-life choices in observable network properties rather than arbitrary selection.
+
 #### Tier 1: Weighted Average
 
 For a subject `S` in context `C`, collect all valid, non-expired attestation events matching `{"#p": [S], "#t": [C], "kinds": [30085]}`. Compute:
@@ -357,6 +377,8 @@ weight_i = reliability_i * decay_i * neg_multiplier(rating_i) * burst_decay(atte
 
 > **Agent advantage:** Software attestors can be programmed to follow the dominant strategy that DMI assumes. The comprehension barrier — the primary practical failure mode in human peer prediction deployments — is structurally absent in agent-to-agent systems. This means DMI, which has zero production deployments with human participants, may be viable specifically in agent reputation contexts.
 
+> **Open research question:** DMI is dominant-strategy incentive compatible (DSIC) in static mechanism design — honest reporting is optimal regardless of others' strategies. Whether this property persists under evolutionary dynamics (where attestor strategies evolve by fitness) is an open question. Specifically: is honest reporting an Evolutionarily Stable Strategy (ESS) under the DMI mechanism? If so, this would provide the strongest known robustness guarantee for peer prediction in reputation systems. The Allen et al. (2017) structure coefficient framework may provide the tools for this proof.
+
 #### Tier 2: Graph Diversity Metric
 
 Tier 2 measures structural independence among attestors. It penalizes concentrated attestation sources and rewards diverse, independent signals.
@@ -381,6 +403,28 @@ score_T2 = diversity * score_T1
 When `diversity = 1.0` (every attestor is in its own component, maximally independent), Tier 2 equals Tier 1. When `diversity -> 0` (all attestors in one cluster), Tier 2 approaches zero regardless of ratings.
 
 > **Interpretation:** A sockpuppet flood with 100 fake attestors in a single connected component produces `diversity = 1/100 = 0.01`. Even with all ratings at 5 and confidence at 1.0, the Tier 2 score is `0.01 * 5.0 = 0.05`. The star topology is structurally penalized.
+
+##### Degree-Weighted Diversity (Recommended Enhancement)
+
+The basic diversity metric treats all attestors equally, but hub compromise is disproportionately dangerous — a compromised node with degree `k_hub` affects `k_hub` connections, making its capture probability scale as `ρ_hub ~ r^k_hub / N`. To account for this, Standard-level implementations SHOULD use degree-weighted diversity:
+
+```
+For each connected component C_j in the attestor interaction graph:
+  degree_weight(C_j) = sum of degrees of all nodes in C_j
+
+weighted_diversity = (sum over all components j of 1/degree_weight(C_j)) / total_attestors
+```
+
+This ensures that a single large cluster of highly-connected nodes (hubs) produces a LOWER diversity score than the same number of nodes spread across disconnected components. A cluster containing high-degree hubs has a large `degree_weight`, contributing less to the numerator.
+
+**Example:** Four attestors with degrees [5, 5, 1, 1]. Components: `{A(5), B(5)}`, `{C(1)}`, `{D(1)}`.
+
+```
+Basic diversity:    3 / 4 = 0.75
+Weighted diversity: (1/10 + 1/1 + 1/1) / 4 = 2.1 / 4 = 0.525
+```
+
+The weighted version correctly penalizes the hub-containing cluster. Implementations MAY use the basic `cluster_count / total_attestors` formula (Minimal level) or the degree-weighted formula (Standard level and above).
 
 #### Temporal Burst Rate-Limiting
 
@@ -491,6 +535,16 @@ Six attack scenarios have been analyzed in detail. Summary of defenses:
 *Mitigation:* Observer relay diversity. Clients MUST query multiple independent relay sets. At 10+ independent relays, eclipse cost exceeds most agents' reputation value.
 
 > **Fundamental limitation:** Cluster collusion and eclipse attacks exploit the same structural ambiguity — legitimate community endorsement is topologically identical to coordinated deception. No reputation protocol can distinguish them without external information. This NIP makes the limitation explicit: Tier 2 flags concentration but cannot determine whether concentration implies collusion or community.
+
+#### 7. Multi-Layer Network Bounds
+
+The Nostr network is not a single graph — it is a multi-layer network comprising at least three distinct layers: the **relay transport layer** (which relays an observer connects to), the **follow graph layer** (NIP-02 contact lists), and the **attestation graph layer** (kind `30085` events). Sybil resistance for reputation computation is bounded by the *sparsest* layer, not the most diverse one.
+
+In practice, relay concentration is often the binding constraint. If an observer queries attestations from a small number of relays controlled by overlapping operators, then even perfect attestation graph diversity provides no protection — the adversary filters attestations at the relay layer before the observer ever sees them (a generalized eclipse attack).
+
+Formally, the Cheeger constant (isoperimetric number) of the relay-layer graph provides an upper bound on the expansion — and therefore the Sybil resistance — of the composite reputation network. A relay layer with low expansion (few relays, high operator concentration) cannot be compensated by high expansion in the attestation layer.
+
+> **Implication for implementers:** Clients computing Tier 2 diversity scores SHOULD also assess relay-layer diversity. A practical heuristic: if more than 50% of attestations for a subject were fetched from relays operated by the same entity, the effective diversity score should be discounted regardless of attestation graph structure. The eclipse attack defense (querying 10+ independent relays) is the minimum prerequisite for Tier 2 scores to be meaningful.
 
 When NOT to Use
 ---------------
@@ -822,7 +876,7 @@ Parse and validate kind `30085` events per the validation rules in this NIP. Com
 
 #### Standard (SHOULD)
 
-Domain-dependent decay classes (slow, standard, fast). Tier 2 graph diversity scoring. Burst rate-limiting with sliding window. Task-type tag processing and filtering.
+Domain-dependent decay classes (slow, standard, fast). Tier 2 graph diversity scoring with degree-weighted diversity. Burst rate-limiting with sliding window. Task-type tag processing and filtering.
 
 #### Full (MAY)
 
@@ -835,7 +889,7 @@ Tier 1.5 DMI peer prediction for attestor quality weighting. Cross-namespace agg
 | Domain-dependent decay classes | | ✓ | ✓ |
 | Burst rate-limiting | | ✓ | ✓ |
 | Task-type tags | | ✓ | ✓ |
-| Tier 2 graph diversity | | ✓ | ✓ |
+| Tier 2 graph diversity (degree-weighted) | | ✓ | ✓ |
 | Tier 1.5 DMI peer prediction | | | ✓ |
 | Cross-namespace aggregation | | | ✓ |
 | Attestor graph visualization | | | ✓ |
@@ -922,3 +976,4 @@ Revision History
 | 2026-03-27 | v5.5: Enhanced NIP-A5 interoperability — settlement vs social anchoring, evidence weighting, cross-protocol query pattern | `e0e247e9514f` |
 | 2026-03-27 | v5.6: Added commitment class taxonomy — formalized evidence-strength hierarchy (self-assertion → reference → computational proof → economic settlement → staked commitment) with scoring multipliers. Cross-protocol design from NIP-A5 collaboration. | `refined-element` |
 | 2026-03-27 | v5.7: Added theoretical foundation for commitment classes — Zahavian costly signaling theory, Grafen single-crossing condition, Donath bridge to digital identity. Multiplier ordering grounded in signal cost regimes. | `kai` |
+| 2026-03-27 | v6.0: Evolutionary game theory improvements — degree-weighted diversity for Tier 2, adaptive commitment multipliers under Sybil pressure, multi-layer network bounds in security analysis, DMI-ESS open research question, principled half-life derivation from interaction/detection timescales. | `kai` |
