@@ -91,7 +91,17 @@ Kind 31402 is an addressable event ([NIP-01](01.md)). The combination of `pubkey
 
 **`pmi` tag:** A multi-element tag. The first element after the tag name identifies the payment rail. Additional elements carry rail-specific parameters. See [Canonical PMI Values](#canonical-pmi-values).
 
-**`price` tag:** Amount MUST be a non-negative integer in the smallest unit of the specified currency (satoshis for `sats`, cents for `usd`, pence for `gbp`). Capability names MUST NOT exceed 64 characters. Currency codes MUST NOT exceed 32 characters.
+**`price` tag:** Amount MUST be a non-negative integer in the smallest unit of the specified currency. Capability names MUST NOT exceed 64 characters. Currency codes MUST be lowercase and MUST NOT exceed 32 characters. The field is open to any currency operators wish to use. Well-known values:
+
+| Code | Unit | Description |
+|------|------|-------------|
+| `sat` | satoshi | Bitcoin (Lightning, on-chain) |
+| `btc` | bitcoin | Bitcoin (whole units) |
+| `usd` | cent | US Dollar |
+| `eur` | cent | Euro |
+| `gbp` | penny | British Pound |
+
+For fiat currencies, ISO 4217 codes (lowercase) SHOULD be used. Clients SHOULD treat unrecognised currency codes as opaque strings and display them as-is.
 
 ### Content
 
@@ -164,8 +174,8 @@ Future payment rails MAY be added by convention. Implementations SHOULD NOT reje
     ["summary", "GPT-4 class inference with Lightning and Cashu payment. Supports chat completions and embeddings."],
     ["pmi", "l402", "lightning"],
     ["pmi", "cashu"],
-    ["price", "chat_completion", "100", "sats"],
-    ["price", "embedding", "10", "sats"],
+    ["price", "chat_completion", "100", "sat"],
+    ["price", "embedding", "10", "sat"],
     ["t", "ai"],
     ["t", "inference"],
     ["t", "llm"]
@@ -215,8 +225,8 @@ Future payment rails MAY be added by convention. Implementations SHOULD NOT reje
     ["summary", "On-demand GPU compute for ML training and rendering. A100 instances."],
     ["pmi", "l402", "lightning"],
     ["pmi", "xcashu"],
-    ["price", "gpu_hour_a100", "50000", "sats"],
-    ["price", "gpu_minute_a100", "900", "sats"],
+    ["price", "gpu_hour_a100", "50000", "sat"],
+    ["price", "gpu_minute_a100", "900", "sat"],
     ["t", "compute"],
     ["t", "gpu"],
     ["t", "ml"]
