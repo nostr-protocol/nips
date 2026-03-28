@@ -106,6 +106,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-99: Classified Listings](99.md)
 - [NIP-A0: Voice Messages](A0.md)
 - [NIP-A4: Public Messages](A4.md)
+- [NIP-A5: Agent Service Agreements](A5.md)
 - [NIP-B0: Web Bookmarks](B0.md)
 - [NIP-B7: Blossom](B7.md)
 - [NIP-BE: Nostr BLE Communications Protocol](BE.md)
@@ -296,6 +297,10 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `38173`       | Fedimint Announcement           | [87](87.md)                            |
 | `37516`       | Geocache listing                | [geocaching](geocaching)               |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
+| `38400`       | Capability Advertisement        | [A5](A5.md)                            |
+| `38401`       | Service Request                 | [A5](A5.md)                            |
+| `38402`       | Service Agreement               | [A5](A5.md)                            |
+| `38403`       | Attestation                     | [A5](A5.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
 | `39089`       | Starter packs                   | [51](51.md)                            |
 | `39092`       | Media starter packs             | [51](51.md)                            |
@@ -371,7 +376,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `q`               | event id (hex)                       | relay URL, pubkey (hex)         | [18](18.md)                                        |
 | `r`               | a reference (URL, etc)               | --                              | [24](24.md), [25](25.md)                           |
 | `r`               | relay url                            | marker                          | [65](65.md)                                        |
-| `s`               | status                               | --                              | [69](69.md)                                        |
+| `s`               | status, service category             | --                              | [69](69.md), [A5](A5.md)                           |
 | `t`               | hashtag                              | --                              | [24](24.md), [34](34.md), [35](35.md)              |
 | `u`               | url                                  | --                              | [61](61.md), [98](98.md)                           |
 | `x`               | hash                                 | --                              | [35](35.md), [56](56.md)                           |
@@ -381,18 +386,22 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `alt`             | summary                              | --                              | [31](31.md)                                        |
 | `amount`          | millisatoshis, stringified           | --                              | [57](57.md)                                        |
 | `bolt11`          | `bolt11` invoice                     | --                              | [57](57.md)                                        |
+| `budget`          | budget amount                        | unit                            | [A5](A5.md)                                        |
 | `branch-name`     | branch name suggestion               | --                              | [34](34.md)                                        |
+| `capacity`        | rate limit or throughput             | unit                            | [A5](A5.md)                                        |
 | `challenge`       | challenge string                     | --                              | [42](42.md)                                        |
 | `client`          | name, address                        | relay URL                       | [89](89.md)                                        |
 | `clone`           | git clone URL                        | --                              | [34](34.md)                                        |
 | `content-warning` | reason                               | --                              | [36](36.md)                                        |
 | `delegation`      | pubkey, conditions, delegation token | --                              | [26](26.md)                                        |
+| `deadline`        | unix timestamp (string)              | --                              | [A5](A5.md)                                        |
 | `dep`             | Required dependency                  | --                              | [C0](C0.md)                                        |
 | `description`     | description                          | --                              | [34](34.md), [57](57.md), [58](58.md), [C0](C0.md) |
 | `emoji`           | shortcode, image URL                 | --                              | [30](30.md)                                        |
 | `encrypted`       | --                                   | --                              | [90](90.md)                                        |
+| `endpoint`        | API endpoint URL                     | HTTP method                     | [A5](A5.md)                                        |
 | `extension`       | File extension                       | --                              | [C0](C0.md)                                        |
-| `expiration`      | unix timestamp (string)              | --                              | [40](40.md)                                        |
+| `expiration`      | unix timestamp (string)              | --                              | [40](40.md), [A5](A5.md)                           |
 | `file`            | full path (string)                   | --                              | [35](35.md)                                        |
 | `goal`            | event id (hex)                       | relay URL                       | [75](75.md)                                        |
 | `merge-base`      | commit id                            |                                 | [34](34.md)                                        |
@@ -400,25 +409,34 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `image`           | image URL                            | dimensions in pixels            | [23](23.md), [52](52.md), [58](58.md)              |
 | `imeta`           | inline metadata                      | --                              | [92](92.md)                                        |
 | `license`         | License of the shared content        | --                              | [C0](C0.md)                                        |
+| `l402`            | L402 endpoint URL                    | --                              | [A5](A5.md)                                        |
 | `lnurl`           | `bech32` encoded `lnurl`             | --                              | [57](57.md)                                        |
 | `location`        | location string                      | --                              | [52](52.md), [99](99.md)                           |
 | `name`            | name                                 | --                              | [34](34.md), [58](58.md), [72](72.md), [C0](C0.md) |
+| `negotiable`      | negotiability flag                   | floor amount                    | [A5](A5.md)                                        |
 | `nonce`           | random                               | difficulty                      | [13](13.md)                                        |
+| `payment_hash`    | Lightning payment hash (hex)         | --                              | [A5](A5.md)                                        |
 | `preimage`        | hash of `bolt11` invoice             | --                              | [57](57.md)                                        |
-| `price`           | price                                | currency, frequency             | [99](99.md)                                        |
+| `price`           | price                                | currency, frequency             | [99](99.md), [A5](A5.md)                           |
+| `proof`           | Lightning payment_hash (hex)         | --                              | [A5](A5.md)                                        |
 | `proxy`           | external ID                          | protocol                        | [48](48.md)                                        |
 | `published_at`    | unix timestamp (string)              | --                              | [23](23.md), [B0](B0.md)                           |
+| `rating`          | numeric rating (1-5)                 | --                              | [A5](A5.md)                                        |
 | `relay`           | relay url                            | --                              | [42](42.md), [17](17.md)                           |
 | `relays`          | relay list                           | --                              | [57](57.md)                                        |
 | `repo`            | Reference to the origin repository   | --                              | [C0](C0.md)                                        |
 | `runtime`         | Runtime or environment specification | --                              | [C0](C0.md)                                        |
+| `schema`          | JSON Schema or OpenAPI spec URL      | --                              | [A5](A5.md)                                        |
 | `server`          | file storage server url              | --                              | [96](96.md)                                        |
 | `sound`           | shortcode, sound url, image url      | --                              | [51](51.md)                                        |
+| `status`          | agreement status                     | --                              | [A5](A5.md)                                        |
 | `subject`         | subject                              | --                              | [14](14.md), [17](17.md), [34](34.md)              |
 | `summary`         | summary                              | --                              | [23](23.md), [52](52.md)                           |
 | `thumb`           | badge thumbnail                      | dimensions in pixels            | [58](58.md)                                        |
+| `terms`           | agreement terms                      | value, unit                     | [A5](A5.md)                                        |
 | `title`           | title                                | --                              | [23](23.md), [B0](B0.md)                           |
 | `tracker`         | torrent tracker URL                  | --                              | [35](35.md)                                        |
+| `uptime`          | self-reported uptime ratio           | --                              | [A5](A5.md)                                        |
 | `web`             | webpage URL                          | --                              | [34](34.md)                                        |
 | `zap`             | pubkey (hex), relay URL              | weight                          | [57](57.md)                                        |
 
