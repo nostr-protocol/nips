@@ -411,6 +411,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `name`            | name                                 | --                              | [34](34.md), [58](58.md), [72](72.md), [C0](C0.md) |
 | `negotiable`      | negotiability flag                   | floor amount                    | [A5](A5.md)                                        |
 | `nonce`           | random                               | difficulty                      | [13](13.md)                                        |
+| `payment_hash`    | Lightning payment hash (hex)         | --                              | [A5](A5.md)                                        |
 | `preimage`        | hash of `bolt11` invoice             | --                              | [57](57.md)                                        |
 | `price`           | price                                | currency, frequency             | [99](99.md), [A5](A5.md)                           |
 | `proof`           | Lightning payment_hash (hex)         | --                              | [A5](A5.md)                                        |
