@@ -203,5 +203,8 @@ Prior Art
 - **NIP-06**: derives Nostr key from BIP-39 mnemonic at `m/44'/1237'/0'/0/0`. Requires seed phrase access.
 - **LUD-04**: LNURL-auth specification. Defines the linking key derivation from wallet seed.
 - **LUD-13**: derives LNURL-auth key from `signMessage`. The `hashingKey` is a valid secp256k1 key but is per-domain and known to the server.
-- **EIP-2645**: derives StarkWare keys from Ethereum signatures. No nonce split.
-- **zkSync**: `SHA256(sign(msg))` for L2 key derivation. No nonce split.
+
+The technique of deriving keys from signatures has been proven at scale in Ethereum L2s. SplitSig applies the same cryptographic primitive to LNURL-auth with an added nonce split:
+
+- **EIP-2645/StarkWare**: derives StarkWare keys from Ethereum signatures. No nonce split — server can derive the key.
+- **zkSync**: `SHA256(sign(msg))` for L2 key derivation. Billions in TVL. No nonce split.
