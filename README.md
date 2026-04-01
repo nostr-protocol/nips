@@ -205,6 +205,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10005`       | Public chats list               | [51](51.md)                            |
 | `10006`       | Blocked relays list             | [51](51.md)                            |
 | `10007`       | Search relays list              | [51](51.md)                            |
+| `10008`       | Profile Badges                  | [51](51.md), [58](58.md)               |
 | `10009`       | User groups                     | [51](51.md), [29](29.md)               |
 | `10011`       | External Identities             | [39](39.md)                            |
 | `10012`       | Favorite relays list            | [51](51.md)                            |
@@ -244,7 +245,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30005`       | Video sets                      | [51](51.md)                            |
 | `30006`       | Picture sets                    | [51](51.md)                            |
 | `30007`       | Kind mute sets                  | [51](51.md)                            |
-| `30008`       | Profile Badges                  | [58](58.md)                            |
+| `30008`       | Badge sets                      | [51](51.md), [58](58.md)               |
 | `30009`       | Badge Definition                | [58](58.md)                            |
 | `30015`       | Interest sets                   | [51](51.md)                            |
 | `30017`       | Create or update a stall        | [15](15.md)                            |
