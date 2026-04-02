@@ -6,7 +6,7 @@ Reservation Protocol v1.0
 
 `draft` `optional`
 
-This NIP defines a protocol to manage reservations via Nostr. The term "reservations" is used as a broad term and could be applied to restaurants, hotels, or any other business offering appointments. This NIP also defines a business transaction attestation event associated with a succesfully completed reservation so that customers can issue a **verified business review**.
+This NIP defines a protocol to manage reservations via Nostr. The term "reservations" is used as a broad term and could be applied to restaurants, hotels, or any other business offering appointments. This NIP also defines a business transaction attestation event associated with a successfully completed reservation so that customers can issue a **verified business review**.
 
 The reservation process uses 4 different messages, each with its own kind, that are sent unsigned, sealed, and gift wrapped between the parties to maintain the privacy of the customer. Only the customer and the business are aware of the reservation.
 
@@ -31,18 +31,34 @@ Clients must support `kind:9901` and `kind:9902` messages. Support for `kind:990
 
 The following tags are used across the different kinds defined by this NIP:
 - `p`: public key of the recipient of the message.
+- `relays`: one or more relay URLs identifying the author's preferred read relays for replies and follow-up messages in the reservation thread.
 - `e`: tag used to connect all messages of the same reservation request (the reservation thread). Contains the `.id` field of the original `kind:9901` reservation request.
 - `party_size`: number of people in the reservation.
 - `time`: inclusive reservation start Unix timestamp in seconds.
 - `tzid`: time zone of the reservation `time`, `earliest_time`, and `latest_time` Unix timestamps, as defined by the IANA Time Zone Database. e.g., `America/Costa_Rica`.
 - `duration`: duration of the reservation in seconds.
 - `name`: reservation holder. May be different from the party initiating the reservation flow.
-- `phone`: phone number for the reservation holder.
+- `telephone`: phone number for the reservation holder.
 - `email`: email for the reservation holder.
 - `earliest_time`: earliest start time Unix timestamp that the requestor would accept for the reservation.
-- `latest_time`: earliest time that the requestor would accept for the reservation.
+- `latest_time`: latest start time that the requestor would accept for the reservation.
 - `status`: status of the reservation as one of the following values `confirmed`, `declined`, or `cancelled`.
 - `broker`: set to `True` if the party initiating the reservation flow is not the reservation holder
+
+## Relay Routing
+
+This NIP follows the outbox model described by [NIP-65](https://github.com/nostr-protocol/nips/blob/master/65.md) for routing reservation rumors between the customer and the business.
+
+When sending a reservation rumor to a counterparty, clients MUST:
+1. Look up the recipient's latest `kind:10002` relay list metadata event.
+2. Publish the gift-wrapped event to the recipient's `read` relays from `kind:10002`. If a relay in `kind:10002` has no marker, it SHOULD be treated as both `read` and `write` as defined by NIP-65.
+3. Include a `["relays", "<relay1>", "<relay2>", ...]` tag in the unsigned rumor listing the author's own preferred `read` relays, so the recipient knows where to publish the next message in the reservation thread.
+
+The `relays` tag acts as a return address. In a `kind:9901` event, it tells the business where to publish a `kind:9902` or `kind:9903` reply for the customer. In a response from the business, it tells the customer where to publish any follow-up messages for the business.
+
+Clients MUST include a `relays` tag in `kind:9901`, `kind:9902`, `kind:9903`, and `kind:9904` messages. If the recipient has no discoverable `kind:10002`, clients MAY fall back to the most recent `relays` tag seen for that counterparty in the reservation thread. The optional relay URL in the `p` tag MAY be used only as a final compatibility fallback when no better routing information is available.
+
+The `p` tag identifies the recipient's public key. Clients MUST use the `relays` tag and `kind:10002` relay list metadata as the primary routing mechanism for this protocol.
 
 ### Reservation Request - Kind:9901
 
@@ -54,7 +70,8 @@ The following tags are used across the different kinds defined by this NIP:
   "created_at": <unix timestamp in seconds>,
   "kind": 9901,
   "tags": [
-    ["p", "<businessPublicKey>", "<relayUrl>"],
+    ["p", "<businessPublicKey>"],
+    ["relays", "<customerReadRelay1>", "<customerReadRelay2>", "..."],
     ["party_size", "<integer between 1 and 20>"],
     ["time", "<unix timestamp in seconds>"],
     ["tzid", "<IANA Time Zone Database identifier>"],
@@ -83,7 +100,8 @@ The following tags are used across the different kinds defined by this NIP:
   "created_at": <unix timestamp in seconds>,
   "kind": 9902,
   "tags": [
-    ["p", "<recipientPublicKey>", "<relay-url>"],
+    ["p", "<recipientPublicKey>"],
+    ["relays", "<authorReadRelay1>", "<authorReadRelay2>", "..."],
     ["e", "<unsigned-9901-rumor.id>", "", "root"], # connects message to reservation thread
     ["status", "<confirmed|declined|cancelled>"],
     ["time", "<unix timestamp in seconds>"],
@@ -100,6 +118,8 @@ The following tags are used across the different kinds defined by this NIP:
 
 ### Reservation Modification Request - Kind:9903
 
+`kind:9903` is used to propose a revised set of reservation terms for an existing reservation thread. It MAY be used by the business as a counter-proposal while responding to a `kind:9901` request, or by either party after a reservation has already been confirmed to propose a replacement reservation. The tags in the event describe the full proposed reservation state that the sender wants the recipient to evaluate.
+
 **Rumor Event Structure:**
 ```yaml
 {
@@ -108,14 +128,15 @@ The following tags are used across the different kinds defined by this NIP:
   "created_at": <unix timestamp in seconds>,
   "kind": 9903,
   "tags": [
-    ["p", "<recipientPublicKey>", "<relay-url>"],
+    ["p", "<recipientPublicKey>"],
+    ["relays", "<authorReadRelay1>", "<authorReadRelay2>", "..."],
     ["e", "<unsigned-9901-rumor.id>", "", "root"], # connects message to reservation thread
     ["party_size", "<integer between 1 and 20>"],
     ["time", "<unix timestamp in seconds>"],
     ["tzid", "<IANA Time Zone Database identifier>"], 
-    ["name", "<optional string, max 200 chars>"],           
-    ["telephone", "<optional string, 'tel:' URI as per RFC 3966>"],  # must be included if present in reservation.request
-    ["email", "<optional string, 'mailto:' URI as per RFC 6068>"],   # must be included if present in reservation.request
+    ["name", "<optional string, max 200 chars>"],
+    ["telephone", "<optional string, 'tel:' URI as per RFC 3966>"],  # if included, should match the reservation holder information for the thread
+    ["email", "<optional string, 'mailto:' URI as per RFC 6068>"],   # if included, should match the reservation holder information for the thread
     ["duration", <optional, duration of reservation in seconds>"],
     ["earliest_time", "<optional unix timestamp in seconds>"],
     ["latest_time", "<optional unix timestamp in seconds>"]
@@ -138,7 +159,8 @@ The following tags are used across the different kinds defined by this NIP:
   "created_at": <unix timestamp in seconds>,
   "kind": 9904,
   "tags": [
-    ["p", "<recipientPublicKey>", "<relay-url>"],
+    ["p", "<recipientPublicKey>"],
+    ["relays", "<authorReadRelay1>", "<authorReadRelay2>", "..."],
     ["e", "<unsigned-9901-rumor.id>", "", "root"], # connects message to reservation thread
     ["status", "<confirmed|declined|cancelled>"],
     ["time", "<unix timestamp in seconds>"],
@@ -153,34 +175,36 @@ The following tags are used across the different kinds defined by this NIP:
 ## Protocol Flow
 
 ### Simple Reservation Request 
-1. Customer sends `reservation.request` `kind:9901` message to the business
-2. Business responds with `reservation.response` `kind:9902` message to the customer with `"status":"confirmed"` or `"status":"declined"`
-3. Message exchange ends
+1. Customer fetches the business's `kind:10002` relay list metadata event
+2. Customer sends `reservation.request` `kind:9901` message to the business by publishing the gift wrap to the business's `read` relays and includes the customer's own `read` relays in the `relays` tag
+3. Business responds with `reservation.response` `kind:9902` message to the customer with `"status":"confirmed"` or `"status":"declined"` by publishing the gift wrap to the customer's `read` relays hinted in the `relays` tag or discoverable from the customer's `kind:10002`
+4. Message exchange ends
 
 ### Reservation Request With Business Suggesting Alternative Time
-1. Customer sends `reservation.request` `kind:9901` message to the business
-2. Business responds with `reservation.modification.request` `kind:9903` message to the customer with proposed new time
-3. Customer responds with `reservation.modification.response` `kind:9904` message to the business with `"status":"confirmed"` or `"status":"declined"`
-4. Business responds with `reservation.response` `kind:9902` message to the customer with matching status `confirmed` or `declined`
+1. Customer fetches the business's `kind:10002` relay list metadata event
+2. Customer sends `reservation.request` `kind:9901` message to the business by publishing the gift wrap to the business's `read` relays and includes the customer's own `read` relays in the `relays` tag
+3. Business responds with `reservation.modification.request` `kind:9903` message to the customer with proposed new time, publishing the gift wrap to the customer's `read` relays hinted in the request's `relays` tag or discoverable from the customer's `kind:10002`
+4. Customer responds with `reservation.modification.response` `kind:9904` message to the business with `"status":"confirmed"` or `"status":"declined"`, publishing the gift wrap to the business's `read` relays hinted in the business's `relays` tag or discoverable from the business's `kind:10002`
+5. Business responds with `reservation.response` `kind:9902` message to the customer with matching status `confirmed` or `declined`
 
-### Succesful Reservation Modification by Customer
-1. Customer sends `reservation.modification.request` `kind:9903` message to the business with proposed new time
-2. Business sends `reservation.modification.response` `kind:9904` message to the customer with `"status":"confirmed"` to indicate availability for the new time
-3. Customer sends `reservation.response` `kind:9902` message to the business with status `confirmed`
-
-
-### Unsuccesful Reservation Modification by Customer
-1. Customer sends `reservation.modification.request` `kind:9903` message to the business with proposed new time
-2. Business sends `reservation.modification.response` `kind:9904` message to the customer with `"status":"declined"` to indicate lack of availability for the new time
-3. Customer sends `reservation.response` `kind:9902` message to the business with original time and status `"status":"confirmed"` to maintain original reservation or `"status":"cancelled"` to cancel the original reservation
+### Successful Reservation Modification by Customer
+1. Customer sends `reservation.modification.request` `kind:9903` message to the business with proposed new time, publishing to the business's `read` relays discovered from `kind:10002` or the latest routing hints available in the reservation thread
+2. Business sends `reservation.modification.response` `kind:9904` message to the customer with `"status":"confirmed"` to indicate availability for the new time, publishing to the customer's `read` relays discovered from `kind:10002` or the latest routing hints available in the reservation thread
+3. Customer sends `reservation.response` `kind:9902` message to the business with status `confirmed`, publishing to the business's `read` relays discovered from `kind:10002` or the latest routing hints available in the reservation thread
 
 
-### Reservation Cancellation Initated by the Business
-1. Business sends `reservation.response` `kind:9902` message to the customer with `"status":"cancelled"`. Including a note in the `.content` field of the event is highly recommended. 
+### Unsuccessful Reservation Modification by Customer
+1. Customer sends `reservation.modification.request` `kind:9903` message to the business with proposed new time, publishing to the business's `read` relays discovered from `kind:10002` or the latest routing hints available in the reservation thread
+2. Business sends `reservation.modification.response` `kind:9904` message to the customer with `"status":"declined"` to indicate lack of availability for the new time, publishing to the customer's `read` relays discovered from `kind:10002` or the latest routing hints available in the reservation thread
+3. Customer sends `reservation.response` `kind:9902` message to the business with original time and status `"status":"confirmed"` to maintain original reservation or `"status":"cancelled"` to cancel the original reservation, publishing to the business's `read` relays discovered from `kind:10002` or the latest routing hints available in the reservation thread
 
 
-### Reservation Cancellation Initated by the Customer
-1. Customer sends `reservation.response` `kind:9902` message to the business with `"status":"cancelled"`. Including a note in the `.content` field of the event is highly recommended. 
+### Reservation Cancellation Initiated by the Business
+1. Business sends `reservation.response` `kind:9902` message to the customer with `"status":"cancelled"`, publishing to the customer's `read` relays discovered from `kind:10002` or the latest routing hints available in the reservation thread. Including a note in the `.content` field of the event is highly recommended. 
+
+
+### Reservation Cancellation Initiated by the Customer
+1. Customer sends `reservation.response` `kind:9902` message to the business with `"status":"cancelled"`, publishing to the business's `read` relays discovered from `kind:10002` or the latest routing hints available in the reservation thread. Including a note in the `.content` field of the event is highly recommended. 
 
 
 ## Business Discovery 
@@ -191,7 +215,7 @@ Businesses MUST advertise their support for the Reservation Protocol using an ex
 {
   "kind": 0,
   "tags": [
-    ["i", "rp", "https://github.com/nostr-protocol/nips/blob/master/rp.md"],
+    ["i", "rp", "https://github.com/Synvya/reservation-protocol/blob/main/nostr-protocols/nips/rp.md"],
     ["k", "nip"],
     // additional tags
   ],
@@ -200,7 +224,7 @@ Businesses MUST advertise their support for the Reservation Protocol using an ex
 ```
 
 ## Verified Business Reviews
-Customers who succesfully complete a business transaction after creating a reservation using the Reservation Protocol may issue a verified business review. Verified business reviews are reviews from real customers and should be considered more relevant than unverified reviews from users for whom it is not possible to determine if they have transacted with the business. 
+Customers who successfully complete a business transaction after creating a reservation using the Reservation Protocol may issue a verified business review. Verified business reviews are reviews from real customers and should be considered more relevant than unverified reviews from users for whom it is not possible to determine if they have transacted with the business.
 
 The Reservation Protocol supports verified business reviews by expanding upon reviews as specified by the [market specification](https://github.com/GammaMarkets/market-spec/blob/main/spec.md) addendum to [NIP-99](https://github.com/nostr-protocol/nips/blob/master/99.md).
 
