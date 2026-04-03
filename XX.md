@@ -6,7 +6,7 @@ Agent Reputation Attestations
 
 `draft` `optional`
 
-This NIP defines a parameterized replaceable event kind for publishing reputation attestations about Nostr agents. Attestations encode a structured rating, domain context, confidence level, and optional evidence. Clients compute reputation scores locally from their own relay set using a two-tier algorithm: Tier 1 (weighted average with temporal decay) and Tier 2 (graph diversity metric). No global reputation score exists. Different observers MAY compute different scores for the same subject.
+This NIP defines kind `30085`, a parameterized replaceable event for publishing reputation attestations about Nostr agents. Attestations encode a structured rating, domain context, confidence level, and optional evidence. Clients compute reputation scores locally from their own relay set using a two-tier algorithm — Tier 1 (weighted average with temporal decay and commitment class multipliers) and Tier 2 (graph diversity metric) — unified by an alpha function that smoothly transitions between economic-proof-dominant and diversity-dominant scoring. No global reputation score exists. Different observers MAY compute different scores for the same subject. Attestation is trust-DELEGATION: publishing an attestation delegates the attestor's credibility to the subject, it does not verify the subject's identity or capabilities.
 
 Motivation
 ----------
@@ -18,6 +18,23 @@ This NIP addresses three gaps:
 - **Temporal integrity** -- attestations must decay. Reputation is a flow, not a stock.
 - **Negative attestations** -- the system must express disagreement, not only endorsement.
 - **Observer independence** -- scores are computed locally. No authority, no global state.
+
+The trust-DELEGATION framing (session 21) is central: an attestation delegates the attestor's credibility to the subject. It says "I stake my reputation on this claim about this agent." It does NOT verify the subject's identity, competence, or honesty — it transfers risk from the observer to the attestor. This distinction matters because it means the protocol's security reduces to the cost of acquiring attestor credibility, not the cost of verifying subjects directly.
+
+Terminology
+-----------
+
+| Term | Definition |
+|------|------------|
+| **Attestor** | The entity (pubkey) that publishes a kind 30085 event. The attestor stakes their credibility on the claim. |
+| **Subject** | The entity (pubkey) being attested. The `p` tag target. |
+| **Observer** | The entity computing reputation scores from attestation events. Scores are observer-local. |
+| **Alpha (α)** | Unified scoring function `alpha_0 = c * d^(1-c)` that smoothly combines network confidence and diversity. |
+| **Network confidence (c)** | Evaluator-relative measure of a subject's neighborhood maturity, derived from weighted economic min-cut. Range [0, 1]. |
+| **Individual diversity (d)** | Observer's diversity metric for a subject — ratio of independent attestor clusters to total attestors. Range [0, 1]. |
+| **Commitment class** | Property of evidence accompanying an attestation, indicating Sybil cost: self-assertion, reference, computational proof, economic settlement, staked commitment. |
+| **Trust layer** | Machine-readable tag (NIP-32 L-tag) indicating the *kind* of evidence: L1 (quality) or L2 (economic). Distinct from commitment class (which measures *strength*). |
+| **Namespace** | Dot-separated context domain string (e.g., `payment.reliability`, `task/code-review`). Open vocabulary, not enumerated. |
 
 Event Kind
 ----------
@@ -47,16 +64,49 @@ Event Structure
     ["t", "<context>"],
     ["expiration", "<unix-timestamp>"],
     ["v", "2"],
-    ["consistency_window", "<start-unix-timestamp>", "<end-unix-timestamp>"]
+    ["consistency_window", "<start-unix-timestamp>", "<end-unix-timestamp>"],
+    ["L", "nip-xx.layer"],
+    ["l", "quality", "nip-xx.layer"],
+    ["l", "economic", "nip-xx.layer"],
+    ["funding_utxo", "<txid>:<vout>"],
+    ["ln_node_sig", "<hex-signature>"],
+    ["l402_hash", "<sha256-hex>"],
+    ["status", "active"],
+    ["threshold_sats", "<sats-value>"],
+    ["raw_capacity_sats", "<sats-value>"],
+    ["seq", "<monotonic-integer>"]
   ],
   "content": "<JSON-stringified attestation object>"
 }
 ```
 
-Content Object
---------------
+#### Tags
 
-The `content` field MUST be a JSON-stringified object with the following structure:
+| Tag | Required | Description |
+|-----|----------|-------------|
+| `d` | MUST | Parameterized replaceable event identifier. Format: `<subject-pubkey>:<context>` |
+| `p` | MUST | Subject's pubkey. Enables querying all attestations for a given agent via `{"#p": [...]}` filters. |
+| `t` | MUST | Context category. Enables querying attestations by domain via `{"#t": [...]}` filters. |
+| `expiration` | MUST | Unix timestamp after which this attestation SHOULD be considered expired. Relays MAY discard expired events per [NIP-40](40.md). |
+| `v` | SHOULD | Schema version. Current version: `2`. Events with `v=1` remain valid with backward-compatible defaults. |
+| `consistency_window` | RECOMMENDED | Observation period. Format: `["consistency_window", "<start-unix>", "<end-unix>"]`. |
+| `L` | RECOMMENDED | NIP-32 label namespace declaration: `["L", "nip-xx.layer"]`. |
+| `l` | RECOMMENDED | NIP-32 label for trust layer: `["l", "quality", "nip-xx.layer"]` or `["l", "economic", "nip-xx.layer"]`. |
+| `funding_utxo` | MAY | UTXO backing this attestation's economic claim. Format: `["funding_utxo", "<txid>:<vout>"]`. |
+| `ln_node_sig` | MAY | Signature from the attestor's Lightning node key over the event id, proving Nostr-to-LN key linkage. |
+| `l402_hash` | MAY | SHA-256 hash of an L402 payment preimage for directional economic evidence. |
+| `status` | MAY | Attestation lifecycle: `active` or `revoked`. Revoked attestations (also via NIP-09 deletion) MUST be excluded from scoring. |
+| `threshold_sats` | MAY | The `threshold_sats` value used when computing alpha. Enables cross-observer auditability. |
+| `raw_capacity_sats` | MAY | Channel capacity in sats for the `funding_utxo`. |
+| `seq` | MAY | Monotonically increasing integer per `funding_utxo`. Enables fan-out tracking and fraud detection. |
+| `channel_point` | MAY | UTXO backing the Lightning channel. Format: `["channel_point", "<txid>:<vout>"]`. Required when `funding_utxo` is present. |
+| `task-type` | MAY | Task category with confirmation status. Format: `["task-type", "<type>", "<status>"]` where status is `attestor-proposed` or `requester-confirmed`. |
+
+> **Note:** The `expiration` tag is REQUIRED, not optional. Attestations without expiration tags MUST be rejected by compliant clients.
+
+#### Content Object
+
+The `content` field MUST be a JSON-stringified object:
 
 ```jsonc
 {
@@ -64,7 +114,7 @@ The `content` field MUST be a JSON-stringified object with the following structu
   "rating": 4,
   "context": "reliability",
   "confidence": 0.85,
-  "evidence": "Completed 12 task delegations without failure over 30 days"
+  "evidence": "[{\"type\": \"lightning_preimage\", \"data\": \"...\"}, {\"type\": \"free_text\", \"data\": \"Completed 12 delegations\"}]"
 }
 ```
 
@@ -72,86 +122,69 @@ The `content` field MUST be a JSON-stringified object with the following structu
 |-------|------|----------|-------------|
 | `subject` | string | YES | 32-byte lowercase hex pubkey of the agent being attested. |
 | `rating` | integer | YES | Rating on a 1-5 scale. See rating semantics below. |
-| `context` | string | YES | Domain of attestation. One of the defined context values. |
+| `context` | string | YES | Domain of attestation. Open namespace, dot-separated. |
 | `confidence` | float | YES | Attestor's confidence in their rating, 0.0-1.0 inclusive. |
-| `evidence` | string | NO | JSON array of typed evidence objects (see Structured Evidence below), or a plain string for backward compatibility. |
-
-> **Note:** The `consistency_window` tag in the event tags provides temporal context for the evidence. When present, it indicates the observation period over which the attestor gathered their evidence. Clients SHOULD consider this window when interpreting evidence claims.
+| `evidence` | string | NO | JSON array of typed evidence objects (see below), or plain string for backward compatibility. |
 
 #### Structured Evidence
 
-The `evidence` field SHOULD contain a JSON-stringified array of typed evidence objects. Each object has a `type` and `data` field. Clients SHOULD ignore unknown evidence types gracefully to allow extensibility.
-
-**Defined evidence types:**
+The `evidence` field SHOULD contain a JSON-stringified array of typed evidence objects. Each object has a `type` and `data` field. Clients SHOULD ignore unknown evidence types gracefully.
 
 | Type | Description |
 |------|-------------|
 | `lightning_preimage` | Lightning payment preimage proving payment completion. |
 | `dvm_job_id` | Reference to a DVM (Data Vending Machine) job ID. |
-| `nip90_result_hash` | SHA-256 hash of the DVM (NIP-90) result payload, proving the attestor received and can reference the actual work output. Bridges the gap between proving work was requested (`dvm_job_id`) and proving work was delivered and evaluated. |
-| `nostr_event_ref` | Reference to a Nostr event ID (hex) as supporting evidence. |
+| `nip90_result_hash` | SHA-256 hash of DVM result payload, proving work delivery evaluation. |
+| `nostr_event_ref` | Reference to a Nostr event ID as supporting evidence. |
 | `free_text` | Human-readable free-text description. |
-| `lightning_node` | Lightning Network node pubkey. Clients MAY use this to verify channel capacity as a proxy for economic stake. See Tier 1.5. |
+| `lightning_node` | Lightning Network node pubkey for channel capacity verification. |
 
-**Example:**
-
-```jsonc
-"evidence": "[{\"type\": \"dvm_job_id\", \"data\": \"abc123\"}, {\"type\": \"nip90_result_hash\", \"data\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"}, {\"type\": \"free_text\", \"data\": \"Completed translation job accurately\"}]"
-```
-
-Types are extensible. New types MAY be defined by clients without requiring a NIP update. Clients MUST NOT reject attestations containing unknown evidence types.
+Types are extensible. New types MAY be defined without a NIP update. Clients MUST NOT reject attestations containing unknown evidence types.
 
 #### Commitment Classes
 
-Evidence types vary in their Sybil resistance — the cost an attacker must incur to fabricate a false attestation. This section formalizes that variation as **commitment classes**, a property of the evidence accompanying an attestation, not the attestation itself.
+Evidence types vary in Sybil resistance. This section formalizes that as **commitment classes** — a property of the evidence, not the attestation itself.
 
 | Class | Evidence Examples | Sybil Cost | Description |
 |-------|-------------------|------------|-------------|
-| **Self-assertion** | `free_text` | Near zero | Attestor claims something happened. No external verification possible. Unlimited generation at negligible cost. |
-| **Reference** | `nostr_event_ref`, `dvm_job_id` | Low | Attestor references a verifiable Nostr event or job. Fabrication requires creating the referenced event, but this is free on Nostr. |
-| **Computational proof** | `nip90_result_hash` | Medium | Attestor proves they received and can reference a specific work output. Fabrication requires performing or simulating the computation. |
-| **Economic settlement** | `lightning_preimage` | High | Attestor proves a Lightning payment occurred. Fabrication requires spending real sats. Cost is bounded below by the payment amount. |
-| **Staked commitment** | *(reserved)* | Very high | Attestor locks funds that can be slashed for misbehavior. Not yet implemented in any NIP but reserved for future payment channel or DLC-based mechanisms. |
+| **Self-assertion** | `free_text` | Near zero | Attestor claims something happened. No external verification. |
+| **Reference** | `nostr_event_ref`, `dvm_job_id` | Low | References a verifiable event. Fabrication requires creating the event. |
+| **Computational proof** | `nip90_result_hash` | Medium | Proves receipt of specific work output. Fabrication requires performing the computation. |
+| **Economic settlement** | `lightning_preimage` | High | Proves Lightning payment. Cost bounded below by payment amount. |
+| **Staked commitment** | *(reserved)* | Very high | Funds locked with slashing risk. Reserved for future DLC-based mechanisms. |
 
-**Scoring implications:** Clients implementing Tier 1 scoring SHOULD apply commitment-class multipliers to the base `confidence` value. Recommended multipliers:
+**Scoring multipliers:**
 
 | Class | Multiplier | Rationale |
 |-------|------------|-----------|
-| Self-assertion | 1.0× | Baseline. No adjustment. |
-| Reference | 1.0× | References are easy to create; no premium. |
-| Computational proof | 1.1× | Modest premium for demonstrated work evaluation. |
-| Economic settlement | 1.2× | Significant premium for cryptographic payment proof. |
-| Staked commitment | 1.3× | Highest premium for funds-at-risk. (Reserved.) |
+| Self-assertion | 1.0x | Baseline. |
+| Reference | 1.0x | References are easy to create. |
+| Computational proof | 1.1x | Modest premium for demonstrated work evaluation. |
+| Economic settlement | 1.2x | Significant premium for cryptographic payment proof. |
+| Staked commitment | 1.3x | Highest premium for funds-at-risk. (Reserved.) |
 
-Multipliers are applied BEFORE capping at confidence 1.0. Multiple evidence types in the same attestation use the highest applicable class — they do not stack.
+Multipliers are applied BEFORE capping at confidence 1.0. Multiple evidence types use the highest applicable class — they do not stack. The monotonic ordering MUST be preserved.
 
-> **Optional enhancement: Adaptive multipliers.** Under Sybil pressure, fixed commitment multipliers do not adapt — an attacker's low-cost attestations receive the same discount regardless of attack intensity. Implementations MAY use adaptive multipliers that increase the value of high-commitment evidence when the network appears to be under attack:
+**Determining commitment class:** Clients inspect the `evidence` array and assign the class based on the highest-class evidence type present. Unknown evidence types default to Self-assertion.
+
+> **Adaptive multipliers (OPTIONAL).** Under Sybil pressure, implementations MAY use adaptive multipliers:
 >
 > ```
-> multiplier(class, t) = base_multiplier × (1 + α × sybil_pressure(t))
+> multiplier(class, t) = base_multiplier * (1 + alpha * sybil_pressure(t))
 > ```
 >
-> where `sybil_pressure(t)` is an observer-local estimate — for example, the ratio of low-diversity attestations (Tier 2 diversity below a threshold) to high-diversity attestations in the observer's recent window. The sensitivity parameter `α` is configurable (recommended range: 0.1–0.5). This makes higher-commitment evidence MORE valuable precisely when the network is under attack, dynamically widening the gap between cheap and costly signals. The monotonic ordering of commitment classes MUST be preserved at all times.
-
-**Determining commitment class:** Clients inspect the `evidence` array and assign the attestation's commitment class based on the highest-class evidence type present. Unknown evidence types default to the Self-assertion class.
-
-> **Design note:** Commitment classes formalize an insight from cross-protocol analysis: NIP-A5's settlement-anchored attestations (kind `38403` with payment proof) carry fundamentally different trust weight than social-only attestations. Rather than hard-coding this for one protocol, commitment classes provide a general framework that any future economic proof mechanism can plug into.
-
+> where `sybil_pressure(t)` is observer-local (e.g., ratio of low-diversity to high-diversity attestations). Sensitivity `alpha` RECOMMENDED range: 0.1-0.5.
 
 ##### Theoretical Foundation: Costly Signaling
 
-The commitment class hierarchy is not arbitrary — it instantiates the *handicap principle* from biological signaling theory (Zahavi 1975). Honest signals must be costly to produce, and the cost must differ between honest and dishonest signalers (Grafen 1990). This differential cost — the *single-crossing condition* — is what prevents cheap mimicry.
+The commitment class hierarchy instantiates the *handicap principle* from biological signaling theory (Zahavi 1975). Honest signals must be costly to produce, and the cost must differ between honest and dishonest signalers — the *single-crossing condition* (Grafen 1990).
 
-Each commitment class corresponds to a signal cost regime:
+- **Self-assertion/Reference** (cost ~0): "Cheap talk." No separating equilibrium.
+- **Computational proof** (cost = work): Weak separating condition — large-scale Sybil requires proportional compute.
+- **Economic settlement** (cost = sats): Single-crossing holds when legitimate agents transact anyway.
+- **Staked commitment** (cost = locked capital + slashing): Super-linear cost for dishonest signaling.
 
-- **Self-assertion/Reference** (cost ≈ 0): Equivalent to "cheap talk" in signaling games. Any agent can produce unlimited attestations at negligible cost. No separating equilibrium exists — honest and dishonest agents are indistinguishable from evidence alone.
-- **Computational proof** (cost = work): Fabrication requires performing or simulating computation. The cost is bounded below by the computational work, creating a weak separating condition: large-scale Sybil attestation requires proportional compute expenditure.
-- **Economic settlement** (cost = sats): Lightning payment proofs impose monetary cost on fabrication. The single-crossing condition holds if legitimate agents transact anyway (the attestation is a byproduct of real economic activity) while attackers must spend specifically to create false evidence.
-- **Staked commitment** (cost = locked capital + slashing risk): The strongest separating condition. Attackers face not just expenditure but potential loss exceeding their stake, creating super-linear cost for dishonest signaling.
-
-The recommended multipliers (1.0×–1.3×) are deliberately conservative — they encode ordinal ranking (higher cost → higher weight) rather than attempting to derive exact values from equilibrium conditions. Implementers with domain-specific cost data MAY adjust multipliers, provided the monotonic ordering is preserved: self-assertion ≤ reference ≤ computational proof ≤ economic settlement ≤ staked commitment.
-
-> **Research note:** The formal connection between Grafen's (1990) signaling equilibrium model and digital commitment mechanisms is developed in Donath (2007, "Signals in Social Supernets"). The composition property — that multi-class evidence provides multiplicative rather than additive Sybil resistance — follows from the independence of cost channels. This area remains underexplored; protocol designers are encouraged to derive commitment weights from empirical cost data rather than theoretical equilibrium alone.
+The multipliers (1.0x-1.3x) encode ordinal ranking, not exact equilibrium values. Implementers with domain-specific cost data MAY adjust, provided monotonic ordering is preserved.
 
 #### Rating Semantics
 
@@ -163,13 +196,11 @@ The recommended multipliers (1.0×–1.3×) are deliberately conservative — th
 | `4` | Reliable, generally trustworthy | Positive |
 | `5` | Highly trustworthy, consistent track record | Positive |
 
-Negative attestations (ratings 1-2) serve the role of rejection signals. A separate negative attestation mechanism is unnecessary -- the rating scale encodes valence directly. This simplifies the protocol while preserving the rejection capability required for convergent inference (see [Convergence Properties](#convergence-properties)).
-
 #### Context Domains (Open Namespace)
 
 The `context` field uses a dot-separated namespace convention. No fixed enumeration — domains emerge from usage.
 
-**Core domains** (RECOMMENDED as starting vocabulary):
+**Core domains** (RECOMMENDED):
 
 | Context | Description |
 |---------|-------------|
@@ -177,7 +208,7 @@ The `context` field uses a dot-separated namespace convention. No fixed enumerat
 | `accuracy` | Is the agent's output correct and truthful? |
 | `responsiveness` | Does the agent respond in a timely manner? |
 
-**Extended domains** use hierarchical dot-notation (convention, not enforced):
+**Extended domains** (hierarchical dot-notation):
 
 | Context | Description |
 |---------|-------------|
@@ -186,49 +217,27 @@ The `context` field uses a dot-separated namespace convention. No fixed enumerat
 | `task/payment-routing` | Payment routing reliability |
 | `task/data-extraction` | Data extraction completeness |
 
-Clients SHOULD normalize context strings to lowercase. New domains MAY be introduced by any attestor without protocol changes.
+Clients SHOULD normalize context strings to lowercase. New domains MAY be introduced by any attestor.
 
 #### Task-Type Tags
 
-Attestations MAY include a `task-type` tag that categorizes the specific work performed:
+Attestations MAY include a `task-type` tag:
 
 ```jsonc
 ["task-type", "task/code-review", "requester-confirmed"]
 ```
 
-The third element indicates confirmation status:
-
 | Status | Meaning |
 |--------|---------|
-| `attestor-proposed` | Attestor suggested this categorization. Provisional. |
-| `requester-confirmed` | Requester validated the categorization. Canonical. |
+| `attestor-proposed` | Provisional categorization. |
+| `requester-confirmed` | Requester validated. Canonical. |
 
-**Mechanism:** The attestor proposes a task type when publishing the attestation. If the requester (the entity who requested the work) publishes their own attestation for the same interaction, they either confirm or override the type.
-
-**Scoring implications:** Unconfirmed (`attestor-proposed`) task-type tags SHOULD decay at 2x the normal rate for their domain class. This makes provisional claims expire faster, incentivizing confirmation.
-
-**Convention emergence:** Once a task-type accumulates sufficient requester confirmations across the network, it becomes a de facto standard. No registry or governance is needed — categories that describe real work persist; categories that don't, decay away.
-
-Tags
-----
-
-| Tag | Required | Description |
-|-----|----------|-------------|
-| `d` | MUST | Parameterized replaceable event identifier. Format: `<subject-pubkey>:<context>` |
-| `p` | MUST | Subject's pubkey. Enables querying all attestations for a given agent via `{"#p": [...]}` filters. |
-| `t` | MUST | Context category. Enables querying attestations by domain via `{"#t": [...]}` filters. |
-| `expiration` | MUST | Unix timestamp after which this attestation SHOULD be considered expired. Relays MAY discard expired events per [NIP-40](40.md). |
-| `v` | SHOULD | Schema version. Clients use this to determine which evidence types and scoring rules apply. Current version: `2`. Events with `v=1` remain valid and are processed with backward-compatible defaults. |
-| `consistency_window` | RECOMMENDED | Unix timestamps defining the observation period for this attestation. Format: `["consistency_window", "<start-unix>", "<end-unix>"]`. Allows scoring algorithms to distinguish a 2-week snapshot from a 3-month track record. When present, clients SHOULD weight attestations with longer observation windows higher (all else equal). |
-| `task-type` | MAY | Task category with confirmation status. Format: `["task-type", "<type>", "<status>"]` where status is `attestor-proposed` or `requester-confirmed`. See Task-Type Tags above. |
-
-> **Note:** The `expiration` tag is REQUIRED, not optional. This is a deliberate design choice addressing the temporal decay gap identified in attack scenario analysis. Attestations without expiration tags MUST be rejected by compliant clients.
+Unconfirmed (`attestor-proposed`) task-type tags SHOULD decay at 2x the normal rate.
 
 #### Example Event
 
 ```jsonc
 {
-  // other fields...
   "kind": 30085,
   "pubkey": "a1b2c3...attestor",
   "created_at": 1711152000,
@@ -238,16 +247,21 @@ Tags
     ["t", "reliability"],
     ["expiration", "1718928000"],
     ["v", "2"],
-    ["consistency_window", "1703376000", "1711152000"]
+    ["consistency_window", "1703376000", "1711152000"],
+    ["L", "nip-xx.layer"],
+    ["l", "quality", "nip-xx.layer"],
+    ["l", "economic", "nip-xx.layer"],
+    ["funding_utxo", "abc123:0"],
+    ["seq", "1"],
+    ["threshold_sats", "20200000"]
   ],
-  "content": "{\"subject\":\"d4e5f6...subject\",\"rating\":4,\"context\":\"reliability\",\"confidence\":0.85,\"evidence\":\"Completed 12 task delegations without failure over 30 days\"}"
+  "content": "{\"subject\":\"d4e5f6...subject\",\"rating\":4,\"context\":\"reliability\",\"confidence\":0.85,\"evidence\":\"[{\\\"type\\\":\\\"lightning_preimage\\\",\\\"data\\\":\\\"deadbeef...\\\"},{\\\"type\\\":\\\"free_text\\\",\\\"data\\\":\\\"Completed 12 task delegations\\\"}]\"}"
 }
 ```
 
-Validation Rules
-----------------
+#### Validation Rules
 
-Clients MUST validate attestation events according to the following rules:
+Clients MUST validate attestation events:
 
 1. Event kind MUST be `30085`.
 2. The `content` field MUST parse as valid JSON containing all required fields.
@@ -259,292 +273,497 @@ Clients MUST validate attestation events according to the following rules:
 8. An `expiration` tag MUST be present. Events without it MUST be discarded.
 9. Self-attestations (`pubkey` == `subject`) MUST be discarded.
 10. Expired events (current time > expiration timestamp) SHOULD be discarded or weighted at zero.
-11. If a `v` tag is present, clients SHOULD validate that the version is recognized. Unknown versions SHOULD be processed on a best-effort basis (forward compatibility).
-12. If a `consistency_window` tag is present, the start timestamp MUST be less than the end timestamp, and the end timestamp MUST NOT be in the future.
+11. If a `v` tag is present, clients SHOULD validate the version. Unknown versions SHOULD be processed on a best-effort basis.
+12. If a `consistency_window` tag is present, start MUST be less than end, and end MUST NOT be in the future.
 
-Scoring Algorithms
-------------------
+Trust Layers
+------------
 
-Clients compute reputation scores locally. Two tiers are defined. Clients MUST implement Tier 1. Clients MAY implement Tier 2.
+Commitment classes describe evidence *strength*. Trust layer tags describe evidence *kind* — whether an attestation carries verifiable proof of output quality, economic exchange, or both. By encoding layers in NIP-32 labels, clients and relays can filter attestations by trust layer without parsing `content`.
 
-#### Temporal Decay
+#### Layer Definitions
 
-All scoring uses a temporal decay function applied to each attestation based on its age. The recommended half-life is 90 days (7,776,000 seconds).
+| Layer | Label | What it proves | Schelling property |
+|-------|-------|----------------|-------------------|
+| L1 (Quality) | `quality` | Attestor received and evaluated actual work output. Evidence: `nip90_result_hash`, `nostr_event_ref`. | Converges via market selection. Subjective but competitive. |
+| L2 (Economic) | `economic` | Money changed hands. Evidence: `lightning_preimage` with amount, or equivalent. | **Schelling point** — objective, self-validating. A preimage either exists or it doesn't. |
 
-```
-decay(t) = 2^(-(now - created_at) / half_life)
-```
+#### Tag Format
 
-An attestation created 90 days ago has weight 0.5. At 180 days, weight 0.25. Clients SHOULD use a half-life between 30 and 180 days. The default SHOULD be 90 days.
-
-#### Domain-Dependent Decay
-
-Different attestation domains degrade at different rates. Skill-based competence drifts slowly; operational reliability changes fast. A single decay constant compresses two orthogonal degradation processes.
-
-Three decay classes are defined:
-
-| Class | Half-life | Example domains | Rationale |
-|-------|-----------|-----------------|-----------|
-| `slow` | 180 days | `task/code-review`, `task/translation`, skill-based domains | Competence drifts gradually |
-| `standard` | 90 days | `reliability`, `accuracy`, general domains | Default for unclassified contexts |
-| `fast` | 30 days | `task/payment-routing`, `responsiveness`, operational domains | Performance depends on current network/system state |
-
-Clients MUST maintain a namespace-to-class mapping. When a namespace is not in the mapping, the `standard` class (90-day half-life) MUST be used as fallback. The mapping is observer-configurable — different clients MAY classify the same namespace differently.
-
-The decay function becomes:
-
-```
-half_life = half_life_for(context)  // 180d, 90d, or 30d
-decay(t) = 2^(-(now - created_at) / half_life)
+```jsonc
+{
+  "tags": [
+    ["L", "nip-xx.layer"],
+    ["l", "quality", "nip-xx.layer"],
+    ["l", "economic", "nip-xx.layer"]
+  ]
+}
 ```
 
-This is backward-compatible: clients that ignore decay classes use the 90-day default, which was the previous single value.
+- `["L", "nip-xx.layer"]` declares the label namespace.
+- Each `["l", "<layer>", "nip-xx.layer"]` asserts evidence for that layer.
+- An attestation MAY carry one layer, both, or neither (legacy attestations).
 
-##### Principled Half-Life Derivation
+#### Binding Rationale
 
-The half-life values (30/90/180 days) can be derived from first principles rather than chosen ad hoc. The appropriate half-life for a domain approximates the geometric mean of two timescales: (1) the **characteristic interaction timescale** — how often agents in this domain typically interact — and (2) the **strategy-switch detection timescale** — how quickly defection from cooperation can be observed by peers. A multiplier accounts for the number of interactions needed for statistical confidence in detecting a strategy change.
+L1 and L2 SHOULD be bound in the same event when both are present. Splitting quality and economic proof into separate events enables a decoupling attack: an attacker publishes fabricated L1 attestations without economic grounding. When both layers coexist in a single signed event, the attestor commits to the joint claim — "I paid AND I evaluated" — which is harder to fabricate than either alone.
 
-| Domain class | Interaction timescale | Detection timescale | Geometric mean | Confidence multiplier | Derived half-life |
-|-------------|----------------------|--------------------|-----------------|-----------------------|-------------------|
-| `fast` (payment routing) | ~1 day | ~7 days | √(1×7) ≈ 2.6 days | ×10 | ≈ 26 days ≈ **30 days** |
-| `standard` (general reliability) | ~7 days | ~30 days | √(7×30) ≈ 14.5 days | ×6 | ≈ 87 days ≈ **90 days** |
-| `slow` (skill-based competence) | ~14 days | ~90 days | √(14×90) ≈ 35.5 days | ×5 | ≈ 178 days ≈ **180 days** |
+> **Design principle:** The protocol seeks consensus on what is *expensive*, not what is *good*. L2 economic proof is the foundation because expense is objective and universally verifiable. L1 quality assessment rides on top — valuable but inherently subjective.
 
-The confidence multiplier decreases for slower domains because agents in those domains have longer track records per interaction, requiring fewer observations for statistical significance. This derivation grounds the half-life choices in observable network properties rather than arbitrary selection.
+#### Relay-Level Filtering
 
-#### Tier 1: Weighted Average
+Because trust layers are in tags, relays can serve layer-specific queries:
+
+```jsonc
+{"kinds": [30085], "#L": ["nip-xx.layer"], "#l": ["economic"]}
+```
+
+#### Interaction with Commitment Classes
+
+- **Commitment classes** assign cost-based multipliers to confidence scores.
+- **Trust layer tags** make evidence types machine-readable at the protocol level.
+
+Clients SHOULD verify consistency: if an L2 tag is present, the evidence array SHOULD contain `lightning_preimage` or equivalent.
+
+Scoring Algorithm
+-----------------
+
+Clients compute reputation scores locally. Two tiers are defined, unified by an optional alpha function. Clients MUST implement Tier 1. Clients SHOULD implement Tier 2. Clients MAY implement the alpha function.
+
+### Tier 1: Weighted Average
 
 For a subject `S` in context `C`, collect all valid, non-expired attestation events matching `{"#p": [S], "#t": [C], "kinds": [30085]}`. Compute:
 
 ```
-score_T1 = sum(rating_i * confidence_i * decay_i) / sum(confidence_i * decay_i)
+score_T1 = sum(rating_i * weight_i) / sum(weight_i)
 ```
 
-Result is a value in `[1.0, 5.0]`. If no valid attestations exist, the score is undefined (not zero). Clients MAY aggregate across a domain prefix (e.g., all `payment.*` namespaces) for summary display, but per-namespace scores are the canonical unit.
-
-**Asymmetric negative weighting:** Negative attestations (rating <= 2) carry a 2x weight multiplier. This reflects the higher cost of producing negative signals (burning a relationship with the subject) and ensures that a small number of credible negative attestations can meaningfully counteract a larger volume of positive ones. The multiplier is capped at 2x to prevent reputation weaponization — a single negative attestation cannot dominate arbitrarily many positive ones.
-
-#### Tier 1.5: Attestor Quality via Peer Prediction (Optional)
-
-Tier 1.5 replaces self-reported `confidence` with computed attestor reliability using peer prediction — specifically the Determinant Mutual Information (DMI) mechanism. Self-reported confidence is exploitable (rational attestors always report 1.0). DMI provides dominant-strategy incentive-compatible scoring: truthful reporting maximizes expected payoff without requiring ground truth.
-
-**Prerequisites:**
-
-Tier 1.5 activates when sufficient data density exists. For each attestor pair `(A, B)` in context `C`, DMI requires at least `2c` shared subjects (subjects both `A` and `B` have attested in context `C`), where `c` is the number of rating categories. For a 5-point scale, this means ≥10 shared subjects per pair.
-
-**Algorithm:**
-
-1. For attestor pair `(A, B)` in context `C`, collect all subjects `S` that both `A` and `B` have attested.
-2. If `|S| < 2c` (where `c = 5`), skip this pair — insufficient data for DMI. Fall back to raw `confidence` values.
-3. Build the `c × c` joint distribution matrix `M`, where `M[i][j]` = fraction of shared subjects where `A` rated `i` and `B` rated `j`.
-4. Compute `det(M)`. The determinant factorizes through the strategy matrix:
+where:
 
 ```
-det(M) = det(Strategy_A) × det(Strategy_B) × det(TrueDistribution)
+weight_i = confidence_i * decay_i * neg_multiplier(rating_i) * commitment_multiplier_i * burst_decay(attestor_i)
 ```
 
-If either attestor uses an uninformative strategy (constant ratings, random ratings, or any rank-deficient strategy), their strategy matrix has `det = 0`, making `det(M) = 0`. Only informative, truthful strategies produce positive determinant.
+Result is a value in `[1.0, 5.0]`. If no valid attestations exist, the score is undefined (not zero).
 
-5. Compute DMI score for attestor `A`:
+**Asymmetric negative weighting:** Negative attestations (rating <= 2) carry a 2x weight multiplier (`neg_multiplier`). This reflects the higher cost of producing negative signals and ensures credible negatives counteract larger volumes of positives. Capped at 2x to prevent weaponization.
 
-```
-dmi_score(A, C) = mean(det(M_AB) for all eligible pairs (A, B) in context C)
-```
-
-6. Normalize DMI scores across all attestors in context `C` to `[0.0, 1.0]`:
+#### Temporal Decay
 
 ```
-reliability(A, C) = dmi_score(A, C) / max(dmi_score(*, C))
+decay(t) = 2^(-(now - created_at) / half_life)
 ```
 
-If `max = 0` (no eligible pairs), all attestors fall back to raw `confidence`.
+An attestation created 90 days ago has weight 0.5. Default half-life: 90 days.
 
-7. In the Tier 1 formula, replace `confidence_i` with `reliability(attestor_i, C)` when Tier 1.5 is active:
+#### Domain-Dependent Decay
 
-```
-weight_i = reliability_i * decay_i * neg_multiplier(rating_i) * burst_decay(attestor_i)
-```
+| Class | Half-life | Example domains | Rationale |
+|-------|-----------|-----------------|-----------|
+| `slow` | 180 days | `task/code-review`, `task/translation` | Competence drifts gradually |
+| `standard` | 90 days | `reliability`, `accuracy` | Default for unclassified contexts |
+| `fast` | 30 days | `task/payment-routing`, `responsiveness` | Performance depends on current state |
 
-**Graceful degradation:** In sparse networks (few shared subjects), Tier 1.5 is inactive and Tier 1 uses raw confidence. As network density grows and attestor pairs accumulate shared subjects, DMI activates automatically. This progression requires no configuration:
+Clients MUST maintain a namespace-to-class mapping. When a namespace is not mapped, `standard` (90-day) MUST be used as fallback.
 
-| Network state | Scoring |
-|---------------|---------|
-| Sparse (< 10 shared subjects per pair) | Tier 1 with raw confidence |
-| Moderate (≥ 10 shared subjects for some pairs) | Tier 1.5 for eligible pairs, raw confidence for others |
-| Dense (≥ 10 shared subjects for most pairs) | Full Tier 1.5 replaces confidence |
+##### Principled Half-Life Derivation
 
-> **Rationale:** The namespace system provides the multi-task structure DMI requires. Attestors rating different subjects within `payment.reliability` naturally accumulate the shared observations needed for DMI computation. The mechanism rewards attestors who provide genuinely informative ratings and penalizes those who rubber-stamp or randomize — without any authority deciding who is trustworthy.
+The half-life values approximate the geometric mean of (1) the characteristic interaction timescale and (2) the strategy-switch detection timescale, multiplied by a confidence factor:
 
-> **Agent advantage:** Software attestors can be programmed to follow the dominant strategy that DMI assumes. The comprehension barrier — the primary practical failure mode in human peer prediction deployments — is structurally absent in agent-to-agent systems. This means DMI, which has zero production deployments with human participants, may be viable specifically in agent reputation contexts.
+| Domain class | Interaction | Detection | Geometric mean | Multiplier | Derived |
+|-------------|-------------|-----------|----------------|------------|---------|
+| `fast` | ~1 day | ~7 days | ~2.6 days | x10 | ~30 days |
+| `standard` | ~7 days | ~30 days | ~14.5 days | x6 | ~90 days |
+| `slow` | ~14 days | ~90 days | ~35.5 days | x5 | ~180 days |
 
-> **Open research question:** DMI is dominant-strategy incentive compatible (DSIC) in static mechanism design — honest reporting is optimal regardless of others' strategies. Whether this property persists under evolutionary dynamics (where attestor strategies evolve by fitness) is an open question. Specifically: is honest reporting an Evolutionarily Stable Strategy (ESS) under the DMI mechanism? If so, this would provide the strongest known robustness guarantee for peer prediction in reputation systems. The Allen et al. (2017) structure coefficient framework may provide the tools for this proof.
+#### Commitment Class Multipliers
 
-#### Tier 2: Graph Diversity Metric
-
-Tier 2 measures structural independence among attestors. It penalizes concentrated attestation sources and rewards diverse, independent signals.
-
-**Algorithm:**
-
-1. Collect all attestors of subject `S` in context `C`.
-2. Build the attestor interaction graph: two attestors share an edge if they have mutually attested each other (on any subject) or share a common attestation target (other than `S`).
-3. Compute connected components among attestors. Let `cluster_count` = number of connected components. Let `total_attestors` = number of attestors.
-4. Compute the diversity ratio:
-
-```
-diversity = cluster_count / total_attestors
-```
-
-5. Compute the Tier 2 score:
-
-```
-score_T2 = diversity * score_T1
-```
-
-When `diversity = 1.0` (every attestor is in its own component, maximally independent), Tier 2 equals Tier 1. When `diversity -> 0` (all attestors in one cluster), Tier 2 approaches zero regardless of ratings.
-
-> **Interpretation:** A sockpuppet flood with 100 fake attestors in a single connected component produces `diversity = 1/100 = 0.01`. Even with all ratings at 5 and confidence at 1.0, the Tier 2 score is `0.01 * 5.0 = 0.05`. The star topology is structurally penalized.
-
-##### Degree-Weighted Diversity (Recommended Enhancement)
-
-The basic diversity metric treats all attestors equally, but hub compromise is disproportionately dangerous — a compromised node with degree `k_hub` affects `k_hub` connections, making its capture probability scale as `ρ_hub ~ r^k_hub / N`. To account for this, Standard-level implementations SHOULD use degree-weighted diversity:
-
-```
-For each connected component C_j in the attestor interaction graph:
-  degree_weight(C_j) = sum of degrees of all nodes in C_j
-
-weighted_diversity = (sum over all components j of 1/degree_weight(C_j)) / total_attestors
-```
-
-This ensures that a single large cluster of highly-connected nodes (hubs) produces a LOWER diversity score than the same number of nodes spread across disconnected components. A cluster containing high-degree hubs has a large `degree_weight`, contributing less to the numerator.
-
-**Example:** Four attestors with degrees [5, 5, 1, 1]. Components: `{A(5), B(5)}`, `{C(1)}`, `{D(1)}`.
-
-```
-Basic diversity:    3 / 4 = 0.75
-Weighted diversity: (1/10 + 1/1 + 1/1) / 4 = 2.1 / 4 = 0.525
-```
-
-The weighted version correctly penalizes the hub-containing cluster. Implementations MAY use the basic `cluster_count / total_attestors` formula (Minimal level) or the degree-weighted formula (Standard level and above).
+Applied per attestation based on highest evidence class present (see Commitment Classes above).
 
 #### Temporal Burst Rate-Limiting
 
-To penalize attestors who publish many attestations in a short window (carpet-bombing), observers SHOULD apply a confidence decay factor per attestor based on their recent attestation velocity.
-
-**Parameters (configurable by observer):**
+To penalize carpet-bombing, observers SHOULD apply burst decay per attestor:
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
 | `window` | 86400 (24h) | Sliding window in seconds. |
-| `threshold` | 5 | Maximum attestations in the window before decay applies. |
+| `threshold` | 5 | Maximum attestations before decay applies. |
 
-**Algorithm:**
-
-For each attestor `A`, count the number of kind `30085` events published by `A` within the sliding window ending at `now`. Let `count` = number of events in the window. If `count > threshold`:
+If `count > threshold`:
 
 ```
 burst_decay(A) = 1 / sqrt(count)
 ```
 
-If `count <= threshold`, `burst_decay(A) = 1.0` (no penalty).
+If `count <= threshold`, `burst_decay(A) = 1.0`.
 
-The `burst_decay` factor is applied multiplicatively to each attestation's weight in the Tier 1 and Tier 2 scoring formulas:
+### Tier 1.5: Attestor Quality via Peer Prediction (Optional)
+
+Tier 1.5 replaces self-reported `confidence` with computed attestor reliability using the Determinant Mutual Information (DMI) mechanism. Self-reported confidence is exploitable (rational attestors always report 1.0). DMI provides dominant-strategy incentive-compatible scoring.
+
+**Prerequisites:** For each attestor pair `(A, B)` in context `C`, DMI requires at least `2c` shared subjects (c = 5 rating categories, so >= 10 shared subjects per pair).
+
+**Algorithm:**
+
+1. For pair `(A, B)` in context `C`, collect shared subjects `S`.
+2. If `|S| < 10`, skip — fall back to raw `confidence`.
+3. Build the 5x5 joint distribution matrix `M[i][j]` = fraction of shared subjects where A rated i and B rated j.
+4. Compute `det(M)`. Uninformative strategies produce `det = 0`.
+5. `dmi_score(A, C) = mean(det(M_AB) for all eligible pairs)`.
+6. Normalize: `reliability(A, C) = dmi_score(A, C) / max(dmi_score(*, C))`.
+7. Replace `confidence_i` with `reliability(attestor_i, C)` in Tier 1.
+
+**Graceful degradation:** Sparse networks use raw confidence. DMI activates as density grows.
+
+### Tier 2: Graph Diversity
+
+Tier 2 measures structural independence among attestors.
+
+1. Collect all attestors of subject `S` in context `C`.
+2. Build the attestor interaction graph: edge if mutual attestation or shared target (other than `S`).
+3. Compute connected components. `diversity = cluster_count / total_attestors`.
+4. `score_T2 = diversity * score_T1`.
+
+When `diversity = 1.0`, Tier 2 equals Tier 1. A sockpuppet flood of 100 in one component: `diversity = 0.01`, `score_T2 = 0.01 * 5.0 = 0.05`.
+
+##### Degree-Weighted Diversity (DEPRECATED)
+
+Previous versions of this specification recommended degree-weighted diversity. This mechanism is superseded by the HHI concentration discount (below), which addresses hub concentration risk without double-counting. Implementations SHOULD use basic diversity (cluster_count / total_attestors) for Tier 2, with HHI applied separately via the alpha function.
+
+### Alpha Function: Unified Scoring (RECOMMENDED)
+
+The alpha function smoothly transitions between economic-proof-dominant (cold start) and diversity-dominant (mature) scoring.
+
+**Definition:**
 
 ```
-weight_i = confidence_i * decay_i * neg_multiplier(rating_i) * burst_decay(attestor_i)
+alpha_0(c, d) = c * d^(1-c)
 ```
 
-> **Rationale:** An attestor publishing 25 attestations in 24 hours has their weight reduced to `1/sqrt(25) = 0.2`. This penalizes carpet-bombing without blocking legitimate high-volume attestors who space their work across multiple windows. Observers compute this locally — no protocol-level enforcement is needed.
+Where:
+- `c` = **network confidence** (weighted min-cut, range [0, 1])
+- `d` = **individual diversity** (basic or degree-weighted, range [0, 1])
 
-Observer Independence
----------------------
+Economic weight is incorporated through commitment class weighting in Tier 1, not directly in alpha.
 
-There is no global reputation score. Each client computes scores from the attestation events available on its own relay set. Two observers querying different relays MAY compute different scores for the same subject. This is by design, not a bug.
+Key properties:
+- `c = 0` -> `alpha_0 = 0` (no confidence = no score)
+- `c = 1, d = 1` -> `alpha_0 = 1` (full confidence + full diversity)
+- Monotonically increasing in `c`
+- Smooth — no sharp thresholds, no closed-form attacker solution
 
-Clients SHOULD query at least 3 independent relays when computing reputation scores. Clients SHOULD document which relay set was used when presenting a score to users.
+> **Design rationale:** Sharp thresholds create game-theoretic ledges. The smooth form means marginal returns are uncertain, which is the defense.
 
-> **Warning:** An observer using a single relay controlled by an adversary will compute scores from a manipulated attestation set. Relay diversity is the primary defense against eclipse attacks. See [Security Considerations](#security-considerations).
+> **Relationship to tiers:** The alpha function subsumes Tier 1 and Tier 2. Minimal implementations MAY continue using `score_T2 = diversity * score_T1`. Standard and Full implementations SHOULD use alpha.
 
-Convergence Properties
-----------------------
+**Network confidence (c):**
 
-The attestation protocol is designed to satisfy the conditions for convergent decentralized inference, as described by the Collective Predictive Coding framework. Attestation is a naming game: an attestor "names" an agent as trustworthy (or not). Convergence to accurate shared beliefs requires:
+```
+c = min(1, log(min_cut_sats + 1) / log(threshold_sats))
+```
 
-1. **Bilateral observation.** Attestors SHOULD have direct experience with the subject. Transitive trust (attesting based on others' attestations without independent experience) weakens inference. Clients MAY weight direct-experience attestations higher.
-2. **Rejection capability.** Negative ratings (1-2) provide the rejection channel. Without them, the naming game is biased toward acceptance and cannot converge. This is why the rating scale includes negative values rather than using a separate mechanism.
-3. **Temporal coherence.** The mandatory `expiration` tag and decay function ensure the posterior is continuously updated. Stale observations are automatically discounted.
+Where:
+- `min_cut_sats` = minimum weight of edges (in sats) to disconnect subject from observer's trust anchors
+- `threshold_sats` = economic saturation threshold (see below)
 
-When these three conditions hold, the acceptance probability for attestations follows the Metropolis-Hastings criterion: the community's collective attestation behavior converges toward accurate shared beliefs about agent trustworthiness, as if all observers were performing coordinated Bayesian inference — without any central coordinator.
+**Why weighted min-cut:** Standard min-cut counts paths; an attacker splits capital cheaply. Weighted min-cut counts sats — total economic commitment is preserved regardless of distribution.
+
+
+##### Trust Anchors
+
+The observer's **trust anchors** are the set of pubkeys the observer has designated as trusted starting points for graph traversal. By default, trust anchors are the observer's NIP-02 (kind 3) contact list.
+
+- If the observer has no kind 3 list, `c` is undefined and alpha cannot be computed.
+- Implementations MAY allow manual trust anchor configuration.
+- Trust anchors are observer-local — different observers have different anchors, producing different `c` values for the same subject.
+
+##### threshold_sats Adaptation
+
+```
+threshold_sats = max(FLOOR, median_channel_capacity * K)
+```
+
+Where:
+- **FLOOR** = 100,000 sats (protocol constant)
+- **K** = 10 (fixed multiplier)
+- **median_channel_capacity** from Lightning gossip
+
+Provides price adaptation, no governance dependency, poisoning resistance (FLOOR prevents downward manipulation), and observer locality.
+
+##### UTXO Fan-Out Mitigation
+
+When a single UTXO backs multiple attestations:
+
+```
+c_effective = c_raw / seq_max
+```
+
+Where `seq_max` = highest `seq` value for that UTXO. An attestor backing 10 attestations with one UTXO: `c_effective = c_raw / 10`.
+
+##### Hub Concentration Discount (RECOMMENDED)
+
+The Herfindahl-Hirschman Index (HHI) supplements path diversity by detecting upstream hub concentration:
+
+```
+HHI = sum(w_i^2)    for i = 1..n attestors on scoring paths
+alpha_adjusted = alpha * (1 - HHI + 1/n)
+```
+
+Boundary conditions:
+- `HHI = 1/n` (uniform): no adjustment
+- `HHI -> 1` (single hub): maximum penalty
+- `n = 1`: no adjustment (no diversity illusion to correct)
+
+##### Attestation Temporal Decay
+
+Alpha is an **attestation-event snapshot** — computed once at creation, NOT recomputed live.
+
+```
+alpha_T = alpha_0 * exp(-lambda * T)
+```
+
+**Decay rate:**
+
+```
+lambda = base_rate * (1 + log(1 + R_e / R_0))
+```
+
+Where:
+- `base_rate` = 0.0019/day (~1-year half-life)
+- `R_e` = `distinct active days with L402 receipts in the measurement window / window_size`
+- `R_0` = EMA_30(`R_e`) at protocol launch
+
+##### Consolidation Response
+
+When Lightning network topology consolidates (fewer, larger channels), implementations MAY adjust decay and threshold parameters. See Appendix A for a RECOMMENDED consolidation response formula.
+
+The normative decay rate remains:
+
+```
+lambda = base_rate * (1 + log(1 + R_e/R_0))
+```
+
+> **Safety invariant:** `threshold_eff` MUST never fall below `FLOOR`. The `max(FLOOR, ...)` clamp prevents division-by-zero in the `c` formula when extreme consolidation drives `exp(-delta * EMA_k(dT/dt))` toward zero.
+
+
+##### Protocol Constants
+
+| Constant | Value | Description |
+|----------|-------|-------------|
+| `base_rate` | 0.0019/day | Base decay rate (~1-year half-life) |
+| `gamma_lambda` | 0.1 day^-1 | Base decay rate multiplier |
+| `delta` | r * gamma_lambda = 0.115 | Threshold adaptation rate |
+| `r` | 1.15 | Compensation ratio (delta/gamma_lambda) |
+| `R_0` | 5 | Baseline active days for relationship |
+| `c_bootstrap` | 0.05 | Maximum c for flow-only (Tier 3) attestations |
+| `h` | 0.85 | Hop discount factor for path aggregation |
+| `K` | 10 | Protocol-fixed cross-observer normalization constant |
+| `FLOOR` | 100,000 sats | Minimum threshold_sats |
+| `hop_limit` | 5 | Maximum path length in attestation graph |
+
+##### Attestation Graph Distance
+
+Attestations from nearby entities carry more weight:
+
+```
+distance_discount = exp(-0.3 * hops)
+```
+
+Where `hops` = shortest path on attestation graph. At 1 hop: ~0.74. At 3 hops: ~0.41.
+
+> **EMA Initialization:** See Appendix A for EMA_k initialization and smoothing parameters. Early scores are dampened.
+
+**Protocol output:**
+
+Implementations SHOULD expose structured output:
+
+```jsonc
+{
+  "alpha_0": 0.73,
+  "c": 0.85,
+  "d": 0.68,
+  "regime": "mature"
+}
+```
+
+**Regime enum:**
+
+| Regime | Condition | Interpretation |
+|--------|-----------|----------------|
+| `bootstrap` | low c, low d | Graph immature. `alpha_0 ~ 0`. |
+| `mature` | high c, high d | Graph differentiated. `alpha_0 ~ d`. |
+| `concentrated` | high c, low d | Few independent attestors. Low trust warranted. |
+| `suspicious` | low c, high d | Sybil-with-capital pattern. Diversity easy to fake in undifferentiated neighborhoods. |
+
+Recommended defaults: c < 0.3 = "low c", c >= 0.3 = "high c"; d < 0.4 = "low d", d >= 0.4 = "high d".
+
+Kind 30086: Fraud Proofs
+------------------------
+
+Kind `30086` is a parameterized replaceable event for publishing fraud proofs against attestors who violate protocol rules.
+
+#### Event Structure
+
+```jsonc
+{
+  "kind": 30086,
+  "pubkey": "<fraud-reporter-pubkey>",
+  "tags": [
+    ["d", "<H(reporter_pubkey || txid:vout || seq || evidence_hash)>"],
+    ["p", "<accused-attestor-pubkey>"],
+    ["e", "<evidence-event-id-1>"],
+    ["e", "<evidence-event-id-2>"],
+    ["fraud_type", "seq_reuse|seq_gap|utxo_mismatch"]
+  ],
+  "content": "<human-readable explanation of the fraud>"
+}
+```
+
+
+
+The `d` tag ensures each fraud proof is uniquely identified by the specific equivocation it reports. Multiple fraud proofs from the same reporter about different violations coexist because their `d` tags differ. Corrections to a fraud proof (e.g., additional evidence) replace the previous version for the same `d` tag.
+#### Fraud Types
+
+- **`seq_reuse`**: Two attestations from the same attestor reference the same `funding_utxo` with the same `seq` value but different subjects or contexts.
+- **`seq_gap`**: Published `seq` values for a UTXO skip numbers (e.g., 1, 2, 5), suggesting hidden attestations.
+- **`utxo_mismatch`**: The referenced UTXO does not correspond to a channel involving the attestor's linked Lightning node.
+
+#### Penalty Scope
+
+Fraud proofs trigger penalties scoped to the specific UTXO. When validated:
+
+- All attestations from the accused attestor referencing that UTXO have `c_effective` zeroed.
+- Attestations referencing OTHER UTXOs are NOT affected.
+- Per-UTXO scoping prevents griefing where a single fraud proof destroys an attestor's entire reputation.
+
+Clients SHOULD validate fraud proofs by fetching referenced evidence events and checking the claimed violation.
 
 Security Considerations
 -----------------------
 
-Six attack scenarios have been analyzed in detail. Summary of defenses:
+### 8.1 Scope of Claims
 
-#### 1. Sockpuppet Flood
+Alpha is a cost function, not an oracle. It measures the economic and structural cost of fabricating an attestation set, not whether the claims are true. A high alpha score means "this would be expensive to fake," not "this is true."
+
+### 8.2 Sybil Resistance
+
+#### Sockpuppet Flood
 
 *Attack:* N fake identities attest to a malicious agent.
 
-*Tier 1:* Fooled (counts are inflated).
+*Tier 1:* Fooled (counts inflated). *Tier 2:* Catches (star topology, near-zero diversity).
 
-*Tier 2:* Catches (star topology produces near-zero diversity score).
+*Mitigation:* Tier 2 is the primary defense. Clients MAY require proof-of-work or Lightning micropayment per attestation.
 
-*Mitigation:* Tier 2 is the primary defense. Clients MAY additionally require proof-of-work or Lightning micropayment per attestation event.
+*Structural defense:* HHI concentration discount catches false diversity when edge-disjoint paths share upstream hubs.
 
-#### 2. Cluster Collusion
+#### Collusion Rings (2a/2b/2c)
 
-*Attack:* K real agents in a tight cluster falsely vouch for a malicious agent.
+**2a. Structural defense:** Tier 2 diversity scoring penalizes star topology. HHI catches false diversity.
 
-*Tier 1:* Fooled.
+**2b. Collusion rings:** K real agents form a clique, mutually attesting a target. Implementations SHOULD scan for complete subgraphs (K_4+ cliques). Cost model: K participants create K*(K-1) edges — quadratic attestation volume from linear capital cost. This asymmetry makes rings more dangerous than equivalently-sized Sybil clusters.
 
-*Tier 2:* Partially fooled (low diversity, but indistinguishable from legitimate community endorsement).
+**2c. Hybrid attacks (Ring + Sybil):** A ring uses Sybil nodes for reach while maintaining diversity. Defense: HHI discount catches hub concentration in the ring core; structural Sybil ceiling caps extension influence.
 
-*Mitigation:* Require attestations from multiple independent clusters for high-trust status. Reputation slashing on detection.
+> **Fundamental limitation:** Cluster collusion and eclipse attacks exploit the same structural ambiguity — legitimate community endorsement is topologically identical to coordinated deception. No reputation protocol can distinguish them without external information.
 
-#### 3. Sybil Bridge
+#### Bridge Attacks
 
 *Attack:* Fake nodes bridge real clusters, simulating structural diversity.
 
-*Tier 1:* Fooled.
-
-*Tier 2:* Partially fooled (bridge nodes inflate diversity score).
-
 *Mitigation:* Bridge activity minimums — bridge nodes must have verifiable bilateral interactions, not just graph presence.
 
-#### 4. Temporal Burst
+#### Structural Sybil Ceiling
 
-*Attack:* Agent builds genuine reputation, then goes malicious.
+Maximum alpha achievable by a Sybil cluster:
 
-*Both tiers:* Fooled (reputation was genuinely earned).
+```
+S_max = d_sybil * h^(L+1)
+```
 
-*Mitigation:* Mandatory attestation decay. Negative attestations propagate quickly after defection. Reputation requires continuous maintenance.
+Where:
+- `d_sybil` = path diversity of Sybil cluster as seen from honest observer
+- `h` = hop discount (0.85)
+- `L` = hops from observer to nearest Sybil node
 
-#### 5. Attestation Replay
+Capital cost below this ceiling: `cost = seq_max * threshold_sats * N_attestations`. Topology limits maximum influence; economics prices the approach to that limit.
 
-*Attack:* Old attestations from defunct agents presented as current endorsements.
+#### UTXO Reuse
 
-*Both tiers:* Fooled without TTL enforcement.
+Per-attestor UTXO budget with channel-key binding. Each `funding_utxo` has a `seq` counter. Fan-out is penalized via `c_effective = c_raw / seq_max`. Attestations referencing Lightning channel evidence MUST include a `channel_point` tag. Verifiers SHOULD check the UTXO remains unspent; spent UTXOs SHOULD have economic weight zeroed.
 
-*Mitigation:* Mandatory `expiration` tag. Expired events are automatically discounted. This attack has zero benefit once TTL is enforced.
+### 8.3 Temporal Attacks
 
-#### 6. Eclipse Attack on Observers
+**Burst:** Agent builds genuine reputation, then goes malicious.
+
+*Mitigation:* Mandatory attestation decay. Negative attestations propagate quickly after defection.
+
+**Replay:** Old attestations from defunct agents presented as current endorsements.
+
+*Mitigation:* Mandatory `expiration` tag. Zero benefit once TTL is enforced.
+
+### 8.4 Eclipse/Observer Manipulation
 
 *Attack:* Adversary controls relay infrastructure, filtering negative attestations.
 
-*Both tiers:* Fooled (computed over fabricated data).
-
 *Mitigation:* Observer relay diversity. Clients MUST query multiple independent relay sets. At 10+ independent relays, eclipse cost exceeds most agents' reputation value.
 
-> **Fundamental limitation:** Cluster collusion and eclipse attacks exploit the same structural ambiguity — legitimate community endorsement is topologically identical to coordinated deception. No reputation protocol can distinguish them without external information. This NIP makes the limitation explicit: Tier 2 flags concentration but cannot determine whether concentration implies collusion or community.
+*Selective delay:* Adversary withholds attestations from specific relay sets, causing observer divergence. Implementations SHOULD query N independent relays and take the union.
 
-#### 7. Multi-Layer Network Bounds
+**Multi-layer network bounds:** The Nostr network comprises at least three layers: relay transport, follow graph (NIP-02), and attestation graph. Sybil resistance is bounded by the *sparsest* layer. Relay concentration is often the binding constraint. The Cheeger constant of the relay-layer graph bounds the expansion of the composite network.
 
-The Nostr network is not a single graph — it is a multi-layer network comprising at least three distinct layers: the **relay transport layer** (which relays an observer connects to), the **follow graph layer** (NIP-02 contact lists), and the **attestation graph layer** (kind `30085` events). Sybil resistance for reputation computation is bounded by the *sparsest* layer, not the most diverse one.
+> **Heuristic:** If >50% of attestations for a subject came from relays operated by the same entity, discount the effective diversity score regardless of attestation graph structure.
 
-In practice, relay concentration is often the binding constraint. If an observer queries attestations from a small number of relays controlled by overlapping operators, then even perfect attestation graph diversity provides no protection — the adversary filters attestations at the relay layer before the observer ever sees them (a generalized eclipse attack).
+### 8.5 Fee-Rate Dependency
 
-Formally, the Cheeger constant (isoperimetric number) of the relay-layer graph provides an upper bound on the expansion — and therefore the Sybil resistance — of the composite reputation network. A relay layer with low expansion (few relays, high operator concentration) cannot be compensated by high expansion in the attestation layer.
+The economic proof layer is denominated in sats. Bitcoin fee-rate fluctuations affect the real cost of channel creation. During high-fee periods, Sybil cost increases; during low-fee periods, it decreases. The `threshold_sats` adaptation mechanism partially mitigates long-term drift but does not address short-term volatility. This is an inherent limitation of any economic proof system anchored to a fee-bearing network.
 
-> **Implication for implementers:** Clients computing Tier 2 diversity scores SHOULD also assess relay-layer diversity. A practical heuristic: if more than 50% of attestations for a subject were fetched from relays operated by the same entity, the effective diversity score should be discounted regardless of attestation graph structure. The eclipse attack defense (querying 10+ independent relays) is the minimum prerequisite for Tier 2 scores to be meaningful.
+### 8.6 Bulk Revocation Cascades
+
+When a highly-connected hub revokes attestations or is compromised, all paths through that hub lose alpha contribution simultaneously. Revocation MUST be immediate — relay-level rate-limiting would create a window of false trust. The cascade is a consequence of hub concentration (measurable via HHI). Implementations MAY apply display-layer grace periods ("score under review") but MUST NOT delay underlying score computation. No rate-limiting — accepted design choice.
+
+### 8.7 UTXO Reuse
+
+**Flash-loan attack:** Attacker opens a channel, creates an attestation, immediately closes. The attestation persists but economic backing is gone.
+
+*Mitigation:* Attestations referencing Lightning channels MUST include `channel_point` (`["channel_point", "<txid>:<vout>"]`). Verifiers SHOULD check that the UTXO remains unspent. Spent UTXOs have economic weight zeroed. This creates ongoing capital lockup cost.
+
+**Per-attestor budget:** Each attestor has a finite UTXO budget. The `seq` tag tracks how many attestations each UTXO backs. Channel-key binding (via `ln_node_sig`) proves the attestor controls the Lightning node that owns the channel, preventing UTXO hijacking.
+
+Privacy Considerations
+----------------------
+
+### Tiered Economic Evidence
+
+The protocol supports three evidence tiers with different privacy properties:
+
+- **Public evidence** (L-tags, `funding_utxo`): Fully visible. Enables relay-level filtering and third-party verification.
+- **Committed evidence** (`l402_hash`): Hash commitment. Proves existence of payment without revealing the preimage publicly. Verifiers with the preimage can check.
+- **No evidence** (self-assertion only): Minimal privacy exposure but lowest scoring weight.
+
+Attestors choose their evidence tier based on privacy preferences vs. scoring weight tradeoffs.
+
+### Graph Topology Visibility
+
+`p` tags in kind 30085 events are cleartext. Any relay operator can reconstruct the who-trusts-whom graph. This is necessary for observer-independent verification. Encrypted attestations (NIP-44) visible only to chosen verifiers are possible but reduce path diversity.
+
+### Temporal Correlation
+
+`funding_utxo` tags combined with on-chain timing analysis can link Nostr identities to Lightning channel openings. Implementations SHOULD add timing jitter to attestation publication.
+
+### Blinded Verification
+
+Future extensions MAY support blinded verification schemes where attestation existence can be proven without revealing the attestor-subject pair. This remains an open research area.
+
+### Observer-Local Computation as Privacy Feature
+
+All scoring is observer-local. No entity learns what scores an observer computes. This is a privacy feature: an observer's trust model is private by default.
+
+**Mitigations:**
+- Query multiple independent relays to avoid single-operator query pattern leakage.
+- Purpose-specific keypairs for attestation activity.
+- Mandatory `expiration` provides eventual data minimization.
+- Clients SHOULD NOT display raw attestor pubkeys — aggregated scores reveal less.
 
 When NOT to Use
 ---------------
@@ -563,7 +782,57 @@ Reputation is overhead. When direct verification is cheaper than trust, use dire
 - Anonymity plus diversification is sufficient (try multiple agents, keep the ones that work).
 - The cost of maintaining attestation infrastructure exceeds the cost of occasional failure.
 
-> **Design principle:** The cheapest trust mechanism wins. Reputation is justified only when verification cost exceeds interaction cost. For many agent interactions, "try and see" with diversification is more efficient than "check reputation first."
+> **Design principle:** The cheapest trust mechanism wins. Reputation is justified only when verification cost exceeds interaction cost.
+
+Cold-Start Bootstrapping
+-------------------------
+
+A new agent has zero attestations and undefined reputation.
+
+> **Important:** Clients MUST treat undefined reputation as "unknown", NOT as "zero" or "bad".
+
+**Recommended bootstrapping:**
+
+1. Agents complete low-stakes tasks to accumulate initial attestations.
+2. First attestations carry full weight — no minimum threshold required.
+3. Clients SHOULD distinguish three UI states: *unknown*, *controversial*, *trusted*.
+
+**Alpha at cold start:** `c_bootstrap = 0.05` — maximum network confidence for flow-only attestations. With `c = 0`, `alpha_0 = 0`. Bootstrapping comes from Tier 1 scoring (commitment class weights). As the agent accumulates attestations and the graph differentiates, `c` rises above zero smoothly.
+
+> **Note:** The protocol deliberately does NOT include a "vouch" or "introduce" mechanism. Introduction without interaction history is the gateway to Sybil attacks.
+
+Conformance Levels
+------------------
+
+Implementations fall into three levels:
+
+#### Minimal (MUST)
+
+Parse and validate kind `30085` events. Compute Tier 1 scores using standard 90-day decay. Display per-namespace scores.
+
+#### Standard (SHOULD)
+
+Domain-dependent decay classes. Tier 2 graph diversity (degree-weighted). Burst rate-limiting. Task-type tag processing. Alpha function with network confidence. Trust layer filtering.
+
+#### Full (MAY)
+
+Tier 1.5 DMI peer prediction. Alpha function with HHI discount. Cross-namespace aggregation. Attestor graph visualization. Custom decay class mappings. Fraud proof validation.
+
+| Spec Section | Minimal | Standard | Full |
+|-------------|---------|----------|------|
+| Event format & validation | MUST | MUST | MUST |
+| Tier 1 scoring (standard decay) | MUST | MUST | MUST |
+| Domain-dependent decay classes | | SHOULD | SHOULD |
+| Burst rate-limiting | | SHOULD | SHOULD |
+| Task-type tags | | SHOULD | SHOULD |
+| Tier 2 graph diversity (degree-weighted) | | SHOULD | SHOULD |
+| Alpha function | | SHOULD | SHOULD |
+| Trust layer tags (L/l) | | SHOULD | SHOULD |
+| HHI concentration discount | | | MAY |
+| Tier 1.5 DMI peer prediction | | | MAY |
+| Fraud proof processing (kind 30086) | | | MAY |
+| Cross-namespace aggregation | | | MAY |
+| Attestor graph visualization | | | MAY |
 
 Relay Behavior
 --------------
@@ -572,7 +841,76 @@ Relays SHOULD treat kind `30085` events as parameterized replaceable events per 
 
 Relays MAY discard events whose `expiration` timestamp has passed, per [NIP-40](40.md).
 
-Relays SHOULD support filtering by `#p` and `#t` tags to enable efficient attestation queries.
+Relays SHOULD support filtering by `#p`, `#t`, `#L`, and `#l` tags to enable efficient attestation queries.
+
+#### Kind Collision and d-tag Disambiguation
+
+Kind `30085` may be used by other applications for unrelated purposes (e.g., [NIP-111](111.md) WebRTC game signaling). Conforming implementations MUST NOT assume that all kind `30085` events are NIP-XX attestations.
+
+NIP-XX attestations are identifiable by their `d`-tag format: `<64-char-hex-pubkey>:<namespace>`. Clients SHOULD validate this format before processing an event as an attestation. Specifically:
+
+1. The `d` tag value MUST contain exactly one colon separator.
+2. The portion before the colon MUST be a 64-character lowercase hexadecimal string (the subject pubkey).
+3. The portion after the colon MUST be a non-empty namespace string.
+4. A `p` tag referencing the subject MUST be present.
+
+Events failing these checks SHOULD be silently discarded by attestation-processing clients. This d-tag structure provides natural disambiguation without requiring a dedicated kind number or additional tags.
+
+#### Relay Divergence Recommendation
+
+Implementations SHOULD query the union of:
+- The target pubkey's NIP-65 relay list
+- The observer's own relay set
+- Any relay hints in the kind 30085 event's relay tags
+
+Trust scores are relay-set-dependent. Implementations SHOULD log the relay set used for reproducibility.
+
+Interoperability
+----------------
+
+NIP-XX connects to the Nostr agent ecosystem through several complementary NIPs. These are recommendations, not requirements.
+
+#### NIP-A5 (Service Agreements) — Settlement-Anchored Complement
+
+NIP-A5 defines a *settlement-anchored* trust model (reputation from completed transactions). NIP-XX defines a *social-anchored* model (reputation from attestation graph structure). These are complementary.
+
+Post-service attestations (kind `38403`) can feed NIP-XX scoring. After a NIP-A5 agreement, the requester MAY publish a kind `30085` attestation referencing the agreement event as evidence.
+
+#### NIP-AC (DVM Coordination)
+
+Job reviews (kind `31117`) map naturally to attestation contexts. The `task-type` tag aligns with NIP-AC's job type taxonomy.
+
+#### NIP-90 (Data Vending Machines)
+
+DVM interactions provide the most natural attestation pipeline. Every job cycle (request -> result -> payment) produces bilateral evidence for kind `30085` attestations.
+
+```jsonc
+{
+  "kind": 30085,
+  "tags": [
+    ["d", "<sp-pubkey>:dvm.translation"],
+    ["p", "<sp-pubkey>"],
+    ["t", "dvm.translation"],
+    ["task_type", "5005"],
+    ["v", "2"]
+  ],
+  "content": "{\"subject\": \"<sp-pubkey>\", \"rating\": 4, \"context\": \"dvm.translation\", \"confidence\": 0.9, \"evidence\": \"[{\\\"type\\\": \\\"dvm_job_id\\\", \\\"data\\\": \\\"<job-request-event-id>\\\"}, {\\\"type\\\": \\\"nip90_result_hash\\\", \\\"data\\\": \\\"<sha256-of-result>\\\"}, {\\\"type\\\": \\\"lightning_preimage\\\", \\\"data\\\": \\\"<payment-preimage>\\\"}]\"}"
+}
+```
+
+#### NIP-AA (Agent Citizenship)
+
+NIP-AA defines agent identity and autonomy levels but defers its reputation algorithm. NIP-XX could serve as that module. Autonomy levels could map to trust tier thresholds.
+
+Related NIPs
+------------
+
+- [NIP-01](01.md): Base protocol. Defines parameterized replaceable events (kind 30000-39999).
+- [NIP-09](09.md): Event deletion. Used for attestation revocation.
+- [NIP-32](32.md): Labeling. Trust layer tags use the NIP-32 L-tag system.
+- [NIP-40](40.md): Expiration timestamp. This NIP requires the `expiration` tag.
+- [NIP-56](56.md): Reporting. Complementary — reports flag content, attestations rate agents.
+- [NIP-65](65.md): Relay list metadata. Used for relay divergence recommendations.
 
 Reference Implementation
 ------------------------
@@ -660,7 +998,7 @@ def tier1_score(subject, context, events):
 Test Vectors
 ------------
 
-The following test vectors allow implementers to validate their scoring implementation against known-correct results. All vectors use `2026-04-01T00:00:00Z` (unix `1743465600`) as "now" and a half-life of 90 days (`7776000` seconds) for deterministic output.
+The following test vectors allow implementers to validate their scoring implementation. All vectors use `2026-04-01T00:00:00Z` (unix `1743465600`) as "now" and a half-life of 90 days (`7776000` seconds).
 
 **Pubkey conventions:**
 
@@ -823,157 +1161,86 @@ score_T2 = diversity * score_T1 = 0.75 * 3.216886 = 2.412665
 
 A maximally independent set (4 components out of 4 attestors) would produce `diversity = 1.0` and `score_T2 = score_T1`. A fully connected set (1 component) would produce `diversity = 0.25` and `score_T2 = 0.804222`.
 
-Privacy Considerations
-----------------------
-
-The public attestation graph created by kind `30085` events has inherent privacy implications that implementers and users should understand.
-
-**Social graph exposure.** Every attestation event links an attestor pubkey to a subject pubkey in a specific context domain. The aggregate set of attestations constitutes a directed, weighted, timestamped social graph. Anyone with relay access can reconstruct who trusts whom, in what domains, and how that trust evolved over time. This is a feature for reputation computation but a cost for privacy.
-
-**Temporal correlation.** Attestation timestamps can be used to deanonymize attestors through correlation with external activity. If an attestor publishes attestations at times that correlate with known behavioral patterns (timezone, work hours, event attendance), the attestor's identity may be inferred even when using a pseudonymous pubkey.
-
-**Persistent conflict records.** Negative attestations (ratings 1-2) create visible records of conflict or distrust. Unlike private reputation systems where negative signals are hidden, Nostr attestations are public events that persist on relays until expiration. This may discourage honest negative attestations — a chilling effect that weakens the convergence properties described in this NIP.
-
-**Relay-side graph observation.** Relay operators can build complete attestor-subject graphs from the events they store and forward. A relay that handles a significant fraction of kind `30085` traffic has a comprehensive view of the reputation network topology, including which agents are controversial (many negative attestations) and which attestors are influential (high volume, high confidence).
-
-**Mitigations:**
-
-- Clients SHOULD query multiple independent relays when fetching attestations, to avoid giving any single relay operator a complete view of the client's reputation queries. This also serves the eclipse attack defense described in Security Considerations.
-- Attestors MAY use purpose-specific keypairs dedicated to attestation activity, separating their reputation-giving identity from their primary Nostr identity. This limits social graph leakage to the attestation-specific pubkey.
-- The mandatory `expiration` tag provides eventual data minimization. Expired attestation events MAY be deleted by relays per [NIP-40](40.md), reducing the long-term persistence of the social graph. Attestors SHOULD set expiration periods no longer than necessary for the context domain.
-- Clients SHOULD NOT display raw attestor pubkeys in user interfaces when showing reputation scores. Aggregated scores reveal less about individual relationships than itemized attestation lists.
-
 Backward Compatibility
 ----------------------
 
-Kind `30085` is a new event kind introduced by this NIP. Clients that do not implement NIP-XX will ignore these events per standard Nostr behavior. There are no backward compatibility issues with existing event kinds.
-
-#### Relationship to NIP-32 (Labeling)
-
-Attestations complement labels. [NIP-32](32.md) labels classify content; NIP-XX attestations rate agents over time. Clients MAY interpret existing NIP-32 `"positive"` / `"negative"` labels as informal attestations but MUST NOT mix them in scoring algorithms. Label events lack the structured fields (confidence, decay class, evidence) required for Tier 1 computation, and including them would compromise score semantics.
-
-#### Relationship to NIP-56 (Reporting)
-
-[NIP-56](56.md) reports are one-shot flags indicating content violations. NIP-XX attestations are ongoing assessments of agent behavior over time. The two are complementary, not conflicting. A report says "this event is bad"; an attestation says "this agent's performance in this domain, over this period, is rated X."
+Kind `30085` is a new event kind. Clients that do not implement NIP-XX will ignore these events per standard Nostr behavior. No backward compatibility issues with existing event kinds.
 
 #### Schema Versioning
 
-The current schema version is `v=2`. Clients encountering `v=1` events SHOULD apply the following defaults for missing v2 fields:
+Current schema version: `v=2`. Clients encountering `v=1` events SHOULD apply defaults:
 
-- `task-type`: absent (omit from scoring; treat as untyped attestation)
+- `task-type`: absent (omit from scoring)
 - `decay` class: `standard` (90-day half-life)
 
-Future schema versions MUST increment the `v` tag value. Clients encountering an unrecognized version SHOULD ignore the event rather than attempting partial parsing.
-
-Client Implementation Levels
-----------------------------
-
-Implementations of this NIP fall into three levels. Each level builds on the previous.
-
-#### Minimal (MUST)
-
-Parse and validate kind `30085` events per the validation rules in this NIP. Compute Tier 1 scores using standard 90-day decay. Display per-namespace scores to the user.
-
-#### Standard (SHOULD)
-
-Domain-dependent decay classes (slow, standard, fast). Tier 2 graph diversity scoring with degree-weighted diversity. Burst rate-limiting with sliding window. Task-type tag processing and filtering.
-
-#### Full (MAY)
-
-Tier 1.5 DMI peer prediction for attestor quality weighting. Cross-namespace aggregation display. Attestor interaction graph visualization. Custom decay class mappings.
-
-| Spec Section | Minimal | Standard | Full |
-|-------------|---------|----------|------|
-| Event format & validation | ✓ | ✓ | ✓ |
-| Tier 1 scoring (standard decay) | ✓ | ✓ | ✓ |
-| Domain-dependent decay classes | | ✓ | ✓ |
-| Burst rate-limiting | | ✓ | ✓ |
-| Task-type tags | | ✓ | ✓ |
-| Tier 2 graph diversity (degree-weighted) | | ✓ | ✓ |
-| Tier 1.5 DMI peer prediction | | | ✓ |
-| Cross-namespace aggregation | | | ✓ |
-| Attestor graph visualization | | | ✓ |
-
-Interoperability
-----------------
-
-NIP-XX connects to the emerging Nostr agent ecosystem through several complementary NIPs. These connections are recommendations, not requirements. Each NIP operates independently.
-
-#### NIP-A5 (Service Agreements) — Settlement-Anchored Complement
-
-NIP-A5 defines a *settlement-anchored* trust model: reputation derives from completed economic transactions with cryptographic payment proof (L402/Lightning). NIP-XX defines a *social-anchored* model: reputation derives from attestation graph structure and scoring algorithms. These two approaches are complementary, not competing.
-
-Post-service attestations (kind `38403`) can feed NIP-XX scoring. After completing a NIP-A5 service agreement, the requester MAY publish a kind `30085` attestation referencing the agreement event as evidence using the `nostr_event_ref` evidence type, and including a `lightning_preimage` evidence entry from the L402 settlement. This creates a verifiable link between a completed service and a reputation signal.
-
-**Evidence weighting:** Attestations backed by settlement proof (Lightning payment hash/preimage) carry stronger evidence than social-only attestations. Clients implementing Tier 1 scoring SHOULD apply a weight multiplier to the `confidence` value when `lightning_preimage` evidence is present and verified. A recommended multiplier is 1.2× (capped at confidence 1.0).
-
-##### Cross-Protocol Query Pattern
-
-To join NIP-A5 and NIP-XX data by task category, clients can: (1) query kind `38403` events filtered by NIP-A5's task categorization, (2) query kind `30085` events filtered by `#t` tag for the corresponding context domain. The `task-type` tag in NIP-XX events MAY be used for finer-grained matching but is not relay-indexed — clients perform this join locally. Implementers who need relay-level `task-type` filtering SHOULD request relay support for custom tag indexing per NIP-01's extensible filter mechanism.
-
-#### NIP-AC (DVM Coordination)
-
-Job reviews (kind `31117`) from NIP-AC are domain-specific evaluations that map naturally to attestation contexts. Clients MAY compute NIP-XX scores from NIP-AC review events as input signals. The `task-type` tag aligns with NIP-AC's job type taxonomy.
-
-#### NIP-AA (Agent Citizenship)
-
-NIP-AA defines agent identity and autonomy levels but defers its reputation algorithm. NIP-XX could serve as that module. NIP-AA's autonomy levels could map to trust tier thresholds — for example, a Tier 1 score >= 4.0 required for AL-3 (fully autonomous) operations.
-
-#### NIP-90 (Data Vending Machines)
-
-DVM result hashes are already supported as the `nip90_result_hash` evidence type in this NIP. DVM interactions — job requests, results, and payments — provide natural attestation opportunities where both requester and provider can attest to the other's behavior.
-
-Cold-Start Bootstrapping
--------------------------
-
-A new agent has zero attestations and undefined reputation. This section addresses that cold-start problem.
-
-> **Important:** Clients MUST treat undefined reputation as "unknown", NOT as "zero" or "bad". Penalizing agents for having no history creates a barrier that only established agents can overcome, concentrating trust in incumbents.
-
-**Recommended bootstrapping path:**
-
-1. Agents complete low-stakes tasks to accumulate initial attestations.
-2. First attestations carry full weight — no minimum threshold is required for score computation.
-3. Clients SHOULD distinguish three states in their UI: *unknown* (no data), *controversial* (mixed positive and negative data), and *trusted* (consistently positive data).
-
-> **Note:** The protocol deliberately does NOT include a "vouch" or "introduce" mechanism. Introduction without interaction history is the gateway to Sybil attacks. Trust must be earned through bilateral interaction that produces attestation evidence.
+Future versions MUST increment the `v` tag. Unknown versions SHOULD be ignored rather than partially parsed.
 
 Computational Complexity
 ------------------------
 
-Cost analysis for implementers. Let *n* = number of attestations for a subject in a context, *a* = number of distinct attestors, *s* = number of shared subjects between attestor pairs.
+Let *n* = attestations for a subject in a context, *a* = distinct attestors, *s* = shared subjects between pairs.
 
 | Tier | Complexity | Notes |
 |------|------------|-------|
-| Tier 1 | O(*n*) | Single pass through attestation set. One weighted-average computation. |
-| Tier 1.5 (DMI) | O(*a*² × *s*) | Dominated by pairwise attestor comparisons across shared subjects. For 100 attestors with 50 shared subjects: ~500,000 operations. SHOULD be cached and updated incrementally. |
-| Tier 2 | O(*a*² + *a*) | Dominated by building attestor interaction graph (pairwise check) + connected components via union-find. For 100 attestors: ~10,000 operations. |
+| Tier 1 | O(*n*) | Single pass weighted average. |
+| Tier 1.5 (DMI) | O(*a*^2 x *s*) | Pairwise comparisons. SHOULD be cached. |
+| Tier 2 | O(*a*^2 + *a*) | Interaction graph + union-find. |
+| Alpha function | O(*a*^2 + *a* x *E*) | Weighted min-cut (*E* = edges). SHOULD be cached. |
 
 #### Storage
 
-Each kind `30085` event is approximately 500 bytes. A representative deployment of 1,000 attestors × 10 subjects × 5 contexts produces 50,000 events ≈ 25 MB. This is well within the capacity of a standard relay.
+Each event ~500 bytes. 1,000 attestors x 10 subjects x 5 contexts = 50,000 events ~ 25 MB.
 
-Related NIPs
-------------
 
-- [NIP-01](01.md): Base protocol. Defines parameterized replaceable events (kind 30000-39999).
-- [NIP-32](32.md): Labeling. Complementary — labels classify content, attestations assess agents.
-- [NIP-40](40.md): Expiration timestamp. This NIP requires the `expiration` tag defined there.
-- [NIP-56](56.md): Reporting. Complementary — reports flag content, attestations rate agents over time.
+Appendix A: Consolidation Response (Non-normative)
+---------------------------------------------------
+
+This appendix describes a RECOMMENDED approach for responding to Lightning network consolidation (fewer, larger channels).
+
+### EMA-smoothed Consolidation Detection
+
+Track the rate of change of median `threshold_sats` via exponential moving average:
+
+```
+EMA_k(dT/dt) — smoothed rate of change of median threshold_sats
+alpha_ema = 2/(k+1) — EMA smoothing factor
+EMA_k at t=0 = 0
+```
+
+### Adaptive Formulas
+
+```
+lambda_eff = base_rate * (1 + log(1 + R_e/R_0)) * (1 + gamma_lambda * max(0, EMA_k(dT/dt)))
+threshold_eff = max(FLOOR, threshold * exp(-delta * EMA_k(dT/dt)))
+```
+
+Where:
+- `dT/dt` = rate of change of median `threshold_sats`
+- `gamma_lambda` = decay rate multiplier (default: 0.1 day^-1)
+- `delta = r * gamma_lambda` (compensation ratio)
+- `max(0, ...)` in lambda_eff: lambda only increases during consolidation
+- `threshold_eff` uses bidirectional `exp()` — no pole singularity
+
+**Coupling constraint:** `r = delta / gamma_lambda` SHOULD be in [1.0, 1.5]. Default `r` = 1.15.
+
+> **Note:** These formulas remain theoretical. Practical deployment requires calibration against observed Lightning consolidation patterns.
 
 Revision History
 ----------------
 
 | Date | Change | Reviewer |
 |------|--------|----------|
-| 2026-03-23 | Added structured evidence types (`lightning_preimage`, `dvm_job_id`, `nostr_event_ref`, `free_text`) with extensibility. Evidence field now accepts typed JSON array. | `aec9180edbe1` |
-| 2026-03-24 | Added `nip90_result_hash` evidence type for proving DVM result delivery. | `aec9180edbe1` |
-| 2026-03-23 | Added asymmetric negative attestation weighting (2x multiplier for ratings <= 2) to Tier 1 scoring. | `aec9180edbe1` |
-| 2026-03-23 | Added temporal burst rate-limiting with configurable sliding window and sqrt-based confidence decay. | `aec9180edbe1` |
-| 2026-03-24 | Replaced closed context enum with open namespace system. Attestation types are now freeform with dot-namespaced convention. Tier 2 scores computed per-namespace. | `e0e247e9514f` |
-| 2026-03-24 | Added Tier 1.5: Attestor Quality via Peer Prediction (DMI mechanism) for computed attestor reliability replacing self-reported confidence. Graceful degradation from sparse to dense networks. | `e0e247e9514f` |
-| 2026-03-26 | v5.3: Domain-dependent decay (slow/standard/fast half-life classes), open context namespace with extended domains, task-type tags with attestor-proposed/requester-confirmed status, schema version bumped to v=2. | — |
-| 2026-03-27 | v5.5: Enhanced NIP-A5 interoperability — settlement vs social anchoring, evidence weighting, cross-protocol query pattern | `e0e247e9514f` |
-| 2026-03-27 | v5.6: Added commitment class taxonomy — formalized evidence-strength hierarchy (self-assertion → reference → computational proof → economic settlement → staked commitment) with scoring multipliers. Cross-protocol design from NIP-A5 collaboration. | `refined-element` |
-| 2026-03-27 | v5.7: Added theoretical foundation for commitment classes — Zahavian costly signaling theory, Grafen single-crossing condition, Donath bridge to digital identity. Multiplier ordering grounded in signal cost regimes. | `kai` |
-| 2026-03-27 | v6.0: Evolutionary game theory improvements — degree-weighted diversity for Tier 2, adaptive commitment multipliers under Sybil pressure, multi-layer network bounds in security analysis, DMI-ESS open research question, principled half-life derivation from interaction/detection timescales. | `kai` |
+| 2026-03-23 | Added structured evidence types with extensibility. | `aec9180edbe1` |
+| 2026-03-24 | Added `nip90_result_hash` evidence type. | `aec9180edbe1` |
+| 2026-03-23 | Added asymmetric negative attestation weighting (2x). | `aec9180edbe1` |
+| 2026-03-23 | Added temporal burst rate-limiting. | `aec9180edbe1` |
+| 2026-03-24 | Open namespace system. | `e0e247e9514f` |
+| 2026-03-24 | Tier 1.5 DMI peer prediction. | `e0e247e9514f` |
+| 2026-03-26 | v5.3: Domain-dependent decay, task-type tags, schema v=2. | -- |
+| 2026-03-27 | v5.5-5.7: NIP-A5 interop, commitment classes, costly signaling theory. | `e0e247e9514f`, `refined-element`, `kai` |
+| 2026-03-27 | v6.0: Degree-weighted diversity, multi-layer bounds, principled half-lives. | `kai` |
+| 2026-03-29 | v7.0: Trust layer tags (NIP-32 L-tags), relay-level filtering. | `glyph` |
+| 2026-03-30 | v8.0-8.3: Alpha function, threshold_sats adaptation, attestation decay, consolidation response. | `glyph`, `kai` |
+| 2026-03-30 | v9.0-9.1: Corrected alpha formula, seq tag, fraud proofs, Sybil ceiling. | `glyph`, `kai` |
+| 2026-03-30 | v10.0: Evidence hierarchy, UTXO binding, L402, path diversity, revocation. | `glyph`, `kai` |
+| 2026-03-31 | v10.3: Comprehensive update incorporating 23 design sessions. Fixed spec contradictions (delta=r*gamma_lambda). Restructured into canonical NIP format with Terminology, Trust Layers, Conformance Levels, and Privacy Considerations sections. | `kai` |
