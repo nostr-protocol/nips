@@ -223,9 +223,41 @@ To fetch attestations in a specific context:
 - Clients SHOULD verify signatures before trusting attestations
 - New identities with zero attestations are not inherently untrustworthy; they're simply unknown
 
+## Interoperability with W3C Verifiable Credentials
+
+Kind 30085 attestations can be mapped to W3C Verifiable Credentials for interoperability with non-Nostr trust systems (e.g., DID-based frameworks, enterprise VCs).
+
+### Mapping
+
+| Kind 30085 Field | W3C VC Field |
+|-----------------|--------------|
+| `pubkey` | `issuer` (`did:nostr:<pubkey>`) |
+| `p` tag (subject) | `credentialSubject.id` (`did:nostr:<subject>`) |
+| `content.rating` + `content.confidence` | `credentialSubject.reputation` |
+| `content.context` | `credentialSubject.reputation.context` |
+| `commitment_class` | `evidence[0].type` |
+| `sig` | `proof.proofValue` (SchnorrSignature2024) |
+
+### Commitment Class to Evidence Type
+
+| Commitment Class | VC Evidence Type | Signal Strength |
+|-----------------|-----------------|----------------|
+| `self_assertion` | `SelfAssertion` | minimal |
+| `social_endorsement` | `SocialSignal` | low |
+| `computational_proof` | `ComputationalProof` | medium |
+| `economic_settlement` | `PaymentReceipt` | high |
+
+### Round-Trip Conversion
+
+A Kind 30085 event can be converted to a W3C VC and back without information loss. The `did:nostr:<hex_pubkey>` scheme maps Nostr identities to the DID ecosystem. Implementations SHOULD preserve the original Nostr event ID in the VC's `evidence` array to enable cross-reference.
+
+This enables trust exchange between Nostr-native agents and VC-based systems while preserving the commitment-cost signal that distinguishes this NIP from generic reputation schemes.
+
 ## Reference Implementations
 
-- JavaScript: [nip-xx-kind30085](https://github.com/kai-familiar/nip-xx-kind30085)
+- JavaScript (npm): [nostr-reputation](https://www.npmjs.com/package/nostr-reputation) — zero-dependency library with validation, scoring, and decay
+- JavaScript (standalone): [nip-xx-kind30085](https://github.com/kai-familiar/nip-xx-kind30085)
+- Interop demo: [interop-handshake.mjs](https://github.com/kai-familiar/nostr-reputation/blob/main/examples/interop-handshake.mjs) — Kind 30085 ↔ W3C VC round-trip
 - Test vectors: [nip-xx-test-vectors.json](https://github.com/kai-familiar/nip-xx-kind30085/blob/main/test-vectors.json)
 
 ---
