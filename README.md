@@ -75,7 +75,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
 - [NIP-59: Gift Wrap](59.md)
-- [NIP-5A: Pubkey Static Websites](5A.md)
+- [NIP-5A: Static Websites (nsites)](5A.md)
 - [NIP-60: Cashu Wallet](60.md)
 - [NIP-61: Nutzaps](61.md)
 - [NIP-62: Request to Vanish](62.md)
