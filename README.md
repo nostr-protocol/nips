@@ -149,6 +149,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `44`          | Channel Mute User               | [28](28.md)                            |
 | `62`          | Request to Vanish               | [62](62.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
+| `78`          | Application-specific Data       | [78](78.md)                            |
 | `443`         | KeyPackage                      | [Marmot](marmot)                       |
 | `444`         | Welcome Message                 | [Marmot](marmot)                       |
 | `445`         | Group Event                     | [Marmot](marmot)                       |
