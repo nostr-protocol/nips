@@ -104,6 +104,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md) --- **unrecommended**: replaced by blossom APIs
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-9A: Verifiable Community Rules](9A.md)
 - [NIP-A0: Voice Messages](A0.md)
 - [NIP-A4: Public Messages](A4.md)
 - [NIP-B0: Web Bookmarks](B0.md)
@@ -291,6 +292,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `34236`       | Addressable Short Video Event   | [71](71.md)                            |
 | `34388`       | Sound Effects                   | [Corny Chat][cornychat-soundeffects]   |
 | `34550`       | Community Definition            | [72](72.md)                            |
+| `34551`       | Community Rules                 | [9A](9A.md)                            |
 | `34128`       | Legacy nsite manifest           | [5A](5A.md) (deprecated)               |
 | `35128`       | Named nsite manifest            | [5A](5A.md)                            |
 | `38172`       | Cashu Mint Announcement         | [87](87.md)                            |
