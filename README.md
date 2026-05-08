@@ -108,6 +108,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-A4: Public Messages](A4.md)
 - [NIP-B0: Web Bookmarks](B0.md)
 - [NIP-B7: Blossom](B7.md)
+- [NIP-BC: Onchain Zaps](BC.md)
 - [NIP-BE: Nostr BLE Communications Protocol](BE.md)
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
@@ -190,6 +191,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `7517`        | Geocache proof of find          | [geocaching][geocaching]               |
 | `8000`        | Add User                        | [43](43.md)                            |
 | `8001`        | Remove User                     | [43](43.md)                            |
+| `8333`        | Onchain Zap                     | [BC](BC.md)                            |
 | `9000`-`9030` | Group Control Events            | [29](29.md)                            |
 | `9041`        | Zap Goal                        | [75](75.md)                            |
 | `9321`        | Nutzap                          | [61](61.md)                            |
@@ -360,7 +362,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `f`               | currency code                        | --                              | [69](69.md)                                        |
 | `g`               | geohash                              | --                              | [52](52.md)                                        |
 | `h`               | group id                             | --                              | [29](29.md)                                        |
-| `i`               | external identity                    | proof, url hint                 | [35](35.md), [39](39.md), [73](73.md)              |
+| `i`               | external identity                    | proof, url hint                 | [35](35.md), [39](39.md), [73](73.md), [BC](BC.md) |
 | `I`               | root external identity               | --                              | [22](22.md)                                        |
 | `k`               | kind                                 | --                              | [18](18.md), [25](25.md), [72](72.md), [73](73.md) |
 | `K`               | root scope                           | --                              | [22](22.md)                                        |
@@ -380,7 +382,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `z`               | order number                         | --                              | [69](69.md)                                        |
 | `-`               | --                                   | --                              | [70](70.md)                                        |
 | `alt`             | summary                              | --                              | [31](31.md)                                        |
-| `amount`          | millisatoshis, stringified           | --                              | [57](57.md)                                        |
+| `amount`          | millisatoshis or satoshis, stringified | --                            | [57](57.md), [BC](BC.md)                           |
 | `bolt11`          | `bolt11` invoice                     | --                              | [57](57.md)                                        |
 | `branch-name`     | branch name suggestion               | --                              | [34](34.md)                                        |
 | `challenge`       | challenge string                     | --                              | [42](42.md)                                        |
