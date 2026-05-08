@@ -28,6 +28,8 @@ This specification applies to Bitcoin **mainnet** only. Testnet, signet, and oth
     ["p", "<recipient-pubkey>"],
     ["amount", "<sats>"],
     ["e", "<target-event-id>", "<relay-hint>"],
+    ["block", "<block-hash-hex>", "<height>"],
+    ["proof", "<raw-tx-hex>", "<merkle-proof-hex>"],
     ["alt", "Onchain zap: 25000 sats"]
   ]
 }
@@ -45,6 +47,8 @@ The `content` field is a human-readable comment from the sender. It MAY be empty
 | `e`      | If zapping an event | Hex-encoded id of the event being zapped. A relay hint SHOULD be provided as the third element. |
 | `a`      | If zapping an addressable event | Addressable event coordinate `<kind>:<pubkey>:<d-tag>`. Used instead of (or alongside) `e` for addressable events. |
 | `k`      | No       | The stringified `kind` of the target event, as in NIP-57.                                    |
+| `block`  | No       | Block containing the transaction, as `["block", "<block-hash-hex>", "<height>"]`. Enables SPV-style verification (see [Header-only verification](#header-only-verification)). |
+| `proof`  | No       | SPV proof, as `["proof", "<raw-tx-hex>", "<merkle-proof-hex>"]`. The `<merkle-proof-hex>` is the concatenation of sibling hashes on the path from the txid leaf to the block's merkle root, ordered from leaf to root. |
 | `alt`    | Yes      | [NIP-31](31.md) human-readable fallback.                                                     |
 
 If neither `e` nor `a` is present, the zap targets the recipient's **profile** (i.e. a tip to the pubkey, not to a specific event).
@@ -73,6 +77,22 @@ To verify a `kind:8333` event:
 6. If the sender's `amount` tag is greater than the verified amount, clients MUST NOT display or count the claimed amount. They MAY discard the event, or cap it to the verified amount.
 
 Unconfirmed transactions MAY be displayed as pending. Because unconfirmed transactions can be evicted (RBF, double-spend), clients SHOULD either exclude them from aggregate totals or clearly label them as pending until they confirm.
+
+### Header-only verification
+
+Fetching transactions from a remote Bitcoin API introduces a trusted third party and a round-trip per zap. Senders MAY include an SPV proof inline in the event via the optional `block` and `proof` tags, allowing a verifier with only the ~75 MB Bitcoin block-header chain to validate the event offline.
+
+With both tags present, a verifier:
+
+1. Looks up the header by `block-hash-hex` (or by `height`) in its local header chain.
+2. Double-SHA256 hashes `raw-tx-hex` to obtain the txid, and checks it matches the `i` tag txid.
+3. Walks the merkle proof from the txid up to the header's `merkleRoot`.
+4. Parses the outputs from `raw-tx-hex`, derives the recipient's Taproot script from the `p` tag, and sums matching outputs — this is the verified amount (applying the same rules as above).
+5. Computes confirmations as `tip_height − height + 1`.
+
+When these tags are present, clients SHOULD prefer the inline proof over a remote fetch. When they are absent, clients fall back to the remote verification flow in the previous section. Publishers SHOULD include the tags once the transaction has at least one confirmation, so that the `block` reference is stable (not subject to reorg-induced invalidation of unconfirmed proofs).
+
+Per-event payload cost is roughly 1 KB. For sessions with very large numbers of zaps (≳1M events), downloading compact block filters ([BIP-157](https://github.com/bitcoin/bips/blob/master/bip-0157.mediawiki)/[BIP-158](https://github.com/bitcoin/bips/blob/master/bip-0158.mediawiki), ~1–2 GB) may be more efficient than carrying inline proofs on every event.
 
 ### Anti-spoofing rules
 
