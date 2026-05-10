@@ -6,13 +6,13 @@ Accommodation Listings
 
 `draft` `optional`
 
-This NIP defines `kind:32121` for accommodation listings as parameterized replaceable events. It provides a structured format for hosts to advertise accommodation with pricing, availability rules, amenities, cancellation policies, and location data.
+This NIP defines `kind:32121` for accommodation listings as parameterized replaceable events. It provides a structured format for sellers to advertise accommodation with pricing, availability rules, amenities, cancellation policies, and location data.
 
 ## Terms
 
-- **Guest** — Nostr user searching for accommodation.
-- **Host** — Nostr user providing accommodation.
-- **Listing** — A single accommodation unit or property advertised by a host.
+- **Buyer** — Nostr user searching for accommodation.
+- **Seller** — Nostr user providing accommodation.
+- **Listing** — A single accommodation unit or property advertised by a seller.
 
 ## Event Kind
 
@@ -43,16 +43,16 @@ The `.content` field contains the listing **description** in Markdown.
 | ---------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | `image`                      | `["image", "<url>"]`                                        | Image URL. Repeat for multiple images.                                                                                    |
 | `active`                     | `["active", "true"\|"false"]`                               | Whether the listing is currently available. Default `true`.                                                               |
-| `negotiable`                 | `["negotiable", "true"\|"false"]`                           | Whether the host accepts negotiated prices below the listed price. Default `false`.                                       |
+| `negotiable`                 | `["negotiable", "true"\|"false"]`                           | Whether the seller accepts negotiated prices below the listed price. Default `false`.                                     |
 | `minStay`                    | `["minStay", "<integer>"]`                                  | Minimum stay in days. Default `1`.                                                                                        |
 | `checkIn`                    | `["checkIn", "<hour>:<minute>"]`                            | Check-in time (24h format). Default `"15:0"`.                                                                             |
 | `checkOut`                   | `["checkOut", "<hour>:<minute>"]`                           | Check-out time (24h format). Default `"11:0"`.                                                                            |
 | `location`                   | `["location", "<string>"]`                                  | Human-readable location or address.                                                                                       |
 | `quantity`                   | `["quantity", "<integer>"]`                                 | Number of bookable units. Default `1`.                                                                                    |
-| `instantBook`                | `["instantBook", "true"\|"false"]`                          | Whether reservations are confirmed instantly without host approval. Default `true`. Promoted as `["I", "true"\|"false"]`. |
-| `allowSelfSignedReservation` | `["allowSelfSignedReservation", "true"\|"false"]`           | Whether guests may self-sign reservations (e.g. via zap proof). Default `false`.                                          |
-| `securityDeposit`            | `["securityDeposit", "<amount>", "<denom>", "<decimals>"]`  | Optional security deposit the guest must lock alongside the payment.                                                      |
-| `minPaymentAmount`           | `["minPaymentAmount", "<amount>", "<denom>", "<decimals>"]` | Minimum payment amount the host will accept for a reservation.                                                            |
+| `instantBook`                | `["instantBook", "true"\|"false"]`                          | Whether reservations are confirmed instantly without seller approval. Default `true`. Promoted as `["I", "true"\|"false"]`. |
+| `allowSelfSignedReservation` | `["allowSelfSignedReservation", "true"\|"false"]`           | Whether buyers may self-sign reservations (e.g. via zap proof). Default `false`.                                         |
+| `securityDeposit`            | `["securityDeposit", "<amount>", "<denom>", "<decimals>"]`  | Optional security deposit the buyer must lock alongside the payment.                                                     |
+| `minPaymentAmount`           | `["minPaymentAmount", "<amount>", "<denom>", "<decimals>"]` | Minimum payment amount the seller will accept for a reservation.                                                         |
 | `maxDisputePeriod`           | `["maxDisputePeriod", "<seconds>"]`                         | Maximum time after checkout that escrow may remain disputed before unilateral claim. Default is 1209600 seconds.           |
 | `published_at`               | `["published_at", "<unix-seconds>"]`                        | Timestamp of first publication. Publishers SHOULD preserve this value across listing edits.                                |
 | `imeta`                      | `["imeta", "url <url>", ...]`                               | Inline image metadata as described by NIP-92. Repeat for multiple images.                                                  |
@@ -80,7 +80,7 @@ Listings MAY include one or more `price` tags. Clients SHOULD use the cheapest a
 
 ### Cancellation Policy Tags
 
-Listings MAY include one or more `cancellationPolicy` tags defining refund terms based on how far in advance the guest cancels.
+Listings MAY include one or more `cancellationPolicy` tags defining refund terms based on how far in advance the buyer cancels.
 
 ```json
 ["cancellationPolicy", "<seconds-before-start>", "<refund-fraction>"]
@@ -202,7 +202,7 @@ This anchor can be encoded as an `naddr` ([NIP-19](19.md)) or a `nostr:` URI ([N
 
 ## Cost Calculation
 
-When a guest selects dates, the client computes the cost from the listing's `price` tags:
+When a buyer selects dates, the client computes the cost from the listing's `price` tags:
 
 - **Recurring prices:** `units = days_in_range / frequency_in_days`, then `cost = units × amount`.
   - `day` = 1 day, `week` = 7 days, `month` = 30 days, `year` = 365 days.
