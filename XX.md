@@ -12,11 +12,11 @@ Negotiation is private. Signed reservation and escrow-selection events are sent 
 
 ## Terms
 
-- **Guest** — Nostr user requesting a reservation (buyer).
-- **Host** — Nostr user who owns the listing being reserved (seller).
+- **Buyer** — Nostr user requesting a reservation.
+- **Seller** — Nostr user who owns the listing being reserved.
 - **Escrow** — Optional service participant that verifies funding and can arbitrate disputes.
 - **Trade** — A single reservation negotiation and lifecycle, identified by a stable `d` tag (trade ID).
-- **Listing Anchor** — A parameterized replaceable event address in the format `<kind>:<pubkey>:<d-tag>`, for example `32121:<host-pubkey>:<listing-d-tag>`.
+- **Listing Anchor** — A parameterized replaceable event address in the format `<kind>:<pubkey>:<d-tag>`, for example `32121:<seller-pubkey>:<listing-d-tag>`.
 - **Trade Key** — A per-trade Nostr key that can publish buyer-side reservation events. The buyer's account identity is bound to this key through encrypted `participant_proof` tags.
 
 ## Event Kinds
@@ -26,7 +26,7 @@ Negotiation is private. Signed reservation and escrow-selection events are sent 
 | `32122` | Reservation             | Parameterized replaceable | A participant's reservation proposal, commitment, or cancellation. |
 | `1326`  | Reservation Transition  | Regular                   | Append-only audit record of a reservation stage change. |
 | `1327`  | Structured Message      | Regular private rumor     | Private structured-message rumor whose content is a signed child event JSON string. |
-| `1328`  | Commit Authorization    | Regular helper event      | Host/seller authorization over exact negotiated commit terms. |
+| `1328`  | Commit Authorization    | Regular helper event      | Seller authorization over exact negotiated commit terms. |
 | `1329`  | Trade-Key Authorization | Regular helper event      | Identity-key authorization binding a real participant pubkey to a trade-key participant pubkey. |
 | `32124` | Review                  | Parameterized replaceable | Post-stay review with participation proof. |
 
@@ -34,7 +34,7 @@ These kinds are application-specific and SHOULD be routed only to relays that su
 
 ## Reservation (`kind:32122`)
 
-A reservation event represents one participant's current position in a trade. Multiple participants (guest, host, and optionally escrow) may each publish reservation events sharing the same `d` tag.
+A reservation event represents one participant's current position in a trade. Multiple participants (buyer, seller, and optionally escrow) may each publish reservation events sharing the same `d` tag.
 
 ### Stages
 
@@ -159,7 +159,7 @@ Implementations SHOULD canonicalize those fields before hashing. `stage`, `proof
 
 #### Commit Authorization (`kind:1328`)
 
-When the host accepts off-list or negotiated terms, the host signs a `kind:1328` event authorizing the reservation commit hash.
+When the seller accepts off-list or negotiated terms, the seller signs a `kind:1328` event authorizing the reservation commit hash.
 
 Tags:
 
@@ -220,7 +220,7 @@ Every public reservation stage change MUST be accompanied by a transition event.
   "fromStage": "negotiate",
   "toStage": "commit",
   "commitTermsHash": "<sha256-hex>",
-  "reason": "Accepted by host",
+  "reason": "Accepted by seller",
   "updatedFields": {}
 }
 ```
@@ -259,13 +259,13 @@ Escrow MAY publish `negotiate -> commit` or `negotiate -> cancel` before accepti
 
 ## Payment Proof
 
-A `commit` reservation SHOULD include a `proof` object unless it is a host-published blocked reservation.
+A `commit` reservation SHOULD include a `proof` object unless it is a seller-published blocked reservation.
 
 ### Zap Proof
 
 ```jsonc
 {
-  "hoster": { "...": "host profile/event JSON" },
+  "seller": { "...": "seller profile/event JSON" },
   "listing": { "...": "kind:32121 listing event JSON" },
   "zapProof": {
     "receipt": { "...": "zap receipt event JSON" }
@@ -278,20 +278,20 @@ A `commit` reservation SHOULD include a `proof` object unless it is a host-publi
 
 ```jsonc
 {
-  "hoster": { "...": "host profile/event JSON" },
+  "seller": { "...": "seller profile/event JSON" },
   "listing": { "...": "kind:32121 listing event JSON" },
   "zapProof": null,
   "escrowProof": {
     "txHash": "<evm-transaction-hash>",
     "escrowService": "<JSON string of the EscrowService kind:30303 event>",
-    "hostsEscrowMethods": "<JSON string of the host's EscrowMethod kind:17388 event>"
+    "sellerEscrowMethods": "<JSON string of the seller's EscrowMethod kind:17388 event>"
   }
 }
 ```
 
 See the Escrow Services NIP for escrow verification requirements.
 
-### Host-Published Reservations
+### Seller-Published Reservations
 
 The listing owner MAY publish `commit` reservations without a payment proof, for example to block dates. Clients MAY accept proofless reservations when `reservation.pubkey == listing.pubkey`.
 
@@ -303,8 +303,8 @@ Roles are determined by:
 
 | Role | Determination |
 | ---- | ------------- |
-| Host | `pubkey == getPubKeyFromAnchor(listingAnchor)` or a `p` tag role of `seller`. |
-| Guest | A participant with role `buyer`, including a trade-key participant resolved through `participant_proof`. |
+| Seller | `pubkey == getPubKeyFromAnchor(listingAnchor)` or a `p` tag role of `seller`. |
+| Buyer | A participant with role `buyer`, including a trade-key participant resolved through `participant_proof`. |
 | Escrow | A participant with role `escrow`, or the pubkey of the escrow service in a valid escrow proof. |
 
 The group id SHOULD be derived from the sorted participant set and trade id. Clients MUST reject reservation events from outsiders not in the established participant set.
@@ -317,11 +317,11 @@ The group stage is:
 
 A group is **confirmed committed** if any of the following hold after validation:
 
-- the host has a `commit` reservation;
+- the seller has a `commit` reservation;
 - the escrow has a `commit` reservation;
-- the guest's escrow-backed payment proof validates on-chain.
+- the buyer's escrow-backed payment proof validates on-chain.
 
-Later buyer or host cancellation MUST NOT by itself erase the fact that a trade reached confirmed commitment.
+Later buyer or seller cancellation MUST NOT by itself erase the fact that a trade reached confirmed commitment.
 
 ## Review (`kind:32124`)
 
@@ -374,18 +374,18 @@ This NIP does not define a canonical on-chain or block-time proof that the revie
 
 ## Protocol Flow
 
-### 1. Guest Initiates Negotiation
+### 1. Buyer Initiates Negotiation
 
-1. Guest discovers a listing (`kind:32121`).
-2. Guest allocates a deterministic trade id and trade key.
-3. Guest creates a `kind:32122` reservation with `stage=negotiate`, signed by the trade key.
-4. Guest includes role-marked participant `p` tags and encrypted `participant_proof` tags as needed.
-5. Guest sends the reservation as a child event inside a private `kind:1327` rumor tagged `["conversation", "<trade-id>"]`, delivered with NIP-59 gift wraps to the host and self.
+1. Buyer discovers a listing (`kind:32121`).
+2. Buyer allocates a deterministic trade id and trade key.
+3. Buyer creates a `kind:32122` reservation with `stage=negotiate`, signed by the trade key.
+4. Buyer includes role-marked participant `p` tags and encrypted `participant_proof` tags as needed.
+5. Buyer sends the reservation as a child event inside a private `kind:1327` rumor tagged `["conversation", "<trade-id>"]`, delivered with NIP-59 gift wraps to the seller and self.
 
 ### 2. Negotiation
 
-6. Host reviews the request. If counter-offering, host creates a new `stage=negotiate` reservation with changed terms.
-7. If the host accepts negotiated terms, the host signs a `kind:1328` commit authorization and embeds it in the reservation content.
+6. Seller reviews the request. If counter-offering, seller creates a new `stage=negotiate` reservation with changed terms.
+7. If the seller accepts negotiated terms, the seller signs a `kind:1328` commit authorization and embeds it in the reservation content.
 8. Counteroffers continue privately until terms are accepted or cancelled.
 
 ### 3. Escrow Selection and Payment
@@ -397,7 +397,7 @@ This NIP does not define a canonical on-chain or block-time proof that the revie
 
 11. Once payment proof exists, the buyer/trade key publishes a public `stage=commit` `kind:32122` reservation with `proof`.
 12. A matching `kind:1326` transition is published.
-13. Host or escrow MAY publish their own `stage=commit` reservation/confirmation.
+13. Seller or escrow MAY publish their own `stage=commit` reservation/confirmation.
 
 ### 5. Cancellation
 
