@@ -1,105 +1,135 @@
 NIP-XX
 ======
 
-Accommodation Listings
-----------------------
+Accommodation Listing Extension for NIP-99
+------------------------------------------
 
 `draft` `optional`
 
-This NIP defines `kind:32121` for accommodation listings as parameterized replaceable events. It provides a structured format for sellers to advertise accommodation with pricing, availability rules, amenities, cancellation policies, and location data.
+This NIP defines an accommodation-specific profile for [NIP-99](99.md)
+classified listings. It does not define a new listing event kind.
+
+Accommodation listings use the NIP-99 event kinds:
+
+| Kind    | Description                         |
+| ------- | ----------------------------------- |
+| `30402` | Active accommodation listing        |
+| `30403` | Draft or inactive accommodation listing |
+
+All rules for NIP-99 listing identity, authoring, content, base metadata,
+images, prices, and status remain defined by NIP-99. This NIP only defines
+additional tags and behavior for listings categorized as accommodation.
 
 ## Terms
 
-- **Buyer** — Nostr user searching for accommodation.
-- **Seller** — Nostr user providing accommodation.
-- **Listing** — A single accommodation unit or property advertised by a seller.
+- **Buyer** - Nostr user searching for accommodation.
+- **Seller** - Nostr user providing accommodation.
+- **Listing** - A single accommodation unit or property advertised by a seller.
 
-## Event Kind
+## Category Tags
 
-| Kind    | Description           |
-| ------- | --------------------- |
-| `32121` | Accommodation listing |
-
-`kind:32121` is a parameterized replaceable event (NIP-01). The `d` tag provides a stable identifier for the listing across updates.
-
-## Content
-
-The `.content` field contains the listing **description** in Markdown.
-
-## Tags
-
-### Required Tags
-
-| Tag     | Format                       | Description                                                                                                         |
-| ------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `d`     | `["d", "<unique-id>"]`       | Stable listing identifier. SHOULD be generated once at creation (e.g. base-36 timestamp) and reused across updates. |
-| `title` | `["title", "<string>"]`      | Human-readable listing title.                                                                                       |
-| `t`     | `["t", "accommodation"]`     | Topic tag. MUST be `"accommodation"`.                                                                               |
-| `type`  | `["type", "<listing-type>"]` | One of: `room`, `house`, `apartment`, `villa`, `hotel`, `hostel`, `resort`.                                         |
-
-### Optional Tags
-
-| Tag                          | Format                                                      | Description                                                                                                               |
-| ---------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `image`                      | `["image", "<url>"]`                                        | Image URL. Repeat for multiple images.                                                                                    |
-| `active`                     | `["active", "true"\|"false"]`                               | Whether the listing is currently available. Default `true`.                                                               |
-| `negotiable`                 | `["negotiable", "true"\|"false"]`                           | Whether the seller accepts negotiated prices below the listed price. Default `false`.                                     |
-| `minStay`                    | `["minStay", "<integer>"]`                                  | Minimum stay in days. Default `1`.                                                                                        |
-| `checkIn`                    | `["checkIn", "<hour>:<minute>"]`                            | Check-in time (24h format). Default `"15:0"`.                                                                             |
-| `checkOut`                   | `["checkOut", "<hour>:<minute>"]`                           | Check-out time (24h format). Default `"11:0"`.                                                                            |
-| `location`                   | `["location", "<string>"]`                                  | Human-readable location or address.                                                                                       |
-| `quantity`                   | `["quantity", "<integer>"]`                                 | Number of bookable units. Default `1`.                                                                                    |
-| `instantBook`                | `["instantBook", "true"\|"false"]`                          | Whether reservations are confirmed instantly without seller approval. Default `true`. Promoted as `["I", "true"\|"false"]`. |
-| `allowSelfSignedReservation` | `["allowSelfSignedReservation", "true"\|"false"]`           | Whether buyers may self-sign reservations (e.g. via zap proof). Default `false`.                                         |
-| `securityDeposit`            | `["securityDeposit", "<amount>", "<denom>", "<decimals>"]`  | Optional security deposit the buyer must lock alongside the payment.                                                     |
-| `minPaymentAmount`           | `["minPaymentAmount", "<amount>", "<denom>", "<decimals>"]` | Minimum payment amount the seller will accept for a reservation.                                                         |
-| `maxDisputePeriod`           | `["maxDisputePeriod", "<seconds>"]`                         | Maximum time after checkout that escrow may remain disputed before unilateral claim. Default is 1209600 seconds.           |
-| `published_at`               | `["published_at", "<unix-seconds>"]`                        | Timestamp of first publication. Publishers SHOULD preserve this value across listing edits.                                |
-| `imeta`                      | `["imeta", "url <url>", ...]`                               | Inline image metadata as described by NIP-92. Repeat for multiple images.                                                  |
-| `g`                          | `["g", "<h3-index>"]`                                       | H3 cell/index for location-based search. Publishers SHOULD use H3 tags, not geohash strings.                               |
-
-### Price Tags
-
-Listings MAY include one or more `price` tags. Clients SHOULD use the cheapest applicable price when computing reservation cost.
-
-**Recurring price:**
+Accommodation listings MUST include:
 
 ```json
-["price", "<decimal-amount>", "<denomination>", "<frequency>"]
+["t", "accommodation"]
 ```
 
-- `<decimal-amount>` — Amount as a decimal string in the denomination's standard unit (e.g. `"0.00100000"` for 100,000 satoshis).
-- `<denomination>` — Currency code: `"BTC"`, `"USD"`, `"ETH"`, etc.
-- `<frequency>` — One of: `day`, `week`, `month`, `year`.
+Clients SHOULD treat `["t", "accommodation"]` as the canonical signal that a
+NIP-99 listing follows this accommodation profile.
 
-**One-time/fixed price:**
+## Accommodation Tags
+
+Accommodation listings SHOULD include a `type` tag:
 
 ```json
-["price", "<decimal-amount>", "<denomination>"]
+["type", "<listing-type>"]
 ```
 
-### Cancellation Policy Tags
+Recognized listing types are:
 
-Listings MAY include one or more `cancellationPolicy` tags defining refund terms based on how far in advance the buyer cancels.
+`room`, `house`, `apartment`, `villa`, `hotel`, `hostel`, `resort`
+
+Accommodation listings MAY include the following additional tags:
+
+| Tag                          | Format                                                      | Description |
+| ---------------------------- | ----------------------------------------------------------- | ----------- |
+| `active`                     | `["active", "true"\|"false"]`                               | Whether the listing is currently available. Default `true`. |
+| `negotiable`                 | `["negotiable", "true"\|"false"]`                           | Whether the seller accepts negotiated prices below the listed price. Default `false`. |
+| `minStay`                    | `["minStay", "<integer>"]`                                  | Minimum stay in days. Default `1`. |
+| `checkIn`                    | `["checkIn", "<hour>:<minute>"]`                            | Check-in time in 24h format. Default `"15:0"`. |
+| `checkOut`                   | `["checkOut", "<hour>:<minute>"]`                           | Check-out time in 24h format. Default `"11:0"`. |
+| `quantity`                   | `["quantity", "<integer>"]`                                 | Number of independently bookable units. Default `1`. |
+| `instantBook`                | `["instantBook", "true"\|"false"]`                          | Whether reservations are confirmed instantly without seller approval. Default `true`. |
+| `allowSelfSignedReservation` | `["allowSelfSignedReservation", "true"\|"false"]`           | Whether buyers may self-sign reservations, for example via zap proof. Default `false`. |
+| `securityDeposit`            | `["securityDeposit", "<amount>", "<denom>", "<decimals>"]`  | Optional security deposit the buyer must lock alongside the payment. |
+| `minPaymentAmount`           | `["minPaymentAmount", "<amount>", "<denom>", "<decimals>"]` | Minimum payment amount the seller will accept for a reservation. |
+| `maxDisputePeriod`           | `["maxDisputePeriod", "<seconds>"]`                         | Maximum time after checkout that escrow may remain disputed before unilateral claim. Default `1209600`. |
+
+Tags already defined by NIP-99, such as `title`, `summary`, `published_at`,
+`location`, `image`, `price`, and `status`, SHOULD be used as defined there.
+
+## Location Indexing
+
+Accommodation listings SHOULD include `g` tags containing H3 cell indexes for
+location-based search.
+
+Publishers MUST include multiple `g` tags: one for the listing's most precise
+public H3 cell, plus every parent cell in that H3 hierarchy. This allows a
+listing to appear in search results regardless of the buyer's selected search
+granularity.
+
+If a seller does not want to disclose the exact property location, the publisher
+SHOULD choose the most precise H3 cell the seller is willing to reveal, then add
+that cell and all parent cells.
+
+For example, a listing whose most precise public H3 cell is resolution 12 would
+include:
+
+```json
+["g", "<h3-res-12-cell>"]
+["g", "<h3-res-11-parent>"]
+["g", "<h3-res-10-parent>"]
+["g", "<h3-res-9-parent>"]
+["g", "<h3-res-8-parent>"]
+["g", "..."]
+["g", "<h3-res-0-parent>"]
+```
+
+Clients searching by area SHOULD query the `g` value matching their desired H3
+granularity. Clients MAY also query neighboring cells when the search radius
+crosses cell boundaries.
+
+Publishers SHOULD use H3 indexes for accommodation listings. They SHOULD NOT use
+geohash strings in `g` tags for this profile.
+
+## Cancellation Policy Tags
+
+Listings MAY include one or more `cancellationPolicy` tags defining refund terms
+based on how far in advance the buyer cancels.
 
 ```json
 ["cancellationPolicy", "<seconds-before-start>", "<refund-fraction>"]
 ```
 
-- `<seconds-before-start>` — Number of seconds before check-in that this policy applies.
-- `<refund-fraction>` — Decimal fraction `0.0`–`1.0` of the total cost refunded (e.g. `"0.5"` = 50% refund).
+- `<seconds-before-start>` is the number of seconds before check-in that this
+  policy applies.
+- `<refund-fraction>` is a decimal fraction from `0.0` to `1.0` of the total
+  cost refunded, for example `"0.5"` for 50%.
 
-### Specification Tags
+Clients SHOULD sort cancellation policies by advance notice period before
+displaying them.
 
-Listings MAY include `spec` tags advertising features and details.
+## Specification Tags
 
-**Boolean specification** (presence = `true`):
+Listings MAY include `spec` tags advertising accommodation features and details.
+
+Boolean specifications are represented by presence:
 
 ```json
 ["spec", "<spec-name>"]
 ```
 
-**Valued specification:**
+Valued specifications include a value:
 
 ```json
 ["spec", "<spec-name>", "<value>"]
@@ -107,31 +137,56 @@ Listings MAY include `spec` tags advertising features and details.
 
 Valued specs MUST include a value. Boolean specs MUST NOT include a value.
 
-#### Recognized Specifications for Accommodation
+### Recognized Accommodation Specifications
 
-The recognized names below are specific to `accommodation` listings. Other listing kinds will define their own recognized names.
+The recognized names below are specific to accommodation listings. Clients
+SHOULD treat unrecognized spec names gracefully and MAY display them as-is.
 
-**Valued** (integer value):
+Valued integer specs:
 
 `bathtub`, `bathrooms`, `beds`, `bedrooms`, `max_guests`, `tv`
 
-**Boolean** (presence = true, absence = false):
+Boolean specs:
 
-`airconditioning`, `allows_pets`, `crib`, `tumble_dryer`, `washer`, `elevator`, `free_parking`, `gym`, `hair_dryer`, `heating`, `high_chair`, `wireless_internet`, `iron`, `jacuzzi`, `kitchen`, `outlet_covers`, `pool`, `private_entrance`, `smoking_allowed`, `breakfast`, `fireplace`, `smoke_detector`, `essentials`, `shampoo`, `infants_allowed`, `children_allowed`, `hangers`, `flat_smooth_pathway_to_front_door`, `grab_rails_in_shower_and_toilet`, `oven`, `bbq`, `balcony`, `patio`, `dishwasher`, `refrigerator`, `garden_or_backyard`, `microwave`, `coffee_maker`, `dishes_and_silverware`, `stove`, `fire_extinguisher`, `carbon_monoxide_detector`, `luggage_dropoff_allowed`, `beach_essentials`, `beachfront`, `baby_monitor`, `babysitter_recommendations`, `childrens_books_and_toys`, `game_console`, `street_parking`, `paid_parking`, `hot_water`, `lake_access`, `single_level_home`, `waterfront`, `first_aid_kit`, `handheld_shower_head`, `home_step_free_access`, `lock_on_bedroom_door`, `mobile_hoist`, `path_to_entrance_lit_at_night`, `pool_hoist`, `ev_charger`, `rollin_shower`, `shower_chair`, `tub_with_shower_bench`, `wide_clearance_to_bed`, `wide_clearance_to_shower_and_toilet`, `wide_hallway_clearance`, `baby_bath`, `changing_table`, `room_darkening_shades`, `stair_gates`, `table_corner_guards`, `extra_pillows_and_blankets`, `ski_in_ski_out`, `window_guards`, `disabled_parking_spot`, `grab_rails_in_toilet`, `events_allowed`, `common_spaces_shared`, `bathroom_shared`, `security_cameras`
+`airconditioning`, `allows_pets`, `crib`, `tumble_dryer`, `washer`, `elevator`,
+`free_parking`, `gym`, `hair_dryer`, `heating`, `high_chair`,
+`wireless_internet`, `iron`, `jacuzzi`, `kitchen`, `outlet_covers`, `pool`,
+`private_entrance`, `smoking_allowed`, `breakfast`, `fireplace`,
+`smoke_detector`, `essentials`, `shampoo`, `infants_allowed`,
+`children_allowed`, `hangers`, `flat_smooth_pathway_to_front_door`,
+`grab_rails_in_shower_and_toilet`, `oven`, `bbq`, `balcony`, `patio`,
+`dishwasher`, `refrigerator`, `garden_or_backyard`, `microwave`,
+`coffee_maker`, `dishes_and_silverware`, `stove`, `fire_extinguisher`,
+`carbon_monoxide_detector`, `luggage_dropoff_allowed`, `beach_essentials`,
+`beachfront`, `baby_monitor`, `babysitter_recommendations`,
+`childrens_books_and_toys`, `game_console`, `street_parking`, `paid_parking`,
+`hot_water`, `lake_access`, `single_level_home`, `waterfront`,
+`first_aid_kit`, `handheld_shower_head`, `home_step_free_access`,
+`lock_on_bedroom_door`, `mobile_hoist`, `path_to_entrance_lit_at_night`,
+`pool_hoist`, `ev_charger`, `rollin_shower`, `shower_chair`,
+`tub_with_shower_bench`, `wide_clearance_to_bed`,
+`wide_clearance_to_shower_and_toilet`, `wide_hallway_clearance`, `baby_bath`,
+`changing_table`, `room_darkening_shades`, `stair_gates`,
+`table_corner_guards`, `extra_pillows_and_blankets`, `ski_in_ski_out`,
+`window_guards`, `disabled_parking_spot`, `grab_rails_in_toilet`,
+`events_allowed`, `common_spaces_shared`, `bathroom_shared`,
+`security_cameras`
 
-Clients SHOULD treat unrecognized spec names gracefully and MAY display them as-is.
+## Relay Index Tags
 
-### Relay Index Tags
+Publishers MAY duplicate selected accommodation tags into single-letter index
+tags so relays can filter more efficiently. Readers MUST treat the canonical
+multi-letter tags as authoritative and use index tags only as hints.
 
-Publishers MAY duplicate selected multi-letter tags into single-letter index tags so relays can filter more efficiently. Readers MUST treat the canonical multi-letter tags as authoritative and use index tags only as hints.
-
-These single-letter index meanings are scoped to `kind:32121`; readers MUST NOT interpret them outside accommodation listing events.
+These single-letter index meanings are scoped to NIP-99 listings with
+`["t", "accommodation"]`; readers MUST NOT interpret them outside this profile.
 
 Known index tags include:
 
 | Tag | Source field |
 | --- | ------------ |
 | `T` | `type` |
+| `A` | `active` |
 | `I` | `instantBook` |
 | `N` | `negotiable` |
 | `s` | Boolean `spec` values |
@@ -143,31 +198,42 @@ Known index tags include:
 
 ## Listing Anchor
 
-A listing's stable identity for cross-event references follows the parameterized replaceable event address format:
+Accommodation listing anchors use the NIP-99 addressable event form:
 
-```
-32121:<pubkey>:<d-tag>
+```text
+30402:<pubkey>:<d-tag>
 ```
 
-This anchor can be encoded as an `naddr` ([NIP-19](19.md)) or a `nostr:` URI ([NIP-21](21.md)). Other event kinds (reservations, reviews) reference listings via an `a` tag containing this anchor.
+Draft or inactive listing anchors use:
+
+```text
+30403:<pubkey>:<d-tag>
+```
+
+Other event kinds, such as reservations and reviews, SHOULD reference the active
+listing address with an `a` tag.
 
 ## Example Event
 
 ```jsonc
 {
-  "kind": 32121,
+  "kind": 30402,
   "pubkey": "a1b2c3d4e5f6...",
   "created_at": 1712678400,
   "content": "A beautiful beachfront villa with stunning ocean views. Two bedrooms, private pool, and direct beach access. Perfect for a quiet getaway.",
   "tags": [
     ["d", "m1abc2"],
     ["title", "Ocean View Villa"],
+    ["summary", "Two bedroom beachfront villa with pool"],
     ["image", "https://example.com/villa-front.jpg"],
     ["image", "https://example.com/villa-pool.jpg"],
     ["image", "https://example.com/villa-bedroom.jpg"],
+    ["published_at", "1712678400"],
+    ["status", "active"],
     ["t", "accommodation"],
     ["active", "true"],
     ["type", "villa"],
+    ["A", "true"],
     ["negotiable", "false"],
     ["minStay", "2"],
     ["checkIn", "15:0"],
@@ -176,7 +242,6 @@ This anchor can be encoded as an `naddr` ([NIP-19](19.md)) or a `nostr:` URI ([N
     ["quantity", "1"],
     ["instantBook", "true"],
     ["allowSelfSignedReservation", "false"],
-    ["published_at", "1712678400"],
     ["price", "0.00050000", "BTC", "day"],
     ["cancellationPolicy", "172800", "1.0"],
     ["cancellationPolicy", "86400", "0.5"],
@@ -193,36 +258,29 @@ This anchor can be encoded as an `naddr` ([NIP-19](19.md)) or a `nostr:` URI ([N
     ["securityDeposit", "0.00025000", "BTC", "8"],
     ["minPaymentAmount", "0.00010000", "BTC", "8"],
     ["maxDisputePeriod", "1209600"],
-    ["g", "8c2ab34567"],
+    ["g", "8c2ab34567fffff"],
+    ["g", "8b2ab34567fffff"],
+    ["g", "8a2ab34567fffff"],
+    ["g", "892ab34567fffff"],
+    ["g", "882ab34567fffff"]
   ],
   "id": "...",
-  "sig": "...",
+  "sig": "..."
 }
 ```
 
-## Cost Calculation
-
-When a buyer selects dates, the client computes the cost from the listing's `price` tags:
-
-- **Recurring prices:** `units = days_in_range / frequency_in_days`, then `cost = units × amount`.
-  - `day` = 1 day, `week` = 7 days, `month` = 30 days, `year` = 365 days.
-- **One-time/fixed prices:** `cost = amount × quantity`.
-- If multiple `price` tags are present, the client SHOULD use the cheapest applicable price for the selected date range.
-
 ## Client Behavior
 
-Clients displaying listings SHOULD:
+Clients displaying accommodation listings SHOULD:
 
-1. Render the `.content` as Markdown for the description.
-2. Display images from `image` tags in a gallery or carousel.
-3. Show pricing with frequency (e.g. "0.0005 BTC / day").
-4. Display specifications grouped by category when possible.
-5. Show cancellation policies sorted by advance notice period.
-6. Support geospatial search using H3 values from `g` tags.
-7. Only show listings where `active` is `true` (or absent) in search results.
+1. Apply the base NIP-99 listing behavior.
+2. Use `["t", "accommodation"]` to detect this profile.
+3. Display accommodation specifications grouped by category when possible.
+4. Show cancellation policies sorted by advance notice period.
+5. Support geospatial search using all published H3 `g` tags.
 
 ## Related NIPs
 
-- [NIP-01](01.md) — Event structure and parameterized replaceable events.
-- [NIP-19](19.md) — `naddr` encoding for listing anchors.
-- [NIP-21](21.md) — `nostr:` URI scheme for linking to listings.
+- [NIP-99](99.md) - Classified Listings.
+- [NIP-19](19.md) - `naddr` encoding for listing anchors.
+- [NIP-21](21.md) - `nostr:` URI scheme for linking to listings.
