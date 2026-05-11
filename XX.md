@@ -20,12 +20,12 @@ This NIP defines a protocol for decentralized escrow services on Nostr, enabling
 | Kind    | Name                    | Type                      | Description                                                |
 | ------- | ----------------------- | ------------------------- | ---------------------------------------------------------- |
 | `17388` | Escrow Method           | Replaceable               | User's accepted payment forms and trusted escrow providers |
-| `30302` | Escrow Service Selected | Parameterized replaceable | Buyer's selected escrow and seller method for a trade      |
+| `30302` | Escrow Service Selected | Parameterized replaceable | Optional helper event recording the buyer's selected escrow and seller method for a trade |
 | `30303` | Escrow Service          | Parameterized replaceable | Escrow operator's service advertisement                    |
 
 ## Escrow Service (`kind:30303`)
 
-Published by escrow operators to advertise their service. The `d` tag MUST be set to the smart contract address.
+Published by escrow operators to advertise their service. The `d` tag is a stable service identifier chosen by the escrow operator and MUST remain stable across updates to the same advertised service.
 
 ### Content
 
@@ -60,7 +60,7 @@ JSON object:
 | `contractBytecodeHash` | string  | SHA-256 hash of the contract's runtime bytecode. Clients use this to verify the contract matches a known, audited implementation. |
 | `chainId`              | integer | EVM chain ID (e.g. `30` for Rootstock mainnet).                                                                                   |
 | `maxDuration`          | integer | Maximum escrow lock duration in seconds.                                                                                          |
-| `type`                 | string  | Contract type. Currently `"EVM"`.                                                                                                 |
+| `type`                 | string  | Escrow service type. One possible type is `"EVM"`. Other service types MAY define their own payment rails, contract fields, and verification rules. |
 | `feePercent`           | number  | Proportional fee as a percentage (e.g. `1.0` = 1%).                                                                               |
 | `tokenFeeHints`        | object  | Per-token fee parameters, keyed by token address or `"native"` for the chain's native asset.                                      |
 
@@ -79,14 +79,16 @@ Each entry in `tokenFeeHints` contains:
 ### Tags
 
 ```json
-["d", "<contractAddress>"]
+["d", "<service-id>"]
 ```
 
 ## Escrow Method (`kind:17388`)
 
-Published by both buyers and sellers to declare which escrow services they trust and which payment forms they accept.
+Usually published by sellers to declare which escrow services they trust and which payment forms they accept. When placing an order, buyers normally defer to the seller's escrow method event and choose from the seller's advertised escrow and payment options.
 
-This event is replaceable per pubkey. Implementations SHOULD publish one current escrow method event per user. The event content is empty.
+Buyers MAY publish their own escrow method event to advertise preferred escrow services or accepted payment forms. When a buyer pays through an escrow service used with a seller, the buyer SHOULD adopt that escrow pubkey in their own escrow method event so future counterparties can discover that trust relationship.
+
+This event is replaceable per pubkey. Implementations SHOULD publish at most one current escrow method event per user. The event content is empty.
 
 ### Tags
 
@@ -129,6 +131,8 @@ When present, `<app-id>` scopes the payment form to an application.
 ## Escrow Service Selected (`kind:30302`)
 
 Created by the buyer to record the chosen escrow service and the seller's escrow method for a trade.
+
+This event is OPTIONAL. A buyer MAY use it to keep trade state synchronized across clients or with other participants, but it is not required before funding escrow or before publishing a reservation payment proof. The buyer is responsible for tracking where funds were deposited and for publishing a valid payment-proof reservation when committing the trade.
 
 In private negotiation flows this event is usually sent as a signed child event inside a private `kind:1327` structured-message rumor tagged `["conversation", "<trade-id>"]` and delivered with NIP-59 gift wraps, rather than being broadcast as a standalone public event. Implementations MAY publish it as a standalone event when the trade context is intended to be public.
 
