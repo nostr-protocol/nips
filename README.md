@@ -149,9 +149,9 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `44`          | Channel Mute User               | [28](28.md)                            |
 | `62`          | Request to Vanish               | [62](62.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
-| `443`         | KeyPackage                      | [Marmot](marmot)                       |
-| `444`         | Welcome Message                 | [Marmot](marmot)                       |
-| `445`         | Group Event                     | [Marmot](marmot)                       |
+| `443`         | KeyPackage                      | [Marmot][marmot]                       |
+| `444`         | Welcome Message                 | [Marmot][marmot]                       |
+| `445`         | Group Event                     | [Marmot][marmot]                       |
 | `818`         | Merge Requests                  | [54](54.md)                            |
 | `1018`        | Poll Response                   | [88](88.md)                            |
 | `1021`        | Bid                             | [15](15.md)                            |
@@ -215,7 +215,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10020`       | Media follows                   | [51](51.md)                            |
 | `10030`       | User emoji list                 | [51](51.md)                            |
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
-| `10051`       | KeyPackage Relays List          | [Marmot](marmot)                       |
+| `10051`       | KeyPackage Relays List          | [Marmot][marmot]                       |
 | `10063`       | User server list                | [Blossom][blossom]                     |
 | `10096`       | File storage server list        | [96](96.md) (deprecated)               |
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
@@ -295,7 +295,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `35128`       | Named nsite manifest            | [5A](5A.md)                            |
 | `38172`       | Cashu Mint Announcement         | [87](87.md)                            |
 | `38173`       | Fedimint Announcement           | [87](87.md)                            |
-| `37516`       | Geocache listing                | [geocaching](geocaching)               |
+| `37516`       | Geocache listing                | [geocaching][geocaching]               |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
 | `39089`       | Starter packs                   | [51](51.md)                            |
