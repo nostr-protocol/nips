@@ -16,7 +16,7 @@ Negotiation is private. Signed reservation and escrow-selection events are sent 
 - **Seller** — Nostr user who owns the listing being reserved.
 - **Escrow** — Optional service participant that verifies funding and can arbitrate disputes.
 - **Trade** — A single reservation negotiation and lifecycle, identified by a stable `d` tag (trade ID).
-- **Listing Anchor** — A parameterized replaceable event address in the format `<kind>:<pubkey>:<d-tag>`, for example `32121:<seller-pubkey>:<listing-d-tag>`.
+- **Listing Anchor** — A NIP-99 accommodation listing address in the format `30402:<seller-pubkey>:<listing-d-tag>`.
 - **Trade Key** — A per-trade Nostr key that can publish buyer-side reservation events. The buyer's account identity is bound to this key through encrypted `participant_proof` tags.
 
 ## Event Kinds
@@ -40,7 +40,7 @@ A reservation event represents one participant's current position in a trade. Mu
 
 | Stage       | Description |
 | ----------- | ----------- |
-| `negotiate` | Mutable private proposal or counteroffer. Clients MUST NOT treat negotiate-stage events as affecting availability. |
+| `negotiate` | Mutable private proposal or counteroffer. Negotiate-stage reservations MUST only be exchanged as private messages in the negotiation protocol and MUST NOT be broadcast as public events. Clients MUST NOT treat negotiate-stage events as affecting availability. |
 | `commit`    | Booking commitment. Public commit-stage events affect listing availability unless cancelled. |
 | `cancel`    | Cancellation of a negotiation or prior commitment. |
 
@@ -59,7 +59,7 @@ A reservation event represents one participant's current position in a trade. Mu
 | Tag | Required | Description |
 | --- | -------- | ----------- |
 | `d` | Yes | Trade identifier. Stable across all events in the trade. Private trade messages SHOULD repeat this value in a `conversation` tag on the enclosing rumor. |
-| `a` | Yes | Listing anchor (`<kind>:<pubkey>:<d-tag>`). |
+| `a` | Yes | Listing anchor (`30402:<seller-pubkey>:<listing-d-tag>`). The referenced event MUST be a NIP-99 classified listing with `["t", "accommodation"]`. |
 | `p` | Yes | Participant pubkey. When a role is known, use `["p", pubkey, relayHint, role]` where role is `seller`, `buyer`, or `escrow`. |
 | `participant_proof` | No | Encrypted proof binding a trade-key participant pubkey to a real identity pubkey. Required when `participantPubkey != identityPubkey`. |
 | `published_at` | No | First publication timestamp. Publishers SHOULD preserve this across replacements. |
@@ -266,7 +266,7 @@ A `commit` reservation SHOULD include a `proof` object unless it is a seller-pub
 ```jsonc
 {
   "seller": { "...": "seller profile/event JSON" },
-  "listing": { "...": "kind:32121 listing event JSON" },
+  "listing": { "...": "kind:30402 NIP-99 accommodation listing event JSON" },
   "zapProof": {
     "receipt": { "...": "zap receipt event JSON" }
   },
@@ -279,7 +279,7 @@ A `commit` reservation SHOULD include a `proof` object unless it is a seller-pub
 ```jsonc
 {
   "seller": { "...": "seller profile/event JSON" },
-  "listing": { "...": "kind:32121 listing event JSON" },
+  "listing": { "...": "kind:30402 NIP-99 accommodation listing event JSON" },
   "zapProof": null,
   "escrowProof": {
     "txHash": "<evm-transaction-hash>",
@@ -376,7 +376,7 @@ This NIP does not define a canonical on-chain or block-time proof that the revie
 
 ### 1. Buyer Initiates Negotiation
 
-1. Buyer discovers a listing (`kind:32121`).
+1. Buyer discovers a NIP-99 accommodation listing (`kind:30402`, `["t", "accommodation"]`).
 2. Buyer allocates a deterministic trade id and trade key.
 3. Buyer creates a `kind:32122` reservation with `stage=negotiate`, signed by the trade key.
 4. Buyer includes role-marked participant `p` tags and encrypted `participant_proof` tags as needed.
@@ -407,9 +407,12 @@ Either party MAY cancel a private negotiation with a private `stage=cancel` rese
 
 Clients MUST only consider public `stage=commit` reservations from active, non-cancelled groups when computing listing availability. Private `stage=negotiate` events MUST NOT affect availability.
 
+Reservation clients SHOULD verify that the referenced listing is an active NIP-99 accommodation listing before displaying or accepting a reservation. For this protocol, listing subtype such as `villa`, `hotel`, or `apartment` is determined by the listing's `type` tag and its relay-indexed `T` duplicate, not by additional `t` tags.
+
 ## Related NIPs
 
 - [NIP-01](01.md) — Event structure and parameterized replaceable events.
+- [NIP-99](99.md) — Classified listings.
 - [NIP-17](17.md) — Private message rumor kind `14`.
 - [NIP-19](19.md) — `naddr` encoding for anchors.
 - [NIP-44](44.md) — Encryption scheme.
