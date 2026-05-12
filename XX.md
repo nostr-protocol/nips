@@ -199,6 +199,7 @@ Every public reservation stage change MUST be accompanied by a transition event.
 ```json
 [
   ["d", "<trade-id>"],
+  ["t", "<trade-id>"],
   ["e", "<reservation-event-id>"],
   ["prev", "<previous-transition-event-id>"],
   ["a", "<listing-anchor>"]
@@ -207,7 +208,8 @@ Every public reservation stage change MUST be accompanied by a transition event.
 
 | Tag | Required | Description |
 | --- | -------- | ----------- |
-| `d` | Yes | Trade identifier matching the reservation `d` tag. |
+| `d` | Yes | Canonical trade identifier matching the reservation `d` tag. Consumers MUST use this tag for reservation-transition identity and lookups. |
+| `t` | No | Backward-compatible trade-id hashtag/search tag. When present it MUST equal `d`. Publishers SHOULD include it while older consumers still query transitions by `#t`; consumers MAY query it as a fallback but MUST NOT treat it as canonical. |
 | `e` | Yes | Reservation event this transition applies to. |
 | `prev` | No | Previous transition event id in this participant's transition chain. Omit only for the first transition. |
 | `a` | No | Listing anchor. SHOULD be included when known. |
