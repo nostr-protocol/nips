@@ -19,8 +19,9 @@ Accommodation listings use the NIP-99 event kinds:
 
 Generic marketplace behavior, including `instantBook`, `negotiable`,
 `quantity`, security deposits, minimum payment amounts, and maximum dispute
-periods, is defined by the NIP-99 Marketplace Listing Extension. This NIP only
-defines accommodation-specific profile tags and location indexing.
+periods, and cancellation policies, is defined by the NIP-99 Marketplace Listing
+Extension. This NIP only defines accommodation-specific profile tags and
+location indexing.
 
 ## Terms
 
@@ -58,7 +59,6 @@ Accommodation listings MAY include the following accommodation-specific tags:
 | `minStay`            | `["minStay", "<integer>"]`                        | Minimum stay in days. Default `1`. |
 | `checkIn`            | `["checkIn", "<hour>:<minute>"]`                  | Check-in time in 24h format. Default `"15:00"`. |
 | `checkOut`           | `["checkOut", "<hour>:<minute>"]`                 | Check-out time in 24h format. Default `"11:00"`. |
-| `cancellationPolicy` | `["cancellationPolicy", "<seconds>", "<refund>"]` | Refund terms based on how far in advance the buyer cancels. |
 | `spec`               | `["spec", "<spec-name>"]` or `["spec", "<spec-name>", "<value>"]` | Accommodation feature or detail. |
 
 Tags already defined by NIP-99, such as `title`, `summary`, `published_at`,
@@ -97,23 +97,6 @@ crosses cell boundaries.
 
 Publishers SHOULD use H3 indexes for accommodation listings. They SHOULD NOT use
 geohash strings in `g` tags for this profile.
-
-## Cancellation Policy Tags
-
-Listings MAY include one or more `cancellationPolicy` tags defining refund terms
-based on how far in advance the buyer cancels.
-
-```json
-["cancellationPolicy", "<seconds-before-start>", "<refund-fraction>"]
-```
-
-- `<seconds-before-start>` is the number of seconds before check-in that this
-  policy applies.
-- `<refund-fraction>` is a decimal fraction from `0.0` to `1.0` of the total
-  cost refunded, for example `"0.5"` for 50%.
-
-Clients SHOULD sort cancellation policies by advance notice period before
-displaying them.
 
 ## Specification Tags
 
@@ -234,8 +217,6 @@ listing address with an `a` tag.
     ["negotiable", "false"],
     ["N", "false"],
     ["price", "0.00050000", "BTC", "day"],
-    ["cancellationPolicy", "172800", "1.0"],
-    ["cancellationPolicy", "86400", "0.5"],
     ["spec", "wireless_internet"],
     ["s", "wireless_internet"],
     ["spec", "pool"],
@@ -275,8 +256,7 @@ Clients displaying accommodation listings SHOULD:
    Listing Extension.
 3. Use `["t", "accommodation"]` to detect this profile.
 4. Display accommodation specifications grouped by category when possible.
-5. Show cancellation policies sorted by advance notice period.
-6. Support geospatial search using all published H3 `g` tags.
+5. Support geospatial search using all published H3 `g` tags.
 
 ## Related NIPs
 
