@@ -16,7 +16,7 @@ Official Nostr Protocol Extensions for the UPlanet/Astroport.ONE Ecosystem
 
 ### Core Systems
 - **Identity & DIDs:** [NIP-101](101.md) + [42-twin-key-extension.md](42-twin-key-extension.md)
-- **Oracle Permits:** [42-oracle-permits-extension.md](42-oracle-permits-extension.md)
+- **WoTx2 Permits (P2P):** [42-oracle-permits-extension.md](42-oracle-permits-extension.md)
 - **Oracle Badges:** [58-oracle-badges-extension.md](58-oracle-badges-extension.md) - Gamification NIP-58
 - **Relay Sync:** [101-n2-constellation-sync-extension.md](101-n2-constellation-sync-extension.md)
 - **Economic Health:** [101-economic-health-extension.md](101-economic-health-extension.md) - Swarm economic monitoring
@@ -53,7 +53,7 @@ UPlanet extends Nostr with:
 - 🔐 **Decentralized Identity (DID)** - W3C-compliant identities on Nostr
 - 📁 **IPFS Integration** - Content-addressed file storage
 - 🌐 **Provenance Tracking** - File attribution and deduplication
-- 🎫 **Peer-Validated Credentials** - Oracle system for competence verification
+- 🎫 **Peer-Validated Credentials** - WoTx2 P2P system for competence certification (100% P2P, no Oracle)
 - 🏅 **Badge Gamification** - NIP-58 badges for visual competence representation
 - 🔄 **N² Synchronization** - Friends + friends-of-friends social graph sync (relativistic distribution)
 - 🌱 **Environmental Registry** - ORE (Ecological Real Obligations) system
@@ -91,13 +91,13 @@ UPlanet extends Nostr with:
   - **Process:** User signs → UMAP signs → Relay links identities
   - **Use case:** Location-based content access + permission control
 
-- **[NIP-42 Oracle Permits Extension](42-oracle-permits-extension.md)** - Multi-Signature Permit Management
+- **[NIP-42 WoTx2 Permits Extension](42-oracle-permits-extension.md)** - P2P Competence Certification (WoTx2)
   - **Extends:** NIP-42 (Authentication to relays)
-  - **New kinds:** 30500 (definitions), 30501 (requests), 30502 (attestations), 30503 (credentials)
-  - **Innovation:** Web of Trust (WoT) multi-signature competence validation
-  - **Flow:** Define permit → Request → N attestations → Auto-issue W3C VC → Add to DID
-  - **Examples:** `PERMIT_ORE_V1` (5 sigs), `PERMIT_DRIVER` (12 sigs, WoT insurance mutual)
-  - **Integration:** Enhanced NIP-42 auth with `permit` and `credential_id` tags
+  - **New kinds:** 30500 (user-signed definitions), 30501 (learning requests), 30502 (peer endorsements), 30503 (self-signed certificates)
+  - **Innovation:** 100% P2P Web of Trust — no Oracle, no central server
+  - **Rule A:** 3 Kind 7 `+` reactions from distinct peers → apprentice self-signs Kind 30503
+  - **Rule B:** 1 Kind 30502 from a peer of level X1+ → direct level upgrade
+  - **Integration:** `POST /api/permit/define` with NIP-42 auth (TTL 300s), `callAPIWithAuth()` in common.js
 
 - **[NIP-58 Oracle Badges Extension](58-oracle-badges-extension.md)** - Gamification of Competence Certification
   - **Extends:** NIP-58 (Badges)
@@ -217,7 +217,7 @@ Satellites (24)
 | Feature | Standard NIP | UPlanet Extension | Kind(s) | Status |
 |---------|-------------|-------------------|---------|--------|
 | **Authentication** | NIP-42 | [42-twin-key-extension.md](42-twin-key-extension.md) | 22242 | ✅ Production |
-| **Oracle Permits** | NIP-42 | [42-oracle-permits-extension.md](42-oracle-permits-extension.md) | 30500-30503 | ✅ Production |
+| **WoTx2 Permits (P2P)** | NIP-42 | [42-oracle-permits-extension.md](42-oracle-permits-extension.md) | 30500-30503, 7 | ✅ Production |
 | **Oracle Badges** | NIP-58 | [58-oracle-badges-extension.md](58-oracle-badges-extension.md) | 30009, 8, 30008 | ✅ Production |
 | **File Metadata** | NIP-94 | [94-provenance-extension.md](94-provenance-extension.md) | 1063 | ✅ Production |
 | **File Storage** | NIP-96 | [96-ipfs-extension.md](96-ipfs-extension.md) | - (HTTP API) | ✅ Production |
@@ -264,10 +264,10 @@ Satellites (24)
 | 30023 | Article | NIP-23 | Long-form content |
 | 30024 | Draft | NIP-23 | Article drafts |
 | **Identity & Oracle** ||||
-| 30500 | Permit Definition | Oracle | License type definition |
-| 30501 | Permit Request | Oracle | Application for permit |
-| 30502 | Permit Attestation | Oracle | Expert signature |
-| 30503 | Permit Credential | Oracle | W3C Verifiable Credential |
+| 30500 | Permit Definition | WoTx2 | Skill definition, user-signed (NIP-07) |
+| 30501 | Learning Request | WoTx2 | Apprentice self-declaration |
+| 30502 | Peer Endorsement | WoTx2 | Rule B — formal endorsement by peer X1+ |
+| 30503 | Self-Signed Certificate | WoTx2 | Rule A/B — self-signed by apprentice |
 | 30800 | DID Document | NIP-101 | Decentralized identity |
 | 22242 | Auth | NIP-42 + Twin-Key | Authentication with UMAP keypair |
 | **ORE System** ||||
@@ -324,15 +324,15 @@ Carol uploads a video:
 - NIP-71 event published
 - Dave re-uploads same video → instant (provenance tracking)
 
-### 3. Competence Certification
+### 3. Competence Certification (WoTx2 P2P)
 
 Eve becomes environmental verifier:
-- Requests PERMIT_ORE_V1 (kind 30501)
-- 5 experts attest her competence (kind 30502)
-- Oracle issues VC (kind 30503)
-- Badge NIP-58 automatically emitted (kind 30009 + kind 8)
-- Credential added to Eve's DID (kind 30800)
-- Eve receives 10 Ẑen reward
+- Declares PERMIT_ORE_V1 learning intent (kind 30501)
+- 3 peers send Kind 7 `+` reactions with tag `wotx-review` (Rule A)
+- Eve self-signs her certificate (kind 30503) — no Oracle
+- Or: 1 peer of level X1+ sends Kind 30502 endorsement (Rule B)
+- Credential visible in DID (kind 30800)
+- Cooperative may reward Eve with 10 Ẑen based on on-chain evidence
 
 ### 4. Environmental Obligations
 

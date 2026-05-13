@@ -1,72 +1,100 @@
-NIP-42 Oracle Permits Extension
-=================================
+NIP-42 WoTx2 Permits Extension
+================================
 
-Multi-Signature Permit Management via Web of Trust
----------------------------------------------------
+P2P Web of Trust eXtended — Decentralized Competence Certification
+-------------------------------------------------------------------
 
 `draft` `extension` `optional`
 
-This document describes an extension to [NIP-42](42.md) that enables **multi-signature permit management** for the UPlanet Oracle System. This extension implements the Web of Trust (WoT) model for decentralized competence certification.
+This document describes an extension to [NIP-42](42.md) that enables **peer-validated permit management** for the UPlanet WoTx2 (Web of Trust eXtended on Nostr) system. This extension implements a fully P2P Web of Trust model for decentralized competence certification — no Oracle or central server required.
 
 ## Overview
 
 This extension adds support for:
 
-1. **Permit Definition Events (kind 30500)** - License types requiring N attestations
-2. **Permit Request Events (kind 30501)** - Applications from users
-3. **Permit Attestation Events (kind 30502)** - Expert signatures (multi-sig validation)
-4. **Permit Credential Events (kind 30503)** - W3C Verifiable Credentials
-5. **Authentication with Permit Credentials** - NIP-42 auth enhanced with permit verification
+1. **Permit Definition Events (kind 30500)** - Skill/permit created by a user via `POST /api/permit/define`, signed by the user (NIP-07)
+2. **Learning Request Events (kind 30501)** - Self-declaration by an apprentice
+3. **Formal Endorsement Events (kind 30502)** - Rule B endorsement published by a peer of level X1+
+4. **Self-Signed Certificate Events (kind 30503)** - Auto-signed by apprentice when Rule A threshold is reached
+5. **Kind 7 WoTx2 Reactions** - Rule A: Like/Dislike reactions used for peer validation
+6. **Authentication with Permit Credentials** - NIP-42 auth enhanced with permit verification
+
+### WoTx2 Rules
+
+- **Rule A**: 3 Kind 7 `+` reactions from distinct pubkeys → apprentice can self-sign Kind 30503 (level upgrade)
+- **Rule B**: 1 Kind 30502 from a peer of level X1+ → direct level upgrade
+
+### NIP-42 Auth for Permit Definition
+
+`POST /api/permit/define` requires NIP-42 authentication (TTL 300s), managed by `window.callAPIWithAuth()` (common.js).
 
 ## Motivation
 
 Standard NIP-42 authentication:
 - ❌ Only validates user identity (signature verification)
 - ❌ Cannot verify competencies or authority levels
-- ❌ Lacks multi-signature validation mechanisms
+- ❌ Lacks peer-validation mechanisms
 
 This extension solves these problems by:
 - ✅ Adding competence-based authentication
-- ✅ Enabling multi-signature permit validation
-- ✅ Integrating W3C Verifiable Credentials into Nostr
-- ✅ Supporting Web of Trust (WoT) attestation chains
+- ✅ Enabling peer-validated permit certification (100% P2P)
+- ✅ Integrating self-sovereign credentials into Nostr
+- ✅ Supporting Web of Trust (WoT) attestation chains without central Oracle
 
 ## Implementation
 
-### Permit System Event Kinds
+### WoTx2 Event Kinds
 
 | Kind  | Name | Description | Signed by |
 |-------|------|-------------|-----------|
-| 30500 | Permit Definition | License type definition | `UPLANETNAME.G1` (authority) |
-| 30501 | Permit Request | Application from user | Applicant |
-| 30502 | Permit Attestation | Expert signature | Attester (must have required permit) |
-| 30503 | Permit Credential | W3C Verifiable Credential | `UPLANETNAME.G1` (authority) |
+| 30500 | Permit Definition | Skill definition created via `POST /api/permit/define` | User (NIP-07) |
+| 30501 | Learning Request | Apprentice self-declaration | Apprentice |
+| 30502 | Formal Endorsement | Rule B direct endorsement | Peer of level X1+ |
+| 30503 | Self-Signed Certificate | Auto-signed when Rule A threshold reached | Apprentice (self-signed) |
+| 7 | WoTx2 Reaction | Rule A Like/Dislike peer review | Reviewer |
+
+### 0. Kind 7 — WoTx2 Reaction (Rule A)
+
+A peer review Like/Dislike used to validate an apprentice's competence. Three `+` reactions from distinct pubkeys enable the apprentice to self-sign a Kind 30503 certificate.
+
+```jsonc
+{
+  "kind": 7,
+  "pubkey": "<reviewer_hex>",
+  "tags": [
+    ["e", "<permitEventId>"],         // optional: reference to permit definition
+    ["p", "<targetNpub>"],            // apprentice being reviewed
+    ["t", "wotx-review"],
+    ["t", "<normalizedSkill>"],       // e.g. "permis-conduire"
+    ["k", "30500"]
+  ],
+  "content": "+"   // "+" = Like, "-" = Dislike
+}
+```
 
 ### 1. Permit Definition (kind 30500)
 
-Defines a license type that users can request and experts can attest.
+Defines a skill/permit type. Created by any user via `POST /api/permit/define` (requires NIP-42 auth, TTL 300s), signed by the user's own key (NIP-07). No central authority required.
 
 ```jsonc
 {
   "kind": 30500,
-  "pubkey": "<UPLANETNAME_G1_hex>",
+  "pubkey": "<creator_hex>",
   "tags": [
     ["d", "PERMIT_ORE_V1"],
     ["t", "permit"],
     ["t", "definition"],
     ["t", "UPlanet"],
-    ["min_attestations", "5"],
-    ["required_license", ""], // Empty if no requirement
-    ["valid_duration_days", "1095"], // 3 years
+    ["min_attestations", "3"],        // Rule A threshold
+    ["valid_duration_days", "1095"],  // 3 years
     ["revocable", "true"]
   ],
   "content": "{
     \"id\": \"PERMIT_ORE_V1\",
     \"name\": \"ORE Environmental Verifier\",
     \"description\": \"Authority to verify ORE environmental contracts\",
-    \"min_attestations\": 5,
+    \"min_attestations\": 3,
     \"valid_duration_days\": 1095,
-    \"reward_zen\": 10.0,
     \"verification_method\": \"peer_attestation\"
   }"
 }
@@ -106,9 +134,9 @@ User requests a permit by publishing their application.
 }
 ```
 
-### 3. Permit Attestation (kind 30502)
+### 3. Formal Endorsement (kind 30502) — Rule B
 
-Experts attest an applicant's competence (multi-signature validation).
+A peer of level X1+ endorses an apprentice directly (bypasses Rule A threshold). Published by the endorser's own key — no Oracle involved.
 
 ```jsonc
 {
@@ -135,46 +163,47 @@ Experts attest an applicant's competence (multi-signature validation).
 }
 ```
 
-**Attestation requirements:**
-- Attester MUST hold the `required_license` permit (if specified)
-- Each attester can only attest ONCE per request
-- Attestation is cryptographically signed (Schnorr signature)
+**Endorsement requirements:**
+- Endorser MUST be a peer of level X1+ for the relevant skill
+- Each endorser can only endorse ONCE per request
+- Endorsement is cryptographically signed (Schnorr signature)
+- A single valid Kind 30502 from a qualified peer triggers immediate level upgrade (Rule B)
 
-### 4. Permit Credential (kind 30503)
+### 4. Self-Signed Certificate (kind 30503) — Rule A or Rule B outcome
 
-W3C Verifiable Credential issued after sufficient attestations.
+Published **by the apprentice themselves** (self-signed) once either:
+- Rule A: 3 Kind 7 `+` reactions from distinct pubkeys are received (`checkWoTx2LevelUpgrade()` in wotx2.js), or
+- Rule B: 1 valid Kind 30502 from a qualified peer is received.
+
+No Oracle or central authority issues this event.
 
 ```jsonc
 {
   "kind": 30503,
-  "pubkey": "<UPLANETNAME_G1_hex>",
+  "pubkey": "<apprentice_hex>",
   "tags": [
     ["d", "<credential_id>"],
     ["l", "PERMIT_ORE_V1", "permit_type"],
-    ["p", "<holder_hex>"],
+    ["p", "<apprentice_hex>"],
+    ["e", "<permit_definition_event_id>"],
     ["t", "permit"],
     ["t", "credential"],
-    ["t", "verifiable-credential"],
+    ["t", "wotx2"],
     ["t", "UPlanet"]
   ],
   "content": "{
     \"@context\": \"https://www.w3.org/2018/credentials/v1\",
     \"id\": \"urn:uuid:<credential_id>\",
-    \"type\": [\"VerifiableCredential\", \"UPlanetLicense\"],
-    \"issuer\": \"did:nostr:<UPLANETNAME_G1_hex>\",
+    \"type\": [\"VerifiableCredential\", \"WoTx2Certificate\"],
+    \"issuer\": \"did:nostr:<apprentice_hex>\",
     \"issuanceDate\": \"2025-11-03T12:00:00Z\",
     \"expirationDate\": \"2028-11-03T12:00:00Z\",
     \"credentialSubject\": {
-      \"id\": \"did:nostr:<holder_hex>\",
+      \"id\": \"did:nostr:<apprentice_hex>\",
       \"license\": \"PERMIT_ORE_V1\",
       \"licenseName\": \"ORE Environmental Verifier\",
-      \"attestationsCount\": 5
-    },
-    \"proof\": {
-      \"type\": \"Ed25519Signature2020\",
-      \"created\": \"2025-11-03T12:00:00Z\",
-      \"verificationMethod\": \"did:nostr:<UPLANETNAME_G1_hex>#uplanet-authority\",
-      \"proofValue\": \"<base64_signature>\"
+      \"rule\": \"A\",
+      \"reviewsCount\": 3
     }
   }"
 }
@@ -209,58 +238,56 @@ Enhanced NIP-42 authentication that includes permit verification.
 
 ## Use Cases
 
-### 1. Driver's License (WoT Model)
+### 1. Driver's License (WoT Model — Rule A)
 
 From the [CopyLaRadio article](https://www.copylaradio.com/blog/blog-1/post/reinventer-la-societe-avec-la-monnaie-libre-et-la-web-of-trust-148#):
 
-1. **Alice requests** `PERMIT_DRIVER` (kind 30501)
-2. **12 certified drivers attest** Alice's competence (kind 30502)
-3. **Oracle issues** W3C credential (kind 30503)
-4. **The 12 attesters become** Alice's insurance mutual
-5. **If Alice is dangerous**, attesters can revoke the permit
+1. **Alice declares** her learning intent `PERMIT_DRIVER` (kind 30501)
+2. **3 certified drivers** send Kind 7 `+` reactions (`wotx-review`) (Rule A)
+3. **Alice self-signs** her certificate (kind 30503) — no Oracle needed
+4. **The 3 reviewers become** Alice's peer validators
+5. **If Alice is dangerous**, peers can revoke the permit
 
-### 2. ORE Environmental Verifier
+### 2. ORE Environmental Verifier (Rule B)
 
-1. **Bob requests** `PERMIT_ORE_V1` (kind 30501)
-2. **5 existing verifiers attest** Bob's competence (kind 30502)
-3. **Oracle issues** W3C credential (kind 30503)
-4. **Bob receives** 10 Ẑen reward from `UPLANETNAME_RND`
-5. **Bob can now verify** ORE contracts for UMAPs
+1. **Bob declares** `PERMIT_ORE_V1` learning (kind 30501)
+2. **One existing verifier of level X1+** publishes a Kind 30502 endorsement (Rule B)
+3. **Bob self-signs** his credential (kind 30503) immediately
+4. **Bob can now verify** ORE contracts for UMAPs
 
-### 3. WoT Dragon (UPlanet Authority)
+### 3. WoT Dragon (UPlanet Authority — Rule A)
 
-1. **Carol requests** `PERMIT_WOT_DRAGON` (kind 30501)
-2. **3 community members attest** Carol's trustworthiness (kind 30502)
-3. **Oracle issues** W3C credential (kind 30503)
-4. **Carol receives** 100 Ẑen reward from `UPLANETNAME_G1`
-5. **Carol gains** authority powers (infrastructure management, permit issuance, credential revocation)
+1. **Carol declares** `PERMIT_WOT_DRAGON` learning (kind 30501)
+2. **3 community members** send Kind 7 `+` reactions (Rule A)
+3. **Carol self-signs** her WoT Dragon certificate (kind 30503)
+4. **Carol gains** authority to issue Rule B endorsements (kind 30502) to others
 
-## Web of Trust Bootstrap ("Block 0")
+## P2P Bootstrap — No "Block 0" Required
 
-For NEW permits with no existing holders, the system uses **"Block 0" initialization**:
+WoTx2 requires no bootstrap Oracle or server-side initialization. Any user can:
 
-**Principle:** For a permit requiring **N signatures**, minimum **N+1 members registered** on the station.
+1. **Define a permit** (kind 30500) via `POST /api/permit/define`
+2. **Declare themselves an apprentice** (kind 30501)
+3. **Gather peer reactions** (Kind 7 `+`, Rule A) from 3 distinct pubkeys
+4. **Self-sign their certificate** (kind 30503) once the threshold is reached
 
-Each member attests all other members (except themselves), giving exactly **N attestations** per member.
+The trust chain is self-bootstrapping: the first certificate holders become Rule B endorsers for future apprentices.
 
-**Example:**
-- `PERMIT_ORE_V1` (5 signatures) → minimum **6 registered members**
-- Each member receives 5 attestations (from the other 5)
-- Oracle issues credentials to all 6 members simultaneously
-- The initial group can now attest new applicants
+## Level Upgrade Logic (Client-Side, P2P)
 
-## Auto-Issuance Logic
-
-The Oracle System automatically issues credentials when thresholds are met:
+The `checkWoTx2LevelUpgrade()` function in `wotx2.js` evaluates locally:
 
 ```
-IF (attestations_count >= min_attestations) AND (all_attesters_valid):
-    status = "validated"
-    TRIGGER credential_issuance(request_id)
-    UPDATE_DID(holder, credential)
-    IF (permit_has_reward):
-        TRANSFER_ZEN(UPLANETNAME_RND → holder, reward_amount)
+Rule A:
+  IF (count of distinct Kind 7 '+' reactions with tag 't':'wotx-review') >= 3:
+    → Apprentice can publish Kind 30503 (self-signed certificate)
+
+Rule B:
+  IF (1 valid Kind 30502 from peer with level X1+):
+    → Apprentice can publish Kind 30503 immediately
 ```
+
+No server-side Oracle, no automatic issuance, no central authority. The apprentice actively signs their own certificate when eligible.
 
 ## Security Considerations
 
@@ -306,21 +333,10 @@ When a permit is issued, it's automatically added to the holder's DID document (
 
 ## Economic Incentives
 
-Permit holders receive economic rewards:
+Permit holders may receive cooperative rewards for verified competencies. These are not automatically triggered by kind 30503 issuance but can be attributed by the cooperative based on on-chain certificate evidence:
 - **WoT Dragon**: 100 Ẑen from `UPLANETNAME_G1`
 - **ORE Verifier**: 10 Ẑen + payment per verification from `UPLANETNAME_RND`
 - **Mediator**: Compensation for conflict resolution from `UPLANETNAME_RND`
-
-Rewards flow:
-```
-UPLANETNAME_RND → Credential Holder
-           ↓
-  Automatic on issuance (kind 30503)
-           ↓
-  Blockchain transaction (Ğ1)
-           ↓
-  DID update (metadata.permit_rewards)
-```
 
 ## API Integration
 
@@ -355,10 +371,10 @@ Standard NIP-42 relays can accept authentication and ignore permit tags.
 
 ## Reference Implementation
 
-- **Backend:** `UPassport/oracle_system.py` (Python)
-- **API:** `UPassport/54321.py` (FastAPI routes)
-- **Frontend:** `UPassport/templates/oracle.html` (Web interface)
-- **Scripts:** `Astroport.ONE/tools/oracle.WoT_PERMIT.init.sh` (Bootstrap "Block 0")
+- **API endpoint:** `POST /api/permit/define` — NIP-42 auth (TTL 300s), user signs kind 30500 via NIP-07
+- **P2P logic:** `UPlanet/earth/wotx2.js` — `normalizeSkillTag`, `publishWoTx2Reaction`, `fetchWoTx2Reactions`, `checkWoTx2LevelUpgrade`
+- **Auth helper:** `UPlanet/earth/common.js` — `callAPIWithAuth()` for NIP-42 flow
+- **UI:** `UPassport/templates/wotx2.html` — loads wotx2.js after common.js
 - **Repository:** [github.com/papiche/UPassport](https://github.com/papiche/UPassport)
 
 ## Further Reading
