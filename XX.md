@@ -6,7 +6,7 @@ Reservations
 
 `draft` `optional`
 
-This NIP defines a protocol for creating, negotiating, committing, cancelling, and reviewing accommodation reservations on Nostr. It introduces `kind:32122` reservation events, `kind:1326` append-only reservation transition events, `kind:1327` private structured-message rumors, `kind:1328` commit authorization helper events, `kind:1329` trade-key authorization helper events, and `kind:32124` reviews.
+This NIP defines a protocol for creating, negotiating, committing, cancelling, and reviewing reservations against NIP-99 listings on Nostr. It introduces `kind:32122` reservation events, `kind:1326` append-only reservation transition events, `kind:1327` private structured-message rumors, `kind:1328` commit authorization helper events, `kind:1329` temporary trade key (temp-key) authorization helper events, and `kind:32124` reviews.
 
 Negotiation is private. Signed reservation and escrow-selection events are sent as child events inside encrypted structured-message rumors and delivered with NIP-59 gift wraps. Public committed/cancelled reservation snapshots and transition records are published to relays chosen by the implementation.
 
@@ -16,8 +16,8 @@ Negotiation is private. Signed reservation and escrow-selection events are sent 
 - **Seller** — Nostr user who owns the listing being reserved.
 - **Escrow** — Optional service participant that verifies funding and can arbitrate disputes.
 - **Trade** — A single reservation negotiation and lifecycle, identified by a stable `d` tag (trade ID).
-- **Listing Anchor** — A NIP-99 accommodation listing address in the format `30402:<seller-pubkey>:<listing-d-tag>`.
-- **Trade Key** — A per-trade Nostr key that can publish buyer-side reservation events. The buyer's account identity is bound to this key through encrypted `participant_proof` tags.
+- **Listing Anchor** — A NIP-99 listing address in the format `<listing-kind>:<seller-pubkey>:<listing-d-tag>`.
+- **Temporary Trade Key (Temp-Key)** — A per-trade Nostr key that can publish buyer-side reservation events without revealing the buyer's long-lived account key on public relays. The buyer's account identity is bound to this temporary key through encrypted `participant_proof` tags, preserving buyer privacy while still allowing counterparties, escrows, and review verifiers to prove participation when needed.
 
 ## Event Kinds
 
@@ -27,8 +27,8 @@ Negotiation is private. Signed reservation and escrow-selection events are sent 
 | `1326`  | Reservation Transition  | Regular                   | Append-only audit record of a reservation stage change. |
 | `1327`  | Structured Message      | Regular private rumor     | Private structured-message rumor whose content is a signed child event JSON string. |
 | `1328`  | Commit Authorization    | Regular helper event      | Seller authorization over exact negotiated commit terms. |
-| `1329`  | Trade-Key Authorization | Regular helper event      | Identity-key authorization binding a real participant pubkey to a trade-key participant pubkey. |
-| `32124` | Review                  | Parameterized replaceable | Post-stay review with participation proof. |
+| `1329`  | Temp-Key Authorization  | Regular helper event      | Identity-key authorization binding a real participant pubkey to a temporary trade key (temp-key) participant pubkey. |
+| `32124` | Review                  | Parameterized replaceable | Post-trade review with participation proof. |
 
 These kinds are application-specific and SHOULD be routed only to relays that support this protocol when broadcast as public events. Gift-wrapped private messages use standard NIP-59 outer `kind:1059` events and MAY be routed according to the implementation's private-message relay policy.
 
@@ -40,8 +40,8 @@ A reservation event represents one participant's current position in a trade. Mu
 
 | Stage       | Description |
 | ----------- | ----------- |
-| `negotiate` | Mutable private proposal or counteroffer. Negotiate-stage reservations MUST only be exchanged as private messages in the negotiation protocol and MUST NOT be broadcast as public events. Clients MUST NOT treat negotiate-stage events as affecting availability. |
-| `commit`    | Booking commitment. Public commit-stage events affect listing availability unless cancelled. |
+| `negotiate` | Mutable private proposal or counteroffer. Negotiate-stage reservations are sent only between buyer and seller as private structured-message child events delivered with NIP-59 gift wraps, so they are not observed by the wider relay network. |
+| `commit`    | Reservation commitment. Public commit-stage events affect listing availability unless cancelled. |
 | `cancel`    | Cancellation of a negotiation or prior commitment. |
 
 ### Tags
@@ -59,14 +59,14 @@ A reservation event represents one participant's current position in a trade. Mu
 | Tag | Required | Description |
 | --- | -------- | ----------- |
 | `d` | Yes | Trade identifier. Stable across all events in the trade. Private trade messages SHOULD repeat this value in a `conversation` tag on the enclosing rumor. |
-| `a` | Yes | Listing anchor (`30402:<seller-pubkey>:<listing-d-tag>`). The referenced event MUST be a NIP-99 classified listing with `["t", "accommodation"]`. |
+| `a` | Yes | Listing anchor (`<listing-kind>:<seller-pubkey>:<listing-d-tag>`). The referenced event MUST be a NIP-99 listing. |
 | `p` | Yes | Participant pubkey. When a role is known, use `["p", pubkey, relayHint, role]` where role is `seller`, `buyer`, or `escrow`. |
-| `participant_proof` | No | Encrypted proof binding a trade-key participant pubkey to a real identity pubkey. Required when `participantPubkey != identityPubkey`. |
+| `participant_proof` | No | Encrypted proof binding a temporary trade key (temp-key) participant pubkey to a real identity pubkey. Required when `participantPubkey != identityPubkey`. |
 | `published_at` | No | First publication timestamp. Publishers SHOULD preserve this across replacements. |
 
 ### Participant Proofs
 
-Participant proofs bind trade-key participant pubkeys to real participant identity pubkeys.
+Participant proofs bind temporary trade key (temp-key) participant pubkeys to real participant identity pubkeys without forcing the buyer to disclose their long-lived account key publicly.
 
 `participant_proof` tag format:
 
@@ -82,9 +82,9 @@ Participant proofs bind trade-key participant pubkeys to real participant identi
 ]
 ```
 
-The plaintext authorization payload is a JSON-encoded signed `kind:1329` Trade-Key Authorization event. It is encrypted with NIP-44 for each trade participant recipient.
+The plaintext authorization payload is a JSON-encoded signed `kind:1329` Temp-Key Authorization event. It is encrypted with NIP-44 for each trade participant recipient.
 
-#### Trade-Key Authorization (`kind:1329`)
+#### Temp-Key Authorization (`kind:1329`)
 
 The `kind:1329` event is signed by the real identity pubkey and authorizes one participant pubkey for a trade role.
 
@@ -103,7 +103,7 @@ Content:
 {
   "version": 1,
   "role": "buyer",
-  "participantPubkey": "<trade-key-or-real-participant-pubkey>"
+  "participantPubkey": "<temp-key-or-real-participant-pubkey>"
 }
 ```
 
@@ -139,8 +139,8 @@ Reservation content is JSON:
 | Field | Type | Required | Description |
 | ----- | ---- | -------- | ----------- |
 | `stage` | string | Yes | One of `negotiate`, `commit`, `cancel`. |
-| `start` | string | No | Check-in date/time in ISO 8601 UTC. Date-only reservation UIs SHOULD encode calendar dates as midnight UTC. |
-| `end` | string | No | Check-out date/time in ISO 8601 UTC. |
+| `start` | string | No | Reservation start date/time in ISO 8601 UTC. Date-only reservation UIs SHOULD encode calendar dates as midnight UTC. |
+| `end` | string | No | Reservation end date/time in ISO 8601 UTC. |
 | `quantity` | integer | No | Number of units. Default `1`. |
 | `amount` | object | No | Agreed or proposed price. `value` is a decimal string, `denomination` is the unit of account, and `decimals` is precision. |
 | `recipient` | string | No | Intended payment/trade recipient pubkey. |
@@ -193,6 +193,8 @@ Plain text private messages use standard private message rumor kind `14`.
 ## Reservation Transition (`kind:1326`)
 
 Every public reservation stage change MUST be accompanied by a transition event. Transitions form an append-only audit trail per participant.
+
+Reservation transitions are not the source of truth for reservation state because they are self-published by individual participants. Clients derive public state from validated reservation snapshots, payment proofs, escrow confirmations, and the reservation-group ordering rules below. However, a participant that publishes an invalid transition tree risks creating an unusable audit trail; an escrow may arbitrate against that participant if it cannot follow their updates to the reservation state.
 
 ### Tags
 
@@ -259,6 +261,15 @@ Clients MUST validate:
 
 Escrow MAY publish `negotiate -> commit` or `negotiate -> cancel` before accepting a trade. Escrow MUST NOT publish `commit -> cancel`. Once escrow confirms a funded trade, financial resolution must happen through payment settlement, claim, release, or arbitration rather than by erasing the committed reservation state.
 
+## Verification
+
+Clients verify reservations for two primary reasons:
+
+1. to determine availability for the referenced NIP-99 listing;
+2. to verify that reviews are attached to a real trade.
+
+Availability verification is based on public reservation groups after applying the validity and precedence rules in the Reservation Group section. Review verification proves that the reviewer participated in a structurally valid reservation group that reached confirmed commitment.
+
 ## Payment Proof
 
 A `commit` reservation SHOULD include a `proof` object unless it is a seller-published blocked reservation.
@@ -268,7 +279,7 @@ A `commit` reservation SHOULD include a `proof` object unless it is a seller-pub
 ```jsonc
 {
   "seller": { "...": "seller profile/event JSON" },
-  "listing": { "...": "kind:30402 NIP-99 accommodation listing event JSON" },
+  "listing": { "...": "NIP-99 listing event JSON" },
   "zapProof": {
     "receipt": { "...": "zap receipt event JSON" }
   },
@@ -281,7 +292,7 @@ A `commit` reservation SHOULD include a `proof` object unless it is a seller-pub
 ```jsonc
 {
   "seller": { "...": "seller profile/event JSON" },
-  "listing": { "...": "kind:30402 NIP-99 accommodation listing event JSON" },
+  "listing": { "...": "NIP-99 listing event JSON" },
   "zapProof": null,
   "escrowProof": {
     "txHash": "<evm-transaction-hash>",
@@ -299,22 +310,34 @@ The listing owner MAY publish `commit` reservations without a payment proof, for
 
 ## Reservation Group
 
-All reservation events with the same trade id form a reservation group. The participant set is the union of event pubkeys, role-marked `p` tags, and any identity pubkeys revealed through valid participant proofs.
+All reservation events with the same trade id and listing anchor form a reservation group. Role-marked `p` tags are routing and discovery hints; they MUST NOT by themselves add authority to the group. Clients establish participants from signed reservation authors that satisfy the role rules below, the listing owner derived from the listing anchor, valid participant proofs, valid escrow proofs, and valid escrow-authored reservations.
 
 Roles are determined by:
 
 | Role | Determination |
 | ---- | ------------- |
-| Seller | `pubkey == getPubKeyFromAnchor(listingAnchor)` or a `p` tag role of `seller`. |
-| Buyer | A participant with role `buyer`, including a trade-key participant resolved through `participant_proof`. |
-| Escrow | A participant with role `escrow`, or the pubkey of the escrow service in a valid escrow proof. |
+| Seller | `pubkey == getPubKeyFromAnchor(listingAnchor)`. A `p` tag role of `seller` is only a hint unless it identifies the listing owner. |
+| Buyer | A participant with role `buyer`, including a temporary trade key (temp-key) participant resolved through a valid `participant_proof`. |
+| Escrow | A participant with role `escrow` only when it is the pubkey of the escrow service in a valid escrow proof or the author of an escrow-authored reservation for that trade. |
 
-The group id SHOULD be derived from the sorted participant set and trade id. Clients MUST reject reservation events from outsiders not in the established participant set.
+The group id SHOULD be derived from the listing anchor, trade id, and sorted established participant set. Clients MUST ignore role-marked `p` tags and reservation events from outsiders that cannot be tied to the listing owner, a valid participant proof, a valid escrow proof, or a valid escrow-authored reservation.
 
-The group stage is:
+### Group Validity Ordering
 
-- `cancel` if any participant has cancelled;
-- `commit` if any participant has committed and none cancelled;
+The validity of a reservation group is ordered by participant authority:
+
+1. buyer reservation with attached proof;
+2. escrow reservation for the same trade id, which can confirm with `stage=commit` or override the buyer proof with `stage=cancel`;
+3. seller reservation for the same trade id, which overrides buyer and escrow reservations.
+
+Clients SHOULD first evaluate the buyer's latest public reservation and attached proof. A buyer `commit` can make a listing appear tentatively unavailable only if its payment proof validates or is confirmed by an escrow or seller reservation. An escrow SHOULD immediately publish either `stage=commit` or `stage=cancel` for the same trade id after validating or rejecting a buyer payment proof. This prevents ordinary clients from having to validate against the payment chain for hundreds of public reservations on a listing.
+
+Seller reservations have highest precedence for listing availability because the seller owns the referenced listing. A seller `commit` confirms the trade or blocks the listed inventory even without buyer proof. A seller `cancel` invalidates buyer or escrow claims for availability purposes, while financial disputes after escrow commitment remain governed by escrow settlement, claim, release, or arbitration rules.
+
+The group stage is derived after applying that ordering:
+
+- `cancel` if the highest-precedence applicable reservation is cancelled;
+- `commit` if the highest-precedence applicable reservation is committed;
 - `negotiate` otherwise.
 
 A group is **confirmed committed** if any of the following hold after validation:
@@ -327,7 +350,7 @@ Later buyer or seller cancellation MUST NOT by itself erase the fact that a trad
 
 ## Review (`kind:32124`)
 
-After a completed or confirmed committed stay, a participant MAY publish a review.
+After a completed or confirmed committed trade, a participant MAY publish a review.
 
 ### Tags
 
@@ -348,10 +371,10 @@ The `r` tag contains a reservation anchor (`<kind>:<pubkey>:<d-tag>`) linking th
 ```jsonc
 {
   "rating": 4,
-  "content": "Great stay, beautiful views and very clean.",
+  "content": "Clear terms, smooth payment, and accurate listing.",
   "proof": {
     "role": "buyer",
-    "participantPubkey": "<participant-or-trade-pubkey>",
+    "participantPubkey": "<participant-or-temp-key-pubkey>",
     "authorizationPayload": "<plaintext signed kind:1329 event JSON>"
   }
 }
@@ -372,15 +395,15 @@ A review is valid only if:
 3. the referenced reservation group validates structurally;
 4. the reservation group is confirmed committed.
 
-This NIP does not define a canonical on-chain or block-time proof that the review was written after checkout. Clients MAY additionally require checkout to be in the past or a terminal payment event to exist, but those timing rules are application policy unless standardized separately.
+This NIP does not define a canonical on-chain or block-time proof that the review was written after the reservation ended. Clients MAY additionally require the reservation end time to be in the past or a terminal payment event to exist, but those timing rules are application policy unless standardized separately.
 
 ## Protocol Flow
 
 ### 1. Buyer Initiates Negotiation
 
-1. Buyer discovers a NIP-99 accommodation listing (`kind:30402`, `["t", "accommodation"]`).
-2. Buyer allocates a deterministic trade id and trade key.
-3. Buyer creates a `kind:32122` reservation with `stage=negotiate`, signed by the trade key.
+1. Buyer discovers a NIP-99 listing.
+2. Buyer allocates a trade id and temporary trade key (temp-key). Deterministic derivation is optional and described in the addendum below.
+3. Buyer creates a `kind:32122` reservation with `stage=negotiate`, signed by the temporary trade key (temp-key).
 4. Buyer includes role-marked participant `p` tags and encrypted `participant_proof` tags as needed.
 5. Buyer sends the reservation as a child event inside a private `kind:1327` rumor tagged `["conversation", "<trade-id>"]`, delivered with NIP-59 gift wraps to the seller and self.
 
@@ -397,7 +420,7 @@ This NIP does not define a canonical on-chain or block-time proof that the revie
 
 ### 4. Commitment
 
-11. Once payment proof exists, the buyer/trade key publishes a public `stage=commit` `kind:32122` reservation with `proof`.
+11. Once payment proof exists, the buyer or temporary trade key (temp-key) publishes a public `stage=commit` `kind:32122` reservation with `proof`.
 12. A matching `kind:1326` transition is published.
 13. Seller or escrow MAY publish their own `stage=commit` reservation/confirmation.
 
@@ -407,9 +430,26 @@ Either party MAY cancel a private negotiation with a private `stage=cancel` rese
 
 ## Availability
 
-Clients MUST only consider public `stage=commit` reservations from active, non-cancelled groups when computing listing availability. Private `stage=negotiate` events MUST NOT affect availability.
+Clients MUST only consider public reservation groups after applying the Reservation Group validity ordering when computing listing availability. Negotiation reservations are exchanged only between buyer and seller via gift-wrapped private structured messages, so they are not part of public listing availability calculations.
 
-Reservation clients SHOULD verify that the referenced listing is an active NIP-99 accommodation listing before displaying or accepting a reservation. For this protocol, listing subtype such as `villa`, `hotel`, or `apartment` is determined by the listing's `type` tag and its relay-indexed `T` duplicate, not by additional `t` tags.
+Reservation clients SHOULD verify that the referenced listing is an active NIP-99 listing before displaying or accepting a reservation.
+
+## Addendum: How to Choose Temporary Keys
+
+Temporary trade keys (temp-keys) exist to preserve privacy by separating a buyer's public account identity from public reservation events. This NIP does not require deterministic values for trade ids or temporary keys. A client MAY generate a fresh random trade id and random temporary key for each trade and store the resulting private state locally.
+
+A Nostr user MAY instead publish a single encrypted SEED event (`kind:17389`) globally. The SEED event content is a NIP-44 encrypted payload from the user's identity key to itself, for example:
+
+```jsonc
+{
+  "v": 1,
+  "seed": "<32-byte-hex-seed>"
+}
+```
+
+Clients that can decrypt this SEED event can derive arbitrary trade ids and temporary trade keys from the seed, avoiding dependence on one device's local storage of encrypted gift wraps for each individual trade. This is a convenience and recovery mechanism, not a consensus requirement: clients MUST accept valid reservations and participant proofs regardless of whether their trade ids and temporary keys were random, locally stored, or derived from a published SEED event.
+
+Clients that implement deterministic derivation SHOULD domain-separate trade ids from temporary keys and SHOULD include an account-controlled index or nonce so the same seed never produces the same public key for two unrelated trades.
 
 ## Related NIPs
 
