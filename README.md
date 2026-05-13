@@ -82,6 +82,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-64: Chess (PGN)](64.md)
 - [NIP-65: Relay List Metadata](65.md)
 - [NIP-66: Relay Discovery and Liveness Monitoring](66.md)
+- [NIP-67: EOSE Completeness Hint](67.md)
 - [NIP-68: Picture-first feeds](68.md)
 - [NIP-69: Peer-to-peer Order events](69.md)
 - [NIP-70: Protected Events](70.md)
