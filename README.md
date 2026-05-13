@@ -104,6 +104,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-96: HTTP File Storage Integration](96.md) --- **unrecommended**: replaced by blossom APIs
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-XX: NIP-99 Marketplace Listing Extension](XX.md)
 - [NIP-A0: Voice Messages](A0.md)
 - [NIP-A4: Public Messages](A4.md)
 - [NIP-B0: Web Bookmarks](B0.md)
