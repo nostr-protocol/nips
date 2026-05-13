@@ -30,8 +30,6 @@ Negotiation is private. Signed reservation and escrow-selection events are sent 
 | `1329`  | Temp-Key Authorization  | Regular helper event      | Identity-key authorization binding a real participant pubkey to a temporary trade key (temp-key) participant pubkey. |
 | `32124` | Review                  | Parameterized replaceable | Post-trade review with participation proof. |
 
-These kinds are application-specific and SHOULD be routed only to relays that support this protocol when broadcast as public events. Gift-wrapped private messages use standard NIP-59 outer `kind:1059` events and MAY be routed according to the implementation's private-message relay policy.
-
 ## Reservation (`kind:32122`)
 
 A reservation event represents one participant's current position in a trade. Multiple participants (buyer, seller, and optionally escrow) may each publish reservation events sharing the same `d` tag.
@@ -155,7 +153,7 @@ The reservation commitment hash locks exactly these fields:
 ["start", "end", "quantity", "amount", "recipient"]
 ```
 
-Implementations SHOULD canonicalize those fields before hashing. `stage`, `proof`, and participant proof tags are not part of the commit terms.
+Implementations MUST canonicalize those fields before hashing. `stage`, `proof`, and participant proof tags are not part of the commit terms.
 
 #### Commit Authorization (`kind:1328`)
 
