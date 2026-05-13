@@ -1,13 +1,14 @@
 NIP-XX
 ======
 
-Accommodation Listing Extension for NIP-99
-------------------------------------------
+Accommodation Listing Profile for NIP-99 Marketplace Listings
+-------------------------------------------------------------
 
 `draft` `optional`
 
-This NIP defines an accommodation-specific profile for [NIP-99](99.md)
-classified listings. It does not define a new listing event kind.
+This NIP defines an accommodation marketplace profile for the NIP-99
+Marketplace Listing Extension and [NIP-99](99.md) classified listings. It does
+not define a new listing event kind.
 
 Accommodation listings use the NIP-99 event kinds:
 
@@ -16,9 +17,10 @@ Accommodation listings use the NIP-99 event kinds:
 | `30402` | Active accommodation listing        |
 | `30403` | Draft or inactive accommodation listing |
 
-All rules for NIP-99 listing identity, authoring, content, base metadata,
-images, prices, and status remain defined by NIP-99. This NIP only defines
-additional tags and behavior for listings categorized as accommodation.
+Generic marketplace behavior, including `instantBook`, `negotiable`,
+`quantity`, security deposits, minimum payment amounts, and maximum dispute
+periods, is defined by the NIP-99 Marketplace Listing Extension. This NIP only
+defines accommodation-specific profile tags and location indexing.
 
 ## Terms
 
@@ -26,7 +28,7 @@ additional tags and behavior for listings categorized as accommodation.
 - **Seller** - Nostr user providing accommodation.
 - **Listing** - A single accommodation unit or property advertised by a seller.
 
-## Category Tags
+## Profile Tag
 
 Accommodation listings MUST include:
 
@@ -35,7 +37,7 @@ Accommodation listings MUST include:
 ```
 
 Clients SHOULD treat `["t", "accommodation"]` as the canonical signal that a
-NIP-99 listing follows this accommodation profile.
+NIP-99 marketplace listing follows this accommodation profile.
 
 ## Accommodation Tags
 
@@ -49,26 +51,20 @@ Recognized listing types are:
 
 `room`, `house`, `apartment`, `villa`, `hotel`, `hostel`, `resort`
 
-Accommodation listings MAY include the following additional tags:
+Accommodation listings MAY include the following accommodation-specific tags:
 
-| Tag                          | Format                                                      | Description |
-| ---------------------------- | ----------------------------------------------------------- | ----------- |
-| `active`                     | `["active", "true"\|"false"]`                               | Whether the listing is currently available. Default `true`. |
-| `negotiable`                 | `["negotiable", "true"\|"false"]`                           | Whether the seller accepts negotiated prices below the listed price. Default `false`. |
-| `minStay`                    | `["minStay", "<integer>"]`                                  | Minimum stay in days. Default `1`. |
-| `checkIn`                    | `["checkIn", "<hour>:<minute>"]`                            | Check-in time in 24h format. Default `"15:0"`. |
-| `checkOut`                   | `["checkOut", "<hour>:<minute>"]`                           | Check-out time in 24h format. Default `"11:0"`. |
-| `quantity`                   | `["quantity", "<integer>"]`                                 | Number of independently bookable units. Default `1`. |
-| `instantBook`                | `["instantBook", "true"\|"false"]`                          | Whether reservations are confirmed instantly without seller approval. Default `true`. |
-| `allowSelfSignedReservation` | `["allowSelfSignedReservation", "true"\|"false"]`           | Whether buyers may self-sign reservations, for example via zap proof. Default `false`. |
-| `securityDeposit`            | `["securityDeposit", "<amount>", "<denom>", "<decimals>"]`  | Optional security deposit the buyer must lock alongside the payment. |
-| `minPaymentAmount`           | `["minPaymentAmount", "<amount>", "<denom>", "<decimals>"]` | Minimum payment amount the seller will accept for a reservation. |
-| `maxDisputePeriod`           | `["maxDisputePeriod", "<seconds>"]`                         | Maximum time after checkout that escrow may remain disputed before unilateral claim. Default `1209600`. |
+| Tag                  | Format                                            | Description |
+| -------------------- | ------------------------------------------------- | ----------- |
+| `minStay`            | `["minStay", "<integer>"]`                        | Minimum stay in days. Default `1`. |
+| `checkIn`            | `["checkIn", "<hour>:<minute>"]`                  | Check-in time in 24h format. Default `"15:00"`. |
+| `checkOut`           | `["checkOut", "<hour>:<minute>"]`                 | Check-out time in 24h format. Default `"11:00"`. |
+| `cancellationPolicy` | `["cancellationPolicy", "<seconds>", "<refund>"]` | Refund terms based on how far in advance the buyer cancels. |
+| `spec`               | `["spec", "<spec-name>"]` or `["spec", "<spec-name>", "<value>"]` | Accommodation feature or detail. |
 
 Tags already defined by NIP-99, such as `title`, `summary`, `published_at`,
 `location`, `image`, `price`, and `status`, SHOULD be used as defined there.
 
-## Location Indexing
+## H3 Location Indexing
 
 Accommodation listings SHOULD include `g` tags containing H3 cell indexes for
 location-based search.
@@ -172,29 +168,24 @@ Boolean specs:
 `events_allowed`, `common_spaces_shared`, `bathroom_shared`,
 `security_cameras`
 
-## Relay Index Tags
+## Accommodation Promoted Tags
 
-Publishers MAY duplicate selected accommodation tags into single-letter index
-tags so relays can filter more efficiently. Readers MUST treat the canonical
-multi-letter tags as authoritative and use index tags only as hints.
+The promoted tags below are scoped to NIP-99 marketplace listings with
+`["t", "accommodation"]`. Readers MUST NOT interpret these meanings outside this
+profile.
 
-These single-letter index meanings are scoped to NIP-99 listings with
-`["t", "accommodation"]`; readers MUST NOT interpret them outside this profile.
+| Tag | Source field      | Value format |
+| --- | ----------------- | ------------ |
+| `T` | `type`            | One recognized listing type. |
+| `s` | Boolean `spec`    | One boolean accommodation spec name. Repeatable. |
+| `c` | `spec=max_guests` | Integer. |
+| `b` | `spec=beds`       | Integer. |
+| `B` | `spec=bedrooms`   | Integer. |
+| `R` | `spec=bathrooms`  | Integer. |
+| `S` | Boolean spec set  | Sorted boolean-spec combinations for feature-AND search. |
 
-Known index tags include:
-
-| Tag | Source field |
-| --- | ------------ |
-| `T` | `type` |
-| `A` | `active` |
-| `I` | `instantBook` |
-| `N` | `negotiable` |
-| `s` | Boolean `spec` values |
-| `c` | `spec=max_guests` |
-| `b` | `spec=beds` |
-| `B` | `spec=bedrooms` |
-| `R` | `spec=bathrooms` |
-| `S` | Sorted boolean-spec combinations for feature-AND search |
+Generic promoted tags from the NIP-99 Marketplace Listing Extension, such as
+`I` for `instantBook` and `N` for `negotiable`, retain their generic meaning.
 
 ## Listing Anchor
 
@@ -231,30 +222,36 @@ listing address with an `a` tag.
     ["published_at", "1712678400"],
     ["status", "active"],
     ["t", "accommodation"],
-    ["active", "true"],
     ["type", "villa"],
-    ["A", "true"],
-    ["negotiable", "false"],
+    ["T", "villa"],
     ["minStay", "2"],
-    ["checkIn", "15:0"],
-    ["checkOut", "11:0"],
+    ["checkIn", "15:00"],
+    ["checkOut", "11:00"],
     ["location", "Bali, Indonesia"],
     ["quantity", "1"],
     ["instantBook", "true"],
-    ["allowSelfSignedReservation", "false"],
+    ["I", "true"],
+    ["negotiable", "false"],
+    ["N", "false"],
     ["price", "0.00050000", "BTC", "day"],
     ["cancellationPolicy", "172800", "1.0"],
     ["cancellationPolicy", "86400", "0.5"],
     ["spec", "wireless_internet"],
+    ["s", "wireless_internet"],
     ["spec", "pool"],
+    ["s", "pool"],
     ["spec", "beachfront"],
+    ["s", "beachfront"],
     ["spec", "kitchen"],
-    ["spec", "airconditioning"],
+    ["s", "kitchen"],
     ["spec", "beds", "4"],
+    ["b", "4"],
     ["spec", "bedrooms", "2"],
+    ["B", "2"],
     ["spec", "bathrooms", "2"],
-    ["spec", "bathtub", "1"],
+    ["R", "2"],
     ["spec", "max_guests", "6"],
+    ["c", "6"],
     ["securityDeposit", "0.00025000", "BTC", "8"],
     ["minPaymentAmount", "0.00010000", "BTC", "8"],
     ["maxDisputePeriod", "1209600"],
@@ -274,13 +271,16 @@ listing address with an `a` tag.
 Clients displaying accommodation listings SHOULD:
 
 1. Apply the base NIP-99 listing behavior.
-2. Use `["t", "accommodation"]` to detect this profile.
-3. Display accommodation specifications grouped by category when possible.
-4. Show cancellation policies sorted by advance notice period.
-5. Support geospatial search using all published H3 `g` tags.
+2. Apply the generic marketplace listing behavior from the NIP-99 Marketplace
+   Listing Extension.
+3. Use `["t", "accommodation"]` to detect this profile.
+4. Display accommodation specifications grouped by category when possible.
+5. Show cancellation policies sorted by advance notice period.
+6. Support geospatial search using all published H3 `g` tags.
 
 ## Related NIPs
 
+- NIP-99 Marketplace Listing Extension.
 - [NIP-99](99.md) - Classified Listings.
 - [NIP-19](19.md) - `naddr` encoding for listing anchors.
 - [NIP-21](21.md) - `nostr:` URI scheme for linking to listings.
