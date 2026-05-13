@@ -72,8 +72,13 @@ extension:
 | `securityDeposit`  | `["securityDeposit", "<amount>", "<denom>", "<decimals>"]`  | Optional deposit the buyer must lock alongside payment. |
 | `minPaymentAmount` | `["minPaymentAmount", "<amount>", "<denom>", "<decimals>"]` | Minimum payment amount the seller will accept. |
 | `maxDisputePeriod` | `["maxDisputePeriod", "<seconds>"]`                         | Maximum time an escrow dispute may remain open before unilateral claim. |
+| `cancellationPolicy` | `["cancellationPolicy", "<seconds-before-start>", "<refund-fraction>"]` | Refund terms based on how far in advance the buyer cancels. Repeatable. |
 
 Boolean values MUST be either `"true"` or `"false"`.
+
+`<refund-fraction>` is a decimal fraction from `0.0` to `1.0` of the total cost
+refunded, for example `"0.5"` for 50%. Clients SHOULD sort cancellation policies
+by advance notice period before displaying them.
 
 ## Promoted Tags
 
@@ -163,6 +168,8 @@ Profiles that define `g` SHOULD describe:
     ["I", "true"],
     ["negotiable", "false"],
     ["N", "false"],
+    ["cancellationPolicy", "172800", "1.0"],
+    ["cancellationPolicy", "86400", "0.5"],
     ["T", "villa"],
     ["c", "6"]
   ],
