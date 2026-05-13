@@ -1,8 +1,6 @@
-NIP-XX
-======
+# NIP-XX
 
-Escrow Services
----------------
+## Escrow Services
 
 `draft` `optional`
 
@@ -17,11 +15,10 @@ This NIP defines a protocol for decentralized escrow services on Nostr, enabling
 
 ## Event Kinds
 
-| Kind    | Name                    | Type                      | Description                                                |
-| ------- | ----------------------- | ------------------------- | ---------------------------------------------------------- |
-| `17388` | Escrow Method           | Replaceable               | User's accepted payment forms and trusted escrow providers |
-| `30302` | Escrow Service Selected | Parameterized replaceable | Optional helper event recording the buyer's selected escrow and seller method for a trade |
-| `30303` | Escrow Service          | Parameterized replaceable | Escrow operator's service advertisement                    |
+| Kind    | Name           | Type                      | Description                                                |
+| ------- | -------------- | ------------------------- | ---------------------------------------------------------- |
+| `17388` | Escrow Method  | Replaceable               | User's accepted payment forms and trusted escrow providers |
+| `30303` | Escrow Service | Parameterized replaceable | Escrow operator's service advertisement                    |
 
 ## Escrow Service (`kind:30303`)
 
@@ -52,17 +49,17 @@ JSON object:
 }
 ```
 
-| Field                  | Type    | Description                                                                                                                       |
-| ---------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `pubkey`               | string  | The escrow operator's Nostr hex public key.                                                                                       |
-| `evmAddress`           | string  | The operator's EVM address (EIP-55 checksum).                                                                                     |
-| `contractAddress`      | string  | Deployed escrow smart contract address.                                                                                           |
-| `contractBytecodeHash` | string  | SHA-256 hash of the contract's runtime bytecode. Clients use this to verify the contract matches a known, audited implementation. |
-| `chainId`              | integer | EVM chain ID (e.g. `30` for Rootstock mainnet).                                                                                   |
-| `maxDuration`          | integer | Maximum escrow lock duration in seconds.                                                                                          |
+| Field                  | Type    | Description                                                                                                                                         |
+| ---------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pubkey`               | string  | The escrow operator's Nostr hex public key.                                                                                                         |
+| `evmAddress`           | string  | The operator's EVM address (EIP-55 checksum).                                                                                                       |
+| `contractAddress`      | string  | Deployed escrow smart contract address.                                                                                                             |
+| `contractBytecodeHash` | string  | SHA-256 hash of the contract's runtime bytecode. Clients use this to verify the contract matches a known, audited implementation.                   |
+| `chainId`              | integer | EVM chain ID (e.g. `30` for Rootstock mainnet).                                                                                                     |
+| `maxDuration`          | integer | Maximum escrow lock duration in seconds.                                                                                                            |
 | `type`                 | string  | Escrow service type. One possible type is `"EVM"`. Other service types MAY define their own payment rails, contract fields, and verification rules. |
-| `feePercent`           | number  | Proportional fee as a percentage (e.g. `1.0` = 1%).                                                                               |
-| `tokenFeeHints`        | object  | Per-token fee parameters, keyed by token address or `"native"` for the chain's native asset.                                      |
+| `feePercent`           | number  | Proportional fee as a percentage (e.g. `1.0` = 1%).                                                                                                 |
+| `tokenFeeHints`        | object  | Per-token fee parameters, keyed by token address or `"native"` for the chain's native asset.                                                        |
 
 #### Token Fee Hints
 
@@ -92,10 +89,10 @@ This event is replaceable per pubkey. Implementations SHOULD publish at most one
 
 ### Tags
 
-| Tag | Format                                      | Description                                                        |
-| --- | ------------------------------------------- | ------------------------------------------------------------------ |
-| `p` | `["p", "<escrow-pubkey>"]`                  | Trusted escrow operator pubkey. Repeat for multiple.               |
-| `c` | `["c", "<bytecode-hash>"]`                  | Accepted contract bytecode hash. Repeat for multiple.              |
+| Tag | Format                                                   | Description                                                                                                                            |
+| --- | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `p` | `["p", "<escrow-pubkey>"]`                               | Trusted escrow operator pubkey. Repeat for multiple.                                                                                   |
+| `c` | `["c", "<bytecode-hash>"]`                               | Accepted contract bytecode hash. Repeat for multiple.                                                                                  |
 | `o` | `["o", "<denomination>", "<token-tag-id>", "<app-id?>"]` | Accepted payment form mapping a denomination to a concrete token location. The optional fourth element scopes forms to an application. |
 
 #### Payment Form Tags
@@ -128,35 +125,6 @@ When present, `<app-id>` scopes the payment form to an application.
 }
 ```
 
-## Escrow Service Selected (`kind:30302`)
-
-Created by the buyer to record the chosen escrow service and the seller's escrow method for a trade.
-
-This event is OPTIONAL. A buyer MAY use it to keep trade state synchronized across clients or with other participants, but it is not required before funding escrow or before publishing a reservation payment proof. The buyer is responsible for tracking where funds were deposited and for publishing a valid payment-proof reservation when committing the trade.
-
-In private negotiation flows this event is usually sent as a signed child event inside a private `kind:1327` structured-message rumor tagged `["conversation", "<trade-id>"]` and delivered with NIP-59 gift wraps, rather than being broadcast as a standalone public event. Implementations MAY publish it as a standalone event when the trade context is intended to be public.
-
-### Tags
-
-| Tag | Format | Description |
-| --- | ------ | ----------- |
-| `d` | `["d", "<trade-id>"]` | Reservation trade id. The selected escrow event is parameterized by trade. |
-| `a` | `["a", "<listing-anchor>"]` | Listing anchor for the trade. SHOULD be included when known. |
-| `p` | `["p", "<seller-pubkey>"]` | Seller pubkey. SHOULD be included when known. |
-
-The `d` tag is the only trade identifier carried by this child event. Private message grouping is performed by the enclosing `kind:1327` rumor's `conversation` tag.
-
-### Content
-
-JSON object containing the full serialized Nostr events:
-
-```jsonc
-{
-  "service": "<JSON string of the EscrowService kind:30303 event>",
-  "sellerMethods": "<JSON string of the seller's EscrowMethod kind:17388 event>"
-}
-```
-
 ## Mutual Escrow Resolution
 
 When a buyer and seller wish to transact, their clients SHOULD automatically resolve a mutually trusted escrow:
@@ -165,9 +133,13 @@ When a buyer and seller wish to transact, their clients SHOULD automatically res
 2. Find the intersection of trusted escrow pubkeys (`p` tags).
 3. Find the intersection of supported contract bytecode hashes (`c` tags).
 4. Query `kind:30303` (Escrow Service) events from mutually trusted pubkeys whose `contractBytecodeHash` matches a mutually supported bytecode.
-5. If no mutual match exists, fall back to the seller's trusted escrows.
+5. If no mutual match exists or the buyer doesn't have preferred escrows, fall back to the seller's trusted escrows.
 
 ## On-Chain Escrow Contract
+
+The actual implementation of an escrow contract is irrelevant to this protocol, as long as both buyer and seller publish that they recognize and accept the contract's runtime bytecode hash. Once both parties advertise familiarity with a particular bytecode hash, clients can assume those parties know how to inspect, verify, and interact with contracts matching that hash.
+
+The following EVM contract lifecycle describes one compatible escrow implementation.
 
 The on-chain escrow contract manages funds with the following lifecycle:
 
@@ -236,7 +208,7 @@ When a reservation is backed by escrow, the commitment includes an `EscrowProof`
 {
   "txHash": "<evm-transaction-hash>",
   "escrowService": "<JSON string of the EscrowService kind:30303 event>",
-  "hostsEscrowMethods": "<JSON string of the host's EscrowMethod kind:17388 event>"
+  "sellerEscrowMethods": "<JSON string of the seller's EscrowMethod kind:17388 event>",
 }
 ```
 
@@ -245,11 +217,11 @@ When a reservation is backed by escrow, the commitment includes an `EscrowProof`
 Clients and escrow operators MUST verify escrow proofs:
 
 1. Validate the `EscrowService` event signature and pubkey.
-2. Verify the host's `EscrowMethod` event lists the escrow pubkey in a `p` tag.
-3. Verify the host's `EscrowMethod` event lists the contract bytecode hash in a `c` tag.
+2. Verify the seller's `EscrowMethod` event lists the escrow pubkey in a `p` tag.
+3. Verify the seller's `EscrowMethod` event lists the contract bytecode hash in a `c` tag.
 4. Query on-chain for the `TradeCreated` event matching `txHash`.
 5. Verify the on-chain funded amount covers the reservation cost (accounting for token denomination and decimals).
-6. Verify the host's `EscrowMethod` accepts the on-chain token for the reservation's denomination.
+6. Verify the seller's `EscrowMethod` accepts the on-chain token for the reservation's denomination.
 
 ## Payment Integration
 
@@ -268,6 +240,45 @@ Settled funds MAY be withdrawn to Lightning via reverse submarine swaps:
 1. Build a `withdraw` call as a pre-lock call in a swap-out operation.
 2. Atomically execute: `withdraw()` from escrow → `lock()` into swap contract.
 3. Swap provider pays a Lightning invoice to the beneficiary.
+
+## Addendum: Optional Escrow Service Selection
+
+This addendum defines an optional helper event for clients that want to synchronize a buyer's selected escrow service before funding. The core escrow protocol does not require this event; a buyer can fund escrow and publish a valid reservation payment proof without first creating or sending this helper event.
+
+### Event Kind
+
+| Kind    | Name                    | Type                      | Description                                                                               |
+| ------- | ----------------------- | ------------------------- | ----------------------------------------------------------------------------------------- |
+| `30302` | Escrow Service Selected | Parameterized replaceable | Optional helper event recording the buyer's selected escrow and seller method for a trade |
+
+### Escrow Service Selected (`kind:30302`)
+
+Created by the buyer to record the chosen escrow service and the seller's escrow method for a trade.
+
+A buyer MAY use it to keep trade state synchronized across clients or with other participants, but it is not required before funding escrow or before publishing a reservation payment proof. The buyer is responsible for tracking where funds were deposited and for publishing a valid payment-proof reservation when committing the trade.
+
+In private negotiation flows this event is usually sent as a signed child event inside a private `kind:1327` structured-message rumor tagged `["conversation", "<trade-id>"]` and delivered with NIP-59 gift wraps, rather than being broadcast as a standalone public event. Implementations MAY publish it as a standalone event when the trade context is intended to be public.
+
+#### Tags
+
+| Tag | Format                      | Description                                                                |
+| --- | --------------------------- | -------------------------------------------------------------------------- |
+| `d` | `["d", "<trade-id>"]`       | Reservation trade id. The selected escrow event is parameterized by trade. |
+| `a` | `["a", "<listing-anchor>"]` | Listing anchor for the trade. SHOULD be included when known.               |
+| `p` | `["p", "<seller-pubkey>"]`  | Seller pubkey. SHOULD be included when known.                              |
+
+The `d` tag is the only trade identifier carried by this child event. Private message grouping is performed by the enclosing `kind:1327` rumor's `conversation` tag.
+
+#### Content
+
+JSON object containing the full serialized Nostr events:
+
+```jsonc
+{
+  "service": "<JSON string of the EscrowService kind:30303 event>",
+  "sellerMethods": "<JSON string of the seller's EscrowMethod kind:17388 event>",
+}
+```
 
 ## Related NIPs
 
