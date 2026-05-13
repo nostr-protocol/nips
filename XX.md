@@ -4,27 +4,8 @@ NIP-XX
 NIP-99 Marketplace Listing Extension
 ------------------------------------
 
-`draft` `optional`
-
-This NIP defines a profile mechanism for [NIP-99](99.md) classified listings
-that lets marketplace-specific fields be promoted into relay-indexed tags.
-
-It does not define a new event kind. Marketplace listings use the NIP-99 event
-kinds:
-
-| Kind    | Description                           |
-| ------- | ------------------------------------- |
-| `30402` | Active marketplace listing            |
-| `30403` | Draft or inactive marketplace listing |
-
-All rules for NIP-99 listing identity, authoring, content, base metadata,
-images, prices, and status remain defined by NIP-99. This NIP only defines how
-marketplace profiles can add searchable structure.
-
 ## Terms
 
-- **Listing** - A NIP-99 classified listing that advertises a product, service,
-  rental, reservation slot, or other market offer.
 - **Marketplace profile** - A listing category identified by a `t` tag whose
   specification defines additional tags and promoted index fields.
 - **Canonical tag** - A full, descriptive tag name whose value is authoritative.
@@ -49,15 +30,6 @@ For example:
 The value of a profile `t` tag determines how profile-scoped promoted tags are
 interpreted. A promoted tag such as `T`, `c`, or `s` MAY have different meanings
 for different marketplace profiles.
-
-Clients MUST NOT interpret profile-scoped promoted tags unless they understand
-at least one profile advertised by the listing. Clients SHOULD ignore
-unrecognized profiles and unrecognized promoted tags.
-
-If a listing includes multiple marketplace profile `t` tags, clients SHOULD only
-interpret the promoted tags defined by profiles they understand. Profile authors
-SHOULD avoid defining incompatible meanings for promoted tags that are likely to
-be used together.
 
 ## Generic Marketplace Tags
 
@@ -138,13 +110,6 @@ profiles MAY define the exact location encoding used in `g` tags.
 For example, a marketplace profile may specify that `g` values are geohashes,
 H3 cell indexes, administrative region identifiers, or another profile-specific
 location index.
-
-Profiles that define `g` SHOULD describe:
-
-1. The location index format.
-2. Whether parent or ancestor locations should also be published.
-3. How clients should query neighboring cells or areas.
-4. How publishers can preserve approximate location privacy.
 
 ## Example Event
 
