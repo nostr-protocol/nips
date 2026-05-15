@@ -99,6 +99,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `42`          | Channel Message            | [28](28.md)              |
 | `43`          | Channel Hide Message       | [28](28.md)              |
 | `44`          | Channel Mute User          | [28](28.md)              |
+| `54`          | Podcast Episode            | [F4](F4.md)              |
 | `1021`        | Bid                        | [15](15.md)              |
 | `1022`        | Bid confirmation           | [15](15.md)              |
 | `1040`        | OpenTimestamps             | [03](03.md)              |
@@ -126,7 +127,10 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10007`       | Search relays list         | [51](51.md)              |
 | `10015`       | Interests list             | [51](51.md)              |
 | `10030`       | User emoji list            | [51](51.md)              |
+| `10054`       | Favorite podcasts list     | [51](51.md)              |
+| `10064`       | Authored podcasts list     | [51](51.md)              |
 | `10096`       | File storage server list   | [96](96.md)              |
+| `10154`       | Podcast Metadata           | [F4](F4.md)              |
 | `13194`       | Wallet Info                | [47](47.md)              |
 | `21000`       | Lightning Pub RPC          | [Lightning.Pub][lnpub]   |
 | `22242`       | Client Authentication      | [42](42.md)              |
