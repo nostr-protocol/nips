@@ -47,10 +47,11 @@ This extension solves these problems by:
 
 | Kind  | Name | Description | Signed by |
 |-------|------|-------------|-----------|
-| 30500 | Permit Definition | Skill definition created via `POST /api/permit/define` | User (NIP-07) |
+| 30500 | Permit Definition | Skill/craft recipe — `requires` tags = ingredients with level, `t` tags = relay filter mirror, `r` tags = training resources | Any user (NIP-07) |
 | 30501 | Learning Request | Apprentice self-declaration | Apprentice |
 | 30502 | Formal Endorsement | Rule B direct endorsement | Peer of level X1+ |
-| 30503 | Self-Signed Certificate | Auto-signed when Rule A threshold reached | Apprentice (self-signed) |
+| 30503 | Skill Certificate | Auto-signed (Rule A/B) or Oracle-signed | Apprentice or `UPLANETNAME_G1` |
+| 30504 | Training Resource | Multimedia resource linked to a skill (collective enrichment) | Any MULTIPASS user |
 | 7 | WoTx2 Reaction | Rule A Like/Dislike peer review | Reviewer |
 
 ### 0. Kind 7 — WoTx2 Reaction (Rule A)
@@ -76,6 +77,10 @@ A peer review Like/Dislike used to validate an apprentice's competence. Three `+
 
 Defines a skill/permit type. Created by any user via `POST /api/permit/define` (requires NIP-42 auth, TTL 300s), signed by the user's own key (NIP-07). No central authority required.
 
+Two sub-types exist: **simple permits** (auto-proclaimed competence) and **composite permits** (crafted from ingredient skills).
+
+**Simple permit (auto-proclaimed):**
+
 ```jsonc
 {
   "kind": 30500,
@@ -83,29 +88,66 @@ Defines a skill/permit type. Created by any user via `POST /api/permit/define` (
   "tags": [
     ["d", "PERMIT_ORE_V1"],
     ["t", "permit"],
-    ["t", "definition"],
-    ["t", "UPlanet"],
-    ["min_attestations", "3"],        // Rule A threshold
-    ["valid_duration_days", "1095"],  // 3 years
-    ["revocable", "true"]
+    ["t", "auto_proclaimed"],
+    ["t", "ore-verifier"],
+    ["min_attestations", "3"],
+    ["valid_duration_days", "1095"],
+    ["r", "/ipfs/Qm.../ore-training.pdf", "document"]
   ],
   "content": "{
     \"id\": \"PERMIT_ORE_V1\",
     \"name\": \"ORE Environmental Verifier\",
     \"description\": \"Authority to verify ORE environmental contracts\",
-    \"min_attestations\": 3,
-    \"valid_duration_days\": 1095,
-    \"verification_method\": \"peer_attestation\"
+    \"skill_tag\": \"ore-verifier\"
   }"
 }
 ```
 
+**Composite permit (crafted from ingredient skills):**
+
+```jsonc
+{
+  "kind": 30500,
+  "pubkey": "<creator_hex>",
+  "tags": [
+    ["d", "PERMIT_DEVOPS_X1"],
+    ["t", "permit"],
+    ["t", "composite"],
+    ["requires", "linux", "1"],       // explicit ingredient with minimum level
+    ["requires", "docker", "1"],
+    ["requires", "bash", "1"],
+    ["t", "linux"],                   // mirrored for relay filtering
+    ["t", "docker"],
+    ["t", "bash"],
+    ["r", "/ipfs/Qm.../devops.mp4", "video"]
+  ],
+  "content": "{
+    \"id\": \"PERMIT_DEVOPS_X1\",
+    \"name\": \"DevOps Station\",
+    \"icon\": \"⚙️\",
+    \"skill_tag\": \"devops\"
+  }"
+}
+```
+
+**`requires` tag convention:**
+- Format: `["requires", "<normalizedSkill>", "<minLevel>"]`
+- `<normalizedSkill>`: lowercase, hyphenated (e.g. `"ore-verifier"`, `"first-aid"`, `"linux"`)
+- `<minLevel>`: integer as string, `"1"` to `"5"` (minimum Kind 30503 level the holder must have)
+- A mirroring `["t", "<normalizedSkill>"]` tag MUST be present alongside each `requires` tag for relay filtering
+- `_META_T = {"permit", "auto_proclaimed", "composite", "formation", "training"}` — these `t` values are NOT ingredients
+
+**Ingredient resolution order in `parseRecipeFromPermit()`:**
+1. `requires` tags → explicit ingredient with specified level
+2. `t` tags (excluding `_META_T`) → implicit ingredient at level 1 (retrocompatibility)
+
 **Common permit types:**
-- `PERMIT_ORE_V1` - Environmental verifier (5 attestations, 3 years)
+- `PERMIT_ORE_V1` - Environmental verifier (3 attestations, 3 years)
 - `PERMIT_DRIVER` - Driver's license WoT model (12 attestations, 15 years)
 - `PERMIT_WOT_DRAGON` - UPlanet authority (3 attestations, unlimited)
 - `PERMIT_MEDICAL_FIRST_AID` - First aid provider (8 attestations, 2 years)
 - `PERMIT_BUILDING_ARTISAN` - Building artisan (10 attestations, 5 years)
+- `PERMIT_DEVOPS_X1` - DevOps composite (requires: linux×1, docker×1, bash×1)
 
 ### 2. Permit Request (kind 30501)
 
@@ -209,7 +251,44 @@ No Oracle or central authority issues this event.
 }
 ```
 
-### 5. Authentication with Permit Credentials
+### 5. Training Resource (kind 30504)
+
+Published by any MULTIPASS user to collectively enrich the training environment of a skill. Links multimedia content (IPFS/URL) produced by the UPlanet FILE_CONTRACT system to a skill via `r` tags.
+
+```jsonc
+{
+  "kind": 30504,
+  "pubkey": "<contributor_hex>",
+  "tags": [
+    ["d", "training_<skill>_<timestamp>"],
+    ["t", "<normalizedSkill>"],      // skill this resource is linked to
+    ["t", "formation"],
+    ["r", "/ipfs/Qm.../tuto.mp4", "video"],   // url + type
+    ["title", "Introduction to Docker"]
+  ],
+  "content": "{
+    \"description\": \"Training resource for skill\",
+    \"skill\": \"<normalizedSkill>\",
+    \"resource_url\": \"/ipfs/Qm.../tuto.mp4\",
+    \"resource_type\": \"video\"
+  }"
+}
+```
+
+**Supported `r` tag types** (aligned with `UPlanet_FILE_CONTRACT.md`):
+
+| Type | Kind source | Origin |
+|------|-------------|--------|
+| `video` | Kind 21/22 (NIP-71) | `webcam.html`, `ajouter_media.sh` |
+| `audio` | Kind 1222 (NIP-A0) | VOCALS system |
+| `document` | Kind 1063 (NIP-94) | `ajouter_media.sh` (pdf) |
+| `image` | Kind 1063 (NIP-94) | IPFS upload |
+| `cours` | Kind 30023 (NIP-23) | Markdown articles |
+| `lien` | — | Free URL |
+
+Resources from Kind 30504 are displayed in the **MineLife Formation tab** alongside resources from Kind 30500 `r` tags, allowing both the permit creator and the community to build a rich training environment for each skill.
+
+### 6. Authentication with Permit Credentials
 
 Enhanced NIP-42 authentication that includes permit verification.
 
@@ -364,6 +443,10 @@ This extension is compatible with:
 - ✅ [NIP-42](42.md) - Authentication to relays
 - ✅ [NIP-01](01.md) - Basic protocol flow
 - ✅ [NIP-33](33.md) - Parameterized Replaceable Events
+- ✅ [NIP-71](71.md) / Kind 21/22 - Video media in training resources
+- ✅ [NIP-94](94.md) / Kind 1063 - File media in training resources
+- ✅ [NIP-A0](A0.md) / Kind 1222 - Audio/voice in training resources
+- ✅ [NIP-23](23.md) / Kind 30023 - Markdown articles as training resources
 - ✅ [NIP-101](101.md) - UPlanet Identity & DID system
 - ✅ W3C Verifiable Credentials Data Model
 
@@ -371,9 +454,14 @@ Standard NIP-42 relays can accept authentication and ignore permit tags.
 
 ## Reference Implementation
 
+- **MineLife UI:** `UPlanet/earth/minelife.html` — Main dashboard: crafting, formation, BRO, edit mode
+- **Craft widget:** `UPlanet/earth/minelife.js` — `MineLife.init()`, `MineLife.fromPermitEvents()`
 - **API endpoint:** `POST /api/permit/define` — NIP-42 auth (TTL 300s), user signs kind 30500 via NIP-07
-- **P2P logic:** `UPlanet/earth/wotx2.js` — `normalizeSkillTag`, `publishWoTx2Reaction`, `fetchWoTx2Reactions`, `checkWoTx2LevelUpgrade`
 - **Auth helper:** `UPlanet/earth/common.js` — `callAPIWithAuth()` for NIP-42 flow
+- **Oracle:** `Astroport.ONE/RUNTIME/ORACLE.refresh.sh` — Emits kind 30503 Oracle certificates
+- **Bootstrap:** `Astroport.ONE/tools/oracle_init_captain_wotx2.sh` — Creates captain seed permits
+- **BRO daemon:** `Astroport.ONE/IA/bro_dm_daemon.sh` — Kind 4 DM handler (Ollama + ComfyUI)
+- **Full spec:** `Astroport.ONE/docs/MINELIFE.md` — Complete schemas and flows
 - **UI:** `UPassport/templates/wotx2.html` — loads wotx2.js after common.js
 - **Repository:** [github.com/papiche/UPassport](https://github.com/papiche/UPassport)
 
