@@ -1,5 +1,10 @@
 # NIP-10000: UPlanet Analytics Events
 
+SEE https://github.com/papiche/Astroport.ONE/blob/master/docs/Analytics.README.md
+
+
+    DEPRECATED !!! kind 10000 is for "MUTE"
+
 ## Abstract
 
 This NIP defines a standardized event kind (`kind: 10000`) for sending analytics data as NOSTR events. This allows analytics to be stored on decentralized NOSTR relays instead of centralized servers, providing users with control over their data and enabling queryable, verifiable analytics.
