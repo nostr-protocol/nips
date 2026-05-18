@@ -18,6 +18,8 @@ This specification applies to Bitcoin **mainnet** only. Testnet, signet, and oth
 
 ## Event Structure
 
+Single-recipient zap (the common case — tipping a post or profile):
+
 ```jsonc
 {
   "kind": 8333,
@@ -35,6 +37,25 @@ This specification applies to Bitcoin **mainnet** only. Testnet, signet, and oth
 }
 ```
 
+Multi-recipient zap (one transaction paying multiple recipients — community splits, campaign donations):
+
+```jsonc
+{
+  "kind": 8333,
+  "pubkey": "<sender-pubkey>",
+  "content": "Great campaign!",
+  "tags": [
+    ["i", "bitcoin:tx:<txid>"],
+    ["p", "<recipient-1-pubkey>"],
+    ["p", "<recipient-2-pubkey>"],
+    ["p", "<recipient-3-pubkey>"],
+    ["amount", "<total-sats-paid-to-all-listed-recipients>"],
+    ["a", "<kind>:<pubkey>:<d-tag>"],
+    ["alt", "Onchain zap: 75000 sats across 3 recipients"]
+  ]
+}
+```
+
 The `content` field is a human-readable comment from the sender. It MAY be empty. Unlike NIP-57, it is NOT a JSON-encoded zap request.
 
 ### Tags
@@ -42,8 +63,8 @@ The `content` field is a human-readable comment from the sender. It MAY be empty
 | Tag      | Required | Description                                                                                  |
 |----------|----------|----------------------------------------------------------------------------------------------|
 | `i`      | Yes      | [NIP-73](73.md) external content identifier. MUST be `bitcoin:tx:<txid>` where `<txid>` is a 64-character lowercase hex Bitcoin transaction ID. |
-| `p`      | Yes      | Hex-encoded pubkey of the zap **recipient** (the author being paid).                         |
-| `amount` | Yes      | Amount paid to the recipient in **satoshis**, as a decimal integer string. This is the sum of outputs in the referenced transaction that pay the recipient's derived Taproot address — *not* the total transaction value. |
+| `p`      | Yes (≥1) | Hex-encoded pubkey of a zap **recipient** (an author being paid). A single event MAY include multiple `p` tags when the transaction has one output per recipient. Each `p` tag MUST correspond to at least one tx output paying that recipient's derived Taproot address. |
+| `amount` | Yes      | **Total** amount paid in **satoshis**, as a decimal integer string. This is the sum of outputs in the referenced transaction that pay the derived Taproot addresses of **all** listed `p` recipients combined — *not* the total transaction value. The sender's change output MUST NOT be included. For single-recipient events this is simply the amount paid to that one recipient. |
 | `e`      | If zapping an event | Hex-encoded id of the event being zapped. A relay hint SHOULD be provided as the third element. |
 | `a`      | If zapping an addressable event | Addressable event coordinate `<kind>:<pubkey>:<d-tag>`. Used instead of (or alongside) `e` for addressable events. |
 | `k`      | No       | The stringified `kind` of the target event, as in NIP-57.                                    |
@@ -51,7 +72,9 @@ The `content` field is a human-readable comment from the sender. It MAY be empty
 | `proof`  | No       | SPV proof, as `["proof", "<raw-tx-hex>", "<merkle-proof-hex>"]`. The `<merkle-proof-hex>` is the concatenation of sibling hashes on the path from the txid leaf to the block's merkle root, ordered from leaf to root. |
 | `alt`    | Yes      | [NIP-31](31.md) human-readable fallback.                                                     |
 
-If neither `e` nor `a` is present, the zap targets the recipient's **profile** (i.e. a tip to the pubkey, not to a specific event).
+If neither `e` nor `a` is present, the zap targets the recipients' **profiles** (i.e. a tip to the pubkey(s), not to a specific event).
+
+Per-recipient amounts are not encoded in the event. Clients that need them (e.g. attributing a multi-recipient donation to one recipient's profile zap history) recompute them from the on-chain transaction by matching each recipient's derived Taproot address against the tx outputs.
 
 ## Querying
 
@@ -61,7 +84,7 @@ Clients can retrieve onchain zaps for an event using a standard NIP-01 filter:
 { "kinds": [8333], "#e": ["<target-event-id>"] }
 ```
 
-For addressable events, use `"#a": ["<kind>:<pubkey>:<d-tag>"]`. For profile-level zaps, use `"#p": ["<pubkey>"]`. Clients MAY also locate zaps for a given transaction with `"#i": ["bitcoin:tx:<txid>"]`.
+For addressable events, use `"#a": ["<kind>:<pubkey>:<d-tag>"]`. For profile-level zaps targeting a specific user, use `"#p": ["<pubkey>"]` — this matches both single-recipient events tagging that user and multi-recipient events where the user is one of several recipients. Clients MAY also locate zaps for a given transaction with `"#i": ["bitcoin:tx:<txid>"]`.
 
 ## Verification
 
@@ -71,10 +94,12 @@ To verify a `kind:8333` event:
 
 1. Parse the `txid` from the `i` tag.
 2. Fetch the transaction from a Bitcoin data source (an Esplora-compatible API, an Electrum server, a local node, etc.).
-3. Derive the recipient's expected Taproot address from the `p` tag pubkey as described above.
-4. Sum the values of all outputs in the transaction that pay that address. This is the **verified amount**. Change outputs paying back to the sender's own derived Taproot address MUST NOT be counted.
-5. If the verified amount is `0`, the event SHOULD be discarded.
+3. For each `p` tag, derive the recipient's expected Taproot address from the pubkey as described above.
+4. Sum the values of all outputs in the transaction that pay any of the derived recipient addresses. This is the **verified amount**. Change outputs paying back to the sender's own derived Taproot address MUST NOT be counted.
+5. If the verified amount is `0` (no listed recipient received anything in the tx), the event SHOULD be discarded.
 6. If the sender's `amount` tag is greater than the verified amount, clients MUST NOT display or count the claimed amount. They MAY discard the event, or cap it to the verified amount.
+
+When a client needs to attribute a multi-recipient event to one specific recipient (e.g. rendering a profile zap-history entry), it MAY sum only the tx outputs paying that one recipient's derived Taproot address. Per-recipient amounts are not stored in the event — they are recomputed from the transaction at display time.
 
 Unconfirmed transactions MAY be displayed as pending. Because unconfirmed transactions can be evicted (RBF, double-spend), clients SHOULD either exclude them from aggregate totals or clearly label them as pending until they confirm.
 
@@ -87,7 +112,7 @@ With both tags present, a verifier:
 1. Looks up the header by `block-hash-hex` (or by `height`) in its local header chain.
 2. Double-SHA256 hashes `raw-tx-hex` to obtain the txid, and checks it matches the `i` tag txid.
 3. Walks the merkle proof from the txid up to the header's `merkleRoot`.
-4. Parses the outputs from `raw-tx-hex`, derives the recipient's Taproot script from the `p` tag, and sums matching outputs — this is the verified amount (applying the same rules as above).
+4. Parses the outputs from `raw-tx-hex`, derives the Taproot script for each `p` tag, and sums outputs paying any of those scripts — this is the verified amount (applying the same rules as above).
 5. Computes confirmations as `tip_height − height + 1`.
 
 When these tags are present, clients SHOULD prefer the inline proof over a remote fetch. When they are absent, clients fall back to the remote verification flow in the previous section. Publishers SHOULD include the tags once the transaction has at least one confirmation, so that the `block` reference is stable (not subject to reorg-induced invalidation of unconfirmed proofs).
@@ -96,8 +121,8 @@ Per-event payload cost is roughly 1 KB. For sessions with very large numbers of 
 
 ### Anti-spoofing rules
 
-- **Self-zaps.** Clients SHOULD reject events where the sender's `pubkey` equals the recipient pubkey in the `p` tag. Because the sender already controls the destination address, self-zaps are trivial to fabricate and contribute nothing meaningful to zap totals.
-- **Duplicate events for the same transaction.** Any party can publish a `kind:8333` event referencing someone else's transaction. Clients SHOULD deduplicate events by `(txid, target)` pair and treat the event whose `pubkey` matches an input of the transaction as canonical when such a correlation is available; otherwise the earliest valid event per `(txid, target)` SHOULD be preferred.
+- **Self-zaps.** Clients SHOULD reject events where the sender's `pubkey` appears in any `p` tag. Because the sender already controls the destination address, self-zaps are trivial to fabricate and contribute nothing meaningful to zap totals. Outputs in the underlying transaction that pay the sender's own derived Taproot address are change outputs and MUST NOT be counted toward the verified amount regardless of the tag set.
+- **Duplicate events for the same transaction.** Any party can publish a `kind:8333` event referencing someone else's transaction. Clients SHOULD deduplicate events by `txid` and treat the event whose `pubkey` matches an input of the transaction as canonical when such a correlation is available; otherwise the earliest valid event per `txid` SHOULD be preferred.
 
 ## Client Behavior
 
