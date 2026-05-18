@@ -280,7 +280,7 @@ Satellites (24)
 | 31900 | Workflow Definition | NIP-101 Cookie | Cookie workflow definition |
 | 31901 | Workflow Instance | NIP-101 Cookie | Cookie workflow instance |
 | 31902 | Workflow Completion | NIP-101 Cookie | Cookie workflow completion |
-| 10000 | Analytics | [10000-analytics-extension.md](10000-analytics-extension.md) | Decentralized user analytics |
+| 10600 | Analytics | [10600-analytics-extension.md](10600-analytics-extension.md) | Decentralized user analytics |
 
 ---
 

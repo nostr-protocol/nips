@@ -1,4 +1,4 @@
-# NIP-10000: UPlanet Analytics Events
+# NIP-10600: UPlanet Analytics Events
 
 SEE https://github.com/papiche/Astroport.ONE/blob/master/docs/Analytics.README.md
 
@@ -7,9 +7,9 @@ SEE https://github.com/papiche/Astroport.ONE/blob/master/docs/Analytics.README.m
 
 ## Abstract
 
-This NIP defines a standardized event kind (`kind: 10000`) for sending analytics data as NOSTR events. This allows analytics to be stored on decentralized NOSTR relays instead of centralized servers, providing users with control over their data and enabling queryable, verifiable analytics.
+This NIP defines a standardized event kind (`kind: 10600`) for sending analytics data as NOSTR events. This allows analytics to be stored on decentralized NOSTR relays instead of centralized servers, providing users with control over their data and enabling queryable, verifiable analytics.
 
-**Both encrypted and unencrypted analytics use the same kind 10000.** The encryption status is determined by the content field and tags. Encrypted analytics have encrypted content (NIP-44) and may include `["t", "encrypted"]` tag.
+**Both encrypted and unencrypted analytics use the same kind 10600.** The encryption status is determined by the content field and tags. Encrypted analytics have encrypted content (NIP-44) and may include `["t", "encrypted"]` tag.
 
 ## Motivation
 
@@ -23,13 +23,13 @@ Traditional analytics systems rely on centralized servers that collect user data
 
 ## Event Structure
 
-### Event Kind: 10000
+### Event Kind: 10600
 
-Analytics events use `kind: 10000` and follow this structure:
+Analytics events use `kind: 10600` and follow this structure:
 
 ```json
 {
-  "kind": 10000,
+  "kind": 10600,
   "content": "{\"type\":\"page_view\",\"source\":\"email\",\"timestamp\":\"2024-01-01T12:00:00.000Z\",...}",
   "tags": [
     ["t", "analytics"],
@@ -116,20 +116,20 @@ Analytics events can be queried using standard NOSTR filters:
 ```javascript
 // Query all analytics events from a user
 {
-  "kinds": [10000],
+  "kinds": [10600],
   "authors": ["<user_pubkey>"]
 }
 
 // Query specific event type
 {
-  "kinds": [10000],
+  "kinds": [10600],
   "#t": ["analytics", "page_view"],
   "authors": ["<user_pubkey>"]
 }
 
 // Query by source
 {
-  "kinds": [10000],
+  "kinds": [10600],
   "#source": ["email"],
   "authors": ["<user_pubkey>"]
 }
@@ -152,7 +152,7 @@ Analytics events can be queried using standard NOSTR filters:
 
 ## Compatibility
 
-- Compatible with all NOSTR relays that support kind 10000
+- Compatible with all NOSTR relays that support kind 10600
 - Works with standard NOSTR clients and filters
 - Can be extended with additional tags as needed
 - Integrates with NIP-101 (DID) for user identity
@@ -163,7 +163,7 @@ Analytics events can be queried using standard NOSTR filters:
 
 ```json
 {
-  "kind": 10000,
+  "kind": 10600,
   "content": "{\"type\":\"page_view\",\"source\":\"web\",\"timestamp\":\"2024-01-01T12:00:00.000Z\",\"current_url\":\"https://ipfs.domain.tld/page\",\"viewport\":{\"width\":1920,\"height\":1080}}",
   "tags": [
     ["t", "analytics"],
@@ -178,7 +178,7 @@ Analytics events can be queried using standard NOSTR filters:
 
 ```json
 {
-  "kind": 10000,
+  "kind": 10600,
   "content": "{\"type\":\"multipass_card_usage\",\"source\":\"email\",\"email\":\"user@example.com\",\"timestamp\":\"2024-01-01T12:00:00.000Z\"}",
   "tags": [
     ["t", "analytics"],
