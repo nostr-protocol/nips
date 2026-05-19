@@ -68,8 +68,8 @@ The `content` field is a human-readable comment from the sender. It MAY be empty
 | `e`      | If zapping an event | Hex-encoded id of the event being zapped. A relay hint SHOULD be provided as the third element. |
 | `a`      | If zapping an addressable event | Addressable event coordinate `<kind>:<pubkey>:<d-tag>`. Used instead of (or alongside) `e` for addressable events. |
 | `k`      | No       | The stringified `kind` of the target event, as in NIP-57.                                    |
-| `block`  | No       | Block containing the transaction, as `["block", "<block-hash-hex>", "<height>"]`. Enables SPV-style verification (see [Header-only verification](#header-only-verification)). |
-| `proof`  | No       | SPV proof, as `["proof", "<raw-tx-hex>", "<merkle-proof-hex>"]`. The `<merkle-proof-hex>` is the concatenation of sibling hashes on the path from the txid leaf to the block's merkle root, ordered from leaf to root. |
+| `block`  | No       | Block containing the transaction, as `["block", "<block-hash-hex>", "<height>"]`. `<block-hash-hex>` is the 64-character lowercase hex block hash in display (RPC) byte order. `<height>` is a stringified non-negative decimal integer ≤ `2^31 − 1` with no leading zeros. Enables SPV-style verification (see [Header-only verification](#header-only-verification)). |
+| `proof`  | No       | Inline SPV proof, as `["proof", "<raw-tx-hex>", "<merkle-proof-hex>"]`. When `proof` is present, `block` MUST also be present. See [Inline SPV proof encoding](#inline-spv-proof-encoding). |
 | `alt`    | Yes      | [NIP-31](31.md) human-readable fallback.                                                     |
 
 If neither `e` nor `a` is present, the zap targets the recipients' **profiles** (i.e. a tip to the pubkey(s), not to a specific event).
@@ -110,14 +110,52 @@ Fetching transactions from a remote Bitcoin API introduces a trusted third party
 With both tags present, a verifier:
 
 1. Looks up the header by `block-hash-hex` (or by `height`) in its local header chain.
-2. Double-SHA256 hashes `raw-tx-hex` to obtain the txid, and checks it matches the `i` tag txid.
-3. Walks the merkle proof from the txid up to the header's `merkleRoot`.
+2. Double-SHA256 hashes `raw-tx-hex` (with any SegWit witness data stripped) to obtain the txid, and checks it matches the `i` tag txid.
+3. Walks the merkle proof from the txid up to the header's `merkleRoot`, per [Inline SPV proof encoding](#inline-spv-proof-encoding) below.
 4. Parses the outputs from `raw-tx-hex`, derives the Taproot script for each `p` tag, and sums outputs paying any of those scripts — this is the verified amount (applying the same rules as above).
 5. Computes confirmations as `tip_height − height + 1`.
 
-When these tags are present, clients SHOULD prefer the inline proof over a remote fetch. When they are absent, clients fall back to the remote verification flow in the previous section. Publishers SHOULD include the tags once the transaction has at least one confirmation, so that the `block` reference is stable (not subject to reorg-induced invalidation of unconfirmed proofs).
+When these tags are present, clients SHOULD prefer the inline proof over a remote fetch. When they are absent — or when proof verification fails — clients fall back to the remote verification flow in the previous section. A `kind:8333` event whose `proof` fails verification MUST NOT be treated as invalid overall; it MUST be treated as if neither `block` nor `proof` were present.
+
+Senders MAY publish a `kind:8333` event before the transaction is confirmed, omitting `block` and `proof`. Once the transaction has at least one confirmation, the same sender MAY publish a second `kind:8333` event referencing the same `i` tag with `block` and `proof` filled in. Verifiers MUST deduplicate by `(txid, recipient-set, target)` and prefer the variant carrying a valid SPV proof.
 
 Per-event payload cost is roughly 1 KB. For sessions with very large numbers of zaps (≳1M events), downloading compact block filters ([BIP-157](https://github.com/bitcoin/bips/blob/master/bip-0157.mediawiki)/[BIP-158](https://github.com/bitcoin/bips/blob/master/bip-0158.mediawiki), ~1–2 GB) may be more efficient than carrying inline proofs on every event.
+
+### Inline SPV proof encoding
+
+All hex byte strings in this section use lower-case hex. Each 32-byte hash inside `<merkle-proof-hex>` is encoded in **internal hashing byte order** (the order produced by SHA-256, the reverse of explorer/RPC display order). The `block-hash-hex` and `txid` strings used elsewhere in the event remain in display order; verifiers reverse them before hashing.
+
+The `<merkle-proof-hex>` field encodes an ordered list of *N* sibling steps from the txid leaf toward the root. Each step is **33 bytes**:
+
+```
++0     1 B   direction
+             0x00 → current node is the LEFT child; sibling is on the RIGHT
+             0x01 → current node is the RIGHT child; sibling is on the LEFT
+             all other values MUST cause the verifier to reject the proof
++1    32 B   sibling hash, internal byte order
+```
+
+So `<merkle-proof-hex>` is exactly `33 * N` bytes (`66 * N` hex chars). *N* MAY be `0` (a block with a single transaction), in which case the field is the empty string; the verifier MUST then check that the computed txid equals the header's `merkleRoot`. *N* MUST NOT exceed 32. Verifiers MUST reject proofs whose length is not a multiple of 33.
+
+When Bitcoin's standard odd-level duplication applies — the current node sits at the last, unpaired position at some level — the producer MUST emit a step with `direction = 0x00` and `sibling = cur` (the current node hashed with itself). The verifier treats it like any other step; it does not need to know the total transaction count of the block.
+
+#### Verification algorithm
+
+```
+def verify(raw_tx_hex, merkle_proof_hex, header_merkle_root_display):
+    tx_bytes = unhex(raw_tx_hex)
+    cur      = dsha256(strip_witness(tx_bytes))         # txid, internal order
+    root     = reverse_bytes(unhex(header_merkle_root_display))
+    proof    = unhex(merkle_proof_hex)
+    if len(proof) % 33 != 0: reject()
+    if len(proof) // 33 > 32: reject()
+    for step in chunks(proof, 33):
+        direction, sibling = step[0], step[1:]
+        if   direction == 0x00: cur = dsha256(cur     + sibling)
+        elif direction == 0x01: cur = dsha256(sibling + cur)
+        else: reject()
+    return cur == root
+```
 
 ### Anti-spoofing rules
 
