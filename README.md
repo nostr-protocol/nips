@@ -409,7 +409,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `preimage`        | hash of `bolt11` invoice             | --                              | [57](57.md)                                        |
 | `price`           | price                                | currency, frequency             | [99](99.md)                                        |
 | `proxy`           | external ID                          | protocol                        | [48](48.md)                                        |
-| `published_at`    | unix timestamp (string)              | --                              | [23](23.md), [B0](B0.md)                           |
+| `published_at`    | unix timestamp (string)              | --                              | [23](23.md), [51](51.md), [B0](B0.md)              |
 | `relay`           | relay url                            | --                              | [42](42.md), [17](17.md)                           |
 | `relays`          | relay list                           | --                              | [57](57.md)                                        |
 | `repo`            | Reference to the origin repository   | --                              | [C0](C0.md)                                        |
