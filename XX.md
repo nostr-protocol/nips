@@ -190,7 +190,7 @@ All settlements credit a `balances[recipient][token]` mapping (pull pattern) rat
 When a dispute arises:
 
 1. Either party messages the escrow operator via Nostr DMs.
-2. The escrow operator reviews the trade context (reservation, listing, payment proof, on-chain state).
+2. The escrow operator reviews the trade context (order, listing, payment proof, on-chain state).
 3. The operator submits an `arbitrate` transaction with a `factor` value:
    - `0` = full refund to buyer
    - `1000` = all funds to seller
@@ -202,7 +202,7 @@ When a dispute arises:
 
 ## Escrow Proof
 
-When a reservation is backed by escrow, the commitment includes an `EscrowProof` in the reservation's `PaymentProof`:
+When an order is backed by escrow, the commitment includes an `EscrowProof` in the order's `PaymentProof`:
 
 ```jsonc
 {
@@ -220,8 +220,8 @@ Clients and escrow operators MUST verify escrow proofs:
 2. Verify the seller's `EscrowMethod` event lists the escrow pubkey in a `p` tag.
 3. Verify the seller's `EscrowMethod` event lists the contract bytecode hash in a `c` tag.
 4. Query on-chain for the `TradeCreated` event matching `txHash`.
-5. Verify the on-chain funded amount covers the reservation cost (accounting for token denomination and decimals).
-6. Verify the seller's `EscrowMethod` accepts the on-chain token for the reservation's denomination.
+5. Verify the on-chain funded amount covers the order cost (accounting for token denomination and decimals).
+6. Verify the seller's `EscrowMethod` accepts the on-chain token for the order's denomination.
 
 ## Related NIPs
 
