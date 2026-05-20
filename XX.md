@@ -31,20 +31,33 @@ JSON object:
 ```jsonc
 {
   "pubkey": "<escrow-operator-nostr-pubkey>",
-  "evmAddress": "<eip55-checksummed-address>",
-  "contractAddress": "<deployed-escrow-contract-address>",
-  "contractBytecodeHash": "<sha256-of-runtime-bytecode>",
-  "chainId": 30,
-  "maxDuration": 31536000,
   "type": "EVM",
-  "feePercent": 1.0,
-  "tokenFeeHints": {
-    "native": { "baseFee": 0, "maxFee": 0, "minFee": 0 },
-    "0xdAC17F958D2ee523a2206206994597C13D831ec7": {
-      "baseFee": 50000,
-      "maxFee": 1000000,
-      "minFee": 10000,
+  "maxDuration": 31536000,
+  "fee": {
+    "ppm": 10000,
+    "base": "0",
+    "min": "0",
+    "max": "0",
+    "assetOverrides": {
+      "native": {
+        "ppm": 10000,
+        "base": "0",
+        "min": "0",
+        "max": "0",
+      },
+      "0xdAC17F958D2ee523a2206206994597C13D831ec7": {
+        "ppm": 10000,
+        "base": "50000",
+        "min": "10000",
+        "max": "1000000",
+      },
     },
+  },
+  "params": {
+    "arbiterAddress": "<eip55-checksummed-address>",
+    "contractAddress": "<deployed-escrow-contract-address>",
+    "contractBytecodeHash": "<sha256-of-runtime-bytecode>",
+    "chainId": 30,
   },
 }
 ```
@@ -52,26 +65,37 @@ JSON object:
 | Field                  | Type    | Description                                                                                                                                         |
 | ---------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `pubkey`               | string  | The escrow operator's Nostr hex public key.                                                                                                         |
-| `evmAddress`           | string  | The operator's EVM address (EIP-55 checksum).                                                                                                       |
-| `contractAddress`      | string  | Deployed escrow smart contract address.                                                                                                             |
-| `contractBytecodeHash` | string  | SHA-256 hash of the contract's runtime bytecode. Clients use this to verify the contract matches a known, audited implementation.                   |
-| `chainId`              | integer | EVM chain ID (e.g. `30` for Rootstock mainnet).                                                                                                     |
-| `maxDuration`          | integer | Maximum escrow lock duration in seconds.                                                                                                            |
 | `type`                 | string  | Escrow service type. One possible type is `"EVM"`. Other service types MAY define their own payment rails, contract fields, and verification rules. |
-| `feePercent`           | number  | Proportional fee as a percentage (e.g. `1.0` = 1%).                                                                                                 |
-| `tokenFeeHints`        | object  | Per-token fee parameters, keyed by token address or `"native"` for the chain's native asset.                                                        |
+| `maxDuration`          | integer | Maximum escrow lock duration in seconds.                                                                                                            |
+| `fee`                  | object  | Escrow service fee policy.                                                                                                                          |
+| `params`               | object  | Service-type specific parameters. For `"EVM"`, see below.                                                                                           |
 
-#### Token Fee Hints
+#### EVM Params
 
-Each entry in `tokenFeeHints` contains:
+When `type` is `"EVM"`, `params` contains:
 
-| Field     | Type    | Description                                 |
-| --------- | ------- | ------------------------------------------- |
-| `baseFee` | integer | Flat base fee in the token's smallest unit. |
-| `maxFee`  | integer | Maximum fee cap. `0` = no maximum.          |
-| `minFee`  | integer | Minimum fee floor.                          |
+| Field                  | Type    | Description                                                                                                                       |
+| ---------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `arbiterAddress`       | string  | The operator's EVM address (EIP-55 checksum).                                                                                     |
+| `contractAddress`      | string  | Deployed escrow smart contract address.                                                                                           |
+| `contractBytecodeHash` | string  | SHA-256 hash of the contract's runtime bytecode. Clients use this to verify the contract matches a known, audited implementation. |
+| `chainId`              | integer | EVM chain ID (e.g. `30` for Rootstock mainnet).                                                                                   |
 
-**Fee calculation:** `fee = clamp(floor(amount × feePercent / 100) + baseFee, minFee, maxFee)`
+#### Fee
+
+The `fee` object contains:
+
+| Field            | Type    | Description                                                                                              |
+| ---------------- | ------- | -------------------------------------------------------------------------------------------------------- |
+| `ppm`            | integer | Proportional fee in parts per million. `10000` = 1%.                                                     |
+| `base`           | string  | Flat base fee in the selected asset's smallest unit.                                                     |
+| `min`            | string  | Minimum fee floor in the selected asset's smallest unit. `0` = no floor.                                 |
+| `max`            | string  | Maximum fee cap in the selected asset's smallest unit. `0` = no maximum.                                 |
+| `assetOverrides` | object  | Optional complete fee overrides keyed by token contract address, or `"native"` for the chain's native asset. |
+
+Each entry in `assetOverrides` is a complete `fee` object without its own `assetOverrides`. When no override exists for a selected asset, clients use the top-level fee.
+
+**Fee calculation:** `fee = clamp(floor(amount × ppm / 1,000,000) + base, min, max)`
 
 ### Tags
 
@@ -132,7 +156,7 @@ When a buyer and seller wish to transact, their clients SHOULD automatically res
 1. Query both parties' `kind:17388` (Escrow Method) events.
 2. Find the intersection of trusted escrow pubkeys (`p` tags).
 3. Find the intersection of supported contract bytecode hashes (`c` tags).
-4. Query `kind:30303` (Escrow Service) events from mutually trusted pubkeys whose `contractBytecodeHash` matches a mutually supported bytecode.
+4. Query `kind:30303` (Escrow Service) events from mutually trusted pubkeys whose `params.contractBytecodeHash` matches a mutually supported bytecode.
 5. If no mutual match exists or the buyer doesn't have preferred escrows, fall back to the seller's trusted escrows.
 
 ## On-Chain Escrow Contract
@@ -206,11 +230,15 @@ When an order is backed by escrow, the commitment includes an `EscrowProof` in t
 
 ```jsonc
 {
-  "txHash": "<evm-transaction-hash>",
   "escrowService": "<JSON string of the EscrowService kind:30303 event>",
   "sellerEscrowMethods": "<JSON string of the seller's EscrowMethod kind:17388 event>",
+  "params": {
+    "txHash": "<evm-transaction-hash>"
+  }
 }
 ```
+
+`params` is specific to the escrow service `type`. For `type: "EVM"`, `params.txHash` is the transaction hash to verify. Clients MUST derive funding details from the transaction receipt and decoded logs, not from additional fields in the Nostr proof.
 
 ### Verification
 
@@ -219,7 +247,7 @@ Clients and escrow operators MUST verify escrow proofs:
 1. Validate the `EscrowService` event signature and pubkey.
 2. Verify the seller's `EscrowMethod` event lists the escrow pubkey in a `p` tag.
 3. Verify the seller's `EscrowMethod` event lists the contract bytecode hash in a `c` tag.
-4. Query on-chain for the `TradeCreated` event matching `txHash`.
+4. Query the transaction receipt for `params.txHash` and decode the matching `TradeCreated` event.
 5. Verify the on-chain funded amount covers the order cost (accounting for token denomination and decimals).
 6. Verify the seller's `EscrowMethod` accepts the on-chain token for the order's denomination.
 
