@@ -40,6 +40,7 @@ extension:
 | ------------------ | ----------------------------------------------------------- | ----------- |
 | `instantBook`      | `["instantBook", "true"\|"false"]`                          | Whether the buyer can commit to the listed price without seller approval. Default `false`. |
 | `negotiable`       | `["negotiable", "true"\|"false"]`                           | Whether the seller accepts negotiated terms or prices. Default `false`. |
+| `rentOrBuy`       | `["rentOrBuy", "rent"\|"buy"]`                             | Whether the listing is offered for recurring rental/reservation or one-time purchase. SHOULD be derived from the `price` tag: if any price includes a frequency, use `rent`; otherwise use `buy`. |
 | `quantity`         | `["quantity", "<integer>"]`                                 | Number of independently purchasable, reservable, or bookable units. Default `1`. |
 | `securityDeposit`  | `["securityDeposit", "<amount>", "<denom>", "<decimals>"]`  | Optional deposit the buyer must lock alongside payment. |
 | `minPaymentAmount` | `["minPaymentAmount", "<amount>", "<denom>", "<decimals>"]` | Minimum payment amount the seller will accept. |
@@ -47,6 +48,10 @@ extension:
 | `cancellationPolicy` | `["cancellationPolicy", "<seconds-before-start>", "<refund-fraction>"]` | Refund terms based on how far in advance the buyer cancels. Repeatable. |
 
 Boolean values MUST be either `"true"` or `"false"`.
+
+`rentOrBuy` is a search and display classification derived from `price`.
+Clients SHOULD treat `price` frequency as authoritative when deriving or
+validating it.
 
 `<refund-fraction>` is a decimal fraction from `0.0` to `1.0` of the total cost
 refunded, for example `"0.5"` for 50%. Clients SHOULD sort cancellation policies
@@ -78,10 +83,11 @@ promoted tags only when relay filtering benefits from them.
 
 The following compact promoted tags are reserved by this extension:
 
-| Tag | Source field  | Description |
-| --- | ------------- | ----------- |
-| `I` | `instantBook` | Same value as `instantBook`. |
-| `N` | `negotiable`  | Same value as `negotiable`. |
+| Tag | Source field      | Description |
+| --- | ----------------- | ----------- |
+| `I` | `instantBook`     | Same value as `instantBook`. |
+| `M` | `rentOrBuy`      | Same value as `rentOrBuy`; `rent` or `buy`. |
+| `N` | `negotiable`      | Same value as `negotiable`. |
 
 Marketplace profiles MAY define additional compact promoted tags. Those tags
 are scoped by the profile `t` value.
@@ -93,6 +99,8 @@ For example, an accommodation profile could define `T` as accommodation type and
 ["t", "accommodation"]
 ["instantBook", "true"]
 ["I", "true"]
+["rentOrBuy", "rent"]
+["M", "rent"]
 ["negotiable", "false"]
 ["N", "false"]
 ["T", "villa"]
@@ -131,6 +139,8 @@ location index.
     ["quantity", "1"],
     ["instantBook", "true"],
     ["I", "true"],
+    ["rentOrBuy", "rent"],
+    ["M", "rent"],
     ["negotiable", "false"],
     ["N", "false"],
     ["cancellationPolicy", "172800", "1.0"],
