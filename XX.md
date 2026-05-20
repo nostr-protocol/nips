@@ -184,7 +184,7 @@ Draft or inactive listing anchors use:
 30403:<pubkey>:<d-tag>
 ```
 
-Other event kinds, such as reservations and reviews, SHOULD reference the active
+Other event kinds, such as orders and reviews, SHOULD reference the active
 listing address with an `a` tag.
 
 ## Example Event
