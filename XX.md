@@ -6,7 +6,7 @@ Orders
 
 `draft` `optional`
 
-This NIP defines a protocol for creating, negotiating, committing, cancelling, and reviewing orders against NIP-99 listings on Nostr. It introduces `kind:32122` order events, `kind:1326` append-only order transition events, `kind:1327` private structured-message rumors, `kind:1328` commit authorization helper events, `kind:1329` temporary trade key (temp-key) authorization helper events, and `kind:32124` reviews.
+This NIP defines a protocol for creating, negotiating, committing, cancelling, and reviewing orders against NIP-99 listings on Nostr. It introduces `kind:32122` order events, `kind:1326` append-only order transition events, `kind:1327` private structured-message rumors, `kind:1328` commit authorization helper events, `kind:1329` temporary trade key (temp-key) authorization helper events, and `kind:31555` reviews.
 
 Negotiation is private. Signed order and escrow-selection events are sent as child events inside encrypted structured-message rumors and delivered with NIP-59 gift wraps. Public committed/cancelled order snapshots and transition records are published to relays chosen by the implementation.
 
@@ -28,7 +28,7 @@ Negotiation is private. Signed order and escrow-selection events are sent as chi
 | `1327`  | Structured Message      | Regular private rumor     | Private structured-message rumor whose content is a signed child event JSON string. |
 | `1328`  | Commit Authorization    | Regular helper event      | Seller authorization over exact negotiated commit terms. |
 | `1329`  | Temp-Key Authorization  | Regular helper event      | Identity-key authorization binding a real participant pubkey to a temporary trade key (temp-key) participant pubkey. |
-| `32124` | Review                  | Parameterized replaceable | Post-trade review with participation proof. |
+| `31555` | Review                  | Parameterized replaceable | Post-trade marketplace review. |
 
 ## Order (`kind:32122`)
 
@@ -346,9 +346,9 @@ A group is **confirmed committed** if any of the following hold after validation
 
 Later buyer or seller cancellation MUST NOT by itself erase the fact that a trade reached confirmed commitment.
 
-## Review (`kind:32124`)
+## Review (`kind:31555`)
 
-After a completed or confirmed committed trade, a participant MAY publish a review.
+After a completed or confirmed committed trade, a participant MAY publish a review. Reviews use the GammaMarkets product review shape: the review body is raw human-readable text in `content`, and the primary rating is a `rating` tag with a normalized score from 0 to 1 and the `thumb` label.
 
 ### Tags
 
@@ -356,42 +356,41 @@ After a completed or confirmed committed trade, a participant MAY publish a revi
 [
   ["d", "<trade-id>"],
   ["a", "<listing-anchor>"],
-  ["r", "<order-anchor>"]
+  ["rating", "<0-to-1-score>", "thumb"],
+  ["r", "<order-anchor>"],
+  ["review_proof", "<role>", "<participant-or-temp-key-pubkey>", "<plaintext signed kind:1329 event JSON>"]
 ]
 ```
 
 The `d` tag contains the order trade id. Reviews are parameterized replaceable events, so a participant replaces their review for the same trade by publishing a newer review with the same `d` tag.
 
+The `a` tag contains the listing anchor (`<kind>:<pubkey>:<d-tag>`) for the listing being reviewed.
+
+The `rating` tag contains the primary rating. The third element MUST be `thumb`. The score is normalized from 0 to 1, where 0 is negative and 1 is positive. Five-star clients SHOULD map stars to this value by dividing by 5.
+
 The `r` tag contains an order anchor (`<kind>:<pubkey>:<d-tag>`) linking the review to a specific trade participant event.
+
+The `review_proof` tag is Hostr-specific and MAY be omitted when the review is signed directly by an order participant pubkey. Clients SHOULD include it when the review is signed by an identity key but the public order participant is a temporary trade key. Generic Gamma-compatible clients can ignore this tag.
 
 ### Content
 
-```jsonc
-{
-  "rating": 4,
-  "content": "Clear terms, smooth payment, and accurate listing.",
-  "proof": {
-    "role": "buyer",
-    "participantPubkey": "<participant-or-temp-key-pubkey>",
-    "authorizationPayload": "<plaintext signed kind:1329 event JSON>"
-  }
-}
+```text
+Clear terms, smooth payment, and accurate listing.
 ```
 
-| Field | Type | Description |
-| ----- | ---- | ----------- |
-| `rating` | integer | Rating from 1 to 5. |
-| `content` | string | Review text. |
-| `proof` | object | Participation proof revealing the signed authorization payload that matches an order `participant_proof` hash. |
+The content field is raw review text. Structured data belongs in tags.
 
 ### Review Validity
 
 A review is valid only if:
 
-1. the proof's `authorizationPayload` hashes to a `participant_proof` payload hash in the referenced order group;
-2. the decoded `kind:1329` authorization event is valid and matches the claimed role, participant pubkey, listing anchor, and trade id;
+1. the `d` tag identifies a trade and the `a` tag references an existing listing;
+2. the primary `rating` tag is present as `["rating", "<0-to-1-score>", "thumb"]`;
 3. the referenced order group validates structurally;
-4. the order group is confirmed committed.
+4. the order group is confirmed committed;
+5. either:
+   - the review pubkey appears as an order participant pubkey in the referenced order group; or
+   - the `review_proof` tag's authorization payload hashes to a `participant_proof` payload hash in the referenced order group, and the decoded `kind:1329` authorization event is valid and matches the claimed role, participant pubkey, listing anchor, and trade id.
 
 This NIP does not define a canonical on-chain or block-time proof that the review was written after the order ended. Clients MAY additionally require the order end time to be in the past or a terminal payment event to exist, but those timing rules are application policy unless standardized separately.
 
