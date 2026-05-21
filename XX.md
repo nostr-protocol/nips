@@ -172,6 +172,36 @@ NIP-05 as unverified. It MUST NOT silently fall back to a DNS lookup
 of `<name>.bit` — `.bit` is not a valid public TLD in DNS and any
 match found via DNS is necessarily out-of-band.
 
+### Opcode handling
+
+Implementations that extract the name value directly from the
+scriptPubKey of a Namecoin transaction output (rather than asking the
+upstream resolver for the parsed value) MUST recognise **both**
+name-operation opcodes:
+
+| Opcode | Value | Name | When emitted |
+|---|---|---|---|
+| `OP_NAME_FIRSTUPDATE` | `0x52` (`OP_2`) | First update | The first transaction in a name's lifetime, immediately after the `name_new` commitment matures. |
+| `OP_NAME_UPDATE`      | `0x53` (`OP_3`) | Subsequent update | Every later `NAME_UPDATE` transaction (renewals, value changes). |
+
+A scriptPubKey emitting a name operation always begins with one of
+these two opcodes. A resolver that only matches `0x53` silently
+returns no value for **every Namecoin identity that has never been
+re-updated** — i.e. any identity registered once and never renewed.
+These cases are common in practice, especially for short-lived
+experiments and fresh registrations.
+
+The two opcodes carry slightly different stack shapes:
+
+- `OP_NAME_UPDATE` (`0x53`):
+  `OP_NAME_UPDATE <push(name)> <push(value)> OP_2DROP OP_DROP <address_script>`
+- `OP_NAME_FIRSTUPDATE` (`0x52`):
+  `OP_NAME_FIRSTUPDATE <push(name)> <push(rand)> <push(value)> OP_2DROP OP_2DROP <address_script>`
+
+The FIRSTUPDATE form carries an additional 8-byte `rand` salt push
+between the name and the value. Resolvers MUST skip the `rand` push
+when reading the value, not return it as the value.
+
 ### Root local-part fallback
 
 For root lookups (no local-part, or local-part `_`), if `nostr.names._`
@@ -214,6 +244,52 @@ over all of them, and a single resolver implementation MAY pick its
 transport per environment without changing its caller-facing API.
 
 [electrumx-nmc]: https://github.com/namecoin/electrumx
+
+### Bidirectional JSON-RPC
+
+ElectrumX is a **bidirectional** JSON-RPC transport. The server is
+permitted to initiate its own method calls toward the client,
+interleaved with — and often before — responses to the client's
+outstanding requests. Server-initiated calls observed in the wild
+include `server.banner`, `blockchain.headers.subscribe`,
+`blockchain.relayfee`, and `blockchain.estimatefee`. Many of these
+arrive before the client's first `server.version` response.
+
+Clients MUST NOT assume that the next inbound frame on a connection is
+the response to the most recently sent request. Concretely:
+
+- Every outbound JSON-RPC request MUST carry an `id` field.
+- The client MUST match every inbound response by its `id` against
+  the set of outstanding outbound requests.
+- Inbound frames with no `id`, or with an `id` that does not match an
+  outstanding request, MUST be either dispatched to a separate
+  server-initiated-request handler or silently ignored. They MUST NOT
+  be consumed as the response to a request that happens to be waiting.
+
+A naive "read the next message and treat it as my response" handler
+will return `null` / `undefined` / a corrupted result whenever the
+server chooses to push first. The failure is silent: the resolver
+appears to say "name not found" or "no nostr field" even though the
+name is present on chain.
+
+The canonical receive-loop shape, in pseudocode:
+
+```
+outstanding[id] = pendingPromise
+ws.send({ jsonrpc: "2.0", method, params, id })
+// ...
+on_message(frame):
+    msg = parse(frame)
+    if msg.id == undefined or msg.id not in outstanding:
+        // server-initiated push, ignore or route
+        return
+    outstanding[msg.id].resolve(msg.result)
+    delete outstanding[msg.id]
+```
+
+The same requirement applies to the TCP+TLS, WebSocket-plaintext, and
+WebSocket-TLS transports; the framing differs (`\n`-delimited vs. one
+frame per message) but the JSON-RPC semantics are identical.
 
 ### ElectrumX server set
 
@@ -397,6 +473,37 @@ This MUST NOT exempt the resolver from the §"Lookup transport"
 authenticity rule. Self-signed `.onion` ElectrumX servers MUST still
 have their TLS certificate fingerprint pinned.
 
+## Signer-side enforcement (optional)
+
+This NIP defines a reader-side verification path: a client receives an
+event and checks the `nip05` claim against the Namecoin record. A
+signer MAY additionally enforce the same check **before** signing a
+`kind:0` event whose `nip05` value ends in `.bit`, refusing or warning
+on a mismatch between the claimed identifier and the key being used
+to sign.
+
+Signer-side enforcement is OPTIONAL and orthogonal to reader-side
+verification — a signer that does not enforce produces events that
+reader-side verifiers can still verify correctly. Implementations
+that choose to enforce SHOULD:
+
+1. Trigger the check only when the `kind:0` event's `nip05` value
+   matches one of the identifier shapes in §"Identifier grammar" with
+   a `.bit` right-hand side.
+2. Resolve the Namecoin record using the same transport rules in
+   §"Lookup transport".
+3. **Fail open on network errors.** A signer that hard-blocks signing
+   whenever ElectrumX is unreachable would be unusable on flaky
+   networks; the signer SHOULD distinguish between "name does not
+   match" (refuse / warn) and "could not check" (proceed with a
+   user-visible warning).
+4. Allow the user to override per-event, and to disable the check
+   globally.
+
+This pattern complements reader-side verification by catching
+misconfigurations and impersonation attempts at the source, before an
+event reaches any relay.
+
 ## Publishing
 
 A publisher with a Namecoin name and a Nostr keypair publishes a
@@ -458,36 +565,53 @@ This NIP is strictly additive to NIP-05:
 
 ## Reference implementations
 
-The following implementations have shipped this NIP against a live
-Namecoin chain, with cross-implementation byte-for-byte agreement on
-the same on-chain records:
+This NIP has shipping implementations across six runtimes — Kotlin,
+Swift, Dart, TypeScript, vanilla JavaScript, and Haskell — spanning
+Android, iOS, web, desktop, and relay-side. All exercise the same
+live Namecoin chain via overlapping ElectrumX server sets and have
+been verified byte-for-byte against the same on-chain records.
 
-- **Amethyst** (Android / KMP iOS / Desktop, Kotlin):
-  [#1734](https://github.com/vitorpamplona/amethyst/pull/1734) (initial),
-  [#1771](https://github.com/vitorpamplona/amethyst/pull/1771)
-  (race-condition fixes),
-  [#1786](https://github.com/vitorpamplona/amethyst/pull/1786) (custom
-  servers),
-  [#1937](https://github.com/vitorpamplona/amethyst/pull/1937)
-  (ElectrumX TLS pinning).
-- **Nostur** (iOS, Swift):
-  [#60](https://github.com/nostur-com/nostur-ios-public/pull/60).
-- **nostr-tools** (TypeScript / Node, isomorphic):
-  [#533](https://github.com/nbd-wtf/nostr-tools/pull/533).
-- **dart-nostr** (Flutter / Dart):
-  [#44](https://github.com/ethicnology/dart-nostr/pull/44).
-- **Jumble** (web client, browser-resident `wss://` ElectrumX):
-  [#774](https://github.com/CodyTseng/jumble/pull/774).
-- **noStrudel** (web client):
-  [#352](https://github.com/hzrd149/nostrudel/pull/352).
+### Reader-side (clients)
+
+| Runtime | Project | Surface | PR / repo |
+|---|---|---|---|
+| Kotlin | Amethyst | Android / KMP iOS / Desktop | [vitorpamplona/amethyst #1734](https://github.com/vitorpamplona/amethyst/pull/1734), [#1771](https://github.com/vitorpamplona/amethyst/pull/1771), [#1786](https://github.com/vitorpamplona/amethyst/pull/1786), [#1937](https://github.com/vitorpamplona/amethyst/pull/1937) |
+| Swift | Nostur | iOS | [nostur-com/nostur-ios-public #60](https://github.com/nostur-com/nostur-ios-public/pull/60) |
+| Swift | nos | iOS (Planetary) | [planetary-social/nos #1779](https://github.com/planetary-social/nos/pull/1779) |
+| Dart | dart-nostr | Flutter library | [ethicnology/dart-nostr #44](https://github.com/ethicnology/dart-nostr/pull/44) (merged) |
+| Dart | 0xchat | Flutter, Android+iOS+Web | [0xchat-app/0xchat-app-main #65](https://github.com/0xchat-app/0xchat-app-main/pull/65) |
+| Dart | nostrmo | Flutter cross-platform | [haorendashu/nostrmo #33](https://github.com/haorendashu/nostrmo/pull/33) |
+| TypeScript | nostr-tools | Library (isomorphic) | [nbd-wtf/nostr-tools #533](https://github.com/nbd-wtf/nostr-tools/pull/533) |
+| TypeScript | noStrudel | Web client | [hzrd149/nostrudel #352](https://github.com/hzrd149/nostrudel/pull/352) |
+| TypeScript | Jumble | Web client (browser `wss://`) | [CodyTseng/jumble #774](https://github.com/CodyTseng/jumble/pull/774) |
+| TypeScript | nostter | SvelteKit web | [SnowCait/nostter #2128](https://github.com/SnowCait/nostter/pull/2128) |
+| TypeScript | lumilumi | SvelteKit web | [TsukemonoGit/lumilumi #1037](https://github.com/TsukemonoGit/lumilumi/pull/1037) |
+| TypeScript | nosotros | Web client | [cesardeazevedo/nosotros #205](https://github.com/cesardeazevedo/nosotros/pull/205) |
+| TypeScript | ants | Search / Next.js | [dergigi/ants #281](https://github.com/dergigi/ants/pull/281) |
+| Vanilla JS | alphaama | Web (no build step) | [eskema/alphaama #9](https://github.com/eskema/alphaama/pull/9) |
+| Haskell | futr | Desktop (Qt5) | [futrnostr/futr #162](https://github.com/futrnostr/futr/pull/162) |
+
+### Signer-side
+
+| Runtime | Project | Surface | PR / repo |
+|---|---|---|---|
+| Dart | Aegis | Flutter cross-platform signer (NIP-46 / NIP-07 / NIP-55) | [ZharlieW/Aegis #14](https://github.com/ZharlieW/Aegis/pull/14) |
+
+### Server-side / library
+
 - **strfry NIP-05 sidecar** (relay-side, Rust + Node):
   https://github.com/mstrofnone/strfry-nip05-namecoin.
 - **nostrlib** (Go): drop-in shape at
   https://github.com/mstrofnone/nostrlib-nip05-namecoin, per
   [`nak#123`](https://github.com/fiatjaf/nak/pull/123) discussion.
 
-A live reference deployment is at `testls.bit` / `relay.testls.bit`
-and is exercised by the test suites of every implementation above.
+### Live reference deployment
+
+`testls.bit` / `relay.testls.bit` (a public `.bit` ElectrumX server
+plus a `.bit`-gated relay) is exercised by the test suites of every
+implementation above. The associated identity
+`mstrofnone@testls.bit` is the canonical end-to-end test target for
+FIRSTUPDATE-shaped records (see §"Opcode handling").
 
 ## Out of scope for this NIP
 
