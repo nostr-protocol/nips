@@ -112,6 +112,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
 - [NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)
+- [NIP-XX: Agent Reputation Attestations](XX.md)
 
 ## Event Kinds
 | kind          | description                     | NIP                                    |
@@ -260,6 +261,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `30041`       | Curated Publication Content     | [NKBIP-01]                             |
 | `30063`       | Release artifact sets           | [51](51.md)                            |
 | `30078`       | Application-specific Data       | [78](78.md)                            |
+| `30085`       | Agent Reputation Attestation    | [XX](XX.md)                            |
 | `30166`       | Relay Discovery                 | [66](66.md)                            |
 | `30267`       | App curation sets               | [51](51.md)                            |
 | `30311`       | Live Event                      | [53](53.md)                            |
