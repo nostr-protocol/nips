@@ -46,7 +46,7 @@ Where:
 - `tag` is UTF-8 encoded
 - `int(h)` interprets the 32-byte hash as a big-endian unsigned integer
 - `n` = secp256k1 group order
-- The serialization of `P` as bytes is specified in OQ-1 below
+- `P` MUST be serialized as the **32-byte x-only** Nostr/BIP-340 public key (the raw `npub` bytes) — NOT the 33-byte SEC-compressed form
 
 Derive the Silent Payment public keys using point addition:
 
@@ -131,19 +131,6 @@ Senders with NSW support:
 1. Send using standard BIP-352 sender algorithm
 
 If the recipient has published a `sp1...` in kind `0`, senders MAY use that value but SHOULD verify it matches the NSW-derived address before trusting it.
-
------
-
-## Open Questions
-
-**OQ-1: Serialization of P in the tagged hash**
-The derivation uses `tagged_hash("nostr-sp/scan", P)` where `P` is the Nostr public key point. The byte serialization of `P` as hash input must be specified for interoperability. Candidates: 32-byte x-only (BIP-340 convention, the raw `npub` bytes) or 33-byte SEC-compressed. Implementations MUST agree on one format; this question is open pending cross-implementation verification.
-
-**OQ-2: Coordination with NIP PR #1934**
-NIP PR #1934 (0ceanSlim, May 2025) proposes the `bitcoin` field in kind `0`. If #1934 merges before this NIP, the kind `0` field definition here SHOULD be replaced with a reference to the merged NIP number.
-
-**OQ-3: Multiple derivation approaches**
-Two independent implementations have emerged with different approaches: NSW additive tweak from `npub` (this NIP) and `nsec` as BIP-32 master key (hzrd149, Sparrow Wallet compatible). Cross-implementation test vectors and explicit compatibility documentation are needed before finalization.
 
 -----
 
