@@ -40,11 +40,13 @@ Official Nostr Protocol Extensions for the UPlanet/Astroport.ONE Ecosystem
 - **Crowdfunding:** [CROWDFUNDING_COMMUNS.md](../Astroport.ONE/docs/CROWDFUNDING_COMMUNS.md)
 - **Collaborative Commons:** [COLLABORATIVE_COMMONS_SYSTEM.md](../Astroport.ONE/docs/COLLABORATIVE_COMMONS_SYSTEM.md)
 
+just added **App Switch Configuration:** [78-app-switch-extension.md](78-app-switch-extension.md) - configuration personnalisée du menu FAB UPlanet
+
 ---
 
 ## 📚 Complete Documentation
 
-This repository contains **10 official extensions** to the Nostr protocol for the UPlanet/Astroport.ONE ecosystem.
+This repository contains **official extensions** to the Nostr protocol for the UPlanet/Astroport.ONE ecosystem.
 
 ### 🎯 Overview
 
@@ -280,6 +282,7 @@ Satellites (24)
 | 31900 | Workflow Definition | NIP-101 Cookie | Cookie workflow definition |
 | 31901 | Workflow Instance | NIP-101 Cookie | Cookie workflow instance |
 | 31902 | Workflow Completion | NIP-101 Cookie | Cookie workflow completion |
+| 31903 | Cookie Vault | [101-cookie-vault-extension.md](101-cookie-vault-extension.md) | Stockage CID cookie chiffré (NIP-101 ext.) |
 | 10600 | Analytics | [10600-analytics-extension.md](10600-analytics-extension.md) | Decentralized user analytics |
 
 ---
