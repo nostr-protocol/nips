@@ -57,6 +57,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-38: User Statuses](38.md)
 - [NIP-39: External Identities in Profiles](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
+- [NIP-XX: Event Timestamp Attestations](event-timestamp-attestation.md)
 - [NIP-42: Authentication of clients to relays](42.md)
 - [NIP-43: Relay Access Metadata and Requests](43.md)
 - [NIP-44: Encrypted Payloads (Versioned)](44.md)
@@ -158,6 +159,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `1022`        | Bid confirmation                | [15](15.md)                            |
 | `1234`        | Draft Checkpoint                | [37](37.md)                            |
 | `1040`        | OpenTimestamps                  | [03](03.md)                            |
+| `1041`        | Event Timestamp Attestation     | [XX](event-timestamp-attestation.md)   |
 | `1059`        | Gift Wrap                       | [59](59.md)                            |
 | `1063`        | File Metadata                   | [94](94.md)                            |
 | `1068`        | Poll                            | [88](88.md)                            |
