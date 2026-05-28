@@ -147,6 +147,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `42`          | Channel Message                 | [28](28.md)                            |
 | `43`          | Channel Hide Message            | [28](28.md)                            |
 | `44`          | Channel Mute User               | [28](28.md)                            |
+| `54`          | Podcast Episode                 | [F4](F4.md)                            |
 | `62`          | Request to Vanish               | [62](62.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
 | `443`         | KeyPackage                      | [Marmot][marmot]                       |
@@ -217,8 +218,11 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `10030`       | User emoji list                 | [51](51.md)                            |
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
 | `10051`       | KeyPackage Relays List          | [Marmot][marmot]                       |
+| `10054`       | Favorite podcasts list          | [51](51.md)                            |
 | `10063`       | User server list                | [Blossom][blossom]                     |
+| `10064`       | Authored podcasts list          | [51](51.md)                            |
 | `10096`       | File storage server list        | [96](96.md) (deprecated)               |
+| `10154`       | Podcast Metadata                | [F4](F4.md)                            |
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
 | `10312`       | Room Presence                   | [53](53.md)                            |
 | `10377`       | Proxy Announcement              | [Nostr Epoxy][nostr-epoxy]             |
