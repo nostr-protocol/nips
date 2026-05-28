@@ -110,6 +110,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 - [NIP-B7: Blossom](B7.md)
 - [NIP-BE: Nostr BLE Communications Protocol](BE.md)
 - [NIP-C0: Code Snippets](C0.md)
+- [NIP-CC: Geocaching](CC.md)
 - [NIP-C7: Chats](C7.md)
 - [NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)
 
@@ -188,8 +189,8 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `7374`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
 | `7375`        | Cashu Wallet Tokens             | [60](60.md)                            |
 | `7376`        | Cashu Wallet History            | [60](60.md)                            |
-| `7516`        | Geocache log                    | [geocaching][geocaching]               |
-| `7517`        | Geocache proof of find          | [geocaching][geocaching]               |
+| `7516`        | Geocache log                    | [CC](CC.md)                            |
+| `7517`        | Geocache proof of find          | [CC](CC.md)                            |
 | `8000`        | Add User                        | [43](43.md)                            |
 | `8001`        | Remove User                     | [43](43.md)                            |
 | `9000`-`9030` | Group Control Events            | [29](29.md)                            |
