@@ -152,9 +152,10 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `54`          | Podcast Episode                 | [F4](F4.md)                            |
 | `62`          | Request to Vanish               | [62](62.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
-| `443`         | KeyPackage                      | [Marmot][marmot]                       |
-| `444`         | Welcome Message                 | [Marmot][marmot]                       |
-| `445`         | Group Event                     | [Marmot][marmot]                       |
+| `78`          | Application-specific Data       | [78](78.md)                            |
+| `443`         | KeyPackage                      | [Marmot](marmot)                       |
+| `444`         | Welcome Message                 | [Marmot](marmot)                       |
+| `445`         | Group Event                     | [Marmot](marmot)                       |
 | `818`         | Merge Requests                  | [54](54.md)                            |
 | `1018`        | Poll Response                   | [88](88.md)                            |
 | `1021`        | Bid                             | [15](15.md)                            |
