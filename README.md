@@ -109,6 +109,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-A4: Public Messages](A4.md)
 - [NIP-B0: Web Bookmarks](B0.md)
 - [NIP-B7: Blossom](B7.md)
+- [NIP-BC: Onchain Zaps](BC.md)
 ~~- [NIP-BE: Nostr BLE Communications Protocol](BE.md) --- **unrecommended**: only implemented once and unclear whether it works, requires review~~
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-CC: Geocaching](CC.md)
@@ -191,6 +192,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `7517`        | Geocache proof of find          | [CC](CC.md)                            |
 | `8000`        | Add User                        | [43](43.md)                            |
 | `8001`        | Remove User                     | [43](43.md)                            |
+| `8333`        | Onchain Zap                     | [BC](BC.md)                            |
 | `9000`-`9030` | Group Control Events            | [29](29.md)                            |
 | `9041`        | Zap Goal                        | [75](75.md)                            |
 | `9321`        | Nutzap                          | [61](61.md)                            |
