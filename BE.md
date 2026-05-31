@@ -1,10 +1,12 @@
+> __Warning__  `unrecommended`: only implemented once and unclear whether it works, requires review
+
 NIP-BE
 ======
 
 Nostr BLE Communications Protocol
 ---------------------------------
 
-`draft` `optional`
+`draft` `unrecommended` `optional`
 
 This NIP specifies how Nostr apps can use BLE to communicate and synchronize with each other. The BLE protocol follows a client-server pattern, so this NIP emulates the WS structure in a similar way, but with some adaptations to its limitations.
 
