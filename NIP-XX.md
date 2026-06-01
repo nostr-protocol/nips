@@ -181,6 +181,10 @@ Full scanning services — where the wallet provides `bscan` directly to a remot
 
 On wallet restore from `nsec` alone, a full BIP-352 scan from genesis (or a trusted checkpoint) is required to recover all UTXOs. Tweak-data service providers MAY offer checkpointed scan history to reduce restore time.
 
+### Payment Flow
+
+Implementing this derivation standard alone is sufficient to receive payments via BIP-352 chain scanning. A companion NIP, NIP-XX: Nostr Silent Payments — Payment Flow ([PR #2362](https://github.com/nostr-protocol/nips/pull/2362)), defines Nostr-native payment notifications (kind `8352`) and UTXO cache events (kind `10353`) built on this derivation standard.
+
 -----
 
 ## Spending
