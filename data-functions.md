@@ -6,6 +6,8 @@ Data Functions
 
 `draft` `optional`
 
+> **Status: work in progress.** Incomplete and subject to change; not yet submitted for review. Kind numbers are provisional.
+
 ## Abstract
 
 A **data function** is an addressable, reusable computation over Nostr events: code ([NIP-C0](C0.md) `kind:1337`) plus a fixed configuration (source relays, params, ttl). A [NIP-90](90.md) Data Vending Machine runs it on demand and publishes a **content-addressed cached result**, so clients read a cheap precomputed event instead of crawling and aggregating raw events themselves (e.g. comment/like counts, rolling averages).
@@ -60,6 +62,16 @@ Addressable. `.content` is the JSON-serialized output.
 ## Execution
 
 Code MUST be run in an isolated sandbox with no ambient I/O; the only capability is `nostr.query`. Implementations enforce runtime, memory, output-size and event-count limits. Since a DVM executes arbitrary third-party code at its own cost, operators MAY restrict which authors' code they run and which pubkeys may trigger jobs — this is operator policy, not part of the protocol.
+
+## Security & Abuse (TBD)
+
+A DVM performs work on request, so it can be griefed into wasted computation. Cache-first design already absorbs the common case: repeat requests for the same (definition + inputs) return the cached event without recomputing. The remaining vectors are forcing *distinct* computations (varying inputs) or forcing recompute (`cache:no`). Mitigations to specify later (placeholders):
+
+- relay-level gating of `5910` (e.g. [NIP-42](42.md) auth / allowlisted relay)
+- requester allowlist (operator policy)
+- per-pubkey rate limiting and a bounded job queue
+- honoring `cache:no` only from the definition author
+- payment per job ([NIP-90](90.md) bids)
 
 ## Reference Implementation
 
