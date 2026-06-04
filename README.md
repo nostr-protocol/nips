@@ -225,7 +225,7 @@ They exist to document what may be implemented by [Nostr](https://github.com/nos
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `13534`       | Membership Lists                | [43](43.md)                            |
 | `14388`       | User Sound Effect Lists         | [Corny Chat][cornychat-usersoundlist]  |
-| `5128`        | Pinned nsite manifest           | [5A](5A.md)                            |
+| `5128`        | nsite manifest snapshot         | [5A](5A.md)                            |
 | `15128`       | Root nsite manifest             | [5A](5A.md)                            |
 | `17375`       | Cashu Wallet Event              | [60](60.md)                            |
 | `21000`       | Lightning Pub RPC               | [Lightning.Pub][lnpub]                 |
