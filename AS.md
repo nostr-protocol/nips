@@ -28,9 +28,9 @@ Existing scheduling tools (Calendly, Cal.com, etc.) act as intermediaries: they 
 | 31927 | Scheduling Page | Parameterized replaceable |
 | 32680 | Scheduling Page Key Index | Parameterized replaceable |
 | 31926 | Public Busy List | Parameterized replaceable |
-| 1057  | Booking Request Gift Wrap | Regular (NIP-59) |
+| 1059  | Booking Request Gift Wrap (k=1057) | Regular (NIP-59) |
 | 57    | Booking Request Rumor | Unsigned (inside booking request gift wrap) |
-| 1058  | Booking Response Gift Wrap | Regular (NIP-59) |
+| 1059  | Booking Response Gift Wrap (k=1058) | Regular (NIP-59) |
 | 58    | Booking Response Rumor | Unsigned (inside booking response gift wrap) |
 
 The confirmed appointment uses kinds defined in NIP-52E:
@@ -38,7 +38,7 @@ The confirmed appointment uses kinds defined in NIP-52E:
 | Kind  | Name | Type |
 |-------|------|------|
 | 32678 | Private Calendar Event | Parameterized replaceable |
-| 1052  | Calendar Event Gift Wrap | Regular (NIP-59) |
+| 1059  | Calendar Event Gift Wrap (k=1052) | Regular (NIP-59) |
 
 ---
 
@@ -166,26 +166,27 @@ When a booking is approved, the host client MAY add a `block` entry to the relev
 
 ---
 
-## Booking Request (kind `1057`)
+## Booking Request (kind `1059`, k=`1057`)
 
-When a booker selects a slot, they send a **NIP-59 gift wrap** (kind `1057`) to the host. The gift wrap seals an unsigned rumor (kind `57`) carrying the appointment details.
+When a booker selects a slot, they send a **NIP-59 gift wrap** (kind `1059`) to the host. The gift wrap seals an unsigned rumor (kind `57`) carrying the appointment details. The outer `["k", "1057"]` tag allows relay-side filtering to distinguish booking requests from other gift-wrapped content.
 
 Crucially, the booker generates both the `d` tag and the **view key** for the future private event *before* sending the request. This means:
 
 1. The booker can add the event to their calendar immediately, with the correct view key.
 2. The host uses the booker's key directly, so the booker never needs to receive and store a key from the host.
 
-### Outer gift wrap (kind `1057`)
+### Outer gift wrap (kind `1059`)
 
 Standard NIP-59 gift wrap addressed to the host.
 
 ```jsonc
 {
-  "kind": 1057,
+  "kind": 1059,
   "pubkey": "<ephemeral-pubkey>",
   "created_at": "<randomized-timestamp>",
   "tags": [
-    ["p", "<host-pubkey>"]
+    ["p", "<host-pubkey>"],
+    ["k", "1057"]
   ],
   "content": "<nip44-encrypted-seal>"
 }
@@ -223,21 +224,22 @@ Standard NIP-59 gift wrap addressed to the host.
 
 ---
 
-## Booking Response (kind `1058`)
+## Booking Response (kind `1059`, k=`1058`)
 
-After processing the request, the host sends a **NIP-59 gift wrap** (kind `1058`) back to the booker confirming approval or decline.
+After processing the request, the host sends a **NIP-59 gift wrap** (kind `1059`) back to the booker confirming approval or decline. The outer `["k", "1058"]` tag distinguishes booking responses from other gift-wrapped content.
 
-### Outer gift wrap (kind `1058`)
+### Outer gift wrap (kind `1059`)
 
 Standard NIP-59 gift wrap addressed to the booker. The `status` tag is left in plaintext on the outer event so relays can filter responses by status without decrypting.
 
 ```jsonc
 {
-  "kind": 1058,
+  "kind": 1059,
   "pubkey": "<ephemeral-pubkey>",
   "created_at": "<randomized-timestamp>",
   "tags": [
     ["p", "<booker-pubkey>"],
+    ["k", "1058"],
     ["status", "approved"]
   ],
   "content": "<nip44-encrypted-seal>"
@@ -300,9 +302,7 @@ When a booking is approved, the host publishes a private calendar event as defin
 - Use the `d` tag supplied by the booker in the booking request.
 - Use the `viewKey` supplied by the booker in the booking request to encrypt the event content.
 - Include the booker's pubkey as a participant (`["p", "<booker-pubkey>"]`) in the encrypted content.
-- Send a kind `1052` **calendar event gift wrap** to the booker (per NIP-52E) so the booker receives the viewKey as a fallback.
-
-The `1052` gift wrap MAY include a `["booking", "true"]` tag on the outer event so booker clients can distinguish booking confirmations from ordinary event invitations.
+- Send a kind `1059` **calendar event gift wrap** (k=`1052`) to the booker (per NIP-52E) so the booker receives the viewKey as a fallback.
 
 ---
 
@@ -375,7 +375,7 @@ Bob immediately adds the event ref to his calendar list (kind `32123`) with the 
 
 ### Step 4 — Bob sends the booking request
 
-Bob's client NIP-59-wraps the following rumor and publishes a kind `1057` gift wrap to Alice's relay:
+Bob's client NIP-59-wraps the following rumor and publishes a kind `1059` gift wrap to Alice's relay:
 
 **Rumor (kind 57):**
 ```json
@@ -396,20 +396,20 @@ Bob's client NIP-59-wraps the following rumor and publishes a kind `1057` gift w
 }
 ```
 
-**Gift wrap (kind 1057):**
+**Gift wrap (kind 1059):**
 ```json
 {
-  "kind": 1057,
+  "kind": 1059,
   "pubkey": "ffff11...ephemeral",
   "created_at": 1699900000,
-  "tags": [["p", "aabbcc...alice"]],
+  "tags": [["p", "aabbcc...alice"], ["k", "1057"]],
   "content": "<nip44-encrypted-seal>"
 }
 ```
 
 ### Step 5 — Alice approves the booking
 
-Alice's client receives the kind `1057` gift wrap, unwraps it, and reads the rumor. It extracts `d = "a3f9c2..."` and `viewKey = "nsec1bob..."`.
+Alice's client receives the kind `1059` gift wrap (k=`1057`), unwraps it, and reads the rumor. It extracts `d = "a3f9c2..."` and `viewKey = "nsec1bob..."`.
 
 Alice's client:
 1. Publishes kind `32678` using `d = "a3f9c2..."` and encrypts with `viewKey_B` (the booker's key):
@@ -424,12 +424,12 @@ Alice's client:
 }
 ```
 
-2. Sends a kind `1052` **calendar event gift wrap** to Bob's pubkey with `["booking", "true"]`:
+2. Sends a kind `1059` **calendar event gift wrap** (k=`1052`) to Bob's pubkey:
 
-**Rumor (kind 52):**
+**Rumor (kind 1052):**
 ```json
 {
-  "kind": 52,
+  "kind": 1052,
   "pubkey": "aabbcc...alice",
   "created_at": 1700060000,
   "tags": [
@@ -440,15 +440,15 @@ Alice's client:
 }
 ```
 
-**Gift wrap (kind 1052):**
+**Gift wrap (kind 1059):**
 ```json
 {
-  "kind": 1052,
+  "kind": 1059,
   "pubkey": "ffff22...ephemeral",
   "created_at": 1699870000,
   "tags": [
     ["p", "ddeeff...bob"],
-    ["booking", "true"]
+    ["k", "1052"]
   ],
   "content": "<nip44-encrypted-seal>"
 }
@@ -474,7 +474,7 @@ Alice's client:
 }
 ```
 
-5. Sends a kind `1058` booking response to Bob:
+5. Sends a kind `1059` booking response (k=`1058`) to Bob:
 
 **Rumor (kind 58):**
 ```json
@@ -494,14 +494,15 @@ Alice's client:
 }
 ```
 
-**Gift wrap (kind 1058):**
+**Gift wrap (kind 1059):**
 ```json
 {
-  "kind": 1058,
+  "kind": 1059,
   "pubkey": "ffff33...ephemeral",
   "created_at": 1699880000,
   "tags": [
     ["p", "ddeeff...bob"],
+    ["k", "1058"],
     ["status", "approved"]
   ],
   "content": "<nip44-encrypted-seal>"
@@ -511,8 +512,8 @@ Alice's client:
 ### Step 6 — Bob receives confirmation
 
 Bob's client monitors for:
-- **Kind `1052` with `["booking", "true"]`** — when this gift wrap arrives for an event already in Bob's calendar (`a3f9c2...` is already present in kind `32123`), his client auto-approves the matching outgoing booking record and marks it as confirmed. No user interaction needed.
-- **Kind `1058`** — the explicit booking response gift wrap. Either path is sufficient; clients SHOULD handle both for robustness.
+- **Kind `1059` with `["k", "1052"]`** — when this calendar invitation gift wrap arrives for an event already in Bob's calendar (`a3f9c2...` is already present in kind `32123`), his client auto-approves the matching outgoing booking record and marks it as confirmed. No user interaction needed.
+- **Kind `1059` with `["k", "1058"]`** — the explicit booking response gift wrap. Either path is sufficient; clients SHOULD handle both for robustness.
 
 Because Bob's client already stored the event ref with the correct view key in Step 3, the confirmed appointment appears on his calendar the moment he submitted the request — it transitions from "pending" to "confirmed" when either of the above messages arrives.
 
@@ -534,20 +535,21 @@ BOOKER                                       HOST
    own calendar list (kind 32123)           
    Store outgoing booking (pending)
 
-3. Publish kind 1057 gift wrap ──────────►  4. Unwrap kind 1057
-   (carries d-tag + viewKey_B)                  Extract dTag + viewKey_B
+3. Publish kind 1059 gift wrap ──────────►  4. Unwrap kind 1059 (k=1057)
+   (k=1057, carries d-tag + viewKey_B)          Extract dTag + viewKey_B
                                                 Publish kind 32678
                                                   using dTag + viewKey_B
-                                                Publish kind 1052 gift wrap ─┐
-                                                  ["booking","true"]          │
+                                                Publish kind 1059 gift wrap ─┐
+                                                  (k=1052, calendar invite)   │
                                                 Add event to own calendar    │
                                                 Update kind 31926 busy list  │
-                                                Publish kind 1058 gift wrap ─┤
-5. Receive kind 1052 ◄─────────────────────────────────────────────────────┘
+                                                Publish kind 1059 gift wrap ─┤
+                                                  (k=1058, booking response)  │
+5. Receive kind 1059 (k=1052) ◄────────────────────────────────────────────┘
    Event already in calendar →
    Auto-approve booking (pending → confirmed)
    OR
-   Receive kind 1058 ◄──────────────────────────────────────────────────────┘
+   Receive kind 1059 (k=1058) ◄──────────────────────────────────────────────┘
    Update booking status
 ```
 
@@ -563,7 +565,7 @@ BOOKER                                       HOST
 - MUST update the kind `31926` busy list after every approved booking.
 - MUST use the `d` tag and `viewKey` from the booker's request rumor verbatim when publishing the kind `32678` private event.
 - MUST include the booker's pubkey as a participant in the encrypted private event content.
-- SHOULD send a kind `1052` gift wrap with `["booking", "true"]` to the booker in addition to the kind `1058` response, so clients can auto-approve without user interaction.
+- SHOULD send a kind `1059` gift wrap (k=`1052`) to the booker in addition to the kind `1059` (k=`1058`) response, so clients can auto-approve without user interaction.
 - SHOULD include relay hints in both the kind `31927` inner `relay` tags and in the `event_ref` tag of the booking response.
 - SHOULD set `["expiry", "<seconds>"]` on the scheduling page to give bookers a deadline to respond to pending requests.
 
@@ -572,13 +574,13 @@ BOOKER                                       HOST
 - MUST generate both the `d` tag and the `viewKey` for the future event locally before sending the booking request.
 - MUST add the event ref (with the real `viewKey`, not a placeholder) to their calendar list at the time of submitting the request, so the event appears immediately in their calendar.
 - MUST include `["d", "<pre-generated-d-tag>"]` and `["viewKey", "<nsec>"]` in the booking request rumor.
-- SHOULD monitor for kind `1052` gift wraps with `["booking", "true"]` whose event `d` tag matches a pending outgoing booking. On receipt, SHOULD auto-approve the matching booking without requiring user action.
-- SHOULD also monitor for kind `1058` booking responses as a fallback path.
+- SHOULD monitor for kind `1059` gift wraps with `["k", "1052"]` whose event `d` tag matches a pending outgoing booking. On receipt, SHOULD auto-approve the matching booking without requiring user action.
+- SHOULD also monitor for kind `1059` gift wraps with `["k", "1058"]` as a fallback path.
 - MUST check the host's kind `31926` busy list(s) for the relevant month(s) before rendering available slots, in addition to applying the scheduling page's `avail`/`blocked`/`buffer` rules.
 
 ### Both parties
 
-- MUST use NIP-59 for all booking request and response messages (kinds `1057`, `1058`).
+- MUST use NIP-59 for all booking request and response messages (kind `1059` with `["k", "1057"]` or `["k", "1058"]` respectively).
 - MUST randomize the `created_at` timestamp of gift wraps (±2 days from the actual time) per NIP-59 for metadata privacy.
 - SHOULD set `minNotice` and `maxAdvance` constraints on the scheduling page to avoid requests for slots that are already past or too far in the future.
 - SHOULD ignore or gracefully handle booking requests with a `d` tag or `viewKey` that conflicts with an existing event.
@@ -587,7 +589,7 @@ BOOKER                                       HOST
 
 ## Relay Directives
 
-- Relays SHOULD support `"#p"` tag filtering for kinds `1052`, `1057`, and `1058` so clients can efficiently retrieve only their own gift wraps.
+- Relays SHOULD support `"#p"` and `"#k"` tag filtering for kind `1059` so clients can efficiently retrieve only their own gift wraps filtered by type.
 - Relays SHOULD apply standard NIP-01 parameterized-replaceable semantics to kinds `31926`, `31927`, and `32680` (keep only the latest version per `pubkey + d`).
 - Relays MAY support `"#t"` tag filtering for kind `31926` to allow clients to query busy lists by month (`"#t": ["2024-12"]`).
 - Relays MAY limit the number of gift wraps stored per `#p` recipient to prevent storage abuse.
