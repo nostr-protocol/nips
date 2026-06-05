@@ -106,13 +106,13 @@ If `t_scan`, `t_spend`, `bscan`, or `bspend` equals 0 after mod n reduction, the
 
 NSP is a distinct wallet class, not merely an alternate address encoding. The difference lies in how the base scan and spend keys originate:
 
-|Property                                  |NSP (this NIP)                        |BIP-352 Wallet-Derived       |
-|------------------------------------------|--------------------------------------|-----------------------------|
-|Base key origin                           |Nostr identity (`npub`)               |Private seed or BIP-32 tree  |
-|Public derivability from `npub`           |Yes                                   |No                           |
-|Address verifiability from public identity|Yes                                   |No                           |
-|Private recovery                          |From `nsec`                           |From seed or xprv            |
-|Scan key delegation to untrusted service  |No — `bscan` root-equivalent to `nsec`|Yes — scan key is independent|
+|Property                                 |NSP (this NIP)         |BIP-352 Wallet-Derived     |
+|-----------------------------------------|-----------------------|---------------------------|
+|Base key origin                          |Nostr identity (`npub`)|Private seed or BIP-32 tree|
+|Public derivability from `npub`          |Yes                    |No                         |
+|Address verifiability from public identity|Yes                   |No                         |
+|Private recovery                         |From `nsec`            |From seed or xprv          |
+|Scan key delegation to untrusted service |No — `bscan` root-equivalent to `nsec`|Yes — scan key is independent|
 
 A sender wallet need not distinguish: both classes produce a valid `sp1...` address and the BIP-352 send algorithm is identical. The distinction is receiver-side — an NSP address can only be recovered by software that implements the NSP derivation contract.
 
@@ -159,7 +159,7 @@ A sender follows the standard BIP-352 sending procedure. Given a recipient `npub
 
 ## Receiving
 
-### Local Scan (Required)
+### Full Local Scan
 
 The wallet computes `bscan` and `bspend` per §Key Derivation and runs the BIP-352 receiver algorithm over the chain. For each candidate transaction:
 
@@ -173,17 +173,17 @@ The wallet computes `bscan` and `bspend` per §Key Derivation and runs the BIP-3
    If xonly(P_check) matches the output key → UTXO found, store (txid, vout, value, tₖ)
    ```
 
-### Tweak-Data Service (Optional)
+### Tweak-Data Service
 
-A tweak-data service exposes only public per-transaction data — `input_hash · A` — for BIP-352-eligible transactions. The wallet completes the ECDH locally using `bscan`. **The service never receives `bscan` or any private key material.** Frigate (sparrowwallet) implements this protocol and is confirmed compatible with NSP-derived `sp1...` addresses. A self-hosted Frigate instance is the recommended scanning backend for recipients who require remote assistance.
+A tweak-data service exposes only public per-transaction data — `input_hash · A` — for BIP-352-eligible transactions. The wallet completes the ECDH locally using `bscan`. **The service never receives `bscan` or any private key material.** BlindBit Oracle (setavenger) implements this protocol and is confirmed compatible with NSP-derived `sp1...` addresses. A self-hosted BlindBit Oracle instance is the recommended scanning backend for recipients who require remote assistance. Recipients who require full remote scanning (where the server performs ECDH on behalf of the client) SHOULD use a seed-derived BIP-352 wallet rather than NSP — full remote scanners require `bscan` which is root-equivalent to `nsec`.
 
 Full scanning services — where the wallet provides `bscan` directly to a remote service — are **PROHIBITED** (see §Security Considerations). Because `bscan` is root-equivalent, providing it to any untrusted service is operationally equivalent to disclosing the `nsec`. Recipients who require remote scanning with an untrusted operator SHOULD use a seed-derived BIP-352 wallet rather than NSP; seed-derived scan keys cannot be algebraically inverted to expose a root key.
 
 On wallet restore from `nsec` alone, a full BIP-352 scan from genesis (or a trusted checkpoint) is required to recover all UTXOs. Tweak-data service providers MAY offer checkpointed scan history to reduce restore time.
 
-### Payment Flow
+### Receipts
 
-Implementing this derivation standard alone is sufficient to receive payments via BIP-352 chain scanning. A companion NIP, NIP-XX: Nostr Silent Payments — Payment Flow ([PR #2362](https://github.com/nostr-protocol/nips/pull/2362)), defines Nostr-native payment notifications (kind `8352`) and UTXO cache events (kind `10353`) built on this derivation standard.
+Implementing this derivation standard alone is sufficient to receive payments via BIP-352 chain scanning. A companion NIP, NIP-XX: Nostr Silent Payments — Receipts (PR #2362), defines Nostr-native payment notifications (kind `8352`) and UTXO cache events (kind `10353`) built on this derivation standard.
 
 -----
 
@@ -335,8 +335,9 @@ The derivation standard and security model in this NIP are based on independent 
 
 - **Nostr Silent Payments (NSP)** (trbouma) — field-tested with Cake Wallet. [Summary Brief](https://github.com/trbouma/openetr/blob/main/docs/summary-brief.md) · [Specification Note](https://github.com/trbouma/openetr/blob/main/docs/specs/NOSTR_SILENT_PAYMENTS_SPEC.md) · [Design Note](https://github.com/trbouma/openetr/blob/main/docs/specs/SILENT_PAYMENTS_DESIGN_NOTE.md) · [Derivation Decision Note](https://github.com/trbouma/openetr/blob/main/docs/specs/SILENT_PAYMENTS_DERIVATION_DECISION_NOTE.md)
 - **Cake Wallet** (`cw_bitcoin`) — confirmed BIP-352 SP sender. [github.com/cake-tech/cake_wallet](https://github.com/cake-tech/cake_wallet)
-- **Sparrow Wallet 2.5.0** (craigraw) — production BIP-352 send and receive. [github.com/sparrowwallet/sparrow](https://github.com/sparrowwallet/sparrow)
-- **Frigate** (sparrowwallet) — SP Electrum server implementing tweak-data service protocol. [github.com/sparrowwallet/frigate](https://github.com/sparrowwallet/frigate)
+- **Sparrow Wallet** (craigraw) — production BIP-352 send and receive. [github.com/sparrowwallet/sparrow](https://github.com/sparrowwallet/sparrow)
+- **BlindBit Oracle** (setavenger) — tweak-data service server providing `input_hash · A` per block. The recommended NSP-compatible scanning backend. [github.com/setavenger/blindbit-oracle](https://github.com/setavenger/blindbit-oracle)
+- **Frigate** (sparrowwallet) — remote scanner requiring `bscan`. Full remote scanning is PROHIBITED for NSP (see §Security Warning). Appropriate for seed-derived BIP-352 wallets only. [github.com/sparrowwallet/frigate](https://github.com/sparrowwallet/frigate)
 
 -----
 
