@@ -112,8 +112,8 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-B7: Blossom](B7.md)
 - ~~[NIP-BE: Nostr BLE Communications Protocol](BE.md) --- **unrecommended**: only implemented once and unclear whether it works, requires review~~
 - [NIP-C0: Code Snippets](C0.md)
-- [NIP-CC: Geocaching](CC.md)
 - [NIP-C7: Chats](C7.md)
+- [NIP-CC: Geocaching](CC.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
 
@@ -289,7 +289,8 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `35128`       | Named nsite manifest            | [5A](5A.md)                            |
 | `38172`       | Cashu Mint Announcement         | [87](87.md)                            |
 | `38173`       | Fedimint Announcement           | [87](87.md)                            |
-| `37516`       | Geocache listing                | [CC](CC.md)                            |
+| `37516`       | Geocache Listing                | [CC](CC.md)                            |
+| `37517`       | Geocache Curation List          | [CC](CC.md)                            |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
 | `39089`       | Starter packs                   | [51](51.md)                            |
