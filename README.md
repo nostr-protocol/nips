@@ -112,8 +112,8 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - ~~[NIP-BE: Nostr BLE Communications Protocol](BE.md) --- **unrecommended**: only implemented once and unclear whether it works, requires review~~
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
+- [NIP-CC: Geocaching](CC.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
-- [NIP-GC: Geocaching](GC.md)
 
 ## Event Kinds
 
@@ -187,8 +187,8 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `7374`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
 | `7375`        | Cashu Wallet Tokens             | [60](60.md)                            |
 | `7376`        | Cashu Wallet History            | [60](60.md)                            |
-| `7516`        | Geocache log                    | [GC](GC.md)                            |
-| `7517`        | Geocache proof of find          | [GC](GC.md)                            |
+| `7516`        | Geocache log                    | [CC](CC.md)                            |
+| `7517`        | Geocache proof of find          | [CC](CC.md)                            |
 | `8000`        | Add User                        | [43](43.md)                            |
 | `8001`        | Remove User                     | [43](43.md)                            |
 | `9000`-`9030` | Group Control Events            | [29](29.md)                            |
@@ -287,8 +287,8 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `35128`       | Named nsite manifest            | [5A](5A.md)                            |
 | `38172`       | Cashu Mint Announcement         | [87](87.md)                            |
 | `38173`       | Fedimint Announcement           | [87](87.md)                            |
-| `37516`       | Geocache Listing                | [GC](GC.md)                            |
-| `37517`       | Geocache Curation List          | [GC](GC.md)                            |
+| `37516`       | Geocache Listing                | [CC](CC.md)                            |
+| `37517`       | Geocache Curation List          | [CC](CC.md)                            |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
 | `39089`       | Starter packs                   | [51](51.md)                            |

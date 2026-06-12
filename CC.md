@@ -1,4 +1,4 @@
-NIP-GC
+NIP-CC
 ======
 
 Geocaching Events
