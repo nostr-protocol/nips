@@ -6,7 +6,7 @@ Nostr Web Applets
 
 `draft` `optional`
 
-This NIP defines a protocol for sandboxed web applications ("napplets") running in iframes to communicate with a hosting application ("shell") via postMessage using a generic JSON envelope. Protocol messages are defined by NUB (Napplet Unified Blueprint) extension specs.
+This NIP defines a protocol for sandboxed web applications ("napplets") running in iframes to communicate with a hosting application ("shell") via postMessage using a generic JSON envelope. Protocol messages are defined by NAP (Nostr Applet Protocol) extension specs.
 
 ## Philosophy
 
@@ -20,7 +20,7 @@ A napplet is a Nostr applet - a small, focused application that does one thing w
 | Napplet | Sandboxed iframe application communicating with the shell via postMessage |
 | dTag | Napplet type identifier from the [NIP-5A](5A.md) manifest `d` tag |
 | Aggregate hash | SHA-256 of napplet build files per [NIP-5A](5A.md) |
-| NUB | Napplet Unified Blueprint -- extension spec defining protocol messages for a capability domain |
+| NAP | Nostr Applet Protocol -- extension spec defining protocol messages for a capability domain |
 
 ## Transport
 
@@ -42,14 +42,14 @@ All messages between napplet and shell are JSON objects with a `type` field:
 
     { "type": "<domain>.<action>", ...payload }
 
-The `type` field is a string discriminant in `domain.action` format. Domains correspond to NUB capability names (e.g., a NUB named `foo` owns all `foo.*` types). NUB specs define the valid type strings and payload shapes for their domain. This NIP does not enumerate message types.
+The `type` field is a string discriminant in `domain.action` format. Domains correspond to NAP capability names (e.g., a NAP named `foo` owns all `foo.*` types). NAP specs define the valid type strings and payload shapes for their domain. This NIP does not enumerate message types.
 
-Example — a hypothetical `foo` NUB with a request/response pattern:
+Example — a hypothetical `foo` NAP with a request/response pattern:
 
     { "type": "foo.bar", "id": "abc", "data": {...} }
     { "type": "foo.bar.result", "id": "abc", "result": {...} }
 
-Messages with an unrecognized `type` MUST be silently ignored. This allows forward compatibility as new NUBs are defined.
+Messages with an unrecognized `type` MUST be silently ignored. This allows forward compatibility as new NAPs are defined.
 
 ## Identity
 
@@ -59,13 +59,13 @@ When the shell creates a napplet iframe, it maps the iframe's `Window` reference
 
 The shell MUST verify `MessageEvent.source` on every inbound message. Messages from Window references not mapped to a napplet identity MUST be silently dropped.
 
-## Manifest and NUB Negotiation
+## Manifest and NAP Negotiation
 
 Napplet manifests ([NIP-5A](5A.md) kind 35128) declare required capabilities using `requires` tags:
 
-    ["requires", "<nub-name>"]
+    ["requires", "<nap-name>"]
 
-Each `requires` value is a short NUB name matching a NUB domain (e.g., `foo`). Manifests MUST NOT use spec identifiers (e.g., use `foo`, not `NUB-FOO`).
+Each `requires` value is a short NAP name matching a NAP domain (e.g., `foo`). Manifests MUST NOT use spec identifiers (e.g., use `foo`, not `NAP-FOO`).
 
 At napplet load time, the shell checks `requires` tags against its own capabilities. If a required capability is absent, the shell SHOULD reject the napplet or display a compatibility warning. If the manifest has no `requires` tags, the shell loads the napplet with whatever capabilities it provides.
 
@@ -73,30 +73,30 @@ At napplet load time, the shell checks `requires` tags against its own capabilit
 
 Napplets query capability support at runtime:
 
-    window.napplet.shell.supports('foo')           // NUB capability — boolean
+    window.napplet.shell.supports('foo')           // NAP capability — boolean
     window.napplet.shell.supports('perm:popups')   // permission — boolean
 
 Shells MUST implement `window.napplet.shell.supports()`. The argument is a namespaced capability string:
 
 | Prefix   | Example            | Meaning                         |
 |----------|--------------------|---------------------------------|
-| *(bare)* | `'relay'`          | Shorthand for `'nub:relay'`     |
-| `nub:`   | `'nub:identity'`   | Shell implements the identity NUB |
+| *(bare)* | `'relay'`          | Shorthand for `'nap:relay'`     |
+| `nap:`   | `'nap:identity'`   | Shell implements the identity NAP |
 | `perm:`  | `'perm:popups'`    | Shell grants popup permission   |
 
 Napplets MUST gracefully degrade when a capability is absent.
 
-## NUB Extension Framework
+## NAP Extension Framework
 
-Protocol messages are defined by NUB (Napplet Unified Blueprint) specs. Each NUB owns a message domain and defines the `type` strings, payload shapes, and semantics for that domain. A NUB spec is self-contained — it references this NIP only for envelope format and transport.
+Protocol messages are defined by NAP (Nostr Applet Protocol) specs. Each NAP owns a message domain and defines the `type` strings, payload shapes, and semantics for that domain. A NAP spec is self-contained — it references this NIP only for envelope format and transport.
 
-For example, a NUB named `foo` would own all `foo.*` message types (e.g., `foo.bar`, `foo.bar.result`) and define their payloads and shell behavior.
+For example, a NAP named `foo` would own all `foo.*` message types (e.g., `foo.bar`, `foo.bar.result`) and define their payloads and shell behavior.
 
-NUB specs MUST:
+NAP specs MUST:
 - Define all valid `type` strings for their domain
 - Specify the payload shape for each message type
 - Document expected shell behavior for each message
-- Be independently implementable — a shell MAY support any subset of NUBs
+- Be independently implementable — a shell MAY support any subset of NAPs
 
 ## Security Considerations
 
@@ -110,9 +110,9 @@ Napplets are untrusted code. The shell is trusted. The browser enforces iframe s
 5. Unrecognized message types are silently ignored, preventing capability probing.
 6. Napplets produce cleartext only. Shells MUST NOT sign or broadcast events containing ciphertext received from a napplet. Shells MUST NOT provide `window.nostr` (NIP-07) or any signing/encryption primitives.
 
-Storage isolation, relay access control, and ACL enforcement are defined by their respective NUB specs.
+Storage isolation, relay access control, and ACL enforcement are defined by their respective NAP specs.
 
-**Class-posture delegation.** NUBs MAY define napplet classes with different security postures delivered through shell-controlled HTTP response headers. Class taxonomy, the mechanism for assigning a class to a napplet, and the wire or header shapes used to express a class are out of scope for this NIP. NUB specs that define class-contributing capabilities document their own posture and their own shell responsibilities; NIP-5D provides only the transport, identity, manifest-negotiation, and capability-query primitives on which such NUB-level machinery can layer.
+**Class-posture delegation.** NAPs MAY define napplet classes with different security postures delivered through shell-controlled HTTP response headers. Class taxonomy, the mechanism for assigning a class to a napplet, and the wire or header shapes used to express a class are out of scope for this NIP. NAP specs that define class-contributing capabilities document their own posture and their own shell responsibilities; NIP-5D provides only the transport, identity, manifest-negotiation, and capability-query primitives on which such NAP-level machinery can layer.
 
 **Non-Guarantees:** The protocol does NOT protect against a compromised browser, a malicious shell, side-channel attacks, or social engineering.
 
