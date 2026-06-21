@@ -116,6 +116,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-CC: Geocaching](CC.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
+- [NIP-M4: Email](M4.md)
 
 ## Event Kinds
 
@@ -155,6 +156,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `62`          | Request to Vanish               | [62](62.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
 | `78`          | Application-specific Data       | [78](78.md)                            |
+| `322`         | Email                           | [M4](M4.md)                            |
 | `443`         | KeyPackage                      | [Marmot](marmot)                       |
 | `444`         | Welcome Message                 | [Marmot](marmot)                       |
 | `445`         | Group Event                     | [Marmot](marmot)                       |
