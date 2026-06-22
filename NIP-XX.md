@@ -1,4 +1,4 @@
-# NIP-XX: Nostr Silent Payments — Payment Flow
+# NIP-XX: Nostr Silent Payments — Receipts
 
 `draft` `optional`
 
@@ -17,8 +17,8 @@ interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
 
 ## Abstract
 
-This NIP defines the Nostr-layer payment flow built on top of the NSP derivation
-standard ([PR #2355](https://github.com/nostr-protocol/nips/pull/2355)). It
+This NIP defines the Nostr-layer receipt and UTXO sync layer built on top of the
+NSP derivation standard (PR #2355). It
 specifies: a private sender-to-recipient receipt notification (kind `8352`)
 delivered via NIP-59 gift wrap; an encrypted UTXO cache (kind `10353`) for
 cross-device sync; and a sweep-only spending rule to prevent UTXO
@@ -30,7 +30,7 @@ chain scanning.
 
 ## Motivation
 
-The NSP derivation standard ([PR #2355](https://github.com/nostr-protocol/nips/pull/2355)) defines how to
+The NSP derivation standard (PR #2355) defines how to
 derive a BIP-352 `sp1...` address from any `npub`. This NIP defines what
 happens after a sender pays to that address — how the recipient is notified
 quickly without scanning, how wallet state is preserved across devices, and how
@@ -59,13 +59,13 @@ NSP payment detection involves explicit trust choices, analogous to the custody
 spectrum in ecash protocols — each tier adds convenience at the cost of privacy
 or counterparty risk:
 
-|Model                            |What you trust               |Risk                                                                |
-|---------------------------------|-----------------------------|--------------------------------------------------------------------|
-|Txid hint + local verify         |No third party               |No third-party risk                                                 |
-|Local scanner                    |No third party               |No third-party risk                                                 |
-|Self-hosted scanner              |Your own infrastructure      |Your own operational security                                       |
-|Trusted Frigate (tweak-data only)|Server sees public tweak data|Server learns payment amounts, output keys, and timing — not `bscan`|
-|Full scan service                |Scanner receives `bscan`     |**Equivalent to publishing `nsec` — PROHIBITED**                    |
+|Model                                            |What you trust                    |Risk                                                                |
+|-------------------------------------------------|----------------------------------|--------------------------------------------------------------------|
+|Txid hint + local verify                         |No third party                    |No third-party risk                                                 |
+|Local scanner                                    |No third party                    |No third-party risk                                                 |
+|Self-hosted scanner                              |Your own infrastructure           |Your own operational security                                       |
+|Trusted Tweak-Data Service (e.g. BlindBit Oracle)|Server sees public tweak data only|Server learns payment amounts, output keys, and timing — not `bscan`|
+|Full scan service                                |Scanner receives `bscan`          |**Equivalent to publishing `nsec` — PROHIBITED**                    |
 
 The txid hint model (kind `8352`) is the only path that requires no scanning
 infrastructure and no third-party trust.
@@ -385,7 +385,7 @@ verification is creditable regardless of who sent it.
 ### Remote Scanning
 
 ⚠️ Full scanning services that receive `bscan` are **PROHIBITED** per
-[PR #2355](https://github.com/nostr-protocol/nips/pull/2355) §Security Warning.
+PR #2355 §Security Warning.
 The kind `10353` UTXO cache is self-encrypted — it does not reduce this
 requirement.
 
@@ -469,8 +469,11 @@ the derivation standard’s labeled address publication format.
   [gist.github.com/trbouma](https://gist.github.com/trbouma/77648ebe1005b181b67d1c4b42c7f31d#file-sweep_silent_payment_standalond-md)
 - **NIP-SP** (hzrd149) — source specification for kind `8352` and kind `10353`.
   [nostrhub.io](https://nostrhub.io/naddr1qvzqqqrcvypzqfngzhsvjggdlgeycm96x4emzjlwf8dyyzdfg4hefp89zpkdgz99qy28wumn8ghj7un9d3shjtnyv9kh2uewd9hsqpjwf9gz656seqszmx)
-- **Frigate** (sparrowwallet) — tweak-data service protocol, referenced scanning
-  architecture.
+- **BlindBit Oracle** (setavenger) — tweak-data service providing `input_hash · A`
+  per block. The recommended NSP-compatible scanning backend.
+  [github.com/setavenger/blindbit-oracle](https://github.com/setavenger/blindbit-oracle)
+- **Frigate** (sparrowwallet) — remote scanner requiring `bscan`. Full remote scanning
+  is PROHIBITED for NSP. Appropriate for seed-derived BIP-352 wallets only.
   [github.com/sparrowwallet/frigate](https://github.com/sparrowwallet/frigate)
 
 -----
