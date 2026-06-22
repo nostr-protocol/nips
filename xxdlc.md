@@ -1,12 +1,12 @@
-NIP-91
-======
+NIP-XXDLC
+=========
 
 Discreet Log Contract Oracles on Nostr
 --------------------------------------
 
 `draft` `optional`
 
-This NIP describes event kinds `88` and `89`, for [Discreet Log Contract (DLC)](https://bitcoinops.org/en/topics/discreet-log-contracts/) oracles to publish their announcements and attestations over Nostr. Clients can consume these signed events to create conditional payment contracts which fulfill differently based on the oracles' attestations.
+This NIP describes event kinds using the placeholder `xxdlc`, for [Discreet Log Contract (DLC)](https://bitcoinops.org/en/topics/discreet-log-contracts/) oracles to publish their announcements and attestations over Nostr. Clients can consume these signed events to create conditional payment contracts which fulfill differently based on the oracles' attestations.
 
 This NIP is scoped to the DLC v0 message format. Future incompatible DLC message versions should use a different NIP or event format so clients do not fetch oracle messages they cannot parse.
 
@@ -16,13 +16,13 @@ DLC protocol messages are binary-serialized messages described concretely in [th
 
 ## DLC Oracle Gossip
 
-DLCs require an oracle to attest to the outcome of real world events. This is done by the oracle signing a message containing the outcome of the event. Before they attest to the outcome, they must create an announcement where they publish the intent to sign the future event. This announcement is then used by the DLC participants to create the contract. Here we define two events, `kind:88` and `kind:89`, that are used to publish the oracle's announcement and attestations respectively.
+DLCs require an oracle to attest to the outcome of real world events. This is done by the oracle signing a message containing the outcome of the event. Before they attest to the outcome, they must create an announcement where they publish the intent to sign the future event. This announcement is then used by the DLC participants to create the contract. Here we define events using the placeholder `kind:xxdlc`, to be replaced by assigned event kind numbers, for publishing the oracle's announcement and attestations respectively.
 
-### `kind:88`
+### Announcement Event (`kind:xxdlc`)
 
 ```jsonc
 {
-  "kind": 88,
+  "kind": xxdlc,
   "content": "BA/cNhCpdD25j/MwDaa4F42QIq8NsOGmaW1MxyswZnipGWirwoxPhL1SmoHcp1JuCjYXF...",
   "tags": [
     [
@@ -58,17 +58,17 @@ The optional `description` tag provides a human-readable summary of the real-wor
 
 The optional `n` tag is described further down this document.
 
-Upon receiving an announcement event of kind `88`, clients _should_ validate:
+Upon receiving an announcement event of `kind:xxdlc`, clients _should_ validate:
 
 - the base64-encoded announcement data contains a copy of the correct oracle attestation pubkey. The oracle's attestation key may be distinct from the oracle's Nostr key.
 - the announcement is signed correctly by the expected oracle attestation pubkey.
-- [the event descriptor included in the announcement](https://github.com/discreetlogcontracts/dlcspecs/blob/master/Messaging.md#the-event_descriptor-type) matches the tags in the `kind:88` event.
+- [the event descriptor included in the announcement](https://github.com/discreetlogcontracts/dlcspecs/blob/master/Messaging.md#the-event_descriptor-type) matches the tags in the `kind:xxdlc` event.
 
-### `kind:89`
+### Attestation Event (`kind:xxdlc`)
 
 ```jsonc
 {
-  "kind": 89,
+  "kind": xxdlc,
   "content": "w7HSaUaPQn7Fa00PoUwTqkR2+wXHCPjD8Da5f4OcJ0EACsUw6uSdQgUDLLG9o/e9daS...",
   "tags": [
     [
@@ -89,17 +89,17 @@ Upon receiving an announcement event of kind `88`, clients _should_ validate:
 
 The `content` field must be the base64-encoding of a binary-serialized [`oracle_attestation` object](https://github.com/discreetlogcontracts/dlcspecs/blob/master/Messaging.md#the-oracle_attestation-type).
 
-Note that the `e` tag is the _Nostr event identifier_ for the `kind:88` announcement event, which is distinct from the identifier embedded [in the announcement](https://github.com/discreetlogcontracts/dlcspecs/blob/master/Messaging.md#oracle_event) or [in the attestation itself](https://github.com/discreetlogcontracts/dlcspecs/blob/master/Messaging.md#oracle_attestation). The `e` tag is intended to be used to look up the corresponding announcement event.
+Note that the `e` tag is the _Nostr event identifier_ for the `kind:xxdlc` announcement event, which is distinct from the identifier embedded [in the announcement](https://github.com/discreetlogcontracts/dlcspecs/blob/master/Messaging.md#oracle_event) or [in the attestation itself](https://github.com/discreetlogcontracts/dlcspecs/blob/master/Messaging.md#oracle_attestation). The `e` tag is intended to be used to look up the corresponding announcement event.
 
 Upon receiving an attestation, clients _should_ validate:
 
-- the base64-encoded attestation data [contains a copy](https://github.com/discreetlogcontracts/dlcspecs/blob/master/Messaging.md#the-oracle_attestation-type) of the correct oracle attestation pubkey. This should be the same as the pubkey contained in the corresponding announcement event, of `kind:88`.
+- the base64-encoded attestation data [contains a copy](https://github.com/discreetlogcontracts/dlcspecs/blob/master/Messaging.md#the-oracle_attestation-type) of the correct oracle attestation pubkey. This should be the same as the pubkey contained in the corresponding announcement event, of `kind:xxdlc`.
 - the `event_id` field inside the `oracle_attestation` object matches the `event_id` field in the original `oracle_announcement` object, referred to by the `e` tag.
 - the attestation signatures are valid under the oracle's attestation key.
 
 ### The `n` Tag
 
-DLCs are often numeric events, in which the oracle signs the relative price of two assets. In this common case, kind `88` or `89` events may include exactly two `n` tags which indicate the ticker symbols of the assets whose relative value is being signed.
+DLCs are often numeric events, in which the oracle signs the relative price of two assets. In this common case, `kind:xxdlc` events may include exactly two `n` tags which indicate the ticker symbols of the assets whose relative value is being signed.
 
 The order of the tags implies a specific denomination of the price attestation: The attestation's outcome should be **the value of the first symbol in units of the second symbol.** For example, `[... ["n", "BTC"], ["n", "USD"]]` indicates the attestation supposedly signs the price of `BTC` in units of `USD`.
 
@@ -109,13 +109,13 @@ Oracles are responsible for choosing how to manage their attestation keypair(s).
 
 The Nostr event's `pubkey` identifies the Nostr key that published the event, but it does not replace or authenticate the oracle attestation key embedded in the DLC message. Clients MUST validate announcement and attestation signatures against the oracle attestation key from the DLC payload, not against the Nostr event key.
 
-### `kind:10088`
+### Trusted Oracle List (`kind:xxdlc`)
 
-Kind `10088` lists a user's trusted oracle publication sources, for the purpose of third party protocols negotiating DLCs or DLC-adjacent conditional payment contracts with the user. A kind `10088` event contains one or more `s` tags with an oracle publisher's Nostr pubkey, and one or more relays where that publisher's announcement events (`kind:88`) may be found.
+Kind `xxdlc` lists a user's trusted oracle publication sources, for the purpose of third party protocols negotiating DLCs or DLC-adjacent conditional payment contracts with the user. A `kind:xxdlc` event contains one or more `s` tags with an oracle publisher's Nostr pubkey, and one or more relays where that publisher's announcement events (`kind:xxdlc`) may be found.
 
 ```jsonc
 {
-  "kind": 10088,
+  "kind": xxdlc,
   "tags": [
     ["s", "4fd5e210530e4f6b2cb083795834bfe5108324f1ed9f00ab73b9e8fcfe5f12fe", "wss://bitagent.prices"],
     // ...
@@ -123,4 +123,4 @@ Kind `10088` lists a user's trusted oracle publication sources, for the purpose 
 }
 ```
 
-Clients that use `kind:10088` for discovery MUST still validate the DLC oracle attestation key in each discovered announcement and attestation according to their own trust policy.
+Clients that use `kind:xxdlc` for discovery MUST still validate the DLC oracle attestation key in each discovered announcement and attestation according to their own trust policy.
