@@ -155,6 +155,8 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `62`          | Request to Vanish               | [62](62.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
 | `78`          | Application-specific Data       | [78](78.md)                            |
+| `88`          | DLC Oracle Announcement         | [91](91.md)                            |
+| `89`          | DLC Oracle Attestation          | [91](91.md)                            |
 | `443`         | KeyPackage                      | [Marmot](marmot)                       |
 | `444`         | Welcome Message                 | [Marmot](marmot)                       |
 | `445`         | Group Event                     | [Marmot](marmot)                       |
@@ -221,6 +223,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `10054`       | Favorite podcasts list          | [51](51.md)                            |
 | `10063`       | User server list                | [B7](B7.md)                            |
 | `10064`       | Authored podcasts list          | [51](51.md)                            |
+| `10088`       | Trusted DLC Oracle List         | [91](91.md)                            |
 | `10096`       | File storage server list        | [96](96.md) (deprecated)               |
 | `10154`       | Podcast Metadata                | [F4](F4.md)                            |
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
