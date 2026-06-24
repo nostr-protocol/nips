@@ -75,6 +75,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-56: Reporting](56.md)
 - [NIP-57: Lightning Zaps](57.md)
 - [NIP-58: Badges](58.md)
+  - [NIP-58 Oracle Badges Extension](58-oracle-badges-extension.md) - UPlanet Oracle System integration
 - [NIP-59: Gift Wrap](59.md)
 - [NIP-5A: Static Websites (nsites)](5A.md)
 - [NIP-60: Cashu Wallet](60.md)
@@ -91,6 +92,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - ~~[NIP-72: Moderated Communities](72.md) --- **unrecommended**: try [NIP-29](29.md) instead~~
 - [NIP-73: External Content IDs](73.md)
 - [NIP-75: Zap Goals](75.md)
+  - [NIP-75 Crowdfunding Extension](75-crowdfunding-extension.md) - UPlanet Commons Crowdfunding
 - [NIP-77: Negentropy Syncing](77.md)
 - [NIP-78: Application-specific data](78.md)
 - [NIP-7D: Forum Threads](7D.md)
@@ -106,6 +108,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - ~~[NIP-96: HTTP File Storage Integration](96.md) --- **unrecommended**: replaced by Blossom~~
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-101: UPlanet - Decentralized Identity & Geographic Coordination](101.md)
 - [NIP-A0: Voice Messages](A0.md)
 - [NIP-A4: Public Messages](A4.md)
 - [NIP-B0: Web Bookmarks](B0.md)
@@ -130,7 +133,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `5`           | Event Deletion Request          | [09](09.md)                            |
 | `6`           | Repost                          | [18](18.md)                            |
 | `7`           | Reaction                        | [25](25.md)                            |
-| `8`           | Badge Award                     | [58](58.md)                            |
+| `8`           | Badge Award                     | [58](58.md), [58-oracle](58-oracle-badges-extension.md) |
 | `9`           | Chat Message                    | [C7](C7.md)                            |
 | `11`          | Thread                          | [7D](7D.md)                            |
 | `13`          | Seal                            | [59](59.md)                            |
@@ -246,8 +249,8 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `30005`       | Video sets                      | [51](51.md)                            |
 | `30006`       | Picture sets                    | [51](51.md)                            |
 | `30007`       | Kind mute sets                  | [51](51.md)                            |
-| `30008`       | Badge sets                      | [51](51.md), [58](58.md)               |
-| `30009`       | Badge Definition                | [58](58.md)                            |
+| `30008`       | Profile Badges                  | [58](58.md), [58-oracle](58-oracle-badges-extension.md) |
+| `30009`       | Badge Definition                | [58](58.md), [58-oracle](58-oracle-badges-extension.md) |
 | `30015`       | Interest sets                   | [51](51.md)                            |
 | `30017`       | Create or update a stall        | [15](15.md)                            |
 | `30018`       | Create or update a product      | [15](15.md)                            |
@@ -263,18 +266,23 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `30166`       | Relay Discovery                 | [66](66.md)                            |
 | `30267`       | App curation sets               | [51](51.md)                            |
 | `30311`       | Live Event                      | [53](53.md)                            |
-| `30312`       | Interactive Room                | [53](53.md)                            |
-| `30313`       | Conference Event                | [53](53.md)                            |
+| `30312`       | Interactive Room / ORE Meeting Space    | [53](53.md), [101](101.md)     |
+| `30313`       | Conference Event / ORE Verification     | [53](53.md), [101](101.md)     |
 | `30315`       | User Statuses                   | [38](38.md)                            |
 | `30382`       | User Trusted Assertion          | [85](85.md)                            |
 | `30383`       | Event Trusted Assertion         | [85](85.md)                            |
 | `30384`       | Addressable Trusted Assertion   | [85](85.md)                            |
 | `30402`       | Classified Listing              | [99](99.md)                            |
 | `30403`       | Draft Classified Listing        | [99](99.md)                            |
+| `30500`       | Permit Definition               | [101](101.md)                          |
+| `30501`       | Permit Request                  | [101](101.md)                          |
+| `30502`       | Permit Attestation              | [101](101.md)                          |
+| `30503`       | Permit Credential               | [101](101.md)                          |
 | `30617`       | Repository announcements        | [34](34.md)                            |
 | `30618`       | Repository state announcements  | [34](34.md)                            |
 | `30818`       | Wiki article                    | [54](54.md)                            |
 | `30819`       | Redirects                       | [54](54.md)                            |
+| `30800`       | DID Document                    | [101](101.md)                          |
 | `31234`       | Draft Event                     | [37](37.md)                            |
 | `31922`       | Date-Based Calendar Event       | [52](52.md)                            |
 | `31923`       | Time-Based Calendar Event       | [52](52.md)                            |
