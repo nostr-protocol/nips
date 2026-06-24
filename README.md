@@ -185,6 +185,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `2003`        | Torrent                         | [35](35.md)                            |
 | `2004`        | Torrent Comment                 | [35](35.md)                            |
 | `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
+| `4341`        | Timestamp Attestation           | [03](03.md)                            |
 | `4550`        | Community Post Approval         | [72](72.md)                            |
 | `7374`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
 | `7375`        | Cashu Wallet Tokens             | [60](60.md)                            |
