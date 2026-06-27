@@ -93,6 +93,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-75: Zap Goals](75.md)
 - [NIP-77: Negentropy Syncing](77.md)
 - [NIP-78: Application-specific data](78.md)
+- [PIP: Perfect IP packet protocol](PIP.md)
 - [NIP-7D: Forum Threads](7D.md)
 - [NIP-84: Highlights](84.md)
 - [NIP-85: Trusted Assertions](85.md)
@@ -260,6 +261,9 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `30041`       | Curated Publication Content     | [NKBIP-01]                             |
 | `30063`       | Release artifact sets           | [51](51.md)                            |
 | `30078`       | Application-specific Data       | [78](78.md)                            |
+| `39078`       | PIP Manifest                    | [PIP](PIP.md)                          |
+| `39079`       | PIP Slice                       | [PIP](PIP.md)                          |
+| `39080`       | PIP Repair Request              | [PIP](PIP.md)                          |
 | `30166`       | Relay Discovery                 | [66](66.md)                            |
 | `30267`       | App curation sets               | [51](51.md)                            |
 | `30311`       | Live Event                      | [53](53.md)                            |
