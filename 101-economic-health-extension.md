@@ -178,6 +178,105 @@ Economic health snapshot published by each station. The `created_at` timestamp i
 }
 ```
 
+---
+
+## Kind 30851 — ZEN Emission Proof (Preuve de paiement ẐEN)
+
+### Motivation
+
+Chaque émission ẐEN déclenchée par une contribution OpenCollective doit être **idempotente et vérifiable** sans dépendre d'un fichier local (`emission.log`). En publiant une preuve signée sur le relay, la station primaire garantit :
+
+- **Anti double-paiement** : n'importe quel nœud du swarm peut vérifier qu'une TX a déjà été traitée
+- **Audit trail décentralisé** : l'historique survit à un changement de station primaire
+- **Preuve cryptographique** : signé par le Capitaine (non-répudiation)
+
+### Event Kind 30851
+
+```jsonc
+{
+  "kind": 30851,
+  "pubkey": "<CAPTAIN_HEX>",
+  "created_at": 1751000000,
+  "tags": [
+    ["d", "oc-emission-user@example.com:25:2026-06-15T10:30:00.000Z"],
+    ["t", "uplanet"],
+    ["t", "oc-emission"],
+    ["s", "OK"],                          // Single-letter tag — filtrable via #s
+    ["email",         "user@example.com"],// Email MULTIPASS effectif
+    ["amount",        "25"],              // Montant en EUR/ẐEN
+    ["tier",          "satellite"],       // Slug du tier OC
+    ["constellation", "<UPLANETG1PUB>"]  // Swarm d'appartenance
+  ],
+  "content": "{
+    \"email\":         \"user@example.com\",
+    \"raw_email\":     \"user+alias@example.com\",
+    \"amount\":        25,
+    \"tier_slug\":     \"satellite\",
+    \"oc_created_at\": \"2026-06-15T10:30:00.000Z\",
+    \"status\":        \"OK\",
+    \"generated_at\":  \"2026-06-30T20:12:00Z\",
+    \"uplanet\":       \"<UPLANETG1PUB>\"
+  }"
+}
+```
+
+### Clé d'adressabilité `d`
+
+```
+oc-emission-{raw_email}:{amount}:{oc_created_at}
+```
+
+- `raw_email` : email brut fourni par OpenCollective (avec alias `+` éventuel)
+- `amount` : montant en EUR tel que retourné par l'API OC
+- `oc_created_at` : timestamp ISO 8601 de la transaction OC
+
+Comme c'est un événement **adressable** (`kind 30000–39999`), republier le même `d` tag écrase l'ancien — idéal si le statut passe de `FAIL` à `OK` après réessai.
+
+### Tag `s` — Status (single-letter pour filtrage)
+
+| Valeur | Signification |
+|--------|--------------|
+| `OK`   | Émission ẐEN réussie (`UPLANET.official.sh` retour 0) |
+| `FAIL` | Échec d'émission (loggé, à retraiter manuellement) |
+
+### Vérification d'idempotence (Bash)
+
+```bash
+# Vérifie si une TX a déjà été traitée (source de vérité = relay local)
+_check_emission_nostr() {
+    local tx_d="oc-emission-${1}"
+    local found
+    found=$(cd ~/.zen/strfry && \
+        ./strfry scan "{\"kinds\":[30851],\"#d\":[\"${tx_d}\"]}" 2>/dev/null \
+        | grep -c '"id"') || found=0
+    [[ "${found:-0}" -gt 0 ]]
+}
+```
+
+### Requêtes NOSTR
+
+```javascript
+// Toutes les preuves d'émission OK du swarm
+{ "kinds": [30851], "#s": ["OK"], "#constellation": ["<UPLANETG1PUB>"] }
+
+// Preuves échouées (à retraiter)
+{ "kinds": [30851], "#s": ["FAIL"] }
+
+// Historique d'un email spécifique
+{ "kinds": [30851], "#email": ["user@example.com"] }
+```
+
+### Implémentation de référence
+
+- **Script** : `OC2UPlanet/oc2uplanet.sh` — fonctions `_check_emission_nostr()` et `_publish_emission_proof()`
+- **Backup** : `OC2UPlanet/data/emission.log` — audit trail local (écrit en parallèle, sert de fallback si strfry est hors-ligne)
+
+### Synchronisation constellation
+
+Le kind 30851 est synchronisé dans la catégorie **Economic** aux côtés de kind 30850. Tous les nœuds peuvent ainsi vérifier les paiements déjà effectués par la station primaire.
+
+---
+
 ## ZenCard User Classification
 
 ### Renters vs Owners (Sociétaires)
@@ -316,9 +415,9 @@ Each economic health event provides:
 - **Wallet public keys** (verifiable on Ğ1 blockchain)
 - **Detailed breakdown** (accounting categories)
 
-### SCIC Compliance
+### Collective Compliance
 
-The event structure maps to SCIC accounting:
+The event structure maps to Collective accounting:
 
 | Tag Category | Accounting Purpose |
 |--------------|-------------------|
