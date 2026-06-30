@@ -151,7 +151,7 @@ Clients MUST ensure:
 
 If all checks pass, clients SHOULD display:
 
-✔ Signature valid
+`✔ Signature valid`
 
 Clients MAY display additional unverified metadata:
 
