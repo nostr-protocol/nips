@@ -149,18 +149,11 @@ Clients MUST ensure:
 
 ## 5. Result
 
-If all checks pass, clients SHOULD display:
+If all verification steps succeed, the event is considered cryptographically valid with respect to the supplied verification key.
 
-`✔ Signature valid`
+Clients MUST NOT infer or imply validation of any external identity, registry, or authority from successful verification.
 
-Clients MAY display additional unverified metadata:
-
-```
-External identity: bitcoin-otc:alice
-Method: PGP | BTC
-```
-
-This specification defines cryptographic verification only. No assertion is made about external identity validity or registry state.
+Clients MAY present the result of signature verification to the user.
 
 ---
 
@@ -224,15 +217,15 @@ All verification is performed locally by clients.
 
 Clients MAY:
 
-* Display a badge: `✔ Signature valid`
-* Link to external reference:
+* indicate that the cryptographic signature was successfully verified;
+* display the claimed external identity;
+* display the proof method (PGP or BTC);
+* link to the external reference specified by the `uri` tag;
+* allow filtering or searching by external identity.
 
-  ```
-  https://bitcoin-otc.com/viewratings.php?nick=<nick>
-  ```
-* Allow filtering by external identity tag
+Clients SHOULD distinguish between successful cryptographic verification and validation of an external identity.
 
-Clients MUST NOT treat this as registry-backed verification unless explicitly extended by another protocol layer.
+Clients MUST NOT present the external identity as verified by an external registry unless another protocol layer provides that guarantee.
 
 ---
 
@@ -268,6 +261,10 @@ This design:
 ---
 
 ## Changelog
+
+### v0.2.1
+
+* Separated protocol requirements from user interface recommendations
 
 ### v0.2
 
