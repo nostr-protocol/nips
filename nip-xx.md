@@ -147,7 +147,7 @@ Clients MUST ensure:
 
 ---
 
-## 5. Result
+### 5. Result
 
 If all verification steps succeed, the event is considered cryptographically valid with respect to the supplied verification key.
 
