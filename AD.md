@@ -10,7 +10,7 @@ This NIP defines how to make URLs that can both work as normal URLs or have Nost
 
 Such URLs, when pasted on a Nostr client, can be turned into a single event (specially when the filter has `"limit": 1`) or a list of events, and handled accordingly. When used in a normal web browser it can just render HTML like any normal web URL.
 
-To get the Nostr counterpart of any URL, call that URL's domain at path `https://<domain>/.well-known/nostr.json?ad=<original-path>` and look for a key with the desired path in the resulting object. That should contain an object with `{"filter": {<any-nostr-filter>}, "relays": [<relay-to-use>, ...]}`.
+To get the Nostr counterpart of any URL, call that URL's domain at path `https://<domain>/.well-known/nostr.json?ad=<original-path>` and look for a key with the desired path in the resulting object. That should contain an object with `{"filter": {<any-nostr-filter>}, "relays": [<relay-to-use>, ...]}`. `"relays"` is optional. If it doesn't exist the `kind:10002` "write" relays of the authors in the filter should be used.
 
 For example, upon seeing the URL `https://golf.com/players`, a client will make a `GET` request to `https://golf.com/.well-known/nostr.json?ad=/players` and get a response like:
 
