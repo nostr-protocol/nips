@@ -590,7 +590,7 @@ Each Astroport node maintains a constellation registry:
       "umap": "43.60,1.44"
     }
   ],
-  "sync_event_kinds": [0, 1, 3, 5, 6, 7, 8, 21, 22, 30008, 30009, 30023, 30024, 30312, 30313, 30500, 30501, 30502, 30503, 30800, 30850]
+  "sync_event_kinds": [0, 1, 3, 5, 6, 7, 8, 21, 22, 30008, 30009, 30023, 30024, 30312, 30313, 30500, 30501, 30502, 30503, 30504, 30506, 30508, 30800, 30850, 30851, 30904]
 }
 ```
 *(Minimal set; full 45-kind list: see [101-backfill-constellation-kinds-analysis.md](101-backfill-constellation-kinds-analysis.md).)*
@@ -675,7 +675,7 @@ Location: `~/.zen/tmp/${IPFSNODEID}/constellation.json`
     }
   ],
   "sync_config": {
-    "event_kinds": [0, 1, 3, 5, 6, 7, 8, 21, 22, 30008, 30009, 30023, 30024, 30312, 30313, 30500, 30501, 30502, 30503, 30800, 30850],
+    "event_kinds": [0, 1, 3, 5, 6, 7, 8, 21, 22, 30008, 30009, 30023, 30024, 30312, 30313, 30500, 30501, 30502, 30503, 30504, 30506, 30508, 30800, 30850, 30851, 30904],
     "sync_interval": 900,
     "retry_attempts": 3,
     "retry_backoff": "exponential"

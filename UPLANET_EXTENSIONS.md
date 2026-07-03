@@ -6,9 +6,9 @@ Official Nostr Protocol Extensions for the UPlanet/Astroport.ONE Ecosystem
 
 **Status:** 🟢 Production (since 2024)
 
-**Version:** 2.0.0
+**Version:** 2.1.0
 
-**Last Updated:** November 3, 2025
+**Last Updated:** July 3, 2026
 
 ---
 
@@ -28,9 +28,12 @@ Official Nostr Protocol Extensions for the UPlanet/Astroport.ONE Ecosystem
 
 ### Geographic & Social
 - **UMAP Chat Rooms:** [28-umap-extension.md](28-umap-extension.md)
+- **ATOM4LOVE Vibratory Match:** [101-atom4love-extension.md](101-atom4love-extension.md) - Kind 30078 profile + Kind 30508 match (k ≥ 0.85, cabine-33)
+- **Friction Mediation:** [56-friction-mediation-extension.md](56-friction-mediation-extension.md) - Kind 1984 → Kind 30506 WoTx² mediation protocol
 
 ### Economic & Crowdfunding
 - **Crowdfunding:** [75-crowdfunding-extension.md](75-crowdfunding-extension.md) - Commons Crowdfunding System
+- **ZEN Emission Proof:** [101-economic-health-extension.md](101-economic-health-extension.md) - Kind 30851 idempotent OC payment record
 
 ### Documentation
 - **Full Documentation:** [DID_IMPLEMENTATION.md](../Astroport.ONE/DID_IMPLEMENTATION.md)
@@ -40,7 +43,7 @@ Official Nostr Protocol Extensions for the UPlanet/Astroport.ONE Ecosystem
 - **Crowdfunding:** [CROWDFUNDING_COMMUNS.md](../Astroport.ONE/docs/CROWDFUNDING_COMMUNS.md)
 - **Collaborative Commons:** [COLLABORATIVE_COMMONS_SYSTEM.md](../Astroport.ONE/docs/COLLABORATIVE_COMMONS_SYSTEM.md)
 
-just added **App Switch Configuration:** [78-app-switch-extension.md](78-app-switch-extension.md) - configuration personnalisée du menu FAB UPlanet
+- **App Switch Configuration:** [78-app-switch-extension.md](78-app-switch-extension.md) - configuration personnalisée du menu FAB UPlanet (Kind 30078 `d=uplanet:app-switch`)
 
 ---
 
