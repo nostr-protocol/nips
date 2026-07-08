@@ -216,6 +216,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `10019`       | Nutzap Mint Recommendation      | [61](61.md)                            |
 | `10020`       | Media follows                   | [51](51.md)                            |
 | `10030`       | User emoji list                 | [51](51.md)                            |
+| `10031`       | User sticker pack list          | [sonar-stickers][sonar-stickers]       |
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
 | `10051`       | KeyPackage Relays List          | [Marmot][marmot]                       |
 | `10054`       | Favorite podcasts list          | [51](51.md)                            |
@@ -256,6 +257,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `30023`       | Long-form Content               | [23](23.md)                            |
 | `30024`       | Draft Long-form Content         | [23](23.md)                            |
 | `30030`       | Emoji sets                      | [51](51.md)                            |
+| `30031`       | Sticker packs                   | [sonar-stickers][sonar-stickers]       |
 | `30040`       | Curated Publication Index       | [NKBIP-01]                             |
 | `30041`       | Curated Publication Content     | [NKBIP-01]                             |
 | `30063`       | Release artifact sets           | [51](51.md)                            |
@@ -304,6 +306,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 [NKBIP-02]: https://wikistr.com/nkbip-02*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1
 [NKBIP-03]: https://wikistr.com/nkbip-03*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1
 [marmot]: https://github.com/marmot-protocol/marmot
+[sonar-stickers]: https://sonarprivacy.xyz/docs/#SONAR-STICKERS
 
 
 ## Message types
