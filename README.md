@@ -114,6 +114,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
 - [NIP-CC: Geocaching](CC.md)
+- [NIP-DA: Permissioned Private Data Sharing (Scoped Data Grants)](DA.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
 
@@ -155,6 +156,8 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `62`          | Request to Vanish               | [62](62.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
 | `78`          | Application-specific Data       | [78](78.md)                            |
+| `440`         | Data Grant                      | [DA](DA.md)                            |
+| `441`         | Grant Revocation notice         | [DA](DA.md)                            |
 | `443`         | KeyPackage                      | [Marmot](marmot)                       |
 | `444`         | Welcome Message                 | [Marmot](marmot)                       |
 | `445`         | Group Event                     | [Marmot](marmot)                       |
@@ -220,6 +223,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `10051`       | KeyPackage Relays List          | [Marmot][marmot]                       |
 | `10054`       | Favorite podcasts list          | [51](51.md)                            |
 | `10063`       | User server list                | [B7](B7.md)                            |
+| `10440`       | Grant Index                     | [DA](DA.md)                            |
 | `10064`       | Authored podcasts list          | [51](51.md)                            |
 | `10096`       | File storage server list        | [96](96.md) (deprecated)               |
 | `10154`       | Podcast Metadata                | [F4](F4.md)                            |
@@ -271,6 +275,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `30384`       | Addressable Trusted Assertion   | [85](85.md)                            |
 | `30402`       | Classified Listing              | [99](99.md)                            |
 | `30403`       | Draft Classified Listing        | [99](99.md)                            |
+| `30440`       | Scoped Data Set                 | [DA](DA.md)                            |
 | `30617`       | Repository announcements        | [34](34.md)                            |
 | `30618`       | Repository state announcements  | [34](34.md)                            |
 | `30818`       | Wiki article                    | [54](54.md)                            |
