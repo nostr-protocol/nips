@@ -93,6 +93,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-75: Zap Goals](75.md)
 - [NIP-77: Negentropy Syncing](77.md)
 - [NIP-78: Application-specific data](78.md)
+- [NIP-79: Stories](79.md)
 - [NIP-7D: Forum Threads](7D.md)
 - [NIP-84: Highlights](84.md)
 - [NIP-85: Trusted Assertions](85.md)
@@ -140,6 +141,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `17`          | Reaction to a website           | [25](25.md)                            |
 | `20`          | Picture                         | [68](68.md)                            |
 | `21`          | Video Event                     | [71](71.md)                            |
+| `19`          | Story Slide                     | [79](79.md)                            |
 | `22`          | Short-form Portrait Video Event | [71](71.md)                            |
 | `24`          | Public Message                  | [A4](A4.md)                            |
 | `30`          | internal reference              | [NKBIP-03]                             |
@@ -199,6 +201,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `9734`        | Zap Request                     | [57](57.md)                            |
 | `9735`        | Zap                             | [57](57.md)                            |
 | `9802`        | Highlights                      | [84](84.md)                            |
+| `10079`       | Close Friends List              | [79](79.md)                            |
 | `10000`       | Mute list                       | [51](51.md)                            |
 | `10001`       | Pin list                        | [51](51.md)                            |
 | `10002`       | Relay List Metadata             | [65](65.md), [51](51.md)               |
@@ -259,7 +262,10 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `30040`       | Curated Publication Index       | [NKBIP-01]                             |
 | `30041`       | Curated Publication Content     | [NKBIP-01]                             |
 | `30063`       | Release artifact sets           | [51](51.md)                            |
+| `15750`       | Story View Receipt              | [79](79.md)                            |
+| `15751`       | Story Emoji Reaction            | [79](79.md)                            |
 | `30078`       | Application-specific Data       | [78](78.md)                            |
+| `30079`       | Story Highlights Collection     | [79](79.md)                            |
 | `30166`       | Relay Discovery                 | [66](66.md)                            |
 | `30267`       | App curation sets               | [51](51.md)                            |
 | `30311`       | Live Event                      | [53](53.md)                            |
@@ -285,6 +291,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `32267`       | Software Application            |                                        |
 | `34235`       | Addressable Video Event         | [71](71.md)                            |
 | `34236`       | Addressable Short Video Event   | [71](71.md)                            |
+| `34237`       | Addressable Story Sequence      | [79](79.md)                            |
 | `34550`       | Community Definition            | [72](72.md)                            |
 | `34128`       | Legacy nsite manifest           | [5A](5A.md) (deprecated)               |
 | `35128`       | Named nsite manifest            | [5A](5A.md)                            |
