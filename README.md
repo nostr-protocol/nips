@@ -112,6 +112,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-B7: Blossom](B7.md)
 - ~~[NIP-BE: Nostr BLE Communications Protocol](BE.md) --- **unrecommended**: only implemented once and unclear whether it works, requires review~~
 - [NIP-C0: Code Snippets](C0.md)
+- [NIP-C1: Collaborative Ownership](C1.md)
 - [NIP-C7: Chats](C7.md)
 - [NIP-CC: Geocaching](CC.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
@@ -296,6 +297,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
 | `39089`       | Starter packs                   | [51](51.md)                            |
 | `39092`       | Media starter packs             | [51](51.md)                            |
+| `39382`       | Collaborative Pointer           | [C1](C1.md)                            |
 | `39701`       | Web bookmarks                   | [B0](B0.md)                            |
 
 [nostrocket]: https://github.com/nostrocket/NIPS/blob/main/Problems.md
