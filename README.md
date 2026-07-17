@@ -215,6 +215,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `10015`       | Interests list                  | [51](51.md)                            |
 | `10019`       | Nutzap Mint Recommendation      | [61](61.md)                            |
 | `10020`       | Media follows                   | [51](51.md)                            |
+| `10021`       | Favorite follow sets            | [51](51.md)                            |
 | `10030`       | User emoji list                 | [51](51.md)                            |
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
 | `10051`       | KeyPackage Relays List          | [Marmot][marmot]                       |
