@@ -116,6 +116,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-CC: Geocaching](CC.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
+- [NIP-XX: Trusted Relay Assertions](trusted-relay-assertions.md)
 
 ## Event Kinds
 
@@ -225,6 +226,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `10154`       | Podcast Metadata                | [F4](F4.md)                            |
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
 | `10312`       | Room Presence                   | [53](53.md)                            |
+| `10385`       | Trusted Provider List           | [XX](trusted-relay-assertions.md)      |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `13534`       | Membership Lists                | [43](43.md)                            |
 | `5128`        | nsite manifest snapshot         | [5A](5A.md)                            |
@@ -269,6 +271,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `30382`       | User Trusted Assertion          | [85](85.md)                            |
 | `30383`       | Event Trusted Assertion         | [85](85.md)                            |
 | `30384`       | Addressable Trusted Assertion   | [85](85.md)                            |
+| `30385`       | Trusted Relay Assertion         | [XX](trusted-relay-assertions.md)      |
 | `30402`       | Classified Listing              | [99](99.md)                            |
 | `30403`       | Draft Classified Listing        | [99](99.md)                            |
 | `30617`       | Repository announcements        | [34](34.md)                            |
