@@ -58,6 +58,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-38: User Statuses](38.md)
 - [NIP-39: Linking Profiles to Other Platforms](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
+- [NIP-41: Editable Short Notes](41.md)
 - [NIP-42: Authentication of clients to relays](42.md)
 - [NIP-43: Relay Access Metadata and Requests](43.md)
 - [NIP-44: Encrypted Payloads (Versioned)](44.md)
@@ -159,6 +160,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `444`         | Welcome Message                 | [Marmot](marmot)                       |
 | `445`         | Group Event                     | [Marmot](marmot)                       |
 | `818`         | Merge Requests                  | [54](54.md)                            |
+| `1010`        | Short Note Edits                | [41](41.md)                            |
 | `1018`        | Poll Response                   | [88](88.md)                            |
 | `1021`        | Bid                             | [15](15.md)                            |
 | `1022`        | Bid confirmation                | [15](15.md)                            |
