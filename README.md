@@ -185,6 +185,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `2003`        | Torrent                         | [35](35.md)                            |
 | `2004`        | Torrent Comment                 | [35](35.md)                            |
 | `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
+| `3063`        | Software Asset                  | [82](82.md)                            |
 | `4550`        | Community Post Approval         | [72](72.md)                            |
 | `7374`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
 | `7375`        | Cashu Wallet Tokens             | [60](60.md)                            |
@@ -258,7 +259,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `30030`       | Emoji sets                      | [51](51.md)                            |
 | `30040`       | Curated Publication Index       | [NKBIP-01]                             |
 | `30041`       | Curated Publication Content     | [NKBIP-01]                             |
-| `30063`       | Release artifact sets           | [51](51.md)                            |
+| `30063`       | Software Release                | [82](82.md)                            |
 | `30078`       | Application-specific Data       | [78](78.md)                            |
 | `30166`       | Relay Discovery                 | [66](66.md)                            |
 | `30267`       | App curation sets               | [51](51.md)                            |
@@ -281,6 +282,8 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `31924`       | Calendar                        | [52](52.md)                            |
 | `31925`       | Calendar Event RSVP             | [52](52.md)                            |
 | `31989`       | Handler recommendation          | [89](89.md)                            |
+| `31990`       | Handler information             | [89](89.md)                            |                         |
+| `32267`       | Software Application            | [82](82.md)                            |
 | `31990`       | Handler information             | [89](89.md)                            |
 | `32267`       | Software Application            |                                        |
 | `34235`       | Addressable Video Event         | [71](71.md)                            |
