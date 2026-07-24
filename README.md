@@ -116,6 +116,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-CC: Geocaching](CC.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
+- [NIP-PNS: Private Note Storage](PNS.md)
 
 ## Event Kinds
 
@@ -167,6 +168,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `1059`        | Gift Wrap                       | [59](59.md)                            |
 | `1063`        | File Metadata                   | [94](94.md)                            |
 | `1068`        | Poll                            | [88](88.md)                            |
+| `1080`        | Private Note Storage            | [PNS](PNS.md)                            |
 | `1111`        | Comment                         | [22](22.md)                            |
 | `1222`        | Voice Message                   | [A0](A0.md)                            |
 | `1244`        | Voice Message Comment           | [A0](A0.md)                            |
