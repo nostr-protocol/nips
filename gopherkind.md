@@ -14,6 +14,20 @@ particular bridge or frontend.
 The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as defined in
 RFC 2119.
 
+## Motivation
+
+A gopherhole is a directory on a host. It lasts as long as that host does, at a
+name its author does not own, and once the host is gone a reader who wants the
+documents has nobody left to ask. Nothing about the documents themselves
+requires that arrangement: they are small, they are text, and they are already
+addressed by path.
+
+This kind puts each document in a signed event instead. A hole becomes a set of
+addressable events under one pubkey, readable from any relay that carries a
+copy and servable by any bridge that can fetch one, with authorship settled by
+the signature rather than by whoever currently answers on port 70. The text is
+inline, so nothing else has to be alive at read time either.
+
 ## Event format
 
 ```json
@@ -71,6 +85,19 @@ and decodes each received segment once.
 An RFC 1436 selector is commonly limited to 255 bytes. When the selector also
 contains an `npub`, publishers SHOULD keep the path at or below 190 UTF-8
 bytes so it remains usable through a gopher bridge.
+
+## Fetching documents
+
+Because the path is the `d` tag, an entire hole is one filter and one document
+is that filter narrowed by path:
+
+```json
+{"kinds": [31436], "authors": ["<pubkey>"]}
+{"kinds": [31436], "authors": ["<pubkey>"], "#d": ["/about.txt"]}
+```
+
+The root document is the one whose `d` is `/`. There is no index event and none
+is needed: a hole's shape is whatever its type `1` documents link to.
 
 ## Replacement, expiry and deletion
 
@@ -171,11 +198,27 @@ Each document is signed and addressed by an author's pubkey and a path rather
 than by one server. The content remains inline on relays, so a text-only hole
 does not depend on an HTTP origin or a separate blob store.
 
-The nsite event family also describes pubkey-owned paths, but carries hashes
-for Blossom-hosted arbitrary assets. Gopherkind deliberately carries UTF-8
-text inline and gives menus a small, host-independent grammar. Kind `30023`
-is for long-form Markdown articles rather than arbitrary path-addressed text
-and menus.
+NIP-5A (static websites, kinds `15128`, `35128` and `5128`, formerly the nsite
+kind `34128`) also describes pubkey-owned paths, and is the closest existing
+work. It differs in three ways that matter here.
+
+Content location. A NIP-5A `path` tag carries the SHA-256 of a Blossom blob,
+so a site is retrievable only where both its relays and its blob servers are.
+Kind `31436` carries UTF-8 text inline, so a hole is readable from relays
+alone. That is the whole claim about outliving a host, and a blob dependency
+would weaken it.
+
+Granularity. NIP-5A publishes a manifest listing many paths, so any edit
+rewrites the manifest. Here one event is one document, addressed by its `d`
+tag, so revising a page replaces that page and nothing else.
+
+Target. NIP-5A serves HTML over HTTP, with an `index.html` fallback. This kind
+carries gopher item types and a menu grammar, because the receiving client may
+be a 1991 gopher client with no HTML parser and no notion of a hostname it did
+not dial itself.
+
+Kind `30023` is for long-form Markdown articles rather than arbitrary
+path-addressed text and menus.
 
 Virtual documents, social views, search, pagination, relay policy, Gemini and
 HTTP URL spaces, and signer-backed account features are application behaviour
