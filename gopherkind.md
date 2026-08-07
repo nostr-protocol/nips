@@ -156,11 +156,21 @@ The item type MUST be one printable ASCII character from `!` through `~`.
 Unknown printable item types are retained. A type `i` record or a record with
 an empty link is information text and its link is ignored.
 
-Display text and links MUST NOT contain control characters. A syntactically
-invalid record MUST be rendered as information text using only its heading,
-with control characters replaced by spaces; it MUST NOT produce a link.
-Consumers MUST likewise neutralise tabs and CR/LF in every field emitted to a
-line-oriented frontend.
+Display text MAY contain SGR sequences, that is `ESC` `[`, zero or more
+characters from `0123456789;:`, then `m`. These carry colour and style only:
+they move no cursor, address no device, set no window property and cannot be
+made actionable, and gopherspace has long used them for menu art. A consumer
+that cannot render them MUST strip the sequences rather than reject the record.
+
+No other control character may appear in a display, and no control character of
+any kind may appear in a link. A link is parsed and acted upon, so it never
+carries an escape; display text is only shown, so it may carry an inert one.
+
+A record whose link contains a control character, or whose display contains one
+that is not part of an SGR sequence, MUST be rendered as information text using
+only its heading, with the offending characters replaced by spaces and its SGR
+sequences left intact; it MUST NOT produce a link. Consumers MUST likewise
+neutralise tabs and CR/LF in every field emitted to a line-oriented frontend.
 
 The defined link forms are:
 
