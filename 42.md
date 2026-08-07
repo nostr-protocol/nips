@@ -53,10 +53,10 @@ The signed event is an ephemeral event not meant to be published or queried, it 
 
 ### `OK` and `CLOSED` machine-readable prefixes
 
-This NIP defines two new prefixes that can be used in `OK` (in response to event writes by clients) and `CLOSED` (in response to rejected subscriptions by clients):
+This NIP defines two new prefixes that can be used in `OK` (in response to event writes by clients) and `CLOSED` (in response to rejected subscriptions by clients). Which of the two applies is determined by whether a further `AUTH` could change the outcome:
 
-- `"auth-required: "` - for when a client has not performed `AUTH` and the relay requires that to fulfill the query or write the event.
-- `"restricted: "` - for when a client has already performed `AUTH` but the key used to perform it is still not allowed by the relay or is exceeding its authorization.
+- `"auth-required: "` - for when the relay requires an `AUTH` that hasn't been performed yet in order to fulfill the query or write the event. This includes the case of a client that has already authenticated one or more pubkeys but none that is allowed to perform this specific request, since authenticating an additional pubkey may still make the relay fulfill it.
+- `"restricted: "` - for when authenticating more pubkeys wouldn't help: the pubkeys that have already performed `AUTH` are not allowed by the relay or are exceeding their authorization, and no additional `AUTH` would change the outcome.
 
 ## Protocol flow
 
@@ -83,6 +83,25 @@ relay: ["EVENT", "sub_1", {...}]
 ```
 
 In this case, the `AUTH` message from the relay could be sent right as the client connects or it can be sent immediately before the `CLOSED` is sent. The only requirement is that _the client must have a stored challenge associated with that relay_ so it can act upon that in response to the `auth-required` `CLOSED` message.
+
+### `auth-required` when a pubkey is missing
+
+Since multiple pubkeys can be authenticated on the same connection, a client may be authenticated and still be missing the pubkey a given request needs. The relay asks for that pubkey with the same prefix:
+
+```
+relay: ["AUTH", "<challenge>"]
+client: ["AUTH", {"id": "abcdef...", ...}]
+relay: ["OK", "abcdef...", true, ""]
+client: ["REQ", "sub_1", {"authors": ["<pubkey-b>"]}]
+relay: ["CLOSED", "sub_1", "auth-required: not authenticated as <pubkey-b>"]
+client: ["AUTH", {"id": "abcde2...", ...}]
+relay: ["OK", "abcde2...", true, ""]
+client: ["REQ", "sub_1", {"authors": ["<pubkey-b>"]}]
+relay: ["EVENT", "sub_1", {...}]
+...
+```
+
+Here the first `AUTH` authenticates some `<pubkey-a>` and the second one authenticates `<pubkey-b>`, both against the same challenge. A relay that answered `restricted:` instead would be telling the client that signing with `<pubkey-b>` is pointless, which is not the case.
 
 ### `auth-required` in response to an `EVENT` message
 
