@@ -44,6 +44,10 @@ Why this convoluted scheme involving `/.well/known/nostr.json` and paths as obje
 
 Notice that these URLs are not intended to be pasted as normal URLs inside Nostr content. A `kind:1` note that is trying to reference another event should use a `nostr:nevent1...` or `nostr:naddr1...` code, never a web address. Likewise, clients should not try to call `/.well-known/nostr.json?path=...` for every URL they see inside random events. Instead, these web addresses must be translated only on specific contexts, like when a user types or pastes a web address on an app generic search bar, or a NIP-29 group search, something like that.
 
+### Handling during note composition
+
+When typing a URL on a client content textarea (for example, when typing a `kind:1` note), perhaps if prefixed by a `@`, clients could query the `/.well-known/nostr.json?path=...` for that URL and suggest replacing the URL for a `nostr:...` code.
+
 ### The webpage counterpart
 
 If this wasn't clear already, the idea is that, when used as a normal URL, these web address will be opened normally in the user web browser, so while `golf.com/players` may represent a feed of notes or profiles of golf players when typed inside a Nostr app search bar, if it is clicked from anywhere else it will just load `https://golf.com/players` in the browser, so that page should display something in HTML, possibly with one or more `nostr:...` links to native Nostr entities.
