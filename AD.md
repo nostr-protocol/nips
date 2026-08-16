@@ -12,7 +12,7 @@ Such URLs, when pasted on a Nostr client, can be turned into a single event (spe
 
 To get the Nostr counterpart of any URL, call that URL's domain at path `https://<domain>/.well-known/nostr.json?path=<original-path>` and look for a key with the desired path in the resulting object. That should contain an object with `{"filter": {<any-nostr-filter>}, "relays": [<relay-to-use>, ...]}`. `"relays"` is optional. If it doesn't exist the `kind:10002` "write" relays of the authors in the filter should be used.
 
-For example, upon seeing the URL `https://golf.com/players`, a client will make a `GET` request to `https://golf.com/.well-known/nostr.json?path=/players` and get a response like:
+For example, upon seeing the URL `golf.com/players`, a client will make a `GET` request to `https://golf.com/.well-known/nostr.json?path=/players` and get a response like:
 
 ```yaml
 {
@@ -39,3 +39,11 @@ Why this convoluted scheme involving `/.well/known/nostr.json` and paths as obje
 3. Hosted feeds: servers can create feeds using whatever algorithm they want and publish those simply as a `{"ids": [...]}` filter, or something else.
 4. People that have websites and blogs fueled by Nostr content can have those sites exist both natively inside Nostr and to people living outside. This also works for `https://njump.me/nevent1...` or client-specific URLs like `https://yakihonne.com/nevent1...`.
 5. This fixes pasted links: when a user pastes a URL on a Nostr client the client can preemptively try to resolve that URL into an event and make a native reference instead.
+
+## Usage
+
+Notice that these URLs are not intended to be pasted as normal URLs inside Nostr content. A `kind:1` note that is trying to reference another event should use a `nostr:nevent1...` or `nostr:naddr1...` code, never a web address. Likewise, clients should not try to call `/.well-known/nostr.json?path=...` for every URL they see inside random events. Instead, these web addresses must be translated only on specific contexts, like when a user types or pastes a web address on an app generic search bar, or a NIP-29 group search, something like that.
+
+### The webpage counterpart
+
+If this wasn't clear already, the idea is that, when used as a normal URL, these web address will be opened normally in the user web browser, so while `golf.com/players` may represent a feed of notes or profiles of golf players when typed inside a Nostr app search bar, if it is clicked from anywhere else it will just load `https://golf.com/players` in the browser, so that page should display something in HTML, possibly with one or more `nostr:...` links to native Nostr entities.
