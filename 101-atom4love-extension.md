@@ -60,13 +60,13 @@ Uses the NIP-78 addressable kind with `d=atom4love`.
 |-----|-------|----------|
 | `d` | `"atom4love"` | Yes |
 | `t` | `"atom4love"` | Yes |
-| `a4l_proof` | Proof salt (from Kind 30800 `AUTHORIZED_APPS`) | Yes |
+| `a4l_proof` | `sha256(pubkey_hex + ":" + app_salt)`, any non-empty value | Yes |
 | `g1pub` | Ğ1 wallet base58 pubkey | Yes |
 | `email` | MULTIPASS email | No |
 
 ### Authorization policy (NIP-101)
 
-Published by any MULTIPASS holder (level `uplanet`). The relay verifies the `a4l_proof` against the cooperative config (Kind 30800 `d=cooperative-config`).
+Published by any MULTIPASS holder (level `uplanet`). The relay only requires the `a4l_proof` tag to be present and non-empty — there is no app whitelist. Biometric ranges (`personal_phase`, `omega_bio`) are the actual acceptance gate.
 
 ---
 
