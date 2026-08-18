@@ -230,6 +230,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `5128`        | nsite manifest snapshot         | [5A](5A.md)                            |
 | `15128`       | Root nsite manifest             | [5A](5A.md)                            |
 | `17375`       | Cashu Wallet Event              | [60](60.md)                            |
+| `19004`       | Room Create Permission          | [29](29.md)                            |
 | `22242`       | Client Authentication           | [42](42.md)                            |
 | `23194`       | Wallet Request                  | [47](47.md)                            |
 | `23195`       | Wallet Response                 | [47](47.md)                            |
