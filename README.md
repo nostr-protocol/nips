@@ -106,6 +106,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - ~~[NIP-96: HTTP File Storage Integration](96.md) --- **unrecommended**: replaced by Blossom~~
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-100: Sovereign Agent Identity Network (SNIN)](100.md)
 - [NIP-A0: Voice Messages](A0.md)
 - [NIP-A4: Public Messages](A4.md)
 - [NIP-B0: Web Bookmarks](B0.md)
@@ -297,6 +298,14 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `39089`       | Starter packs                   | [51](51.md)                            |
 | `39092`       | Media starter packs             | [51](51.md)                            |
 | `39701`       | Web bookmarks                   | [B0](B0.md)                            |
+| `8010`          | Agent Passport                    | [100](100.md)                            |
+| `8011`          | Task Request                      | [100](100.md)                            |
+| `8012`          | Discovery Query                   | [100](100.md)                            |
+| `8013`          | Task Response                     | [100](100.md)                            |
+| `8014`          | Marketplace Listing               | [100](100.md)                            |
+| `8015`          | Invoice                           | [100](100.md)                            |
+| `8016`          | Connection Request                | [100](100.md)                            |
+| `8017`          | Connection Response               | [100](100.md)                            |
 
 [nostrocket]: https://github.com/nostrocket/NIPS/blob/main/Problems.md
 [joinstr]: https://gitlab.com/1440000bytes/joinstr/-/blob/main/NIP.md
