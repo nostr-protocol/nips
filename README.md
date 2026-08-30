@@ -91,6 +91,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - ~~[NIP-72: Moderated Communities](72.md) --- **unrecommended**: try [NIP-29](29.md) instead~~
 - [NIP-73: External Content IDs](73.md)
 - [NIP-75: Zap Goals](75.md)
+- [NIP-76: Reels Feed — Short-form Video Discovery and Interaction](76.md)
 - [NIP-77: Negentropy Syncing](77.md)
 - [NIP-78: Application-specific data](78.md)
 - [NIP-7D: Forum Threads](7D.md)
