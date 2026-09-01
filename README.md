@@ -113,6 +113,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - ~~[NIP-BE: Nostr BLE Communications Protocol](BE.md) --- **unrecommended**: only implemented once and unclear whether it works, requires review~~
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
+- [NIP-A3: payto: Payment Targets](A3.md)
 - [NIP-CC: Geocaching](CC.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
@@ -222,6 +223,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `10063`       | User server list                | [B7](B7.md)                            |
 | `10064`       | Authored podcasts list          | [51](51.md)                            |
 | `10096`       | File storage server list        | [96](96.md) (deprecated)               |
+| `10133`       | Payment Targets                 | [A3](A3.md)                            |
 | `10154`       | Podcast Metadata                | [F4](F4.md)                            |
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
 | `10312`       | Room Presence                   | [53](53.md)                            |
