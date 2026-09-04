@@ -113,6 +113,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - ~~[NIP-BE: Nostr BLE Communications Protocol](BE.md) --- **unrecommended**: only implemented once and unclear whether it works, requires review~~
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
+- [NIP-CD: Slash Commands](CD.md)
 - [NIP-A3: payto: Payment Targets](A3.md)
 - [NIP-CC: Geocaching](CC.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
