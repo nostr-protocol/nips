@@ -101,7 +101,8 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-88: Polls](88.md)
 - [NIP-89: Recommended Application Handlers](89.md)
 - ~~[NIP-90: Data Vending Machines](90.md) --- **unrecommended**: this got totally out of control, prefer use-case-specific microstandards~~
-- [NIP-92: Media Attachments Metadata (`imeta`)](92.md)
+- [NIP-91: AND filters](91.md)
+- [NIP-92: Media Attachments](92.md)
 - [NIP-94: File Metadata](94.md)
 - ~~[NIP-96: HTTP File Storage Integration](96.md) --- **unrecommended**: replaced by Blossom~~
 - [NIP-98: HTTP Auth](98.md)
@@ -307,6 +308,17 @@ This table is not exhaustive. For a machine-readable registry of all known event
 [NKBIP-03]: https://wikistr.com/nkbip-03*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1
 [marmot]: https://github.com/marmot-protocol/marmot
 
+
+## Filters 
+
+| kind            | description                | NIP                      |
+| --------------- | -------------------------- | ------------------------ |
+| `authors`       | by pubkey                  | [01](01.md)              |
+| `ids`           | by ids                     | [01](01.md)              |
+| `kinds`         | by kinds                   | [01](01.md)              |
+| `#{}`           | by indexable tag (OR)      | [01](01.md)              |
+| `&{}`           | by indexable tag (AND)     | [91](91.md)              |
+| `search`        | by search times            | [50](50.md)              |
 
 ## Message types
 
