@@ -117,6 +117,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-CC: Geocaching](CC.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
+- [NIP-XX: Agent-First Messaging](agent-first-messaging.md)
 
 ## Event Kinds
 
@@ -187,6 +188,8 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `2004`        | Torrent Comment                 | [35](35.md)                            |
 | `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
 | `4550`        | Community Post Approval         | [72](72.md)                            |
+| `5600`        | Context Pack Request            | [XX](agent-first-messaging.md)         |
+| `6600`        | Context Pack Result             | [XX](agent-first-messaging.md)         |
 | `7374`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
 | `7375`        | Cashu Wallet Tokens             | [60](60.md)                            |
 | `7376`        | Cashu Wallet History            | [60](60.md)                            |
@@ -194,6 +197,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `7517`        | Geocache proof of find          | [CC](CC.md)                            |
 | `8000`        | Add User                        | [43](43.md)                            |
 | `8001`        | Remove User                     | [43](43.md)                            |
+| `8101`-`8112` | Agent Workspace Events          | [XX](agent-first-messaging.md)         |
 | `9000`-`9030` | Group Control Events            | [29](29.md)                            |
 | `9041`        | Zap Goal                        | [75](75.md)                            |
 | `9321`        | Nutzap                          | [61](61.md)                            |
@@ -238,6 +242,9 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `24133`       | Nostr Connect                   | [46](46.md)                            |
 | `24242`       | Blobs stored on mediaservers    | [B7](B7.md)                            |
 | `27235`       | HTTP Auth                       | [98](98.md)                            |
+| `28101`       | Interrupt                       | [XX](agent-first-messaging.md)         |
+| `28102`       | Thread Lease                    | [XX](agent-first-messaging.md)         |
+| `28103`       | Agent Presence                  | [XX](agent-first-messaging.md)         |
 | `28934`       | Join Request                    | [43](43.md)                            |
 | `28935`       | Invite Request                  | [43](43.md)                            |
 | `28936`       | Leave Request                   | [43](43.md)                            |
@@ -290,6 +297,13 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `34550`       | Community Definition            | [72](72.md)                            |
 | `34128`       | Legacy nsite manifest           | [5A](5A.md) (deprecated)               |
 | `35128`       | Named nsite manifest            | [5A](5A.md)                            |
+| `38101`       | Thread State                    | [XX](agent-first-messaging.md)         |
+| `38102`       | Capability Grant                | [XX](agent-first-messaging.md)         |
+| `38103`       | Agent Manifest                  | [XX](agent-first-messaging.md)         |
+| `38104`       | Agent Memory                    | [XX](agent-first-messaging.md)         |
+| `38105`       | Agent Cursor                    | [XX](agent-first-messaging.md)         |
+| `38106`       | Delegation                      | [XX](agent-first-messaging.md)         |
+| `38107`       | Channel Encryption Policy       | [XX](agent-first-messaging.md)         |
 | `38172`       | Cashu Mint Announcement         | [87](87.md)                            |
 | `38173`       | Fedimint Announcement           | [87](87.md)                            |
 | `37516`       | Geocache Listing                | [CC](CC.md)                            |
