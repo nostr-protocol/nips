@@ -117,6 +117,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-CC: Geocaching](CC.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
+- [NIP-XX: Event Enrichment](XX.md)
 
 ## Event Kinds
 
@@ -278,6 +279,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `30818`       | Wiki article                    | [54](54.md)                            |
 | `30819`       | Redirects                       | [54](54.md)                            |
 | `31234`       | Draft Event                     | [37](37.md)                            |
+| `31562`       | Event Enrichment                | [XX](XX.md)                            |
 | `31922`       | Date-Based Calendar Event       | [52](52.md)                            |
 | `31923`       | Time-Based Calendar Event       | [52](52.md)                            |
 | `31924`       | Calendar                        | [52](52.md)                            |
