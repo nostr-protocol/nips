@@ -17,7 +17,6 @@ A kind `31992` event defines a command using the following tags:
 - `description` - usage, including any reply or context conventions. Required.
 - `arg` - one argument. Ordered.
 - `s` - a `scope` (defined below) indicating what events trigger this command.
-- `ignore` - subtractive `scope` indicating exceptions to matched scopes.
 
 An `arg` tag is `["arg", <name>, <type>, "required" | "optional", <label>, <choice>...]`. `<choice>` elements apply to type `enum` only.
 
@@ -30,7 +29,7 @@ Arguments are positional. Optional/text arguments MUST come after required argum
 - `author:<pubkey>` - an invocation must have an `author` matching `<pubkey>`.
 - `tag:<tag>:<value>` - an invocation must have a `<tag>` tag matching `{value}`.
 
-Scopes combine like a filter: those of the same type (grouped by tag name, for `tag` scopes) are alternatives, scopes of different types must all match, and an absent type is unrestricted. Ignored scopes combine via union - the final set should be the difference between filters and all scopes.
+Scopes combine like a filter: those of the same type (grouped by tag name, for `tag` scopes) are alternatives, scopes of different types must all match, and an absent type is unrestricted.
 
 ```json
 {
@@ -45,8 +44,7 @@ Scopes combine like a filter: those of the same type (grouped by tag name, for `
     ["s", "kind:9"],
     ["s", "kind:11"],
     ["s", "tag:h:62af9b0"],
-    ["s", "relay:wss://relay.example"],
-    ["ignore", "tag:p:<some guy who like to invoke commands for no reason>"]
+    ["s", "relay:wss://relay.example"]
   ]
 }
 ```
