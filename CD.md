@@ -27,6 +27,7 @@ Arguments are positional. Optional/text arguments MUST come after required argum
 - `kind:<kind>` - an invocation's `kind` must match `<kind>`.
 - `relay:<url>` - the executor only listens on the given `<url>`.
 - `author:<pubkey>` - an invocation must have an `author` matching `<pubkey>`.
+- `tag:<tag>` - an invocation must include a non-empty `<tag>` tag.
 - `tag:<tag>:<value>` - an invocation must have a `<tag>` tag matching `{value}`.
 
 Scopes combine like a filter: those of the same type (grouped by tag name, for `tag` scopes) are alternatives, scopes of different types must all match, and an absent type is unrestricted.
