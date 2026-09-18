@@ -53,7 +53,7 @@ Scopes combine like a filter: those of the same type (grouped by tag name, for `
 ## Invocation
 
 ```
-/<command>[@<pubkey>] [<arg>...] [<text>]
+/<command>[@nostr:<pubkey>] [<arg>...] [<text>]
 ```
 
 Invocations appear in the `content` of any event and carry no tags.
@@ -64,15 +64,14 @@ Invocations appear in the `content` of any event and carry no tags.
 - Arguments are separated by whitespace. A `text` argument consumes the remainder of `content` verbatim, including whitespace and newlines.
 
 ```
-/ban@npub1qqqs... nostr:npub1abcd... repeatedly spamming links
-/ban
+/ban@nostr:npub1qqqs... nostr:npub1abcd... repeatedly spamming links
 ```
 
 ## Argument types
 
-- `pubkey` - hex, `npub1…`, `nprofile1…`
-- `event` - hex, `note1…`, `nevent1…`
-- `address` - `naddr1…`
+- `pubkey` - hex, `nostr:npub1…`, `nostr:nprofile1…`
+- `event` - hex, `nostr:note1…`, `nostr:nevent1…`
+- `address` - `nostr:naddr1…`
 - `relay` - websocket URL
 - `number` - decimal digits
 - `bool` - `true|false|yes|no|1|0|t|f|y|n`
@@ -90,7 +89,7 @@ Executors may document additional trigger conditions, reply conventions, or ways
 
 All client support is optional.
 
-Clients MAY offer autocomplete for definitions in scope, insert arguments through a picker appropriate to each type, and render recognized invocations as a chip. A client SHOULD omit `@<pubkey>` and MAY insert it to target a single executor. Where a trigger resolves to more than one definition, a client SHOULD present all of them.
+Clients MAY offer autocomplete for definitions in scope, insert arguments through a picker appropriate to each type, and render recognized invocations as a chip. A client SHOULD omit `@nostr:<pubkey>` and MAY insert it to target a single executor. Where a trigger resolves to more than one definition, a client SHOULD present all of them.
 
 A client MUST NOT require its own support to send an invocation, and MUST send content that fails to parse as ordinary text.
 
