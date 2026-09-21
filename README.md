@@ -13,7 +13,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [Message Types](#message-types)
   - [Client to Relay](#client-to-relay)
   - [Relay to Client](#relay-to-client)
-- [Criteria for acceptance of NIPs](#criteria-for-acceptance-of-nips-in-this-repository)
+- [Criteria for acceptance of NIPs](#criteria-for-acceptance-in-this-repository)
 - [Is this repository a centralizing factor?](#is-this-repository-a-centralizing-factor)
 - [How this repository works](#how-this-repository-works)
 - [License](#license)
@@ -156,9 +156,9 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `62`          | Request to Vanish               | [62](62.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
 | `78`          | Application-specific Data       | [78](78.md)                            |
-| `443`         | KeyPackage                      | [Marmot](marmot)                       |
-| `444`         | Welcome Message                 | [Marmot](marmot)                       |
-| `445`         | Group Event                     | [Marmot](marmot)                       |
+| `443`         | KeyPackage                      | [Marmot][marmot]                       |
+| `444`         | Welcome Message                 | [Marmot][marmot]                       |
+| `445`         | Group Event                     | [Marmot][marmot]                       |
 | `818`         | Merge Requests                  | [54](54.md)                            |
 | `1018`        | Poll Response                   | [88](88.md)                            |
 | `1021`        | Bid                             | [15](15.md)                            |
