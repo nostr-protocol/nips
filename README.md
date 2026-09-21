@@ -117,6 +117,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-CC: Geocaching](CC.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
+- [NIP-F5: Population Census](F5.md)
 
 ## Event Kinds
 
@@ -275,6 +276,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `30403`       | Draft Classified Listing        | [99](99.md)                            |
 | `30617`       | Repository announcements        | [34](34.md)                            |
 | `30618`       | Repository state announcements  | [34](34.md)                            |
+| `30789`       | Population Census               | [F5](F5.md)                            |
 | `30818`       | Wiki article                    | [54](54.md)                            |
 | `30819`       | Redirects                       | [54](54.md)                            |
 | `31234`       | Draft Event                     | [37](37.md)                            |
