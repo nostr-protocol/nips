@@ -107,6 +107,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
 - [NIP-A0: Voice Messages](A0.md)
+- [NIP-A1: Key Set Declaration](A1.md)
 - [NIP-A4: Public Messages](A4.md)
 - [NIP-B0: Web Bookmarks](B0.md)
 - [NIP-B7: Blossom](B7.md)
@@ -217,6 +218,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `10019`       | Nutzap Mint Recommendation      | [61](61.md)                            |
 | `10020`       | Media follows                   | [51](51.md)                            |
 | `10030`       | User emoji list                 | [51](51.md)                            |
+| `10045`       | Key Set Declaration             | [A1](A1.md)                            |
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
 | `10051`       | KeyPackage Relays List          | [Marmot][marmot]                       |
 | `10054`       | Favorite podcasts list          | [51](51.md)                            |
