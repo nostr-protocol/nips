@@ -117,6 +117,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-CC: Geocaching](CC.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
+- [NIP-XX: Post-Quantum Identity Keys](post-quantum-identity-keys.md)
 
 ## Event Kinds
 
@@ -226,6 +227,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `10133`       | Payment Targets                 | [A3](A3.md)                            |
 | `10154`       | Podcast Metadata                | [F4](F4.md)                            |
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
+| `10203`       | Post-Quantum Identity Keys      | [XX](post-quantum-identity-keys.md)    |
 | `10312`       | Room Presence                   | [53](53.md)                            |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `13534`       | Membership Lists                | [43](43.md)                            |
