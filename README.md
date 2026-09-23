@@ -273,6 +273,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `30384`       | Addressable Trusted Assertion   | [85](85.md)                            |
 | `30402`       | Classified Listing              | [99](99.md)                            |
 | `30403`       | Draft Classified Listing        | [99](99.md)                            |
+| `30404`       | Want-to-buy Listing             | [nenya]                                |
 | `30617`       | Repository announcements        | [34](34.md)                            |
 | `30618`       | Repository state announcements  | [34](34.md)                            |
 | `30818`       | Wiki article                    | [54](54.md)                            |
@@ -306,6 +307,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 [NKBIP-02]: https://wikistr.com/nkbip-02*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1
 [NKBIP-03]: https://wikistr.com/nkbip-03*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1
 [marmot]: https://github.com/marmot-protocol/marmot
+[nenya]: https://github.com/Erya-Labs/Nenya/blob/main/spec/NENYA-1.md
 
 
 ## Message types
