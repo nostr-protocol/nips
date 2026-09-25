@@ -117,6 +117,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-CC: Geocaching](CC.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
+- [NIP-F7: Road Event Reports](F7.md)
 
 ## Event Kinds
 
@@ -172,6 +173,8 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `1222`        | Voice Message                   | [A0](A0.md)                            |
 | `1244`        | Voice Message Comment           | [A0](A0.md)                            |
 | `1311`        | Live Chat Message               | [53](53.md)                            |
+| `1315`        | Road Event Report               | [F7](F7.md)                            |
+| `1316`        | Road Event Confirmation         | [F7](F7.md)                            |
 | `1337`        | Code Snippet                    | [C0](C0.md)                            |
 | `1617`        | Patches                         | [34](34.md)                            |
 | `1618`        | Pull Requests                   | [34](34.md)                            |
