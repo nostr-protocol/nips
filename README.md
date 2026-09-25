@@ -217,6 +217,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `10019`       | Nutzap Mint Recommendation      | [61](61.md)                            |
 | `10020`       | Media follows                   | [51](51.md)                            |
 | `10030`       | User emoji list                 | [51](51.md)                            |
+| `10040`       | Trusted Service Providers       | [85](85.md)                            |
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
 | `10051`       | KeyPackage Relays List          | [Marmot][marmot]                       |
 | `10054`       | Favorite podcasts list          | [51](51.md)                            |
@@ -232,6 +233,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `5128`        | nsite manifest snapshot         | [5A](5A.md)                            |
 | `15128`       | Root nsite manifest             | [5A](5A.md)                            |
 | `17375`       | Cashu Wallet Event              | [60](60.md)                            |
+| `21059`       | Ephemeral Gift Wrap             | [59](59.md)                            |
 | `22242`       | Client Authentication           | [42](42.md)                            |
 | `23194`       | Wallet Request                  | [47](47.md)                            |
 | `23195`       | Wallet Response                 | [47](47.md)                            |
@@ -285,11 +287,13 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `31989`       | Handler recommendation          | [89](89.md)                            |
 | `31990`       | Handler information             | [89](89.md)                            |
 | `32267`       | Software Application            |                                        |
+| `33534`       | Role Definition                 | [43](43.md)                            |
 | `34235`       | Addressable Video Event         | [71](71.md)                            |
 | `34236`       | Addressable Short Video Event   | [71](71.md)                            |
 | `34550`       | Community Definition            | [72](72.md)                            |
 | `34128`       | Legacy nsite manifest           | [5A](5A.md) (deprecated)               |
 | `35128`       | Named nsite manifest            | [5A](5A.md)                            |
+| `38000`       | Mint Recommendation             | [87](87.md)                            |
 | `38172`       | Cashu Mint Announcement         | [87](87.md)                            |
 | `38173`       | Fedimint Announcement           | [87](87.md)                            |
 | `37516`       | Geocache Listing                | [CC](CC.md)                            |
