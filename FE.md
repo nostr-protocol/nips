@@ -20,14 +20,13 @@ can answer any round of it.
 
 The endpoints hang off the relay's HTTP URL: the relay URL with `ws://` read
 as `http://` and `wss://` as `https://`, host and path unchanged. For a relay
-at `wss://relay.example/nostr`, REQ is `POST https://relay.example/nostr/req`.
+at `wss://relay.example`, REQ is `POST https://relay.example/req`.
 
 | path     | body                                               | answer ends on        |
 |----------|----------------------------------------------------|-----------------------|
 | `/req`   | one filter, or an array of filters                 | `EOSE`, or `CLOSED`   |
 | `/count` | one filter, or an array of filters ([NIP-45](45.md))        | `COUNT`, or `CLOSED`  |
 | `/event` | one signed event                                   | `OK`                  |
-| `/neg`   | `[<filter>, "<hex message>"]`, one NIP-77 round    | `NEG-MSG`, or `NEG-ERR` |
 
 Every request is a `POST` whose body is JSON: what follows the command's
 subscription id on the websocket, or the lone object where the command takes
@@ -45,9 +44,9 @@ NIP-77). The relay picks the subscription id; clients MUST ignore it.
 ```
 POST /req   {"kinds":[1],"limit":2}
 
-["EVENT","http",{"id":"…","kind":1,…}]
-["EVENT","http",{"id":"…","kind":1,…}]
-["EOSE","http"]
+["EVENT",{"id":"…","kind":1,…}]
+["EVENT",{"id":"…","kind":1,…}]
+["EOSE"]
 ```
 
 The answer ends on the frame in the table's last column, or on a `NOTICE`,
@@ -101,34 +100,6 @@ clearnet name) accepts a `u` at any of them. An `Authorization` header in any
 other scheme (a proxy's `Basic`, an API gateway's `Bearer`) is not addressed to
 the relay and MUST be ignored rather than refused.
 
-Unauthenticated requests are answered under the relay's usual rules for an
-unauthenticated connection.
-
-## Negentropy
-
-A NIP-77 responder holds no state between rounds except the set it reconciles
-against, so `/neg` carries every round whole: the filter and the client's
-current message. The relay answers with the next message in a `NEG-MSG`, and
-the client sends that into its own reconciliation and posts the result as the
-next round, with the same filter, until its side produces no message.
-
-```
-POST /neg   [{"kinds":[1]},"61…"]
-["NEG-MSG","http","61…"]
-
-POST /neg   [{"kinds":[1]},"61…"]
-["NEG-MSG","http","61…"]
-```
-
-There is no `NEG-CLOSE`: nothing was opened. Rounds MAY reach different relay
-instances. Relays SHOULD cache the matching set per filter between rounds,
-since rebuilding it is the expensive part. If the set changes between rounds,
-each range is reconciled against the set as it was when that range was last
-compared, so an event that arrives mid-sync can be missed until the next sync,
-just as with a websocket session whose snapshot predates it. The relay's
-NIP-77 limits (such as a cap on the number of matching events, refused with
-`NEG-ERR` `blocked:`) apply to every round.
-
 ## Browsers, proxies, compression
 
 Relays SHOULD answer CORS preflights for these paths from any origin, allowing
@@ -139,16 +110,3 @@ A relay that compresses a streamed answer SHOULD flush the compressor each
 time it flushes frames (a gzip sync flush), or compression holds back the lines
 streaming exists to deliver. A relay behind a buffering reverse proxy SHOULD
 disable its buffering for these responses (`X-Accel-Buffering: no` for nginx).
-
-## Security considerations
-
-Each request is its own connection, so per-connection limits a relay applies
-on its websocket (concurrent subscriptions, one search at a time) do not bound
-HTTP clients; relays SHOULD apply their own per-client and global concurrency
-limits here. Behind a reverse proxy the client's address is in a header only
-that proxy can be trusted to write: relays SHOULD read it only from requests
-whose peer is the proxy.
-
-A slow reader must not make the relay hold its answer in memory: relays SHOULD
-let socket backpressure reach the producer, and SHOULD drop a client that stops
-reading rather than buffer for it.
