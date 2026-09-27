@@ -12,9 +12,8 @@ answer, in the relay's own [NIP-01](01.md) frames, and nothing stays open after 
 no live subscription, no connection state, no session to resume.
 
 This serves clients that want an answer rather than a connection — scripts,
-serverless functions, crawlers, a page that renders one query — and it makes
-[NIP-77](77.md) reconciliation stateless, so any relay instance behind a load balancer
-can answer any round of it.
+serverless functions, crawlers, a page that renders one query — and any relay
+instance behind a load balancer can answer any request.
 
 ## Endpoints
 
@@ -38,8 +37,8 @@ A relay that serves this NIP lists `FE` in its [NIP-11](11.md) `supported_nips`.
 ## Answers
 
 The response body is `application/x-ndjson`: one relay-to-client frame per
-line, exactly as the relay would send it on the websocket (NIP-01, NIP-45,
-NIP-77). The relay picks the subscription id; clients MUST ignore it.
+line, as the relay would send it on the websocket (NIP-01, NIP-45) but without
+the subscription id, which a single request does not need.
 
 ```
 POST /req   {"kinds":[1],"limit":2}
@@ -65,9 +64,9 @@ The status is decided by the first frame of the answer.
 
 | first frame                                           | status |
 |-------------------------------------------------------|--------|
-| `EVENT`, `EOSE`, `COUNT`, `NEG-MSG`, `OK` with `true` | `200`  |
+| `EVENT`, `EOSE`, `COUNT`, `OK` with `true`            | `200`  |
 | `OK` with `false` and a `duplicate:` reason           | `200`  |
-| a refusal (`CLOSED`, `NEG-ERR`, `OK` with `false`) prefixed `auth-required:` | `401`, with `WWW-Authenticate: Nostr` |
+| a refusal (`CLOSED`, `OK` with `false`) prefixed `auth-required:` | `401`, with `WWW-Authenticate: Nostr` |
 | … prefixed `restricted:` or `blocked:`                | `403`  |
 | … prefixed `rate-limited:`                            | `429`, with `Retry-After` |
 | … prefixed `error:`                                   | `500`  |
