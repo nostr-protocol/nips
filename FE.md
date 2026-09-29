@@ -135,14 +135,22 @@ querier cannot open, and pagination cannot indicate completeness).
 
 ## Replies (kind 1470)
 
-An all-viewers reply uses a **degenerate** [FB](FB.md) envelope: the
-same JSON shape, but `"slots": []`. Readers already hold the reply CEK
-from the parent rumor's `reply_cek` tag, so there is nothing for slots
-to deliver. Clients MUST dispatch on kind — they MUST NOT run the FB
-slot-opening algorithm on a `1470`.
+Kind `1370` is a private note; kind `1470` is a private reply. The
+difference below is only how each one **packages** its ciphertext —
+the [FB](FB.md) envelope `{v, alg, ct, slots}`.
 
-| | kind 1370 (full envelope) | kind 1470 (degenerate envelope) |
+Slots exist to hand a CEK to people who do not yet have it. An
+all-viewers reply is only for people who already opened the parent
+note, so they already hold the reply CEK and slots would be empty
+work. That is a **slotless** (degenerate) envelope: the same JSON,
+`"slots": []`. It is not a copy of the note; it is new reply content
+under a key the audience already has. Clients MUST dispatch on kind —
+they MUST NOT run the FB slot-opening algorithm on a `1470`.
+
+| | kind 1370 private note | kind 1470 private reply |
 |---|---|---|
+| what it is | new post to an audience | reply (or reaction) on that post |
+| envelope | full: `slots` wrap a fresh note CEK for each recipient | slotless: `"slots": []` — CEK already known |
 | outer `pubkey` / `sig` | one-time burner | one-time burner |
 | public tags | `f` aliases (+ junk) | `n` = `note_id` |
 | `content` JSON | `{v, alg, ct, slots: […]}` | `{v, alg, ct, slots: []}` |
