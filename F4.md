@@ -1,0 +1,106 @@
+NIP-F4
+======
+
+Podcasts
+--------
+
+`draft` `optional`
+
+This NIP defines how podcast episodes can be fetched from relays. It's intended to fit easily into existing podcast players.
+
+## Rationale
+
+RSS feeds are great, but they have some problems that are solved by moving feeds from RSS URLs to multiple Nostr events, one for each episode:
+
+- they depend on a URL and that is hard for most people, so podcasters tend to use service providers that can
+   - charge money -- which isn't a bad thing per se but it turns out that with a Nostr-native podcast feed protocol it would be much simpler to host feeds and infinitely cheaper to host the media, so the ecosystem could be more decentralized
+   - seal them into their walled gardens (like Spotify has been doing), slowly turning a previously open ecosystem into a centralized system captured by big corporations
+   - censor podcasters and prevent them from migrating (on Nostr this wouldn't be a problem even if a relay banned someone as moving to other relays would be trivial as long as the podcaster held their key and podcast clients could easily discover the new relay URLs)
+- they can only be loaded in full, with no pagination or filtering of any kind, which means that
+   - the sync process in normal RSS clients is slow and cumbersome (which also nudges people into using centralized solutions)
+     - this has also led to the creation of broken schemes like [Podping](https://podping.org/), which wouldn't be necessary in a Nostr-native podcast feed
+   - It's impossible to reference a single episode directly (since it only exists as a member in the full RSS list of episodes), this means there is no way to share a podcast episode with friends or on social media, so people tend to share links to centralized platforms or to YouTube videos of the same podcast content, which is an antipattern
+- they cannot be interacted with in any way: listeners cannot "like" or comment or signal that they have listened to the episode, which is also another factor in the push towards centralized closed platforms: better analytics and insights and possibilities of engagement with the public
+
+## Concept
+
+The idea is that each podcast is its own Nostr keypair. This is simple and allows podcasts to combine their _podcasting_ presence with a normal `kind:0`/`kind:1` microblogging presence.
+
+It also allows podcasts to have shared ownership (via MuSig2 or just common agreements between friends) and to change that ownership over time (again, based on human trust over handling of key material).
+
+## Event definitions
+
+### Podcast Metadata
+
+Podcast metadata is stored in `kind:10154` _replaceable_ events. This event contains the show-level information that podcast clients need to display the podcast.
+
+Similar information may exist in the `kind:0` profile for the podcast, but podcast-specific clients should be able to read directly from `kind:10154` and ignore `kind:0` entirely.
+
+```yaml
+{
+  "id": "...",
+  "pubkey": "<podcast-pubkey>",
+  "kind": 10154,
+  "created_at": 1700682555,
+  "tags": [
+    ["title", "<podcast-title>"],
+    ["image", "<podcast-cover-image-URL>"],
+    ["description", "<podcast-description>"],
+    ["website", "<podcast-website-URL>"], // optional, multiple
+    ["p", "<podcast-author-pubkey>", "<role>"] // optional, multiple
+  ],
+  "content": "",
+  "sig": "..."
+}
+```
+
+`<role>` is optional, can be `"host"`, `"cohost"` or `"editor"`.
+
+### Authored Podcasts
+
+The `p` tag in `kind:10154` shouldn't be blindly trusted as implying authorship, since any podcast can falsely claim anyone to be their author, so before it is displayed as information by clients it must be checked against an equivalent counter-claim by the podcast authors themselves.
+
+This is the `kind:10164` event. Here podcast authors can list the public keys of the podcasts they author.
+
+```yaml
+{
+  "id": "...",
+  "pubkey": "<user-pubkey>",
+  "kind": 10064,
+  "created_at": 1700682555,
+  "tags": [
+    ["p", "<podcast-pubkey-1>"],
+    ["p", "<podcast-pubkey-2>"]
+  ],
+  "content": "",
+  "sig": "..."
+}
+```
+
+Clients can also use this to discover all podcasts authored by a given user.
+
+### Podcast Episodes
+
+Podcast episodes are `kind:54` events authored by the podcast public key directly.
+
+```yaml
+{
+  "id": "...",
+  "pubkey": "<podcast-pubkey>",
+  "kind": 54,
+  "created_at": 1700682555,
+  "tags": [
+    ["title", "<episode title>"],
+    ["image", "<optional episode image>"],
+    ["description", "<a brief description>"],
+    ["audio", "<audio-url>", "<optional_media_type>"], // can be specified multiple times
+    // ...other important fields to be specified here later after further discovery
+  ],
+  "content": "<markdown content>",
+  "sig": "...",
+}
+```
+
+### Favorite podcasts
+
+See [NIP-51](51.md) for the description of a `kind:10054` event in which any user can list the podcasts they publicly advertise to listening to, as a soft recommendation.
