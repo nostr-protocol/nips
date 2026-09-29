@@ -41,6 +41,10 @@ The event's `content` is a JSON object:
 
 ### Cryptographic constructions (alg `fb-ecdh-v1`)
 
+Throughout this NIP and [FE](FE.md), `H(...)` is SHA-256 of the
+concatenation of the listed byte strings (UTF-8 for the domain-separation
+labels).
+
 - AEAD: `XChaCha20-Poly1305` with a fresh 24-byte random nonce per
   encryption. A slot's encoding is `nonce ‖ ciphertext`, base64. `ct`
   uses the same encoding.
@@ -52,17 +56,29 @@ The event's `content` is a JSON object:
 
 ### Reading
 
-For any false-bottom event, a reader derives
-`HKDF(ECDH(my_sk, event.pubkey))` and attempts to open each slot;
-exactly one authenticates (or none, if the reader is not a recipient),
-yielding the CEK, which decrypts `ct`. Readers that are not recipients
-learn nothing beyond the event's existence and size.
+For any false-bottom event with a non-empty `slots` array, a reader
+derives `HKDF(ECDH(my_sk, event.pubkey))` and attempts to open each
+slot; exactly one authenticates (or none, if the reader is not a
+recipient), yielding the CEK, which decrypts `ct`. Readers that are
+not recipients learn nothing beyond the event's existence and size.
+Degenerate envelopes (`slots: []`) are identified by the application
+kind; do not run this algorithm on them.
 
 ### Padding
 
 Applications SHOULD include junk slots — random bytes of the same
 encoded length — uniformly 1..20 extra, so that the recipient count is
 not revealed by the slot count.
+
+### Degenerate envelope (no slots)
+
+Applications that have already distributed the CEK out of band (for
+example [FE](FE.md) all-viewers replies) MAY publish the same JSON with
+`"slots": []`. Readers MUST NOT run the slot-opening algorithm on these
+events; the application specifies which CEK to use. `ct` is still
+`AEAD(CEK, payload)` with the same encoding. An empty `slots` array is
+the only permitted degenerate form — omit the field and the event is
+not a valid envelope.
 
 ## Alias tags
 

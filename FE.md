@@ -55,11 +55,8 @@ Kind numbers are the [BIP-39](https://github.com/bitcoin/bips/blob/master/bip-00
   carries the true timestamp.
 - Each `f` tag is an alias for one recipient, plus junk ([FB](FB.md) padding).
 - `ct` decrypts (per the [FB](FB.md) reading algorithm) to a kind `124`
-  **author seal**, signed by the author's identity key with standard
-  event signing, whose content decrypts to an **unsigned rumor** of any
-  kind. The seal's content is encrypted under the note CEK (not a
-  pairwise conversation key). The seal is nested inside `ct` — it is
-  never published as a top-level relay event.
+  **author seal**. The seal is nested inside `ct` — it is never
+  published as a top-level relay event.
 - The rumor MUST carry a random 32-byte **reply CEK** as a tag
   (`["reply_cek", "<hex>"]`).
 - The author SHOULD include a slot addressed to themself, so notes can
@@ -69,6 +66,50 @@ Kind numbers are the [BIP-39](https://github.com/bitcoin/bips/blob/master/bip-00
 kind 1370 (burner-signed, alias tags, slots)
   └─ note CEK decrypts → kind 124 seal (author-signed)
        └─ note CEK decrypts → unsigned rumor (any kind, + reply CEK)
+```
+
+Both layers use the **same** note CEK on purpose. [NIP-59](59.md) uses
+a different pairwise key at each layer because each wrap has one
+recipient. Here every recipient already holds the note CEK from their
+slot; the seal exists for the signature / deniability split, not extra
+confidentiality among recipients. Each AEAD invocation MUST use a
+fresh nonce as specified in [FB](FB.md).
+
+### Author seal (kind 124)
+
+The seal is a signed event wrapping an unsigned rumor, formed like
+[NIP-59](59.md)'s kind `13` but encrypted under the envelope CEK (the
+note CEK for a `1370`, the reply CEK for an all-viewers `1470`) rather
+than a pairwise conversation key. `id` and `sig` are ordinary
+[NIP-01](01.md) (SHA-256 of the serialized event, Schnorr over `id`
+with the author's identity key). `tags` MUST be empty. `created_at`
+SHOULD be jittered into the past.
+
+```json
+{
+  "id": "<id>",
+  "pubkey": "<author identity pubkey>",
+  "created_at": 1790000000,
+  "kind": 124,
+  "tags": [],
+  "content": "<base64: AEAD(CEK, rumor JSON)>",
+  "sig": "<author identity signature>"
+}
+```
+
+The rumor is a regular event with `id` computed and `sig` omitted:
+
+```json
+{
+  "id": "<id>",
+  "pubkey": "<author identity pubkey>",
+  "created_at": 1790001234,
+  "kind": 1,
+  "tags": [
+    ["reply_cek", "<32-byte hex>"]
+  ],
+  "content": "hello from a private feed"
+}
 ```
 
 The layering provides:
@@ -83,28 +124,76 @@ The layering provides:
 
 ## Discovery
 
-Clients query `{"#f": [alias(contact, me), …], "kinds": [1370, 1470]}`
-— exact results, standard pagination. The alias list is derived once per
-session from the user's key and their contacts' public keys.
+Clients query `{"#f": [alias(contact, me), …], "kinds": [1370]}`
+— exact results, standard pagination. That returns notes, chunks,
+revisions, and to-OP-only replies. All-viewers replies have no `f`
+tag; they are fetched with `{"#n": [note_id], "kinds": [1470]}` after
+the parent rumor yields the reply CEK. The alias list is derived once
+per session from the user's key and their contacts' public keys.
 Author-pubkey queries are a degraded fallback (they return events the
 querier cannot open, and pagination cannot indicate completeness).
 
 ## Replies (kind 1470)
 
-- **All-viewers reply**: `content` is the [FB](FB.md) envelope with
-  `ct = AEAD(reply CEK, seal)` — the replier's kind `124` seal wrapping
-  their unsigned rumor; `tags` is `[["n", note_id]]` where
-  `note_id = H(reply CEK ‖ "fb-note-id-v1")`. Replies carry no slots —
-  every reader of the root note already holds the reply CEK.
-- **To-OP-only reply**: a one-recipient private note (one slot, addressed
-  to the root author) carrying the pairwise alias tag. It SHOULD NOT
-  carry the `n` tag; clients MAY include it to render "private reply"
-  placeholders. (`n` is used rather than `e` because the value is not an
-  event id and `e` tooling would attempt to fetch it.)
-- Every reply at any depth tags the note_id, so one query
-  `{"#n": [note_id]}` returns the entire tree; parent references inside
-  the rumors render the shape. Clients MUST paginate to an empty page
-  to consider the top level complete.
+An all-viewers reply uses a **degenerate** [FB](FB.md) envelope: the
+same JSON shape, but `"slots": []`. Readers already hold the reply CEK
+from the parent rumor's `reply_cek` tag, so there is nothing for slots
+to deliver. Clients MUST dispatch on kind — they MUST NOT run the FB
+slot-opening algorithm on a `1470`.
+
+| | kind 1370 (full envelope) | kind 1470 (degenerate envelope) |
+|---|---|---|
+| outer `pubkey` / `sig` | one-time burner | one-time burner |
+| public tags | `f` aliases (+ junk) | `n` = `note_id` |
+| `content` JSON | `{v, alg, ct, slots: […]}` | `{v, alg, ct, slots: []}` |
+| how the reader gets the CEK | open their slot | already have it (`reply_cek` on the parent rumor) |
+| `ct` | `AEAD(note CEK, seal)` | `AEAD(reply CEK, seal)` |
+| inner seal / rumor | kind 124 → unsigned rumor | kind 124 → unsigned rumor |
+
+```
+kind 1370                          kind 1470
+┌──────────────────────────┐       ┌──────────────────────────┐
+│ burner sig               │       │ burner sig               │
+│ tags: f, f, f            │       │ tags: n                  │
+│ slots: [s1, s2, …]  ───┐ │       │ slots: []                │
+│ ct = AEAD(note CEK, ─┐ │ │       │ ct = AEAD(reply CEK, ─┐  │
+│        seal)         │ │ │       │        seal)          │  │
+└──────────────────────┼─┼─┘       └───────────────────────┼──┘
+                       │ └ slot wraps note CEK             │
+                       ▼                                   ▼
+              kind 124 (author sig)               kind 124 (author sig)
+              content = AEAD(note CEK, rumor)     content = AEAD(reply CEK, rumor)
+              (same CEK as outer ct)              (CEK from parent rumor, not a slot)
+```
+
+```json
+{
+  "kind": 1470,
+  "pubkey": "<burner public key>",
+  "created_at": 1790000100,
+  "tags": [
+    ["n", "<note_id>"]
+  ],
+  "content": "{\"v\":1,\"alg\":\"fb-ecdh-v1\",\"ct\":\"<base64>\",\"slots\":[]}",
+  "id": "…",
+  "sig": "<signed by the burner key>"
+}
+```
+
+- `pubkey` and `sig` MUST belong to a one-time burner key, not the
+  replier's identity key — otherwise who replied is public even though
+  the body is encrypted.
+- `note_id = H(reply CEK ‖ "fb-note-id-v1")`. (`n` is used rather than
+  `e` because the value is not an event id and `e` tooling would
+  attempt to fetch it.)
+- **To-OP-only reply**: a one-recipient kind `1370` (full envelope, one
+  slot, addressed to the root author) carrying the pairwise alias tag.
+  It SHOULD NOT carry the `n` tag; clients MAY include it to render
+  "private reply" placeholders.
+- Every all-viewers reply at any depth tags the `note_id`, so one query
+  `{"#n": [note_id]}` returns the entire tree; parent references
+  (`e` tags) inside the rumors render the shape. Clients MUST paginate
+  to an empty page to consider the top level complete.
 - Reactions are all-viewers replies whose rumor is a [NIP-25](25.md)-style event.
 - Reply CEKs never expire. Conversation membership is fixed at note
   creation; new members are admitted only by the author sending them
@@ -112,21 +201,61 @@ querier cannot open, and pagination cannot indicate completeness).
 
 ## Chunking for large audiences
 
-A single event holds ~500 slots at a 64 KB relay limit. For larger
-audiences the author MUST publish **chunk events**: multiple `1370`
-events, each with its own note CEK and independently re-encrypted `ct`
-(chunks carry no shared tag and are thus unlinkable), each rumor carrying
-the same reply CEK. 6000 recipients ≈ 12 events.
+A typical 64 KB relay limit holds on the order of **500 slots** per
+event (CEK wrap + junk padding). If the audience is larger than that,
+the author MUST publish **multiple kind `1370` events** — one chunk
+per slice of the recipient list — each a full copy of the note for
+that slice:
+
+- each chunk has its own note CEK and independently re-encrypted `ct`
+- each chunk's rumor is identical, including the same `reply_cek`
+- each chunk carries `f` tags only for the recipients of *that* slice
+  (plus junk)
+
+Chunks share **no** note-level public tag (`n`, `d`, or otherwise), so
+they are not query-linkable as one object. They remain grouped with
+other notes via each recipient's stable `f` alias — the continuity
+property already documented in [FB](FB.md). 6000 recipients ≈ 12
+events. A given recipient only needs the chunk that contains their
+slot.
 
 ## Editing
 
-Edits are **revision events**: a new event of the same kind referencing
-the event it revises (hash inside the rumor), sealed by the same author.
-Clients render the latest revision per author and retain history —
-append-only, no replaceable events, no retained signing keys. Revisions
-and reactions SHOULD embed the hash of the exact parent revision they
-respond to, allowing clients to display "edited after this reply"
-without trusting relays.
+Kind `1370` is a regular event, not an addressable one. A public `d`
+tag would not make relays replace prior versions (that only happens
+for kinds `30000`–`39999`), and putting `note_id` in a public `d` or
+`n` tag on the root would link chunks, revisions, and the reply tree
+together for any observer.
+
+Thread identity lives **inside** the rumor, encrypted:
+
+- `["reply_cek", "<hex>"]` — the conversation key. Revisions MUST
+  reuse the original note's reply CEK, so the `n`-tree continues and
+  membership does not change.
+- `["revision_of", "<previous rumor id>"]` — the [NIP-01](01.md) `id`
+  of the unsigned rumor this event supersedes. That is *not* the
+  wrapper event id (a burner id, useless as a stable handle). The
+  original rumor omits this tag.
+
+Edits are **revision events**: a new kind `1370` (new burner, new note
+CEK, new slots), sealed by the same author, rumor carrying the same
+`reply_cek` plus `revision_of`. Append-only — no replaceable events,
+no retained signing keys.
+
+Clients discover candidates the same way they discover notes (`#f`
+aliases), decrypt, and group by `reply_cek` + seal `pubkey`. They
+render the rumor at the end of the `revision_of` chain (if the chain
+is incomplete, the rumor with the latest `created_at` in that group)
+and retain the rest as history.
+
+Replies and reactions SHOULD put the `id` of the exact rumor they were
+responding to in an `e` tag on **their** rumor, so clients can show
+"edited after this reply" without trusting relays.
+
+Chunks vs revisions: chunks of one publication share a `reply_cek`
+**and** the same rumor `id` (identical unsigned rumor, independently
+re-encrypted). Revisions share a `reply_cek` but have a new rumor `id`
+and a `revision_of` tag.
 
 ## Connections (kind 30378)
 
@@ -193,7 +322,7 @@ Delivery is:
 
 1. The proposer publishes the record (one signature).
 2. The proposer notifies out-of-band: a [NIP-21](21.md)-style URI
-   `nostr+fb:offer/<offerer npuk>` (carries only a public key; safe over
+   `nostr+fb:offer/<offerer npub>` (carries only a public key; safe over
    any transport), or a [NIP-17](17.md) message as the nostr-native
    fallback.
 3. The recipient's client derives `conn_addr(me, offerer)` and queries
@@ -246,3 +375,5 @@ NIP-59's rumor/seal split provides.
 - Recommended chunk size; reader bandwidth on first fetch of a chunked note.
 - Canonical JSON and byte-level pinning for the connection payload
   signature base.
+- Whether the connection-offer URI should be a [NIP-21](21.md) `nostr:`
+  URL rather than `nostr+fb:`.
