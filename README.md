@@ -117,6 +117,8 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-CC: Geocaching](CC.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
+- [NIP-FB: False Bottom: Multi-recipient Encrypted Events](FB.md)
+- [NIP-FE: Feed Encryption](FE.md)
 
 ## Event Kinds
 
@@ -156,6 +158,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `62`          | Request to Vanish               | [62](62.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
 | `78`          | Application-specific Data       | [78](78.md)                            |
+| `124`         | Author seal (private feed)      | [FE](FE.md)                            |
 | `443`         | KeyPackage                      | [Marmot][marmot]                       |
 | `444`         | Welcome Message                 | [Marmot][marmot]                       |
 | `445`         | Group Event                     | [Marmot][marmot]                       |
@@ -173,6 +176,8 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `1244`        | Voice Message Comment           | [A0](A0.md)                            |
 | `1311`        | Live Chat Message               | [53](53.md)                            |
 | `1337`        | Code Snippet                    | [C0](C0.md)                            |
+| `1370`        | Private note                    | [FE](FE.md)                            |
+| `1470`        | Private reply                   | [FE](FE.md)                            |
 | `1617`        | Patches                         | [34](34.md)                            |
 | `1618`        | Pull Requests                   | [34](34.md)                            |
 | `1619`        | Pull Request Updates            | [34](34.md)                            |
@@ -271,6 +276,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `30312`       | Interactive Room                | [53](53.md)                            |
 | `30313`       | Conference Event                | [53](53.md)                            |
 | `30315`       | User Statuses                   | [38](38.md)                            |
+| `30378`       | Connection record (replaceable) | [FE](FE.md)                            |
 | `30382`       | User Trusted Assertion          | [85](85.md)                            |
 | `30383`       | Event Trusted Assertion         | [85](85.md)                            |
 | `30384`       | Addressable Trusted Assertion   | [85](85.md)                            |
