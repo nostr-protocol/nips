@@ -13,7 +13,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [Message Types](#message-types)
   - [Client to Relay](#client-to-relay)
   - [Relay to Client](#relay-to-client)
-- [Criteria for acceptance of NIPs](#criteria-for-acceptance-of-nips-in-this-repository)
+- [Criteria for acceptance of NIPs](#criteria-for-acceptance-in-this-repository)
 - [Is this repository a centralizing factor?](#is-this-repository-a-centralizing-factor)
 - [How this repository works](#how-this-repository-works)
 - [License](#license)
@@ -113,6 +113,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - ~~[NIP-BE: Nostr BLE Communications Protocol](BE.md) --- **unrecommended**: only implemented once and unclear whether it works, requires review~~
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
+- [NIP-A3: payto: Payment Targets](A3.md)
 - [NIP-CC: Geocaching](CC.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
@@ -155,9 +156,9 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `62`          | Request to Vanish               | [62](62.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
 | `78`          | Application-specific Data       | [78](78.md)                            |
-| `443`         | KeyPackage                      | [Marmot](marmot)                       |
-| `444`         | Welcome Message                 | [Marmot](marmot)                       |
-| `445`         | Group Event                     | [Marmot](marmot)                       |
+| `443`         | KeyPackage                      | [Marmot][marmot]                       |
+| `444`         | Welcome Message                 | [Marmot][marmot]                       |
+| `445`         | Group Event                     | [Marmot][marmot]                       |
 | `818`         | Merge Requests                  | [54](54.md)                            |
 | `1018`        | Poll Response                   | [88](88.md)                            |
 | `1021`        | Bid                             | [15](15.md)                            |
@@ -215,13 +216,16 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `10015`       | Interests list                  | [51](51.md)                            |
 | `10019`       | Nutzap Mint Recommendation      | [61](61.md)                            |
 | `10020`       | Media follows                   | [51](51.md)                            |
+| `10021`       | Favorite follow sets            | [51](51.md)                            |
 | `10030`       | User emoji list                 | [51](51.md)                            |
+| `10040`       | Trusted Service Providers       | [85](85.md)                            |
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
 | `10051`       | KeyPackage Relays List          | [Marmot][marmot]                       |
 | `10054`       | Favorite podcasts list          | [51](51.md)                            |
 | `10063`       | User server list                | [B7](B7.md)                            |
 | `10064`       | Authored podcasts list          | [51](51.md)                            |
 | `10096`       | File storage server list        | [96](96.md) (deprecated)               |
+| `10133`       | Payment Targets                 | [A3](A3.md)                            |
 | `10154`       | Podcast Metadata                | [F4](F4.md)                            |
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
 | `10312`       | Room Presence                   | [53](53.md)                            |
@@ -230,6 +234,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `5128`        | nsite manifest snapshot         | [5A](5A.md)                            |
 | `15128`       | Root nsite manifest             | [5A](5A.md)                            |
 | `17375`       | Cashu Wallet Event              | [60](60.md)                            |
+| `21059`       | Ephemeral Gift Wrap             | [59](59.md)                            |
 | `22242`       | Client Authentication           | [42](42.md)                            |
 | `23194`       | Wallet Request                  | [47](47.md)                            |
 | `23195`       | Wallet Response                 | [47](47.md)                            |
@@ -283,11 +288,13 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `31989`       | Handler recommendation          | [89](89.md)                            |
 | `31990`       | Handler information             | [89](89.md)                            |
 | `32267`       | Software Application            |                                        |
+| `33534`       | Role Definition                 | [43](43.md)                            |
 | `34235`       | Addressable Video Event         | [71](71.md)                            |
 | `34236`       | Addressable Short Video Event   | [71](71.md)                            |
 | `34550`       | Community Definition            | [72](72.md)                            |
 | `34128`       | Legacy nsite manifest           | [5A](5A.md) (deprecated)               |
 | `35128`       | Named nsite manifest            | [5A](5A.md)                            |
+| `38000`       | Mint Recommendation             | [87](87.md)                            |
 | `38172`       | Cashu Mint Announcement         | [87](87.md)                            |
 | `38173`       | Fedimint Announcement           | [87](87.md)                            |
 | `37516`       | Geocache Listing                | [CC](CC.md)                            |
