@@ -260,6 +260,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `30020`       | Product sold as an auction      | [15](15.md)                            |
 | `30023`       | Long-form Content               | [23](23.md)                            |
 | `30024`       | Draft Long-form Content         | [23](23.md)                            |
+| `30027`       | Hidden replies                  | [51](51.md)                            |
 | `30030`       | Emoji sets                      | [51](51.md)                            |
 | `30040`       | Curated Publication Index       | [NKBIP-01]                             |
 | `30041`       | Curated Publication Content     | [NKBIP-01]                             |
