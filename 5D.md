@@ -1,0 +1,247 @@
+NIP-5D
+======
+
+Nostr Web Applets
+-----------------
+
+`draft` `optional`
+
+This NIP defines a web projection for sandboxed web applications ("napplets") running in iframes to communicate with a hosting application ("shell"). Shells expose granted NAP (Nostr Applet Protocol) domains through an injected `window.napplet` namespace. Under that namespace, domain calls are carried over `postMessage` using a generic JSON envelope. Protocol messages are defined by NAP extension specs.
+
+## Philosophy
+
+A napplet is a Nostr applet - a small, focused application that does one thing well. Napplets SHOULD be single-purpose rather than monolithic. A chat widget, a feed viewer, a profile editor, and a relay manager are four napplets, not one application with four tabs. The shell composes napplets; napplets do not compose themselves.
+ 
+## Terminology
+
+| Term | Definition |
+|------|------------|
+| Shell | Web application hosting napplet iframes |
+| Napplet | Sandboxed iframe application communicating with the shell via postMessage |
+| dTag | Napplet identifier from the napplet manifest `d` tag |
+| Artifact hash | A napplet's content address — the sha256 of its `/index.html` artifact, carried in the manifest `x` tag |
+| Napplet manifest | Nostr event (kind `5129` / `15129` / `35129`) describing a napplet: its artifact hash, description, optional icon, archetypes, accepted intents, and required and optional capabilities |
+| NAP | Nostr Applet Protocol -- extension spec defining protocol messages for a capability domain |
+
+## Transport
+
+Communication uses an injected `window.napplet` namespace backed by `postMessage`. Napplet to shell: `window.parent.postMessage(msg, '*')`. Shell to napplet: `iframeWindow.postMessage(msg, '*')`. The `'*'` target origin is required because napplets have opaque origins (no `allow-same-origin`).
+
+Napplet iframes are loaded via `srcdoc` (see [Identity](#identity)) and MUST use this sandbox attribute:
+
+    sandbox="allow-scripts"
+
+The `allow-same-origin` token MUST NOT be present. Napplets have no access to `localStorage`, `sessionStorage`, `IndexedDB`, direct WebSocket connections, or signing keys. All storage, signing, encryption, and relay access is proxied through the shell.
+
+The shell identifies senders via `MessageEvent.source` (unforgeable Window reference). Messages from unknown sources (iframes not created by the shell) MUST be silently dropped.
+
+Shells MUST inject `window.napplet` before any napplet script runs, including classic scripts, module scripts, reloads, and development wrappers. The namespace MUST contain only the NAP domain objects the shell exposes to that napplet. Presence of a domain object means that domain is available to the napplet. Absence means unavailable.
+
+Shells MUST NOT provide `window.nostr` (NIP-07) to napplet iframes. Signing and encryption are security-critical operations that MUST be mediated by the shell. See the Security Rationale section below.
+
+## Wire Format
+
+All messages between napplet and shell are JSON objects with a `type` field:
+
+    { "type": "<domain>.<action>", ...payload }
+
+The `type` field is a string discriminant in `domain.action` format. Domains correspond to NAP capability names (e.g., a NAP named `foo` owns all `foo.*` types). NAP specs define the valid type strings and payload shapes for their domain. This NIP does not enumerate message types.
+
+Example — a hypothetical `foo` NAP with a request/response pattern:
+
+    { "type": "foo.bar", "id": "abc", "data": {...} }
+    { "type": "foo.bar.result", "id": "abc", "result": {...} }
+
+Messages with an unrecognized `type` MUST be silently ignored. This allows forward compatibility as new NAPs are defined.
+
+## Identity
+
+A napplet's identity is the `(dTag, artifactHash)` tuple. The runtime **computes** it from the napplet's own bytes; it MUST NOT accept it from a host.
+
+Before creating the iframe, the runtime MUST:
+
+1. Resolve the napplet manifest event (kind `5129`, `15129`, or `35129`, see [Manifest](#manifest)) from relays and verify its signature.
+2. Read the artifact hash from the manifest's single `x` tag; a manifest that does not carry exactly one `x` tag MUST be rejected.
+3. Fetch the artifact blob from Blossom by that sha256 and verify `sha256(blob)` equals the `x` value. This is `artifactHash`.
+4. Inject the verified bytes via `srcdoc` (never a navigated `src`) and map the iframe's `Window` reference to `(dTag, artifactHash)`.
+
+A gateway MAY serve the bytes as an accelerator or fallback, but the runtime MUST verify its output against the signed manifest — the gateway is never trusted.
+
+Identity is thus fixed before any code runs and bound to the exact bytes that run. The shell MUST verify `MessageEvent.source` on every inbound message and silently drop messages from Window references not mapped to a napplet.
+
+## Manifest
+
+A napplet is published as a **napplet manifest** event under NIP-5D's own kinds:
+
+| Kind | Type | `d` tag |
+|------|------|---------|
+| `5129` | snapshot (regular) | none |
+| `15129` | root napplet (replaceable) | none |
+| `35129` | named napplet (addressable) | identifier |
+
+A napplet is a single self-contained `/index.html`. The manifest MUST carry exactly one `x` tag holding the lowercase-hex sha256 of that artifact — `["x", "<sha256>"]` — and `server` tags SHOULD hint the Blossom servers holding the blob.
+
+The event `content` MUST contain a non-empty, human-readable plain-text description of the napplet. Clients MUST treat it as plain text, not HTML or Markdown. The optional `title` tag supplies a short display label; a separate `description` tag is not used.
+
+| Tag | Cardinality | Value |
+|-----|-------------|-------|
+| `d` | exactly 1 on `35129`, absent otherwise | napplet identifier |
+| `x` | exactly 1 | sha256 of the `/index.html` artifact |
+| `z` | 0+ | archetype describing what the napplet does |
+| `i` | 0+ | accepted intent, followed by its advertised parameter names |
+| `R` | 0+ | NAP domain needed for full functionality |
+| `O` | 0+ | optional NAP domain integration |
+| `icon` | 0-1 | icon blob sha256, followed by its MIME type |
+| `server` | 0+ | Blossom server origin hint for the artifact and icon blobs |
+| `title` | 0-1 | short display label |
+| `source` | 0-1 | source URL, as in [NIP-5A](5A.md) |
+| `a` / `A` | 0-1 each, `5129` only | parent / root napplet address |
+
+For example, a named napplet manifest:
+
+```jsonc
+{
+  "kind": 35129,
+  "content": "A feed viewer and editor hosted on Nostr",
+  "tags": [
+    ["d", "my-napplet"],
+    ["x", "186ea5fd14e88fd1ac49351759e7ab906fa94892002b60bf7f5a428f28ca1c99"],
+    ["z", "feed"],
+    ["i", "napplet:feed/open"],
+    ["i", "napplet:feed/edit", "filters", "relays"],
+    ["R", "relay"],
+    ["O", "theme"],
+    ["icon", "ae7a3bd1a3fa9d824d0e64a6f57fe6cb4dd80c423786b6a2ecb94d587c94c75a", "image/png"],
+    ["server", "https://blossom.example.com"],
+    ["title", "My Napplet"],
+    ["source", "https://github.com/example/my-napplet"]
+  ]
+  // id, pubkey, created_at, sig omitted
+}
+```
+
+A `5129` snapshot is a regular event pinning one immutable napplet version. It MAY record lineage with an `A` tag addressing the root napplet the line originates from and an `a` tag addressing the immediate antecedent it derives from, which MAY belong to another author:
+
+    ["A", "35129:<pubkey>:<d-tag>"]
+    ["a", "35129:<pubkey>:<d-tag>"]
+
+Lineage tags are provenance metadata only. They MUST NOT affect verification: a snapshot is verified against its own `x` tag ([Identity](#identity)), and a runtime MUST NOT resolve or trust a referenced napplet on a snapshot's behalf.
+
+### Icon
+
+A manifest MAY include one content-addressed icon:
+
+    ["icon", "<sha256>", "<mime-type>"]
+
+The hash MUST be the 64-character lowercase-hex sha256 of the icon blob. The MIME type MUST be `image/png`, `image/jpeg`, or `image/webp`; other formats, including SVG, are not supported.
+
+Clients displaying the icon MUST fetch the blob by its hash from the manifest's declared Blossom `server` origins and verify that `sha256(blob)` equals the `icon` hash before rendering. They MUST also verify that the bytes decode as the declared supported image format; the declared MIME type or server response alone is not sufficient. Clients MUST render the verified bytes rather than an unverified remote URL.
+
+An absent, malformed, unsupported, unavailable, hash-mismatched, or undecodable icon MUST fall back to generic artwork and MUST NOT prevent loading the napplet. The icon hash is separate from the artifact's `x` hash and does not participate in `(dTag, artifactHash)` identity.
+
+### Archetypes and Intents
+
+A napplet MAY declare the archetypes it advertises and the intents it accepts:
+
+    ["z", "<archetype>"]
+    ["i", "<intent>", "<param>", ...]
+
+An archetype is an ad-hoc description of what the napplet does — `feed`, `profile` — not a role granted to it. An intent is a stable, queryless convention identity naming one thing the napplet will do for that archetype (`napplet:feed/open` renders a feed, `napplet:feed/edit` offers ways to modify one). The elements after `<intent>` name the query parameters the napplet advertises for it; `napplet:feed/edit` might advertise `filters` and `relays`. Archetype vocabulary, intent identities, and their payload semantics are defined outside this NIP by the archetype registry and the NAP that dispatches intents. A napplet with no `z` or `i` tags is valid — it simply cannot be addressed by archetype.
+
+`z` and `i` are advertisements from an untrusted artifact. They are routing hints for the shell, never a grant: a `z` or `i` tag MUST NOT widen what the shell exposes to the napplet.
+
+### Required and Optional Capabilities
+
+The manifest declares NAP domains needed for full functionality with repeated `R` tags and optional integrations with repeated `O` tags:
+
+    ["R", "<nap-name>"]
+    ["O", "<nap-name>"]
+
+Each tag names one bare NAP domain (e.g. `relay`, never `NAP-RELAY`). At load the shell checks the complete `R` set against the domains it can expose to that napplet; if one is absent it SHOULD reject the napplet or warn that full functionality is unavailable. Missing `O` domains MUST NOT by themselves prevent loading. With no `R` tags, the napplet declares no required domains.
+
+Both `R` and `O` are declarations, never grants. These tags MUST NOT widen what the shell exposes; actual availability comes from the injected namespace and remains shell policy ([Runtime Domain Availability](#runtime-domain-availability)).
+
+The uppercase single-letter tags are indexable under [NIP-01](01.md), using `#R` and `#O` filters. Relays supporting the [proposed NIP-91 intersection filters](https://github.com/nostr-protocol/nips/pull/2252) can also use `&R` and `&O` for targeted discovery, with the corresponding `#R` or `#O` fallback filters required by that proposal.
+
+An `&R` filter cannot by itself return every napplet a runtime supports. Required-domain compatibility means `event requirements ⊆ runtime capabilities`, while `&R` tests `supplied filter values ⊆ event requirements`. For example, `&R: ["relay", "theme"]` misses a compatible napplet requiring only `relay`, yet can return one also requiring an unavailable third domain. Clients MUST inspect the complete `R` set locally; `&R` is only a targeted discovery optimization, not a compatibility test. Optional `O` domains do not constrain required-domain compatibility, and declarations do not replace runtime availability checks.
+
+### HTML Metadata for Publishing
+
+Publishing tools SHOULD preserve descriptive metadata in the artifact's `head` using the following mapping, so a napplet can describe itself for upload or recovery without its manifest event:
+
+| Manifest field | HTML representation |
+|----------------|---------------------|
+| `title` tag | `<title>My Napplet</title>` |
+| event `content` | `<meta name="description" content="A feed viewer">` |
+| `d` tag (`35129` only) | `<meta name="napplet-id" content="my-napplet">` |
+| `z` tags | `<meta name="napplet-archetype" content="feed">` |
+| `i` tags | `<meta name="napplet-intent" content="napplet:feed/edit filters relays">` |
+| `R` tags | `<meta name="napplet-requires" content="relay storage">` |
+| `O` tags | `<meta name="napplet-optional" content="theme">` |
+| `icon` tag | `<link rel="icon" href="data:image/png;base64,..." type="image/png">` |
+| `source` tag | `<meta name="napplet-source" content="https://github.com/example/my-napplet">` |
+| `server` tags | `<meta name="napplet-server" content="https://blossom.example.com">` |
+| `a` tag (`5129` only) | `<meta name="napplet-parent" content="35129:PUBLIC_KEY:PARENT_D_TAG">` |
+| `A` tag (`5129` only) | `<meta name="napplet-root" content="35129:PUBLIC_KEY:ROOT_D_TAG">` |
+
+Repeat `napplet-archetype`, `napplet-intent`, and `napplet-server` elements for multiple tags. Each intent contains its queryless identity followed by advertised parameter names, separated by ASCII whitespace. Capability lists likewise contain whitespace-separated bare NAP domains, yielding one `R` or `O` tag per domain. Missing elements supply no declarations; existing manifest cardinality and kind restrictions apply.
+
+Icon links SHOULD use data URLs to keep the artifact self-contained. Publishers derive the `icon` hash from decoded image bytes, not the URL, use a MIME type supported by [Icon](#icon), and publish those same bytes to the declared Blossom servers.
+
+The artifact's own `x` hash and event signing fields are not embedded. Publishers MUST finalize embedded metadata before computing `x`. Embedding is optional: runtimes MUST NOT require this metadata or let it override the signed manifest or runtime domain availability.
+
+### Runtime Domain Availability
+
+Napplets detect runtime domain availability from the injected namespace. If `window.napplet.<domain>` is present, the shell exposes that NAP domain to the napplet. If it is absent, the napplet MUST gracefully degrade or stop using that domain.
+
+Domain object presence is only an availability signal. It does not define the domain's operations, payloads, error model, version support, or semantics. Those contracts remain in the matching NAP specs. If a domain needs semantic compatibility checks, version negotiation, or diagnostics, that domain MUST define them in its own NAP.
+
+## NAP Extension Framework
+
+Protocol messages are defined by [NAP (Nostr Applet Protocol)](https://github.com/napplet/naps) specs. Each NAP owns a message domain and defines the `type` strings, payload shapes, injected domain object behavior, and semantics for that domain. A NAP spec is self-contained — it references this NIP only for web namespace injection, envelope format, and transport.
+
+For example, a NAP named `foo` would own all `foo.*` message types (e.g., `foo.bar`, `foo.bar.result`) and define their payloads and shell behavior.
+
+NAP specs MUST:
+- Define all valid `type` strings for their domain
+- Specify the payload shape for each message type
+- Document expected shell behavior for each message
+- Be independently implementable — a shell MAY support any subset of NAPs
+
+## Security Considerations
+
+Napplets are untrusted code. The shell is trusted. The browser enforces iframe sandbox boundaries. `MessageEvent.source` provides unforgeable sender identity.
+
+**Mitigations:**
+1. Iframe sandbox: `allow-scripts` is the only required token -- shells MUST NOT add `allow-same-origin`. Adding `allow-same-origin` would grant the napplet a real origin, allowing it to register a service worker, read shell `localStorage`, and bypass shell mediation entirely -- this prohibition is the load-bearing precondition for browser-enforced isolation of any kind.
+2. postMessage `'*'` origin is required for opaque-origin iframes; sender identification uses `MessageEvent.source`, NOT `event.origin`.
+3. Identity binding: the runtime computes `(dTag, artifactHash)` from the napplet's verified bytes before execution and maps it to the iframe `Window`. `MessageEvent.source` is unforgeable within the same browsing context.
+4. Content-addressed loading: the runtime verifies the manifest signature and asserts the artifact's sha256 equals the manifest's single `x` tag (see [Identity](#identity)); a napplet failing either check MUST be rejected. Gateways are untrusted — their output is verified against the signed manifest.
+5. Runtime injection is outside the signed napplet artifact. It MUST be limited to the `window.napplet` namespace and MUST NOT change the napplet bytes used to compute `artifactHash`.
+6. Unrecognized message types are silently ignored, preventing capability probing.
+7. Napplets produce cleartext only. Shells MUST NOT sign or broadcast events containing ciphertext received from a napplet. Shells MUST NOT provide `window.nostr` (NIP-07) or any signing/encryption primitives.
+
+**Content Security Policy advisory.** An opaque sandbox origin does not by itself prevent `fetch`, WebSocket, Worker, or subresource requests. Because a `srcdoc` document has no HTTP response on which to carry a Content Security Policy header, shells SHOULD inject a CSP `meta` element as the first element in `head`, before any napplet-controlled resource or script is parsed. The shell MUST inject the policy only after verifying the signed artifact bytes, and the injected policy MUST remain outside the bytes used to compute `artifactHash`, just like the injected `window.napplet` namespace.
+
+A conservative baseline is:
+
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'none'; script-src 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; worker-src 'none'; child-src 'none'; frame-src 'none'; media-src 'none'; object-src 'none'; manifest-src 'none'; base-uri 'none'; form-action 'none'">
+
+If a separate host policy intentionally permits direct network access, `connect-src` MAY name only the exact granted origins. Such access is outside NIP-5D's shell-mediated NAP model; wildcard or scheme-wide sources SHOULD NOT be used.
+
+The `'wasm-unsafe-eval'` source expression permits WebAssembly byte compilation and instantiation. It does not permit JavaScript string compilation such as `eval()` or `Function()`. Shells MUST NOT substitute the broader `'unsafe-eval'` source expression merely to support WebAssembly.
+
+Per [Content Security Policy Level 3](https://www.w3.org/TR/CSP/), `report-uri`, `frame-ancestors`, and `sandbox` are not enforced when delivered through a `meta` element. A shell that needs to restrict its own embedders MUST set `frame-ancestors` on the shell's HTTP response. The CSP is defense in depth and does not replace artifact verification, the required iframe sandbox, or `MessageEvent.source` checks.
+
+Storage isolation, relay access control, and ACL enforcement are defined by their respective NAP specs.
+
+**Non-Guarantees:** The protocol does NOT protect against a compromised browser, a malicious shell, side-channel attacks, or social engineering.
+
+## References
+
+- [NIP-5A](5A.md) -- `source` tag semantics
+- [NIP-01](01.md) -- single-letter tag indexing and filters
+- [Proposed NIP-91](https://github.com/nostr-protocol/nips/pull/2252) -- intersection filters for targeted discovery
+- [NAPs](https://github.com/napplet/naps) -- NAP domain and message-protocol registry
+- [Content Security Policy Level 3](https://www.w3.org/TR/CSP/) -- CSP processing and `meta` delivery
