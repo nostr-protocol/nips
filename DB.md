@@ -39,6 +39,9 @@ interface IWindowNostrDB {
 
   /** Get events by filters */
   query(filters: Filter | Filter[]): Promise<NostrEvent[]>;
+  
+  /* Delete events by id, returns the list of ids that were actually deleted */
+  remove(ids: string[]): Promise<string[]>;
 
   /** Subscribe to events in the database based on filters */
   subscribe(filters: Filter | Filter[]): AsyncGenerator<NostrEvent>;
