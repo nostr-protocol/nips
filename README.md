@@ -104,6 +104,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-92: Media Attachments Metadata (`imeta`)](92.md)
 - [NIP-94: File Metadata](94.md)
 - ~~[NIP-96: HTTP File Storage Integration](96.md) --- **unrecommended**: replaced by Blossom~~
+- [NIP-97: Persisted Delivery Confirmation](97.md)
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
 - [NIP-A0: Voice Messages](A0.md)
@@ -179,6 +180,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `1621`        | Issues                          | [34](34.md)                            |
 | `1622`        | Git Replies (deprecated)        | [34](34.md)                            |
 | `1630`-`1633` | Status                          | [34](34.md)                            |
+| `1797`        | Persisted Delivery Attestation  | [97](97.md)                            |
 | `1971`        | Problem Tracker                 | [nostrocket][nostrocket]               |
 | `1984`        | Reporting                       | [56](56.md)                            |
 | `1985`        | Label                           | [32](32.md)                            |
@@ -324,6 +326,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `CLOSE` | used to stop previous subscriptions                 | [01](01.md) |
 | `AUTH`  | used to send authentication events                  | [42](42.md) |
 | `COUNT` | used to request event counts                        | [45](45.md) |
+| `PROOF` | used to ask whether the relay still holds events    | [97](97.md) |
 
 ### Relay to Client
 
@@ -336,6 +339,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `CLOSED` | used to notify clients that a REQ was ended and why     | [01](01.md) |
 | `AUTH`   | used to send authentication challenges                  | [42](42.md) |
 | `COUNT`  | used to send requested event counts to clients          | [45](45.md) |
+| `PROOF`  | used to attest whether specific events are held         | [97](97.md) |
 
 ## Criteria for acceptance in this repository
 
