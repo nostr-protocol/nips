@@ -115,7 +115,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-C7: Chats](C7.md)
 - [NIP-A3: payto: Payment Targets](A3.md)
 - [NIP-CC: Geocaching](CC.md)
-- ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
+- [NIP-EE: Marmot: End-to-End Encrypted Messaging](EE.md)
 - [NIP-F4: Podcasts](F4.md)
 
 ## Event Kinds
@@ -156,7 +156,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `62`          | Request to Vanish               | [62](62.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
 | `78`          | Application-specific Data       | [78](78.md)                            |
-| `443`         | KeyPackage                      | [Marmot][marmot]                       |
+| `443`         | KeyPackage (legacy)             | [Marmot][marmot]                       |
 | `444`         | Welcome Message                 | [Marmot][marmot]                       |
 | `445`         | Group Event                     | [Marmot][marmot]                       |
 | `818`         | Merge Requests                  | [54](54.md)                            |
@@ -220,7 +220,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `10030`       | User emoji list                 | [51](51.md)                            |
 | `10040`       | Trusted Service Providers       | [85](85.md)                            |
 | `10050`       | Relay list to receive DMs       | [51](51.md), [17](17.md)               |
-| `10051`       | KeyPackage Relays List          | [Marmot][marmot]                       |
+| `10051`       | KeyPackage Relays List (legacy) | [Marmot][marmot]                       |
 | `10054`       | Favorite podcasts list          | [51](51.md)                            |
 | `10063`       | User server list                | [B7](B7.md)                            |
 | `10064`       | Authored podcasts list          | [51](51.md)                            |
@@ -276,6 +276,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `30384`       | Addressable Trusted Assertion   | [85](85.md)                            |
 | `30402`       | Classified Listing              | [99](99.md)                            |
 | `30403`       | Draft Classified Listing        | [99](99.md)                            |
+| `30443`       | Marmot KeyPackage               | [EE](EE.md)                            |
 | `30617`       | Repository announcements        | [34](34.md)                            |
 | `30618`       | Repository state announcements  | [34](34.md)                            |
 | `30818`       | Wiki article                    | [54](54.md)                            |
