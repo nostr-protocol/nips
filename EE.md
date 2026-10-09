@@ -4,7 +4,7 @@
 
 `final` `optional`
 
-This NIP is a short reference to the [Marmot Protocol specification](https://github.com/marmot-protocol/marmot), which defines end-to-end encrypted direct messaging and private groups using [Messaging Layer Security (MLS)](https://www.rfc-editor.org/rfc/rfc9420) and Nostr. This summary covers the `marmot.transport.nostr` version 1 binding. The full specification, especially its [Nostr transport binding](https://github.com/marmot-protocol/marmot/blob/master/transports/nostr.md), defines the required wire formats, validation rules, membership changes, and relay behavior. Clients implementing this NIP MUST follow those rules.
+This NIP is a short reference to the [Marmot Protocol specification](https://github.com/marmot-protocol/marmot/tree/7fabb81b3ed6e2fffeb1b267a0d2ae92b0ab2c89), which defines end-to-end encrypted direct messaging and private groups using [Messaging Layer Security (MLS)](https://www.rfc-editor.org/rfc/rfc9420) and Nostr. This summary covers the `marmot.transport.nostr` version 1 binding at the linked revision. The full specification, especially its [Nostr transport binding](https://github.com/marmot-protocol/marmot/blob/7fabb81b3ed6e2fffeb1b267a0d2ae92b0ab2c89/transports/nostr.md), defines the required wire formats, validation rules, membership changes, and relay behavior. Clients implementing this NIP MUST follow those rules.
 
 ## How it works
 
