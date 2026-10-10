@@ -117,6 +117,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-CC: Geocaching](CC.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
+- [NIP-XX: Interactive Charts](XX.md)
 
 ## Event Kinds
 
@@ -179,6 +180,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `1621`        | Issues                          | [34](34.md)                            |
 | `1622`        | Git Replies (deprecated)        | [34](34.md)                            |
 | `1630`-`1633` | Status                          | [34](34.md)                            |
+| `1786`        | Interactive Chart               | [XX](XX.md)                            |
 | `1971`        | Problem Tracker                 | [nostrocket][nostrocket]               |
 | `1984`        | Reporting                       | [56](56.md)                            |
 | `1985`        | Label                           | [32](32.md)                            |
