@@ -72,9 +72,8 @@ Only the latest event per `(author pubkey, d tag)` is considered authoritative.
 #### Optional tags
 
 ```json
-["uri", "https://bitcoin-otc.com/viewratings.php?nick=<nick>"]
+["uri", "https://bitcoin-otc.com/viewratingdetail.php?nick=<nick>"]
 ["key", "<pgp-fingerprint OR bitcoin-address>"]
-["ts", "<unix timestamp>"]
 ```
 
 The `key` tag, if present, MUST match the public key used to verify the signature.
@@ -234,15 +233,17 @@ Clients MUST NOT present the external identity as verified by an external regist
 ```json
 {
   "kind": 37773,
-  "pubkey": "npub1xyz...",
-  "tags": [
-    ["d", "ext:bitcoin-otc:alice"],
-    ["proof-type", "pgp"],
-    ["uri", "https://bitcoin-otc.com/viewratings.php?nick=alice"],
-    ["key", "FINGERPRINT123"]
-  ],
+  "pubkey": "...",
   "content": "I, alice, assert control of Nostr pubkey npub1xyz... This is a self-attested statement associating external identity \"alice\" with this Nostr identity.",
-  "sig": "..."
+  "created_at": 1791908313,
+  "id": "...",
+  "sig": "...",
+  "tags": [
+    ["d","ext:bitcoin-otc:alice"],
+    ["proof-type","pgp"],
+    ["uri","https://bitcoin-otc.com/viewratingdetail.php?nick=alice"],
+    ["key","FINGERPRINT123"]
+  ]
 }
 ```
 
@@ -261,6 +262,11 @@ This design:
 ---
 
 ## Changelog
+
+### v0.3
+* Corrected bitcoin-otc.com rating page URI
+* Removed Unix timestamp option; redundant to created_at
+* Rebased the example event format to what was actually accepted & published by https://nostrudel.ninja/tools/publisher to wss://relay.ditto.pub/ : https://njump.me/nevent1qqsxx4a694f259mu0hka52v4w5u7t3h5jnve6txvpt9e3afxfph0dqqzyqhp0wrddykf0xa4klpdmw0hpcpww6auxk9049dvdqf4q3amuy8qy2gevm5
 
 ### v0.2.1
 
