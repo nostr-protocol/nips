@@ -527,7 +527,7 @@ ${MY_PATH}/ECONOMY.broadcast.sh
 This extension is compatible with:
 - ✅ [NIP-101](101.md) - UPlanet Identity & Geographic Coordination
 - ✅ [NIP-101 N² Constellation Sync](101-n2-constellation-sync-extension.md)
-- ✅ [NIP-10000 Analytics](10000-analytics-extension.md)
+- ✅ [NIP-10600 Analytics](10600-analytics-extension.md)
 - ✅ Standard NOSTR clients (queryable events)
 
 ## License

@@ -284,8 +284,8 @@ This phase consists of 4 detailed functions:
 - `31924` - Calendar reminders
 - `31925` - Calendar timezones
 
-**Analytics (NIP-10000):**
-- `10000` - Decentralized analytics (encrypted/non-encrypted)
+**Analytics (NIP-10600):**
+- `10600` - Decentralized analytics (encrypted/non-encrypted)
 
 **Optional (configurable):**
 - `4` - Direct messages (DMs) - Excluded by default, can be enabled with `--no-dms` flag
@@ -547,7 +547,7 @@ The N² protocol synchronizes **45 event kinds** across all constellation member
 - **Kind 31900** - Cookie workflow definition
 - **Kind 31901** - Cookie workflow instance
 - **Kind 31902** - Cookie workflow completion
-- **Kind 10000** - Decentralized analytics
+- **Kind 10600** - Decentralized analytics
 
 ### N² Memory System (NIP-101 extension)
 - **Kind 31910** - N² Development Memory (AI recommendations, Captain TODOs, votes)
