@@ -117,6 +117,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-CC: Geocaching](CC.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
+- [NIP-F5: Relay-Set Communities](F5.md)
 
 ## Event Kinds
 
@@ -197,6 +198,14 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `9000`-`9030` | Group Control Events            | [29](29.md)                            |
 | `9041`        | Zap Goal                        | [75](75.md)                            |
 | `9321`        | Nutzap                          | [61](61.md)                            |
+| `9500`        | Community Grant                 | [F5](F5.md)                            |
+| `9501`        | Community Remove                | [F5](F5.md)                            |
+| `9502`        | Community Ban                   | [F5](F5.md)                            |
+| `9503`        | Community Unban                 | [F5](F5.md)                            |
+| `9510`        | Community Invite                | [F5](F5.md)                            |
+| `9511`        | Community Claim                 | [F5](F5.md)                            |
+| `9512`        | Community Leave                 | [F5](F5.md)                            |
+| `9513`        | Community Invite Revoke         | [F5](F5.md)                            |
 | `9734`        | Zap Request                     | [57](57.md)                            |
 | `9735`        | Zap                             | [57](57.md)                            |
 | `9802`        | Highlights                      | [84](84.md)                            |
@@ -288,6 +297,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `31989`       | Handler recommendation          | [89](89.md)                            |
 | `31990`       | Handler information             | [89](89.md)                            |
 | `32267`       | Software Application            |                                        |
+| `33500`       | Relay-Set Community Definition  | [F5](F5.md)                            |
 | `33534`       | Role Definition                 | [43](43.md)                            |
 | `34235`       | Addressable Video Event         | [71](71.md)                            |
 | `34236`       | Addressable Short Video Event   | [71](71.md)                            |
