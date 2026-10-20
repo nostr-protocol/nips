@@ -6,12 +6,18 @@ Feed Encryption
 
 `draft` `optional`
 
-This NIP defines a private social layer on nostr — private notes,
-replies, and explicit pairwise connections — built on the false-bottom
-envelope ([FB](FB.md)): a single event readable by many chosen
-recipients and linkable to none of them. Its goal application is a
-**private feed**: posting to a contact list without duplicating content
-per follower.
+This NIP defines **private generics**: two wrapper kinds that make any
+nostr event private. Kind `1370` (**private generic**) wraps any event
+and *establishes* its own security — slots deliver a fresh content key
+to each recipient. Kind `1470` (**related private generic**) wraps any
+event that relates to a `1370` — replies, reactions, revisions — and
+*inherits* its security and audience wholesale: encrypted under the
+parent's reply CEK, slotless. The contained event is any standard
+nostr kind; all content semantics live inside the wrapper.
+
+The motivating application is a **private feed** — posting to a contact
+list without duplicating content per follower — but nothing here is
+feed-specific; any nostr kind gets a private version for free.
 
 It depends on [NIP-59](59.md)'s rumor/seal *layering* idea (author-signed
 wrapper around an unsigned rumor), and on [FB](FB.md) for the envelope,
@@ -24,10 +30,16 @@ These private events are not identifiable by pubkeys tied to the creator/recieve
 
 | kind | description |
 |---|---|
-| `1370` | private note (top-level) |
-| `1470` | private reply |
+| `1370` | private generic — wraps any event, *establishes* security |
+| `1470` | related private generic — wraps any related event, *inherits* security |
 | `124` | author seal (nested; not published top-level) |
 | `30378` | connection record (parameterized, replaceable) |
+
+Kinds are **crypto roles**, not content types: `1370` establishes a
+fresh security context (slots deliver a new CEK), `1470` inherits an
+existing one (encrypted under the parent's reply CEK). Content typing
+lives in the rumor kind — a reply is a kind-1 rumor in a `1470`, a
+reaction is a kind-7 rumor in a `1470`.
 
 Kind numbers are the [BIP-39](https://github.com/bitcoin/bips/blob/master/bip-0039/bip-0039-wordlists.md) English indices of `private`, `response`, `author`, and `connect` — a mnemonic convention only.
 
@@ -53,7 +65,9 @@ Kind numbers are the [BIP-39](https://github.com/bitcoin/bips/blob/master/bip-00
   author's identity key.
 - `created_at` SHOULD be jittered into the past; the rumor inside
   carries the true timestamp.
-- Each `f` tag is an alias for one recipient, plus junk ([FB](FB.md) padding).
+- Each `f` tag is an alias for one recipient, plus junk ([FB](FB.md)
+  padding), plus the author's **self-alias** (see
+  [Author archive](#author-archive)).
 - `ct` decrypts (per the [FB](FB.md) reading algorithm) to a kind `124`
   **author seal**. The seal is nested inside `ct` — it is never
   published as a top-level relay event.
@@ -61,6 +75,10 @@ Kind numbers are the [BIP-39](https://github.com/bitcoin/bips/blob/master/bip-00
   (`["reply_cek", "<hex>"]`).
 - The author SHOULD include a slot addressed to themself, so notes can
   be re-read from any device.
+- Every private event carries exactly one `b` tag ([FB](FB.md) author
+  key tag): the burner secret key, sealed with the burner's own secret
+  key to the author's public key — so the author can delete the event
+  later ([Editing and deletion](#editing-and-deletion)).
 
 ```
 kind 1370 (burner-signed, alias tags, slots)
@@ -124,11 +142,13 @@ The layering provides:
 
 ## Discovery
 
-Clients query `{"#f": [alias(contact, me), …], "kinds": [1370]}`
+Clients query `{"#f": [alias(contact, me), …], "kinds": [1370, 1470]}`
 — exact results, standard pagination. That returns notes, chunks,
 revisions, and to-OP-only replies. All-viewers replies have no `f`
 tag; they are fetched with `{"#n": [note_id], "kinds": [1470]}` after
-the parent rumor yields the reply CEK. The alias list is derived once
+the parent rumor yields the reply CEK — replies, reactions, and
+revisions are all conversation events under the reply CEK, so the same
+query returns them regardless of connection state. The alias list is derived once
 per session from the user's key and their contacts' public keys.
 Author-pubkey queries are a degraded fallback (they return events the
 querier cannot open, and pagination cannot indicate completeness).
@@ -198,11 +218,12 @@ kind 1370                          kind 1470
   slot, addressed to the root author) carrying the pairwise alias tag.
   It SHOULD NOT carry the `n` tag; clients MAY include it to render
   "private reply" placeholders.
-- Every all-viewers reply at any depth tags the `note_id`, so one query
-  `{"#n": [note_id]}` returns the entire tree; parent references
-  (`e` tags) inside the rumors render the shape. Clients MUST paginate
+- Every all-viewers reply at any depth tags the `note_id`, and so does
+  every revision, so one query `{"#n": [note_id]}` returns the entire
+  conversation — replies and edits alike; parent references (`e` tags)
+  inside the rumors render the shape. Clients MUST paginate
   to an empty page to consider the top level complete.
-- Reactions are all-viewers replies whose rumor is a [NIP-25](25.md)-style event.
+- Reactions are all-viewers replies whose rumor is a [NIP-25](25.md)-style kind-7 event.
 - Reply CEKs never expire. Conversation membership is fixed at note
   creation; new members are admitted only by the author sending them
   the reply CEK in a one-off private note.
@@ -221,13 +242,13 @@ that slice:
   (plus junk)
 
 Chunks share **no** note-level public tag (`n`, `d`, or otherwise), so
-they are not query-linkable as one object. They remain grouped with
-other notes via each recipient's stable `f` alias — the continuity
-property already documented in [FB](FB.md). 6000 recipients ≈ 12
-events. A given recipient only needs the chunk that contains their
-slot.
+they are not query-linkable as one object and the publication size is
+not observable. They remain grouped with other notes via each
+recipient's stable `f` alias — the continuity property already
+documented in [FB](FB.md). 6000 recipients ≈ 12 events. A given
+recipient only needs the chunk that contains their slot.
 
-## Editing
+## Editing and deletion
 
 Kind `1370` is a regular event, not an addressable one. A public `d`
 tag would not make relays replace prior versions (that only happens
@@ -245,10 +266,19 @@ Thread identity lives **inside** the rumor, encrypted:
   wrapper event id (a burner id, useless as a stable handle). The
   original rumor omits this tag.
 
-Edits are **revision events**: a new kind `1370` (new burner, new note
-CEK, new slots), sealed by the same author, rumor carrying the same
-`reply_cek` plus `revision_of`. Append-only — no replaceable events,
-no retained signing keys.
+Edits are **revision events**: a single kind `1470` conversation event
+— slotless, under the note's reply CEK like any reply, tagged `n` —
+whose rumor carries the same `reply_cek` plus `revision_of`. One event
+covers the whole audience: the audience is **frozen at the original's**
+— every chunk recipient, including ex-connections, never post-hoc
+connections — because every holder already has the reply CEK. No
+slots, no aliases, no connection state are needed to edit, and holders
+receive the revision with the same `#n` query that returns replies.
+Authorization is **seal-matches-root**: each participant revises only
+their own words (the seal `pubkey` must equal the superseded rumor's
+author; anyone else's `revision_of` is just their own reply).
+Append-only — no replaceable events; the revision's own `b` tag
+retains its burner for deletion.
 
 Clients discover candidates the same way they discover notes (`#f`
 aliases), decrypt, and group by `reply_cek` + seal `pubkey`. They
@@ -265,6 +295,56 @@ Chunks vs revisions: chunks of one publication share a `reply_cek`
 re-encrypted). Revisions share a `reply_cek` but have a new rumor `id`
 and a `revision_of` tag.
 
+### Deletion
+
+[NIP-09](09.md) deletion is a kind `5` event signed by the deleted
+event's own key. For a private event that key is the burner, so every
+private event carries its burner key back to its author in a `b` tag
+([FB](FB.md) author key tag), sealed by the burner to the author:
+
+- To delete, the author re-reads their own event, opens its `b` tag
+  (KEK from their secret key and the event's public key), recovers
+  the burner secret key, and publishes a NIP-09 kind `5` signed by
+  the burner, referencing the wrapper event id. The deleting key is
+  the burner, so the deletion event links no identity to the note.
+- Exactly one `b` tag per event, identical in shape on kinds `1370`
+  and `1470`; its value is opaque and uncorrelatable, so carrying it
+  is not a signal.
+- Recovery is per-event and forward-only: without the event (and its
+  `b` tag) the burner key is gone. Deletion is relay-side only;
+  recipients' cached copies are not revoked, consistent with the
+  traitor non-goal.
+
+Connection records (kind `30378`) need no `b` tag — they are
+replaceable by construction and both parties already hold the
+connection key.
+
+## Author archive
+
+Every authored `1370` carries a **self-alias** — the me-me relationship
+in the same `f` tag format as every other alias:
+
+```
+self_alias = H(ECDH(sk, pk) ‖ "fb-alias-v1")
+```
+
+One query — `{"#f": [self_alias]}` — returns exactly the events the
+querier authored, complete history included (the tag lives on the
+events, surviving unfollows, deleted connection records, and relay
+moves; migration is verbatim republish, `b` tags intact). The tag is
+the *query handle*; the seal remains the *arbiter* — authored = tag
+match AND seal `pubkey` match, since tags are copyable onto fabricated
+or even genuine events. Everything is identity-derived: no
+device-local state backs the archive.
+
+Privacy: the self-alias is one `f` tag among each event's recipient
+and junk aliases — a coinjoin-style anonymity set; per event it is
+indistinguishable. Extracting it requires global co-occurrence
+analysis (a self-alias recurs within one corpus; a relationship alias
+spans two), yields only an anonymous corpus grouping, never an
+identity, and attribution still requires an external leak. Weaker than
+the per-relationship alias continuity already accepted.
+
 ## Connections (kind 30378)
 
 A connection is explicit mutual consent between two keys, recorded
@@ -279,8 +359,8 @@ replaceable:
   "created_at": 1790000500,
   "tags": [
     ["d", "<conn_addr>"],
-    ["c", "<graph_id of party A>"],
-    ["c", "<graph_id of party B>"]
+    ["c", "<derived_identity_id of party A>"],
+    ["c", "<derived_identity_id of party B>"]
   ],
   "content": "{\"v\":1,\"alg\":\"fb-ecdh-v1\",\"ct\":\"<base64>\",\"slots\":[\"<party A>\",\"<party B>\"]}",
   "id": "…",
@@ -297,8 +377,9 @@ with derivations (domain-separated from all [FB](FB.md) values):
   record updates; standard replaceability applies. The domain-separated
   hash means it cannot derive the alias, any conn_addr, or any CEK, and
   it signs nothing else in existence.
-- `graph_id = H(my_sk ‖ "fb-graph-v1")` — a per-user opaque identifier,
-  carried as a `c` tag.
+- `derived_identity_id = H(my_sk ‖ "fb-identity-v1")` — a per-identity
+  opaque identifier derived from the secret key alone (unlinkable to
+  the pubkey), carried as a `c` tag.
 
 The decrypted payload carries the minimum fields:
 
@@ -341,15 +422,15 @@ optimization, not a delivery mechanism.
 
 ### Enumeration
 
-`{"#c": [my graph_id]}` returns every record the querier has touched —
-their connections and outgoing requests. Incoming unanswered requests
-carry only the proposer's `c` tag, so a user's other devices learn
-nothing about requests they have not acted on. This is the fresh-device
-bootstrap: derive graph_id, one query, full graph.
+`{"#c": [my derived_identity_id]}` returns every record the querier has
+touched — their connections and outgoing requests. Incoming unanswered
+requests carry only the proposer's `c` tag, so a user's other devices
+learn nothing about requests they have not acted on. This is the
+fresh-device bootstrap: derive it, one query, full graph.
 
 ## Notifications
 
-Alias and graph_id derivation require the user's secret key (or a signer
+Alias and derived_identity_id derivation require the user's secret key (or a signer
 oracle), so notification setup MUST be initiated on-device; afterwards
 clients maintain subscriptions on alias tags and open note_ids. A push
 delegate service MAY operate with the derived tag list alone — it can
@@ -360,6 +441,57 @@ receives keys.
 
 None beyond [FB](FB.md)'s (which are none): all kinds and tags here are
 ordinary NIP-01 constructs.
+
+## Spam and abuse
+
+**Threat.** Anyone can copy an observed public tag value (`f` on
+`1370`s, `n` on `1470`s) onto fabricated events, which then match
+queries. This can never inject content — a fabricated event cannot
+decrypt under the CEK it claims, so fake replies, reactions, and
+revisions are cryptographically impossible. It can only waste reader
+CPU and bandwidth.
+
+**PoW floor.** The note's payload declares `pow_floor` (default ~20
+bits, app-tunable), governing every `1470` in that thread — replies,
+nested replies, reactions, and revisions are all flat thread members,
+so one declaration covers them. Clients verify [NIP-13](13.md) PoW
+before any crypto and discard sub-floor events; they MAY also enforce a
+global floor on `1370`s. Members MAY declare a higher floor inside
+their own `1470` payloads (advisory ratchet: clients adopt the max
+seen per thread); only the author's declaration is the baseline.
+Relays MAY enforce static floors at ingest; per-thread relay
+enforcement is impossible (floors are encrypted).
+
+Detection costs (order-of-magnitude, one core):
+
+| check | time |
+|---|---|
+| PoW verification (1 sha256 + bit count) | ~1 µs |
+| one AEAD attempt | ~1 µs |
+| ECDH derivation (reader KEK) | ~100 µs |
+| junk `1470`, total (copied `n`, no PoW) | ~2 µs |
+| junk `1370`, total (copied `f`, no PoW) | ~125 µs (1 ECDH + ~24 AEADs) |
+| any junk, with floor enforced | ~1 µs |
+
+Clients decrypt everything fetched — each junk event fails
+independently and nothing is crowded out; a global per-sync cap bounds
+CPU at pathological volume. [NIP-42](42.md) AUTH is admission plumbing,
+not spam defense for these kinds.
+
+## Hard rules
+
+Settled decisions; implementations MUST NOT deviate:
+
+1. **No replaceable events for notes or replies** — visible revision
+   history is permanent (respect for engagers).
+2. **No revision kind** — revisions are `1470` + `revision_of`; kinds
+   are crypto roles, content typing lives in rumor kinds.
+3. **No identifier shared across chunks**, ever.
+4. **Two-tools rule** ([FB](FB.md)): slots are unqueryable, tags are
+   groupable — nothing is both.
+5. **No queryable inbound connection inbox.**
+6. **Everything identity-derived** — no device-local state for the
+   archive.
 
 ## Security and privacy considerations
 
@@ -379,7 +511,8 @@ NIP-59's rumor/seal split provides.
 
 ## Open questions
 
-- Final confirmation of kind numbers against the registry of kinds.
+- Final confirmation of kind numbers against the registry of kinds, and
+  of the single-character tag letters `f`/`k`/`n`/`c`.
 - Recommended chunk size; reader bandwidth on first fetch of a chunked note.
 - Canonical JSON and byte-level pinning for the connection payload
   signature base.
