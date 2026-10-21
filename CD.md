@@ -1,4 +1,4 @@
-NIP-XX
+NIP-CD
 ======
 
 Commands
