@@ -77,7 +77,8 @@ A user who wants to receive Ark zaps publishes a replaceable event of kind `1074
 
 - `ark` (one or more): `["ark", "<ark address>", "<ark server pubkey>", "<ark server url>"]`.
   - The address MUST commit to the server key, as described under [Terms](#terms).
-  - The server key is REQUIRED. It is the value an [NWC](47.md) wallet reports as `get_info.ark.server_pubkey`.
+  - The server key is REQUIRED. It is the key the address commits to. An NWC wallet reports it as
+    `details.ark_server_pubkey` in an `ark` payment record.
   - The server URL is OPTIONAL. Clients MAY show it, for example to tell a sender which Ark server to join.
   - A user with wallets on several Ark servers lists one `ark` tag per server. A user SHOULD NOT list more than one
     `ark` tag for the same server.
@@ -220,7 +221,8 @@ settled total is below the zap's `amount`, the receipt shows the lower amount.
 ## Sending an Ark zap
 
 1. Fetch the recipient's `kind:10740`. If there is none, or none of its `ark` tags is for the sender's Ark server,
-   use the [fallback](#fallback).
+   use the [fallback](#fallback). A client that does not know its wallet's Ark server can let the wallet decide
+   (see [With Nostr Wallet Connect](#with-nostr-wallet-connect)).
 2. Pick the `ark` tag whose server key is the sender wallet's Ark server. Check that the address is valid for the
    wallet's network and commits to that key. If it does not, do not pay it.
 3. Pay the address with an off-chain Ark payment, for the amount the recipient should receive.
@@ -239,19 +241,29 @@ payment and a separate `kind:9740` to each recipient that it can reach over Ark,
 
 ### With Nostr Wallet Connect
 
-With the [NWC Ark Payments](https://github.com/nostr-wallet-connect/nwc/pull/11) extension:
+With [NWC-321](https://github.com/nostr-wallet-connect/nwc/blob/main/321.md) `pay` and the
+[NWC Ark Payments](https://github.com/nostr-wallet-connect/nwc/pull/11) extension, the wallet chooses the Ark
+server match:
 
-1. `get_info`: `methods` includes `pay_ark_address` and `lookup_payment`, and `ark.server_pubkey` is the wallet's
-   Ark server. Compare it with the server keys in the recipient's `kind:10740`.
-2. `pay_ark_address` with the `address`, `amount` in millisatoshis, and a random `idempotency_key`. A retry with the
-   same key never pays twice.
-3. If the state is `pending`, poll `lookup_payment` with `{"payment_type": "ark", "lookup": {"idempotency_key": ...}}`
-   until it is `settled`.
-4. Read `details.vtxos` from the settled `lookup_payment` record. These are the outpoints for the payment
-   reference.
+1. Build a BIP-321 URI with one Ark instruction for each `ark` tag in the recipient's `kind:10740`. The key is the
+   address's human-readable part, so `ark=` on mainnet and `tark=` on test networks. For example:
+   `bitcoin:?ark=ark1pwh9vsmez...&ark=ark1qzpq904am6...`. Do not add a Lightning instruction, because a Lightning
+   zap needs a NIP-57 zap request (see [Fallback](#fallback)).
+2. Call `pay` with the URI and `amount` in millisatoshis. The wallet pays only an Ark address on its own Ark server.
+   If none matches, it returns `UNSUPPORTED_PAYMENT_INSTRUCTION` without paying, and the client uses the fallback.
+3. If the state is `pending`, poll `lookup_payment` with the returned `transaction_id` until it is `settled`.
+4. Read the settled record's `details` (`payment_type: "ark"`):
+   - `address` says which `ark` tag was paid.
+   - `ark_server_pubkey` goes in the zap's `ark-server` tag.
+   - `vtxos` gives the outpoints for the payment reference.
+
+An Ark payment cannot be deduplicated. Before retrying a `pay` request whose response was lost, the client SHOULD
+check `lookup_payment` with `{"payment_type": "ark", "lookup": {"address": "..."}}` or `list_transactions`.
 
 On the recipient's side, a client or service with an NWC connection receives `payment_received` notifications with
-`payment_type: "ark"`, and uses `details.vtxos` and `details.address` to match Ark zaps.
+`payment_type: "ark"`. It can also confirm each VTXO listed in an Ark zap with `lookup_payment` and
+`{"payment_type": "ark", "lookup": {"vtxo": "<txid>:<vout>"}}`. The match must be an incoming, settled record whose
+`details.address` is the zap's `address`.
 
 ## Fallback
 
@@ -317,8 +329,9 @@ totals. They MAY show it separately as pending, for example to the sender while 
 - [NIP-61](61.md): the same recipient opt-in (a replaceable info event listing accepted servers, like `kind:10019`
   lists mints) and a sender-published event. NIP-61 tokens can be checked offline. Ark payments cannot, so this NIP
   adds a receipt.
-- [NWC Ark Payments](https://github.com/nostr-wallet-connect/nwc/pull/11): `get_info.ark.server_pubkey`,
-  `pay_ark_address` with `idempotency_key`, `lookup_payment` `details.vtxos`, and the same meaning of "settled".
+- [NWC Ark Payments](https://github.com/nostr-wallet-connect/nwc/pull/11): the `ark` instruction for NWC-321
+  `pay`, the `ark` payment type's `details` (`address`, `ark_server_pubkey`, `vtxos`), the `vtxo` lookup selector,
+  and the same meaning of "settled".
 - [Blossom BUD-07 `X-Ark`](https://github.com/hzrd149/blossom/pull/116): the same Ark server key and address checks.
   In BUD-07, the payee issues a fresh address for each request and verifies the payment in its own wallet. In an
   Ark zap, the recipient also verifies the payment in its own wallet, but finds it by VTXO outpoint, because an
