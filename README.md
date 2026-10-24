@@ -200,6 +200,8 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `9321`        | Nutzap                          | [61](61.md)                            |
 | `9734`        | Zap Request                     | [57](57.md)                            |
 | `9735`        | Zap                             | [57](57.md)                            |
+| `9740`        | BIP-321 Zap                     | [XX](XX.md)                            |
+| `9741`        | BIP-321 Zap Receipt             | [XX](XX.md)                            |
 | `9802`        | Highlights                      | [84](84.md)                            |
 | `10000`       | Mute list                       | [51](51.md)                            |
 | `10001`       | Pin list                        | [51](51.md)                            |
