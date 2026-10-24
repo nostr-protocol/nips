@@ -131,7 +131,7 @@ A `d` names a credential only if it is exactly the unpadded base64url of its ID 
 
 ### Choosing a record
 
-The candidates are the passkey's `largeBlob`, if it starts with `4e504b01`, and the eligible events: kind `31778`, a valid signature, `pubkey` = the author and a `d` naming this credential. Readers MUST skip events with a `v` tag. An event's record opens only if its type byte (offset 4) is the type named in its `d`.
+The candidates are records from files explicitly selected by the user, the passkey's `largeBlob` if it starts with `4e504b01`, and the eligible events: kind `31778`, a valid signature, `pubkey` = the author and a `d` naming this credential. Readers MUST skip events with a `v` tag. An event's record opens only if its type byte (offset 4) is the type named in its `d`.
 
 - **`key`**: any candidate that opens will do, since `key` records never change. One that fails is reported and skipped.
 - **`vault`**: selection and precedence are defined by [NIP-YY](YY.md#choosing-a-record). Core-only clients skip this type.
@@ -147,9 +147,9 @@ extensions:              { prf: { eval: { first: <prf_input> } }, largeBlob: { s
 excludeCredentials:      the author's stored passkeys, below
 ```
 
-`largeBlob` and `excludeCredentials` are for stored mode only. Creation fails if `prf.enabled` is `false`, or if there are no `prf.results` and one assertion on the new credential with the same input returns none either (some providers evaluate the PRF only on assertion). The client then tells the user to delete the unusable passkey. A stored-mode client encrypts the secret and saves the record, writing the `largeBlob` with `largeBlob: { write: <record> }` in an assertion.
+`largeBlob` and `excludeCredentials` are for stored mode only. Creation fails if `prf.enabled` is `false`, or if there are no `prf.results` and one assertion on the new credential with the same input returns none either (some providers evaluate the PRF only on assertion). The client then tells the user to delete the unusable passkey. A stored-mode client encrypts the secret and saves the record to at least one supported location chosen by the user. When using `largeBlob`, it writes with `largeBlob: { write: <record> }` in an assertion; clients without that extension use a relay or file.
 
-All of an author's stored passkeys under one relying party have the same handle, and a provider may replace a passkey when another with that handle is created. The replaced passkey's `largeBlob` and PRF secret are lost, and its records can no longer be opened. Before creating a stored passkey, a client MUST therefore query the author's kind `31778` events and put in `excludeCredentials` every credential ID named in the `d` of a validly signed event, and those it already knows. If there are any, it SHOULD offer to sign in with one first, so that the stored identity carries over. A client SHOULD ask the user to keep an identity's further passkeys in different providers or authenticators.
+All of an author's stored passkeys under one relying party have the same handle, and a provider may replace a passkey when another with that handle is created. The replaced passkey's `largeBlob` and PRF secret are lost, and its records can no longer be opened. Before creating a stored passkey, a client MUST therefore query the author's kind `31778` events and put in `excludeCredentials` every credential ID named in the `d` of a validly signed event, and those it already knows. If there are any, it SHOULD offer to sign in with one first, so that the stored identity carries over. This query cannot discover file-only or blob-only credentials, or records on unavailable relays. It MUST NOT be treated as proof that creation cannot replace a credential. Before creating another stored passkey for an existing identity, the client MUST require a recovery copy verified independently of the credential that may be replaced, covering all keys, seed material and other vault data the user intends to preserve, and explain that replacing a credential can destroy any unbacked contents. A copy of the author key alone does not preserve other vault accounts. A client SHOULD ask the user to keep an identity's further passkeys in different providers or authenticators.
 
 ## Signing in
 
@@ -169,13 +169,11 @@ Each assertion targets one RP ID. A host may remember an explicitly chosen sourc
 
 ## Unknown handles
 
-For an unknown handle, in order:
+An unknown handle does not identify a derivation or storage format. A client MUST NOT try its default derivation and present the result as a recovered account, or infer direct mode from missing metadata, an empty `largeBlob` or a failed relay lookup. A non-empty unrecognized `largeBlob` is unknown application data, not proof of a particular key format.
 
-1. If the client's own deployment created every untagged passkey under this relying party ID in derived mode, and its `/.well-known/webauthn`, `apple-app-site-association` and `assetlinks.json` name only that deployment's apps, the client MAY treat the passkey as derived with the deployment's parameter set, which keeps existing deployments working. A browser extension with host permission for the domain does not count against this condition.
-2. Otherwise, a non-empty `largeBlob` means that another app uses the passkey in stored mode: the client MUST NOT derive a key, and tells the user it cannot read this passkey.
-3. Otherwise the client MAY refuse. If it does not, it computes the key of the parameter set it uses for new derived passkeys under this relying party (`01` if none), shows its npub and asks whether it is the user's account. It MUST NOT use the key without that confirmation, and SHOULD then remember the credential ID as derived with that parameter set.
+A legacy reader MAY recover an unknown handle only with an explicitly identified legacy format and the original account metadata or an independently known expected public key. It MUST use that format's original PRF inputs and algorithms, check the RP and selected credential, and verify the recovered public key before use. Otherwise it offers recovery of the original metadata or signing through the original provider; creating a new identity is a separate, explicit action. Clients implementing only one mode follow this rule too.
 
-A relay event naming an unknown passkey's credential cannot open and proves nothing. It MUST NOT lock the user out, though the client MAY mention it when it asks. Clients that implement one mode only follow this section too.
+A relay event merely naming an unknown credential does not establish its format or expected identity and MUST NOT authorize derivation or lock the user out.
 
 ## Existing deployments (informative)
 
