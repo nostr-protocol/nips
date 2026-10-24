@@ -200,8 +200,8 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `9321`        | Nutzap                          | [61](61.md)                            |
 | `9734`        | Zap Request                     | [57](57.md)                            |
 | `9735`        | Zap                             | [57](57.md)                            |
-| `9740`        | Ark Zap                         | [XX](XX.md)                            |
-| `9741`        | Ark Zap Receipt                 | [XX](XX.md)                            |
+| `9740`        | BIP-321 Zap                     | [XX](XX.md)                            |
+| `9741`        | BIP-321 Zap Receipt             | [XX](XX.md)                            |
 | `9802`        | Highlights                      | [84](84.md)                            |
 | `10000`       | Mute list                       | [51](51.md)                            |
 | `10001`       | Pin list                        | [51](51.md)                            |
@@ -232,7 +232,6 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `10154`       | Podcast Metadata                | [F4](F4.md)                            |
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
 | `10312`       | Room Presence                   | [53](53.md)                            |
-| `10740`       | Ark Zap Info                    | [XX](XX.md)                            |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `13534`       | Membership Lists                | [43](43.md)                            |
 | `5128`        | nsite manifest snapshot         | [5A](5A.md)                            |
