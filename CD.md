@@ -1,22 +1,22 @@
 NIP-CD
 ======
 
-Commands
---------
+Slash Commands
+--------------
 
 `draft` `optional`
 
-A command is an interface published by a service, invoked as plain text in the content of any event. Invocations carry no tags and require no client support.
+A slash command is an interface published by a service, invoked as plain text in the content of any event. Invocations carry no tags and require no client support.
 
-## Command definition
+## Slash command definition
 
-A kind `31992` event defines a command using the following tags:
+A kind `31992` event defines a slash command using the following tags:
 
 - `command` - the trigger, without a leading slash. Required.
 - `title` - short human-readable name. Required.
 - `description` - usage, including any reply or context conventions. Required.
 - `arg` - one argument. Ordered.
-- `s` - a `scope` (defined below) indicating what events trigger this command.
+- `s` - a `scope` (defined below) indicating what events trigger this slash command.
 
 An `arg` tag is `["arg", <name>, <type>, "required" | "optional", <label>, <choice>...]`. `<choice>` elements apply to type `enum` only.
 
@@ -60,7 +60,7 @@ Invocations appear in the `content` of any event and carry no tags.
 
 - An invocation MUST begin at index `0` of `content`.
 - `<pubkey>` is `npub1…`, and terminates at the end of the bech32 character set.
-- Without `<pubkey>`, the invocation targets every command whose `command` tag matches and whose scope includes the event, which may result in multiple invocations across different executors.
+- Without `<pubkey>`, the invocation targets every slash command whose `command` tag matches and whose scope includes the event, which may result in multiple invocations across different executors.
 - Arguments are separated by whitespace. A `text` argument consumes the remainder of `content` verbatim, including whitespace and newlines.
 
 ```
@@ -93,9 +93,22 @@ Clients MAY offer autocomplete for definitions in scope, insert arguments throug
 
 A client MUST NOT require its own support to send an invocation, and MUST send content that fails to parse as ordinary text.
 
-## Command discovery
+## Installed slash commands
 
-Commands should be published to relays where they can be discovered by the relevant users:
+Users MAY keep a kind `10992` [NIP-51](51.md) list of `a` tags pointing to the definitions they want available. Clients SHOULD use it as the source for autocomplete and for rendering invocations as chips, and MAY offer to add or remove a definition from it wherever one is displayed.
 
-- For commands related to relays-as-groups or nip29 groups, command definitions and invocations should be published to the group relay
-- For commands related to broadcast social media use cases, command definitions should be published to executor outboxes and optionally command-specific indexing relays, while command invocations should be published to executor inboxes.
+```json
+{
+  "kind": 10992,
+  "tags": [
+    ["a", "31992:<executor-pubkey>:8f2c1a", "wss://relay.example"]
+  ]
+}
+```
+
+## Slash command discovery
+
+Slash commands should be published to relays where they can be discovered by the relevant users:
+
+- For slash commands related to relays-as-groups or nip29 groups, slash command definitions and invocations should be published to the group relay
+- For slash commands related to broadcast social media use cases, slash command definitions should be published to executor outboxes and optionally slash-command-specific indexing relays, while slash command invocations should be published to executor inboxes.

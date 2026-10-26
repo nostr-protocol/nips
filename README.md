@@ -230,6 +230,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `10154`       | Podcast Metadata                | [F4](F4.md)                            |
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
 | `10312`       | Room Presence                   | [53](53.md)                            |
+| `10992`       | Installed slash commands        | [51](51.md), [CD](CD.md)               |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `13534`       | Membership Lists                | [43](43.md)                            |
 | `5128`        | nsite manifest snapshot         | [5A](5A.md)                            |
@@ -288,6 +289,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `31925`       | Calendar Event RSVP             | [52](52.md)                            |
 | `31989`       | Handler recommendation          | [89](89.md)                            |
 | `31990`       | Handler information             | [89](89.md)                            |
+| `31992`       | Slash command definition        | [CD](CD.md)                            |
 | `32267`       | Software Application            |                                        |
 | `33534`       | Role Definition                 | [43](43.md)                            |
 | `34235`       | Addressable Video Event         | [71](71.md)                            |
