@@ -93,6 +93,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-75: Zap Goals](75.md)
 - [NIP-77: Negentropy Syncing](77.md)
 - [NIP-78: Application-specific data](78.md)
+- [NIP-82: Software Applications](82.md)
 - [NIP-7D: Forum Threads](7D.md)
 - [NIP-84: Highlights](84.md)
 - [NIP-85: Trusted Assertions](85.md)
@@ -187,6 +188,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `2003`        | Torrent                         | [35](35.md)                            |
 | `2004`        | Torrent Comment                 | [35](35.md)                            |
 | `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
+| `3063`        | Software Asset                  | [82](82.md)                            |
 | `4550`        | Community Post Approval         | [72](72.md)                            |
 | `7374`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
 | `7375`        | Cashu Wallet Tokens             | [60](60.md)                            |
@@ -225,6 +227,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `10054`       | Favorite podcasts list          | [51](51.md)                            |
 | `10063`       | User server list                | [B7](B7.md)                            |
 | `10064`       | Authored podcasts list          | [51](51.md)                            |
+| `10067`       | App catalog relays              | [82](82.md)                            |
 | `10096`       | File storage server list        | [96](96.md) (deprecated)               |
 | `10133`       | Payment Targets                 | [A3](A3.md)                            |
 | `10154`       | Podcast Metadata                | [F4](F4.md)                            |
@@ -264,10 +267,10 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `30030`       | Emoji sets                      | [51](51.md)                            |
 | `30040`       | Curated Publication Index       | [NKBIP-01]                             |
 | `30041`       | Curated Publication Content     | [NKBIP-01]                             |
-| `30063`       | Release artifact sets           | [51](51.md)                            |
+| `30063`       | Software Release                | [82](82.md)                            |
 | `30078`       | Application-specific Data       | [78](78.md)                            |
 | `30166`       | Relay Discovery                 | [66](66.md)                            |
-| `30267`       | App curation sets               | [51](51.md)                            |
+| `30267`       | App curation sets               | [51](51.md), [82](82.md)               |
 | `30311`       | Live Event                      | [53](53.md)                            |
 | `30312`       | Interactive Room                | [53](53.md)                            |
 | `30313`       | Conference Event                | [53](53.md)                            |
@@ -277,6 +280,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `30384`       | Addressable Trusted Assertion   | [85](85.md)                            |
 | `30402`       | Classified Listing              | [99](99.md)                            |
 | `30403`       | Draft Classified Listing        | [99](99.md)                            |
+| `30509`       | Identity proof                  | [82](82.md)                            |
 | `30617`       | Repository announcements        | [34](34.md)                            |
 | `30618`       | Repository state announcements  | [34](34.md)                            |
 | `30818`       | Wiki article                    | [54](54.md)                            |
@@ -288,7 +292,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `31925`       | Calendar Event RSVP             | [52](52.md)                            |
 | `31989`       | Handler recommendation          | [89](89.md)                            |
 | `31990`       | Handler information             | [89](89.md)                            |
-| `32267`       | Software Application            |                                        |
+| `32267`       | Software Application            | [82](82.md)                            |
 | `33534`       | Role Definition                 | [43](43.md)                            |
 | `34235`       | Addressable Video Event         | [71](71.md)                            |
 | `34236`       | Addressable Short Video Event   | [71](71.md)                            |
