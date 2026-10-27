@@ -10,45 +10,25 @@ DNS Delegation for NIP-05
 
 This NIP defines an optional DNS-based delegation mechanism for [NIP-05](05.md).
 
-It allows the operator of a domain to designate a separate HTTPS service as authoritative for NIP-05 lookups without requiring that service to control or modify the domain's primary web server.
+It allows the operator of a domain to designate a separate HTTPS service for NIP-05 lookups when the original domain's endpoint returns HTTP 404 Not Found or HTTP 410 Gone.
 
 The mechanism does not replace NIP-05, does not store Nostr identities in DNS, and does not change the NIP-05 response format.
 
 DNS is used only to discover the HTTPS endpoint responsible for NIP-05 resolution.
 
-After a successful DNS lookup establishes that no applicable delegation record exists, clients use ordinary NIP-05 resolution. DNS lookup failures are not evidence that delegation is absent.
+Clients attempt ordinary NIP-05 resolution first. Only a 404 or 410 response triggers DNS delegation discovery; other failures do not.
 
 ## Motivation
 
-NIP-05 identifiers intentionally resemble Internet email identifiers:
-
-```
-<local-part>@<domain>
-```
-
-NIP-05 currently resolves such an identifier by requesting:
+NIP-05 resolves `<local-part>@<domain>` by requesting:
 
 ```
 https://<domain>/.well-known/nostr.json?name=<local-part>
 ```
 
-This couples control of NIP-05 identity resolution to control of the web service operating at the domain.
+Organizations commonly use separate providers for web, email, and identity services. Requiring NIP-05 to be served by the domain's web infrastructure makes it difficult for an independent Nostr identity provider to serve identifiers under that domain.
 
-For personal domains this may be acceptable. For organizations it is common for different services associated with the same domain to be operated by different providers.
-
-For example:
-
-- `www.example.com` may be operated by a web hosting provider;
-- email for `example.com` may be operated by a mail provider;
-- Nostr identity services may be operated by a Nostr provider.
-
-Internet email solves the analogous problem using DNS delegation: a domain remains the user-visible namespace while DNS identifies the infrastructure responsible for providing the service.
-
-NIP-05 currently lacks such an abstraction.
-
-This creates particular difficulty for organizations wishing to issue NIP-05 identifiers matching existing email addresses without giving their Nostr identity provider control over their web infrastructure.
-
-This NIP adds that missing delegation layer.
+This NIP adds DNS-based service delegation when the original endpoint reports that the requested resource is absent.
 
 ## Design Principles
 
@@ -59,7 +39,7 @@ The mechanism defined here follows several principles:
 3. One DNS record delegates NIP-05 service for an entire domain.
 4. The delegated server returns the existing NIP-05 JSON format.
 5. Providers may serve NIP-05 for many independent domains.
-6. Successful DNS lookups establishing absence of delegation lead to ordinary NIP-05 resolution.
+6. Ordinary NIP-05 takes precedence; only HTTP 404 or 410 triggers DNS delegation discovery.
 7. DNSSEC can authenticate the delegation independently of the domain's web infrastructure.
 
 ## DNS Record
@@ -125,17 +105,31 @@ The local part MUST satisfy NIP-05's `a-z0-9-_.` restriction, including its `_` 
 
 ## Resolution
 
-When resolving:
+### Ordinary NIP-05 first
+
+A client using this extension MUST first attempt ordinary NIP-05 resolution. For `bob@example.com`, it requests:
 
 ```
-bob@example.com
+https://example.com/.well-known/nostr.json?name=bob
 ```
 
-a client using this extension MUST first query:
+If ordinary NIP-05 succeeds, the client MUST use that result and MUST NOT query `_nip05` for this lookup.
+
+An HTTP 404 Not Found or HTTP 410 Gone response from this original HTTPS endpoint MUST trigger DNS delegation discovery; no other status may do so. Clients MUST perform normal TLS certificate validation for the original domain and MUST NOT follow redirects. The trigger is the HTTP status, not the content of an error page.
+
+For this extension, 404 and 410 signal absence of the requested NIP-05 resource. A 410 can explicitly signal removal of a previously served resource, including during migration to delegation. The signal applies to the requested URI, including its `name` parameter; it does not prove that the domain serves no other names.
+
+Timeouts, connection or TLS failures, HTTP 5xx, HTTP 401/403, redirects, malformed JSON, a missing requested name in valid NIP-05 JSON, public-key mismatches, and other NIP-05 validation failures MUST NOT trigger DNS discovery. Any response status other than 404 or 410 MUST NOT trigger DNS discovery. Existing NIP-05 validation rules continue to determine whether ordinary resolution succeeds.
+
+### DNS discovery after 404 or 410
+
+After receiving 404 or 410 from the original endpoint, the client MUST query:
 
 ```
 _nip05.example.com TXT
 ```
+
+The query always uses the original identifier's domain. Record selection, DNSSEC, alias handling, and resource limits follow the rules in this NIP.
 
 ### Delegated resolution
 
@@ -180,29 +174,24 @@ All existing NIP-05 validation rules continue to apply, including matching the r
 
 Providers serving multiple domains MUST select mappings using the `domain` parameter and MUST NOT substitute another customer's namespace or a default namespace for an unknown domain.
 
-### Fallback
+### Failure handling
 
-Clients MUST use normal NIP-05 resolution only after a completed DNS lookup establishes that no applicable record exists. This includes NXDOMAIN, NOERROR with no TXT records (NODATA), and a TXT RRset with no applicable version marker, subject to the DNSSEC rules below:
+If a completed DNS lookup establishes that no applicable record exists, the overall lookup fails: the original endpoint has already returned 404 or 410 and there is no delegated alternative. This includes NXDOMAIN, NOERROR with no TXT records (NODATA), and a TXT RRset with no applicable version marker, subject to DNSSEC validation.
 
-```
-https://<domain>/.well-known/nostr.json?name=<local-part>
-```
+Invalid or ambiguous delegation, DNSSEC validation failures, SERVFAIL, REFUSED, timeouts, incomplete responses, and other DNS resolution errors MUST fail the lookup. They MUST NOT be interpreted as absence. Retrying DNS resolution is permitted; returning to the original HTTPS endpoint as a fallback is not.
 
-Clients MUST NOT fall back after discovering an invalid or ambiguous delegation, a DNSSEC validation failure, SERVFAIL, REFUSED, a timeout, an incomplete response, or another DNS resolution error. These conditions fail the lookup. Retrying the DNS lookup is permitted; treating an error as absence is not.
-
-Once a valid delegation is discovered, failure of the delegated service MUST NOT trigger fallback. This includes target address resolution errors, connection or TLS errors, HTTP errors or redirects, timeouts, and invalid NIP-05 responses.
+Once a valid delegation is discovered, failure of the delegated service MUST fail the lookup without returning to the original endpoint or attempting further delegation. This includes target address resolution errors, connection or TLS errors, HTTP errors (including 404 and 410), redirects, timeouts, and invalid NIP-05 responses.
 
 | Lookup result | Required behavior |
 | --- | --- |
-| Completed lookup with no applicable record, including NXDOMAIN or NODATA | Ordinary NIP-05 resolution, subject to DNSSEC validation |
-| Exactly one applicable, valid record | Use the delegated HTTPS endpoint |
-| One malformed applicable record, or multiple applicable records | Fail; no fallback |
-| DNSSEC validation failure or DNS resolution error | Fail; no fallback |
-| Delegated HTTPS request or NIP-05 validation fails | Fail; no fallback |
-
-A domain without delegation therefore retains ordinary NIP-05 resolution when DNS successfully establishes its absence. A temporary DNS failure can prevent resolution for clients using this extension even if the original HTTPS endpoint remains available.
-
-A client that does not implement this NIP will likewise continue using existing NIP-05 resolution.
+| Ordinary NIP-05 succeeds | Use its result; do not query `_nip05` |
+| Original endpoint returns HTTP 404 or 410 | Query `_nip05.<domain>` |
+| Ordinary NIP-05 otherwise fails | Fail; do not query `_nip05` |
+| DNS finds exactly one applicable, valid delegation | Use the delegated HTTPS endpoint |
+| DNS successfully finds no applicable delegation | Fail |
+| DNS delegation is malformed or ambiguous | Fail |
+| DNS resolution or DNSSEC validation fails | Fail |
+| Delegated HTTPS request or NIP-05 validation fails | Fail; do not return to the original endpoint |
 
 ## Multiple Records
 
@@ -224,7 +213,7 @@ Clients MUST NOT fall back to ordinary NIP-05 resolution when delegation is inva
 
 Clients MUST use normal DNS alias resolution for CNAME and DNAME responses when querying `_nip05.<domain>`. Record selection applies to the final TXT RRset. Alias loops, resolution errors, or exceeded resource limits fail the lookup without fallback.
 
-DNSSEC validation, when performed, MUST cover the alias chain as well as the final answer or denial of existence. An alias MUST NOT change the original domain used in the HTTPS `domain` parameter or the ordinary NIP-05 fallback URL.
+DNSSEC validation, when performed, MUST cover the alias chain as well as the final answer or denial of existence. An alias MUST NOT change the original domain used in the HTTPS `domain` parameter or the identity being resolved.
 
 ## DNSSEC
 
@@ -244,27 +233,23 @@ DNSSEC is recommended, not required by this NIP. Clients MAY accept insecure (un
 
 DNSSEC authenticates the delegation. HTTPS authenticates and protects communication with the delegated service.
 
-Without authenticated DNS, an attacker able to forge a DNS answer can substitute a target hostname they control and obtain a valid TLS certificate for that hostname. Successful HTTPS authentication of that target does not prove authorization by the original domain. An attacker may also forge the absence of a delegation and induce ordinary NIP-05 fallback. The strict failure rules prevent fallback on detected errors; they cannot prevent these attacks on unauthenticated answers.
+After the original endpoint returns 404 or 410, an attacker able to forge an unauthenticated DNS answer can substitute a target hostname they control and obtain a valid TLS certificate for that hostname. Successful HTTPS authentication of that target does not prove authorization by the original domain. Forging the absence of a delegation can instead cause the lookup to fail. These attacks do not override a successful ordinary NIP-05 lookup, which does not consult `_nip05`.
 
 ## Web Clients and DNS-over-HTTPS
 
-Browser-based applications may not have access to the operating system's DNS resolver.
+Browser clients do not need DNS access for successful ordinary NIP-05 lookups. Only clients implementing this extension, after observing HTTP 404 or 410 from the original endpoint, need to query `_nip05.<domain>`. Browser JavaScript MAY use DNS-over-HTTPS for that lookup.
 
-Such clients MAY query `_nip05.<domain>` using DNS-over-HTTPS.
+A client using a third-party DNS-over-HTTPS resolver should be aware that this exposes the queried domain to that resolver. DNS-over-HTTPS protects communication with the chosen resolver; it does not itself prove that the resolver validates DNSSEC or that a response is DNSSEC-authenticated. The resolver API must expose DNS response status and, when relying on resolver validation, authentication state. A transport or API failure MUST NOT be interpreted as an empty TXT answer.
 
-A client using a third-party DNS-over-HTTPS resolver should be aware that this exposes the queried domain to that resolver.
+The original endpoint's 404 or 410 response must be readable under browser CORS rules for JavaScript to observe the fallback signal. Operators supporting browser clients SHOULD include `Access-Control-Allow-Origin: *` on those responses. A CORS failure or opaque response MUST NOT be interpreted as 404 or 410 and MUST NOT trigger DNS discovery.
 
-Implementations unable or unwilling to perform DNS lookups MAY continue using ordinary NIP-05 resolution without enabling this extension. Once a lookup uses this extension, its error and fallback rules apply; a failed DNS lookup MUST NOT be treated as a reason to switch to ordinary NIP-05 resolution.
+Delegated endpoints SHOULD likewise serve `Access-Control-Allow-Origin: *`, as described by NIP-05. A CORS failure at the delegated endpoint fails the lookup.
 
-DNS-over-HTTPS protects communication with the chosen resolver; it does not itself prove that the resolver validates DNSSEC or that a response is DNSSEC-authenticated. Browser clients need a resolver API that exposes DNS response status and, when relying on resolver validation, authentication state. A transport or API failure MUST NOT be interpreted as an empty TXT answer.
-
-Delegated endpoints SHOULD serve `Access-Control-Allow-Origin: *`, as described by NIP-05, so browser clients can read their responses. A browser CORS failure is a failed delegated request and MUST NOT trigger fallback.
-
-This NIP is therefore an optional extension and does not make DNS resolution a requirement for all Nostr clients.
+Implementations unable or unwilling to perform DNS lookups MAY continue using ordinary NIP-05 without enabling this extension.
 
 ## Security Considerations
 
-### Delegation is authoritative
+### Authority and delegation
 
 Publishing:
 
@@ -272,9 +257,9 @@ Publishing:
 _nip05.example.com. TXT "v=nip05-1; target=nip05.provider.example"
 ```
 
-authorizes `nip05.provider.example` to return NIP-05 mappings for `example.com`.
+authorizes `nip05.provider.example` to return NIP-05 mappings for `example.com` after the original endpoint returns 404 or 410. It does not override a successful ordinary NIP-05 response.
 
-Compromise of the DNS control plane can therefore result in compromise of NIP-05 mappings.
+Compromise of the DNS control plane can therefore compromise mappings obtained through delegation. Control of the original HTTPS endpoint still allows its operator to serve mappings that take precedence; DNSSEC does not remove that authority.
 
 Domains SHOULD use DNSSEC and protect access to DNS management accordingly.
 
@@ -288,7 +273,7 @@ DNS delegation does not replace HTTPS authentication.
 
 ### Redirects
 
-As required by NIP-05, delegated endpoints MUST NOT return HTTP redirects, and clients MUST NOT follow them. A redirect fails the lookup without fallback.
+As required by NIP-05, both the original and delegated endpoints MUST NOT return HTTP redirects, and clients MUST NOT follow them. A redirect from the original endpoint MUST NOT trigger DNS discovery; a redirect from the delegated endpoint fails the lookup.
 
 This NIP does not change NIP-05 redirect semantics.
 
@@ -312,15 +297,13 @@ It does not imply that the delegated provider, returned Nostr identity, or assoc
 
 ### Existing NIP-05 domain
 
-A completed DNS lookup establishes that no applicable delegation record exists.
-
-Client requests:
+Client first requests:
 
 ```
 https://example.com/.well-known/nostr.json?name=bob
 ```
 
-No behavior changes.
+The response satisfies NIP-05. The client uses it without querying `_nip05`, regardless of whether a delegation record exists.
 
 ### Delegated organizational domain
 
@@ -336,7 +319,7 @@ Identifier:
 alice@example.org
 ```
 
-Client requests:
+Client first requests `https://example.org/.well-known/nostr.json?name=alice`. It receives HTTP 404 or 410, queries `_nip05.example.org`, and then requests:
 
 ```
 https://nostr.identity-provider.example/.well-known/nostr.json?name=alice&domain=example.org
@@ -344,7 +327,7 @@ https://nostr.identity-provider.example/.well-known/nostr.json?name=alice&domain
 
 The provider returns an ordinary NIP-05 response.
 
-The website at `example.org` requires no modification for clients using this extension. Clients using only NIP-05 still require the original domain's HTTPS endpoint.
+The original endpoint must return 404 or 410, with CORS access for browser clients. A website already returning such responses needs no special routing to the identity provider. Clients using only NIP-05 cannot resolve this delegated identifier.
 
 ### Provider serving multiple organizations
 
@@ -356,7 +339,7 @@ _nip05.example.org. TXT "v=nip05-1; target=nip05.provider.example"
 _nip05.example.net. TXT "v=nip05-1; target=nip05.provider.example"
 ```
 
-Requests become:
+After the respective original endpoints return 404 or 410 and DNS discovery succeeds, the delegated requests are:
 
 ```
 https://nip05.provider.example/.well-known/nostr.json?name=alice&domain=example.org
@@ -384,34 +367,16 @@ The underscored `_nip05` owner name separates these records from ordinary domain
 
 ### Why DNS rather than HTTP redirects?
 
-HTTP redirects still require control or cooperation from the web service operating the original domain.
+NIP-05 prohibits redirects. DNS delegation lets the domain operator select a provider without configuring a redirect or proxy at the website, provided the original endpoint returns 404 or 410. It cannot bypass a website that returns other statuses or blocks browser access to those responses.
 
-DNS delegation allows the domain operator to assign NIP-05 service independently of its website.
+### Why existing NIP-05 takes precedence
 
-This mirrors the separation of service identity from service infrastructure used elsewhere on the Internet.
-
-### Why DNS first?
-
-The presence of `_nip05.<domain>` explicitly states that the domain has delegated NIP-05 resolution.
-
-Querying the designated service first avoids making delegation dependent upon failure of an unrelated web server.
-
-When a completed DNS lookup establishes that no applicable delegation exists, resolution falls back to NIP-05. A detected failure cannot override a discovered delegation or establish its absence.
+The original HTTPS endpoint corresponds to the domain in the identifier, and a valid response is authoritative under NIP-05. Keeping it first preserves existing resolution and avoids DNS/DoH lookups in the normal case. Delegation is consulted only when that endpoint explicitly returns 404 or 410.
 
 ## Backwards Compatibility
 
-This NIP requires no changes to existing NIP-05 deployments.
+Existing clients continue using ordinary NIP-05. Clients implementing this extension use the same result when ordinary resolution succeeds and do not consult `_nip05`. Publishing a delegation record does not override an existing successful NIP-05 response.
 
-Existing clients continue resolving:
+Only HTTP 404 or 410 enables the additional discovery step. Other failures, including a missing name or mismatched public key in the original response, cannot be bypassed through delegation. DNS errors therefore do not affect an otherwise successful ordinary NIP-05 lookup.
 
-```
-https://<domain>/.well-known/nostr.json?name=<local-part>
-```
-
-Clients implementing this NIP gain an additional DNS-based discovery step.
-
-Domains may therefore deploy DNS delegation incrementally without invalidating existing NIP-05 infrastructure.
-
-DNS delegation alone does not make an identifier resolvable by older clients. Domains that need those clients to continue resolving their identifiers MUST maintain the original NIP-05 HTTPS endpoint and SHOULD keep its mappings consistent with the delegated service. If the two endpoints disagree, older clients and clients using this extension can obtain different mappings.
-
-This extension changes failure behavior for clients that enable it: DNS errors and discovered-but-invalid delegations fail the lookup even when the original HTTPS endpoint is reachable. It does not change the behavior of clients that use only NIP-05.
+Delegation alone does not make an identifier resolvable by older clients. Returning 404 or 410 to migrate an identifier to delegation means clients without this extension cannot resolve it. Domains that need older clients to keep resolving an identifier must continue serving a valid ordinary NIP-05 response for it.
