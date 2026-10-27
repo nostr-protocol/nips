@@ -187,6 +187,8 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `2003`        | Torrent                         | [35](35.md)                            |
 | `2004`        | Torrent Comment                 | [35](35.md)                            |
 | `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
+| `3711`        | Deposit Receipt Attestation     | [NKIP-0001][NKIP-0001]                 |
+| `3712`        | Attestation Log Root            | [NKIP-0001][NKIP-0001]                 |
 | `4550`        | Community Post Approval         | [72](72.md)                            |
 | `7374`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
 | `7375`        | Cashu Wallet Tokens             | [60](60.md)                            |
@@ -197,6 +199,10 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `8001`        | Remove User                     | [43](43.md)                            |
 | `9000`-`9030` | Group Control Events            | [29](29.md)                            |
 | `9041`        | Zap Goal                        | [75](75.md)                            |
+| `9042`        | Monero Tip Receipt              | [NKIP-0002][NKIP-0002]                 |
+| `9043`        | Monero Tip Payment Proof        | [NKIP-0002][NKIP-0002]                 |
+| `9044`        | Monero Tip Confirmation         | [NKIP-0002][NKIP-0002]                 |
+| `9061`        | PGP Chat Message                | [NKIP-0006][NKIP-0006]                 |
 | `9321`        | Nutzap                          | [61](61.md)                            |
 | `9734`        | Zap Request                     | [57](57.md)                            |
 | `9735`        | Zap                             | [57](57.md)                            |
@@ -312,6 +318,9 @@ This table is not exhaustive. For a machine-readable registry of all known event
 [NKBIP-02]: https://wikistr.com/nkbip-02*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1
 [NKBIP-03]: https://wikistr.com/nkbip-03*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1
 [marmot]: https://github.com/marmot-protocol/marmot
+[NKIP-0001]: https://nkips.org/nkip-0001/
+[NKIP-0002]: https://nkips.org/nkip-0002/
+[NKIP-0006]: https://nkips.org/nkip-0006/
 
 
 ## Message types
