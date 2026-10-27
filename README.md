@@ -109,6 +109,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-A0: Voice Messages](A0.md)
 - [NIP-A3: payto: Payment Targets](A3.md)
 - [NIP-A4: Public Messages](A4.md)
+- [NIP-AB: Device Pairing](AB.md)
 - [NIP-B0: Web Bookmarks](B0.md)
 - [NIP-B7: Blossom](B7.md)
 - ~~[NIP-BE: Nostr BLE Communications Protocol](BE.md) --- **unrecommended**: only implemented once and unclear whether it works, requires review~~
