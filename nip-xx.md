@@ -62,39 +62,48 @@ Only the latest event per `(author pubkey, d tag)` is considered authoritative.
 ```json
 ["d", "ext:bitcoin-otc:<nick>"]
 ["proof-type", "pgp" | "btc"]
+["key", "<pgp-fingerprint OR bitcoin-address>"]
 ```
 
 * `d`: External identity namespace and identifier being claimed
 * `proof-type`: Cryptographic method used to produce the signature
+* `key`: For verification only, MUST NOT be used for any external identity resolution or validation.
+
+**Bitcoin Address Constraints**: Because the legacy Bitcoin-OTC Web-of-Trust system historically only supported legacy P2PKH Bitcoin addresses (`1...`), Kind 37773 proofs using `proof-type: "btc"` MUST utilize legacy P2PKH addresses and BIP-137 compact signatures (recovery header + 64-byte signature). Native SegWit (`bc1...`) and script addresses (`3...`) are not supported by the underlying OTC registry.
 
 ---
 
-#### Optional tags
+#### Optional tag
 
 ```json
 ["uri", "https://bitcoin-otc.com/viewratingdetail.php?nick=<nick>"]
-["key", "<pgp-fingerprint OR bitcoin-address>"]
+
 ```
-
-The `key` tag, if present, MUST match the public key used to verify the signature.
-
-It is informational and MUST NOT be used for any external identity resolution or validation.
 
 ---
 
 ### Content
+For `proof-type: "pgp"`:
+The `content` field MUST contain the complete OpenPGP ASCII-armored clearsigned message block, 
+including the header, canonical assertion statement, and ASCII-armored signature packet:
 
-The `content` field MUST contain the exact message that was cryptographically signed.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
 
-#### Required format
+I, <nick>, assert control of Nostr pubkey <npub>. This is a self-attested statement associating external identity <nick> with this Nostr identity.
+-----BEGIN PGP SIGNATURE-----
+...
+-----END PGP SIGNATURE-----
 
-```text
-I, <external-identity>, assert control of Nostr pubkey:
+For `proof-type: "btc"`:
+The `content` field MUST contain the standard Bitcoin signed message container:
 
-<npub>
-
-This is a self-attested statement associating external identity "<nick>" with this Nostr identity.
-```
+-----BEGIN BITCOIN SIGNED MESSAGE-----
+Address: <1-legacy-bitcoin-address>
+Message: I, <nick>, assert control of Nostr pubkey <npub>. This is a self-attested statement associating external identity <nick> with this Nostr identity.
+-----BEGIN BITCOIN SIGNATURE-----
+<base64-compact-signature>
+-----END BITCOIN SIGNED MESSAGE-----
 
 Implementations MAY include a nonce to ensure uniqueness.
 
@@ -111,6 +120,7 @@ Extract:
 * author pubkey
 * `d` tag
 * `proof-type`
+* `key`
 * `content`
 
 ---
@@ -139,10 +149,13 @@ Verify the Bitcoin Signed Message using standard Bitcoin message verification ag
 
 Clients MUST ensure:
 
-* The event author pubkey MUST match the public key that verifies the cryptographic signature
-* The external identity string MUST be identical across the `d` tag and the signed message content
-* The cryptographic signature is valid
-* Client UI MUST reflect only the result of cryptographic verification and MUST NOT imply identity, registry, or external authority validation
+1. **Nostr Event Integrity**: The Nostr event ID hash matches canonical serialization (NIP-01) and the BIP-340 Schnorr signature (`sig`) is valid for the event's `pubkey`.
+2. **Pubkey Inscription**: The signed statement in content explicitly asserts and contains the author's Nostr public key (either Bech32 `npub...` or hex).
+3. **Identity Binding**: The nickname in `d` (`ext:bitcoin-otc:<nick>`) case-insensitively matches the nickname asserted in the signed statement.
+4. **Key Match**: The key used to verify the external signature matches the `key` tag value (full 40-character PGP fingerprint or legacy P2PKH Bitcoin address).
+5. **URI Integrity (if present)**: If a uri tag is included, it MUST point strictly to `https://bitcoin-otc.com/viewratingdetail.php?nick=<nick>` with a matching `<nick>`.
+
+*Client UI MUST reflect only the result of cryptographic verification and MUST NOT imply identity, registry, or external authority validation.*
 
 ---
 
@@ -162,6 +175,8 @@ Clients MAY present the result of signature verification to the user.
 * Uniqueness key: `(pubkey, d)`
 * Only the latest event per `d` is considered valid
 * Clients MAY display older events but SHOULD mark them as superseded
+
+**Revocation (NIP-09)**: In addition to overwriting an existing proof by publishing a new event with the same `(pubkey, d)` coordinate, authors MAY revoke a claim without replacement by broadcasting a standard NIP-09 `kind: 5` deletion event referencing coordinate `["a", "37773:<pubkey>:<d_tag>"]` and `["k", "37773"]`. Relays and clients MUST treat deleted proofs as revoked.
 
 ---
 
@@ -262,6 +277,12 @@ This design:
 ---
 
 ## Changelog
+
+### v0.4
+* Clarified how PGP and BTC signatures are transported in content
+* Fixed binding validations erratum
+* Added note on bitcoin address formats
+* Added revocation section
 
 ### v0.3
 * Corrected bitcoin-otc.com rating page URI
