@@ -116,9 +116,9 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-C7: Chats](C7.md)
 - [NIP-CC: Geocaching](CC.md)
 - [NIP-CD: Slash Commands](CD.md)
+- [NIP-D9: Deletion Request Protection](D9.md) (proposed number)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
-- [NIP-XX: Deletion Request Protection](XX.md) (unassigned proposal)
 
 ## Event Kinds
 
