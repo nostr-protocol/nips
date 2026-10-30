@@ -14,8 +14,6 @@ When a user reacts to or replies to a note they saw through a [NIP-18](18.md) re
 
 The `p` tag lets the reposter's client find the event with a `#p` filter. The `via` tag tells it why it was tagged, so it can show "Bob liked a note you shared" instead of a mention.
 
-A `p` tag whose pubkey is named in a `via` tag is attribution only. It does not change the target, the recipient or the thread participants, and clients SHOULD NOT copy it into replies.
-
 ```jsonc
 {
   "kind": 7,
