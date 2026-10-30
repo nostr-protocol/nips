@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft
+Final/awaiting number assignment
 
 ## Author
 
@@ -87,6 +87,7 @@ For `proof-type: "pgp"`:
 The `content` field MUST contain the complete OpenPGP ASCII-armored clearsigned message block, 
 including the header, canonical assertion statement, and ASCII-armored signature packet:
 
+```
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA256
 
@@ -94,16 +95,19 @@ I, <nick>, assert control of Nostr pubkey <npub>. This is a self-attested statem
 -----BEGIN PGP SIGNATURE-----
 ...
 -----END PGP SIGNATURE-----
+```
 
 For `proof-type: "btc"`:
 The `content` field MUST contain the standard Bitcoin signed message container:
 
+```
 -----BEGIN BITCOIN SIGNED MESSAGE-----
 Address: <1-legacy-bitcoin-address>
 Message: I, <nick>, assert control of Nostr pubkey <npub>. This is a self-attested statement associating external identity <nick> with this Nostr identity.
 -----BEGIN BITCOIN SIGNATURE-----
 <base64-compact-signature>
 -----END BITCOIN SIGNED MESSAGE-----
+```
 
 Implementations MAY include a nonce to ensure uniqueness.
 
