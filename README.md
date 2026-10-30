@@ -118,6 +118,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-CD: Slash Commands](CD.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
+- [NIP-F8: Visit Counter](F8.md)
 
 ## Event Kinds
 
@@ -236,6 +237,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `5128`        | nsite manifest snapshot         | [5A](5A.md)                            |
 | `15128`       | Root nsite manifest             | [5A](5A.md)                            |
 | `17375`       | Cashu Wallet Event              | [60](60.md)                            |
+| `20918`       | Visit                           | [F8](F8.md)                            |
 | `21059`       | Ephemeral Gift Wrap             | [59](59.md)                            |
 | `22242`       | Client Authentication           | [42](42.md)                            |
 | `23194`       | Wallet Request                  | [47](47.md)                            |
@@ -282,6 +284,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `30618`       | Repository state announcements  | [34](34.md)                            |
 | `30818`       | Wiki article                    | [54](54.md)                            |
 | `30819`       | Redirects                       | [54](54.md)                            |
+| `30918`       | Visit Statistics                | [F8](F8.md)                            |
 | `31234`       | Draft Event                     | [37](37.md)                            |
 | `31922`       | Date-Based Calendar Event       | [52](52.md)                            |
 | `31923`       | Time-Based Calendar Event       | [52](52.md)                            |
