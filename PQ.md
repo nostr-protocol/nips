@@ -71,6 +71,24 @@ Within this extension, public-key references in `p` tags, the optional author fi
 
 This NIP does not define ML-DSA encodings for [NIP-19](./19.md) `npub`, `nsec`, or public-key-bearing TLV entities. Existing key encodings MUST NOT be reused for ML-DSA keys without a separate specification. It also does not define migration or a binding between an existing Schnorr identity and a new ML-DSA identity. A binding authenticated only by Schnorr inherits that scheme's limitations.
 
+## Example: social identity anchor (informative)
+
+An application could use an ML-DSA-44-signed kind 0 metadata event as an anchor record for a social identity. The event retains kind 0's metadata meaning and JSON-encoded `content`. The event's tags could identify the Schnorr public keys authorized to sign everyday events on that identity's behalf, using an application-defined authorization tag. Tag values would contain the 64-character lowercase hexadecimal public keys; clients could display these keys to users as `npub`s. The profile metadata would remain in `content`.
+
+An application-defined tag might look like:
+
+```text
+["delegation-signing", <p1>, <p2>, ...]
+```
+
+Here, each `p1`, `p2`, etc. represents a Schnorr public key encoded as 64 lowercase hexadecimal characters. The tag name and format are illustrative only; this NIP does not standardize them or assign them delegation semantics.
+
+For example, an identity could maintain an ML-DSA-44 anchor key and authorize separate Schnorr keys for a mobile client and a desktop client. Both clients would continue publishing ordinary Schnorr-signed events under their own public keys and existing event kinds. An application that trusts the anchor key and understands the authorization convention could associate those events with the anchored identity. A later PQ-signed kind 0 metadata event could update the authorized keys while preserving the profile metadata.
+
+This illustrates separating a long-lived identity key from everyday signing keys. The PQ signature authenticates the anchor record; events signed by the authorized Schnorr keys retain Schnorr's security properties. Standard clients do not automatically interpret such an association as delegation.
+
+The PQ signature covers these tags as part of the event serialization. This NIP does not assign an authorization tag name or define a delegation protocol. A separate specification would need to define the tag format, scope and validity period of authorizations, updates and revocation, treatment of historical events, and how clients establish trust in the anchor key and obtain its current record. An ordinary `p` tag alone does not imply signing authority.
+
 ## Encryption is separate
 
 ML-DSA keys are signing keys and cannot replace the secp256k1 ECDH keys used by [NIP-44](./44.md). NIP-44 version 2 is not post-quantum secure; changing an event signature does not change its encryption or key agreement. This proposal also does not make [NIP-59](./59.md) wrapping post-quantum secure or modify either NIP's required signature scheme.
