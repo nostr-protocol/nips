@@ -12,7 +12,11 @@ This NIP extends the [NIP-01](./01.md) event signature format with ML-DSA-44, as
 
 ML-DSA is designed to resist signature forgery by an adversary with a cryptographically relevant quantum computer. This proposal allows an event to be authenticated with an ML-DSA key instead of a secp256k1 Schnorr key. It does not retroactively protect existing Schnorr signatures, establish the real-world identity of a public key, or encrypt event content.
 
-ML-DSA-44 is a standardized parameter set and has the smallest public keys and signatures among the FIPS 204 ML-DSA parameter sets. Choosing one parameter set keeps this proposal's algorithm selection unambiguous. This is not a claim that it is optimal for every application or that a particular implementation is independently audited.
+ML-DSA is standardized in FIPS 204 with three parameter sets: ML-DSA-44, ML-DSA-65, and ML-DSA-87. This NIP selects ML-DSA-44, which has the smallest public keys and signatures of those parameter sets, to limit event size while providing NIST security category 2.
+
+For simplicity and interoperability, ML-DSA-44 is the single post-quantum signature scheme defined by this NIP, following NIP-01's approach of specifying a single Schnorr scheme. Implementations supporting this extension MUST support ML-DSA-44; there is no per-event algorithm negotiation or application-selected post-quantum default. This fixed choice allows the scheme to be detected from public-key length alone. Adding another post-quantum scheme would require a separate protocol specification.
+
+This is a protocol design choice, not a claim that industry has converged on ML-DSA-44 specifically or that it is optimal for every application.
 
 ## Event format
 
@@ -25,7 +29,15 @@ Events retain the NIP-01 fields, serialization, SHA-256 event ID calculation, an
 
 `id`, `pubkey`, and `sig` MUST be lowercase hexadecimal strings without prefixes or whitespace. `id` remains exactly 32 bytes (64 hex characters). The ML-DSA public key and signature MUST use the raw encodings defined by FIPS 204, without DER, PEM, or other wrappers.
 
-Implementations MUST select the signature scheme using the exact public-key and signature length pair above. All other pairs MUST be rejected. A public key longer than 64 hex characters is not sufficient to identify ML-DSA-44. The signature scheme MUST NOT be inferred from `kind`. Existing event kinds retain their meanings: for example, a kind 1 event remains a text note whether signed with Schnorr or ML-DSA-44. No algorithm tag, new event kind, or kind-number offset is introduced. A failed verification MUST NOT fall back to another algorithm.
+Implementations MUST select the signature scheme solely from the exact length of `pubkey`:
+
+- 64 hex characters (32 bytes): BIP-340 Schnorr.
+- 2624 hex characters (1312 bytes): ML-DSA-44.
+- Any other length: reject as unsupported.
+
+After selecting the scheme, implementations MUST check that `sig` has the corresponding length in the table above and reject a mismatch. Signature length is a validation check, not an algorithm selector. Public-key length alone does not establish that an event is valid; encoding, event ID, and signature verification are still required. A public key longer than 64 hex characters is not sufficient to identify ML-DSA-44.
+
+The signature scheme MUST NOT be inferred from `kind`. Existing event kinds retain their meanings: for example, a kind 1 event remains a text note whether signed with Schnorr or ML-DSA-44. No algorithm tag, new event kind, or kind-number offset is introduced. A failed verification MUST NOT fall back to another algorithm.
 
 The public key and signature together occupy 7,464 hex characters for ML-DSA-44, compared with 192 for Schnorr. This adds 7,272 bytes to a JSON event with otherwise identical fields. Clients and relays need to account for this overhead in message limits, storage, and verification budgets.
 
@@ -43,10 +55,10 @@ The signed message is not the 64-character hexadecimal ID or the serialized JSON
 
 Before accepting an event, a supporting implementation MUST:
 
-1. Validate the required fields and types under NIP-01, including integer timestamps and kinds, string content, and arrays of string tags. Reject malformed hexadecimal encodings and unsupported key/signature length pairs before invoking cryptography.
+1. Validate the required fields and types under NIP-01, including integer timestamps and kinds, string content, and arrays of string tags. Reject malformed hexadecimal encodings, select the scheme by the exact `pubkey` length, and check the corresponding `sig` length before invoking cryptography.
 2. Reconstruct the NIP-01 serialization from the received event fields and compute its SHA-256 digest.
 3. Check that the lowercase hexadecimal digest equals the received `id`. Reject any mismatch, even if a signature over the supplied `id` would verify.
-4. For the Schnorr length pair, apply NIP-01/BIP-340 verification. For the ML-DSA-44 length pair, verify the signature over the recomputed 32-byte digest with the received public key and an empty context string.
+4. For a 64-character `pubkey`, apply NIP-01/BIP-340 verification. For a 2624-character `pubkey`, verify the signature over the recomputed 32-byte digest with the received public key and an empty context string.
 5. Accept only if verification succeeds and the event also satisfies the applicable relay or application policy.
 
 An implementation without ML-DSA-44 support MUST NOT accept these events as valid signed events. Verification authenticates the event against the given key; applications remain responsible for deciding whether that key is trusted or authorized.
