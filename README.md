@@ -118,6 +118,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-CD: Slash Commands](CD.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
+- [NIP-XX: Agent Coordination and Off-Relay Listing Reviews](XX.md)
 
 ## Event Kinds
 
@@ -187,6 +188,8 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `2003`        | Torrent                         | [35](35.md)                            |
 | `2004`        | Torrent Comment                 | [35](35.md)                            |
 | `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
+| `4200`        | Agent Coordination Message      | [XX](XX.md)                            |
+| `4201`        | Agent Listing Review            | [XX](XX.md)                            |
 | `4550`        | Community Post Approval         | [72](72.md)                            |
 | `7374`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
 | `7375`        | Cashu Wallet Tokens             | [60](60.md)                            |
