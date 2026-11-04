@@ -565,17 +565,19 @@ This NIP is strictly additive to NIP-05:
 
 ## Reference implementations
 
-This NIP has shipping implementations across six runtimes — Kotlin,
-Swift, Dart, TypeScript, vanilla JavaScript, and Haskell — spanning
-Android, iOS, web, desktop, and relay-side. All exercise the same
-live Namecoin chain via overlapping ElectrumX server sets and have
-been verified byte-for-byte against the same on-chain records.
+This NIP has implementations across seven runtimes — Kotlin, Swift,
+Dart, TypeScript, vanilla JavaScript, Haskell, and Odin — spanning
+Android, iOS, web, desktop, and relay-side. They use the same live
+Namecoin chain via overlapping ElectrumX server sets; the linked
+implementations document their transport and test coverage.
 
 ### Reader-side (clients)
 
 | Runtime | Project | Surface | PR / repo |
 |---|---|---|---|
 | Kotlin | Amethyst | Android / KMP iOS / Desktop | [vitorpamplona/amethyst #1734](https://github.com/vitorpamplona/amethyst/pull/1734), [#1771](https://github.com/vitorpamplona/amethyst/pull/1771), [#1786](https://github.com/vitorpamplona/amethyst/pull/1786), [#1937](https://github.com/vitorpamplona/amethyst/pull/1937) |
+| TypeScript | GitWorkshop | Web git client; repository search | [Namecoin resolution proposal](https://gitworkshop.dev/danconwaydev.com/relay.ngit.dev/gitworkshop/prs/nevent1qqsxn6y439vzchkckv7qumurj09xeh8av23u5624kcnp024hlhnnpwcpzfmhxue69uhkw6t5dehhxarj9e3k7mgkyd873) (applied; merge `db893727`) |
+| Odin | WhiteNoise Linux | Linux desktop; new chats and invites | [Namecoin resolution proposal](https://gitworkshop.dev/npub1ven4zk8xxw873876gx8y9g9l9fazkye9qnwnglcptgvfwxmygscqsxddfh/relay.ngit.dev/darkmatter-linux/prs/nevent1qqswxmmykpxs0d5puths4gvmj5gxw2t9k4pttvts0vr2jcft64620cgpz3mhxue69uhhyetvv9ujumn8d96zuer9wc7kmzhc) (applied; merge `19bbcb4e`) |
 | Swift | Nostur | iOS | [nostur-com/nostur-ios-public #60](https://github.com/nostur-com/nostur-ios-public/pull/60) |
 | Swift | nos | iOS (Planetary) | [planetary-social/nos #1779](https://github.com/planetary-social/nos/pull/1779) |
 | Dart | dart-nostr | Flutter library | [ethicnology/dart-nostr #44](https://github.com/ethicnology/dart-nostr/pull/44) (merged) |
@@ -608,8 +610,9 @@ been verified byte-for-byte against the same on-chain records.
 ### Live reference deployment
 
 `testls.bit` / `relay.testls.bit` (a public `.bit` ElectrumX server
-plus a `.bit`-gated relay) is exercised by the test suites of every
-implementation above. The associated identity
+plus a `.bit`-gated relay) provides shared integration targets for the
+implementations above; see the linked PRs for per-implementation test
+coverage. The associated identity
 `mstrofnone@testls.bit` is the canonical end-to-end test target for
 FIRSTUPDATE-shaped records (see §"Opcode handling").
 
