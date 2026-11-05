@@ -106,6 +106,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - ~~[NIP-96: HTTP File Storage Integration](96.md) --- **unrecommended**: replaced by Blossom~~
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
+- [NIP-9B: Verifiable Community Rules](9B.md)
 - [NIP-A0: Voice Messages](A0.md)
 - [NIP-A3: payto: Payment Targets](A3.md)
 - [NIP-A4: Public Messages](A4.md)
@@ -295,6 +296,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `34235`       | Addressable Video Event         | [71](71.md)                            |
 | `34236`       | Addressable Short Video Event   | [71](71.md)                            |
 | `34550`       | Community Definition            | [72](72.md)                            |
+| `34551`       | Community Rules                 | [9B](9B.md)                            |
 | `34128`       | Legacy nsite manifest           | [5A](5A.md) (deprecated)               |
 | `35128`       | Named nsite manifest            | [5A](5A.md)                            |
 | `38000`       | Mint Recommendation             | [87](87.md)                            |
