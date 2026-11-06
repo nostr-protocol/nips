@@ -164,13 +164,13 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `1018`        | Poll Response                   | [88](88.md)                            |
 | `1021`        | Bid                             | [15](15.md)                            |
 | `1022`        | Bid confirmation                | [15](15.md)                            |
-| `1234`        | Draft Checkpoint                | [37](37.md)                            |
 | `1040`        | OpenTimestamps                  | [03](03.md)                            |
 | `1059`        | Gift Wrap                       | [59](59.md)                            |
 | `1063`        | File Metadata                   | [94](94.md)                            |
 | `1068`        | Poll                            | [88](88.md)                            |
 | `1111`        | Comment                         | [22](22.md)                            |
 | `1222`        | Voice Message                   | [A0](A0.md)                            |
+| `1234`        | Draft Checkpoint                | [37](37.md)                            |
 | `1244`        | Voice Message Comment           | [A0](A0.md)                            |
 | `1311`        | Live Chat Message               | [53](53.md)                            |
 | `1337`        | Code Snippet                    | [C0](C0.md)                            |
@@ -188,6 +188,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `2004`        | Torrent Comment                 | [35](35.md)                            |
 | `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
 | `4550`        | Community Post Approval         | [72](72.md)                            |
+| `5128`        | nsite manifest snapshot         | [5A](5A.md)                            |
 | `7374`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
 | `7375`        | Cashu Wallet Tokens             | [60](60.md)                            |
 | `7376`        | Cashu Wallet History            | [60](60.md)                            |
@@ -233,7 +234,6 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `10992`       | Installed slash commands        | [51](51.md), [CD](CD.md)               |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `13534`       | Membership Lists                | [43](43.md)                            |
-| `5128`        | nsite manifest snapshot         | [5A](5A.md)                            |
 | `15128`       | Root nsite manifest             | [5A](5A.md)                            |
 | `17375`       | Cashu Wallet Event              | [60](60.md)                            |
 | `21059`       | Ephemeral Gift Wrap             | [59](59.md)                            |
@@ -292,16 +292,16 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `31992`       | Slash command definition        | [CD](CD.md)                            |
 | `32267`       | Software Application            |                                        |
 | `33534`       | Role Definition                 | [43](43.md)                            |
+| `34128`       | Legacy nsite manifest           | [5A](5A.md) (deprecated)               |
 | `34235`       | Addressable Video Event         | [71](71.md)                            |
 | `34236`       | Addressable Short Video Event   | [71](71.md)                            |
 | `34550`       | Community Definition            | [72](72.md)                            |
-| `34128`       | Legacy nsite manifest           | [5A](5A.md) (deprecated)               |
 | `35128`       | Named nsite manifest            | [5A](5A.md)                            |
+| `37516`       | Geocache Listing                | [CC](CC.md)                            |
+| `37517`       | Geocache Curation List          | [CC](CC.md)                            |
 | `38000`       | Mint Recommendation             | [87](87.md)                            |
 | `38172`       | Cashu Mint Announcement         | [87](87.md)                            |
 | `38173`       | Fedimint Announcement           | [87](87.md)                            |
-| `37516`       | Geocache Listing                | [CC](CC.md)                            |
-| `37517`       | Geocache Curation List          | [CC](CC.md)                            |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
 | `39089`       | Starter packs                   | [51](51.md)                            |
