@@ -54,7 +54,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-34: `git` stuff](34.md)
 - [NIP-35: Torrents](35.md)
 - [NIP-36: Sensitive Content](36.md)
-- [NIP-37: Draft Events](37.md)
+- [NIP-37: Draft Wraps](37.md)
 - [NIP-38: User Statuses](38.md)
 - [NIP-39: Linking Profiles to Other Platforms](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
