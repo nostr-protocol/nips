@@ -54,7 +54,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-34: `git` stuff](34.md)
 - [NIP-35: Torrents](35.md)
 - [NIP-36: Sensitive Content](36.md)
-- [NIP-37: Draft Events](37.md)
+- [NIP-37: Draft Wraps](37.md)
 - [NIP-38: User Statuses](38.md)
 - [NIP-39: Linking Profiles to Other Platforms](39.md)
 - [NIP-40: Expiration Timestamp](40.md)
@@ -107,14 +107,15 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-98: HTTP Auth](98.md)
 - [NIP-99: Classified Listings](99.md)
 - [NIP-A0: Voice Messages](A0.md)
+- [NIP-A3: payto: Payment Targets](A3.md)
 - [NIP-A4: Public Messages](A4.md)
 - [NIP-B0: Web Bookmarks](B0.md)
 - [NIP-B7: Blossom](B7.md)
 - ~~[NIP-BE: Nostr BLE Communications Protocol](BE.md) --- **unrecommended**: only implemented once and unclear whether it works, requires review~~
 - [NIP-C0: Code Snippets](C0.md)
 - [NIP-C7: Chats](C7.md)
-- [NIP-A3: payto: Payment Targets](A3.md)
 - [NIP-CC: Geocaching](CC.md)
+- [NIP-CD: Slash Commands](CD.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
 
@@ -163,13 +164,13 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `1018`        | Poll Response                   | [88](88.md)                            |
 | `1021`        | Bid                             | [15](15.md)                            |
 | `1022`        | Bid confirmation                | [15](15.md)                            |
-| `1234`        | Draft Checkpoint                | [37](37.md)                            |
 | `1040`        | OpenTimestamps                  | [03](03.md)                            |
 | `1059`        | Gift Wrap                       | [59](59.md)                            |
 | `1063`        | File Metadata                   | [94](94.md)                            |
 | `1068`        | Poll                            | [88](88.md)                            |
 | `1111`        | Comment                         | [22](22.md)                            |
 | `1222`        | Voice Message                   | [A0](A0.md)                            |
+| `1234`        | Draft Checkpoint                | [37](37.md)                            |
 | `1244`        | Voice Message Comment           | [A0](A0.md)                            |
 | `1311`        | Live Chat Message               | [53](53.md)                            |
 | `1337`        | Code Snippet                    | [C0](C0.md)                            |
@@ -187,6 +188,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `2004`        | Torrent Comment                 | [35](35.md)                            |
 | `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
 | `4550`        | Community Post Approval         | [72](72.md)                            |
+| `5128`        | nsite manifest snapshot         | [5A](5A.md)                            |
 | `7374`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
 | `7375`        | Cashu Wallet Tokens             | [60](60.md)                            |
 | `7376`        | Cashu Wallet History            | [60](60.md)                            |
@@ -229,9 +231,9 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `10154`       | Podcast Metadata                | [F4](F4.md)                            |
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
 | `10312`       | Room Presence                   | [53](53.md)                            |
+| `10992`       | Installed slash commands        | [51](51.md), [CD](CD.md)               |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `13534`       | Membership Lists                | [43](43.md)                            |
-| `5128`        | nsite manifest snapshot         | [5A](5A.md)                            |
 | `15128`       | Root nsite manifest             | [5A](5A.md)                            |
 | `17375`       | Cashu Wallet Event              | [60](60.md)                            |
 | `21059`       | Ephemeral Gift Wrap             | [59](59.md)                            |
@@ -287,18 +289,19 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `31925`       | Calendar Event RSVP             | [52](52.md)                            |
 | `31989`       | Handler recommendation          | [89](89.md)                            |
 | `31990`       | Handler information             | [89](89.md)                            |
+| `31992`       | Slash command definition        | [CD](CD.md)                            |
 | `32267`       | Software Application            |                                        |
 | `33534`       | Role Definition                 | [43](43.md)                            |
+| `34128`       | Legacy nsite manifest           | [5A](5A.md) (deprecated)               |
 | `34235`       | Addressable Video Event         | [71](71.md)                            |
 | `34236`       | Addressable Short Video Event   | [71](71.md)                            |
 | `34550`       | Community Definition            | [72](72.md)                            |
-| `34128`       | Legacy nsite manifest           | [5A](5A.md) (deprecated)               |
 | `35128`       | Named nsite manifest            | [5A](5A.md)                            |
+| `37516`       | Geocache Listing                | [CC](CC.md)                            |
+| `37517`       | Geocache Curation List          | [CC](CC.md)                            |
 | `38000`       | Mint Recommendation             | [87](87.md)                            |
 | `38172`       | Cashu Mint Announcement         | [87](87.md)                            |
 | `38173`       | Fedimint Announcement           | [87](87.md)                            |
-| `37516`       | Geocache Listing                | [CC](CC.md)                            |
-| `37517`       | Geocache Curation List          | [CC](CC.md)                            |
 | `38383`       | Peer-to-peer Order events       | [69](69.md)                            |
 | `39000-9`     | Group metadata events           | [29](29.md)                            |
 | `39089`       | Starter packs                   | [51](51.md)                            |
