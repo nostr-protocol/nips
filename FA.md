@@ -35,23 +35,34 @@ issue keys that look alike, and a local or self-hosted endpoint can't be guessed
 With it, one wire format reaches every provider, since the major ones and the local
 runners all serve Chat Completions (some through a compatibility endpoint).
 
-Clients use the first `key` tag. A user MAY keep more than one, in order of
-preference. A tag without a URL is ignored.
+A user MAY keep more than one key, one `key` tag each, in order of preference.
+**The first `key` tag is the preferred key: the default every client uses.** The
+others are there for the user to switch to, or for a client that lets the user pick
+a different key for a given task. A tag without a URL is ignored.
 
-The event's own tags carry nothing secret:
+The event needs no public tags:
 
 ```json
 {
   "kind": 12000,
   "content": "<nip44 ciphertext of the tag array>",
-  "tags": [
-    ["alt", "AI agent keys (encrypted)"]
-  ]
+  "tags": []
 }
 ```
 
 Clients MAY add a [NIP-70](70.md) `["-"]` tag so relays refuse copies published by
 anyone else.
+
+## Key budgets
+
+Users SHOULD store keys created for this purpose alone, each with a limited budget:
+a cap on the credits, spend or tokens the key can use, set at the provider. Most
+providers let a key carry its own limit, separate from the account's main key. A
+leaked or misused key then costs at most its budget, and revoking it at the provider
+breaks nothing else.
+
+Clients SHOULD say so where the user enters a key, and link to the provider's page
+for creating one where they know it.
 
 ## Using the key
 
@@ -84,8 +95,8 @@ string.
 ## Security
 
 - Anyone holding the user's private key, or a signer session allowed to decrypt with
-  NIP-44, can read the API key. Clients SHOULD suggest a key with a spending limit,
-  which most providers support per key.
+  NIP-44, can read the API key. The key's budget (see Key budgets) is the limit on
+  what they can spend.
 - Every client the user signs into can spend from the key. That is the point of this
   NIP, so clients SHOULD keep the decrypted key in memory or in the platform's secure
   storage, and never write it to logs or URLs.
