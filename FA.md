@@ -28,7 +28,13 @@ A `key` tag holds two values:
 | index | value                                                                       |
 |-------|-----------------------------------------------------------------------------|
 | 1     | the key. An empty string for an endpoint that takes none, such as a model running on the user's own computer |
-| 2     | the root of an API that speaks the OpenAI Chat Completions format            |
+| 2     | the root of an API that speaks the OpenAI Chat Completions format, without a trailing `/` |
+
+The URL MUST be `https`, except for a loopback host (`localhost`, `127.0.0.0/8`, `::1`)
+or when the key is empty: a key never travels in cleartext. Readers strip one trailing
+`/` before use.
+
+A `key` tag MAY carry more values after these two; readers ignore what they don't know.
 
 The URL is required because a key alone does not say where it works: many providers
 issue keys that look alike, and a local or self-hosted endpoint can't be guessed.
@@ -36,9 +42,10 @@ With it, one wire format reaches every provider, since the major ones and the lo
 runners all serve Chat Completions (some through a compatibility endpoint).
 
 A user MAY keep more than one key, one `key` tag each, in order of preference.
-**The first `key` tag is the preferred key: the default every client uses.** The
-others are there for the user to switch to, or for a client that lets the user pick
-a different key for a given task. A tag without a URL is ignored.
+**The first `key` tag that has a URL is the preferred key: the default every client
+uses.** The others are there for the user to switch to, or for a client that lets the
+user pick a different key for a given task. A `key` tag without a URL is ignored by
+readers, but kept by writers (see Editing).
 
 The event needs no public tags:
 
@@ -66,7 +73,8 @@ for creating one where they know it.
 
 ## Using the key
 
-The key is sent as a bearer token to the URL it was stored with, and nowhere else:
+The key is sent as a bearer token to the URL it was stored with, and nowhere else.
+An empty key sends no `Authorization` header at all.
 
 ```
 POST https://openrouter.ai/api/v1/chat/completions
@@ -88,7 +96,10 @@ SHOULD report a `401` or `403` as a rejected key instead of retrying.
 
 To add, reorder or remove a key, a client fetches the newest event from the user's
 [NIP-65](65.md) write relays, decrypts it, changes the `key` tags, keeps every other
-tag as it found it, encrypts and publishes. The content is always an encrypted JSON
+tag as it found it, encrypts and publishes. A client reorders and removes the tag
+arrays it read, rather than rebuilding them, so extra values on a `key` tag and `key`
+tags it couldn't read survive the edit. If the relays could not be read, it does not
+write: starting from an empty list would delete the user's other keys. The content is always an encrypted JSON
 array, `[]` when the user removed their last key: NIP-44 cannot encrypt an empty
 string.
 
