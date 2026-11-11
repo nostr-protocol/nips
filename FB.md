@@ -23,7 +23,7 @@ Kind `34817`, addressable. `d` is the task's id and the only public tag. `conten
   "runner": "3f1c9a0e5b7d4c21",
   "ran": 1794398520,
   "runners": [
-    { "id": "3f1c9a0e5b7d4c21", "name": "Desktop (Linux)", "app": "amethyst-desktop", "unattended": true, "seen": 1794355200 }
+    { "id": "3f1c9a0e5b7d4c21", "name": "Desktop (Linux)", "app": "amethyst-desktop", "unattended": true, "seen": 1794398520 }
   ]
 }
 ```
