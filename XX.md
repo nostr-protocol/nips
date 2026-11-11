@@ -628,6 +628,10 @@ FIRSTUPDATE-shaped records (see §"Opcode handling").
 - **Service attestations** (binding higher-kind events to a Namecoin
   name at a specific block height). Builds on this NIP but does not
   affect it.
+- **Namecoin resolution for nsites**. Defined independently in
+  [#2540](https://github.com/nostr-protocol/nips/pull/2540). The
+  unknown-key rule above permits the companion `nostr.nsite` extension,
+  but this NIP defines no nsite target-selection or content-serving rules.
 
 See https://github.com/nostr-protocol/nips/issues/2330 for the
 broader track and links to the companion drafts.
