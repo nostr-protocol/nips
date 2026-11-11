@@ -119,7 +119,6 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
 - [NIP-FA: AI Agent Keys](FA.md)
-- [NIP-FB: Scheduled Tasks](FB.md)
 
 ## Event Kinds
 
@@ -299,7 +298,6 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `34235`       | Addressable Video Event         | [71](71.md)                            |
 | `34236`       | Addressable Short Video Event   | [71](71.md)                            |
 | `34550`       | Community Definition            | [72](72.md)                            |
-| `34817`       | Scheduled Task                  | [FB](FB.md)                            |
 | `35128`       | Named nsite manifest            | [5A](5A.md)                            |
 | `37516`       | Geocache Listing                | [CC](CC.md)                            |
 | `37517`       | Geocache Curation List          | [CC](CC.md)                            |
