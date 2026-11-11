@@ -11,32 +11,31 @@ sign into. Any of their devices may run a task; the first to claim an occurrence
 
 ## Event
 
-Kind `34817`, addressable. `d` is the task's id and the only public tag. `content` is a
-[NIP-44](44.md) ciphertext, encrypted by the author to themselves, of:
+Kind `34817`, addressable, with `d` as the task's id. Like [NIP-51](51.md) lists, its tags
+can be public, in `tags`, or private, in `content` as a [NIP-44](44.md) ciphertext,
+encrypted by the author to themselves, of a JSON array of tags. Readers use both. Clients
+SHOULD keep every tag but `d` private, since `cron` reveals the user's time zone and
+habits, and `claim` their device names.
 
 ```json
-{
-  "task": "observer",
-  "enabled": true,
-  "cron": "0 6 * * 1-5",
-  "tz": "America/New_York",
-  "claim": { "due": 1794398400, "id": "3f1c9a0e5b7d4c21", "by": "Desktop (Linux)" },
-  "ran": 1794398520
-}
+[
+  ["task", "observer"],
+  ["cron", "0 6 * * 1-5", "America/New_York"],
+  ["claim", "1794398400", "3f1c9a0e5b7d4c21", "Desktop (Linux)"],
+  ["ran", "1794398520"]
+]
 ```
 
-| field     | value |
-|-----------|-------|
-| `task`    | the job, as named by whoever defines it |
-| `enabled` | `false` pauses it |
-| `cron`    | when it runs, read in `tz` |
-| `tz`      | an IANA time zone |
-| `claim`   | the latest claimed occurrence: `due` (unix seconds it was due), `id` (random, kept by the claiming installation), `by` (a name the user recognizes) |
-| `ran`     | unix seconds when the claimed occurrence finished |
-| `params`  | optional task options |
+| tag      | values |
+|----------|--------|
+| `task`   | the job, as named by whoever defines it |
+| `cron`   | when it runs (see below), and the IANA time zone it is read in |
+| `paused` | none; while present, nobody runs the task |
+| `claim`  | the latest claimed occurrence: when it was due (unix seconds), the claiming installation's random id, and a name the user recognizes |
+| `ran`    | unix seconds when the claimed occurrence finished |
 
-A task meant to exist once per user has a fixed `d` set by its definition; others SHOULD
-use a random `d`, since it is public.
+Other tags are the task's own options. A task meant to exist once per user has a fixed
+`d` set by its definition; others SHOULD use a random `d`.
 
 ### `cron`
 
@@ -49,11 +48,11 @@ at the next instant; a repeated one runs once.
 ## Running
 
 A device runs tasks only where the user turned that on, on that device. When an occurrence
-is due, while `enabled`:
+is due and the task isn't `paused`:
 
 1. Wait a random 0 to 60 seconds.
-2. Read the newest event from the user's [NIP-65](65.md) write relays. Stop if `claim.due`
-   is this occurrence. If the task's result already exists (when the task says how to
+2. Read the newest event from the user's [NIP-65](65.md) write relays. Stop if `claim`
+   holds this occurrence. If the task's result already exists (when the task says how to
    tell), claim it and set `ran` without running.
 3. Subscribe to the event on every write relay, then publish it with `claim` set to this
    occurrence and this installation, to every write relay.
@@ -77,6 +76,6 @@ device signs with its own signer.
 
 ## Editing
 
-Fetch the newest event, decrypt, change your fields, keep every other field, encrypt and
-publish with `created_at` = max(now, previous + 1). Don't write if the relays couldn't be
-read. Delete with [NIP-09](09.md).
+Fetch the newest event, decrypt, change the tags you mean to, keep every other tag where
+it was (public or private), encrypt and publish with `created_at` = max(now, previous + 1).
+Don't write if the relays couldn't be read. Delete with [NIP-09](09.md).
