@@ -21,7 +21,7 @@ the user's time zone and habits, and `claim` their device names.
 ```json
 [
   ["task", "observer"],
-  ["cron", "0 6 * * 1-5", "America/New_York"],
+  ["cron", "0 6 * * 1-5", "America/New_York", "1794300000"],
   ["claim", "1794398400", "3f1c9a0e5b7d4c21", "Desktop (Linux)", "1794398431"],
   ["ran", "1794398520"]
 ]
@@ -30,7 +30,7 @@ the user's time zone and habits, and `claim` their device names.
 | tag      | values |
 |----------|--------|
 | `task`   | the job, as named by whoever defines it |
-| `cron`   | when it runs (see below), and the IANA time zone it is read in |
+| `cron`   | when it runs (see below), the IANA time zone it is read in, and when it was last set |
 | `paused` | none; while present, nobody runs the task |
 | `claim`  | the latest claimed occurrence: when it was due, the claiming installation's random id, a name the user recognizes, and when it was claimed |
 | `ran`    | when the latest claimed occurrence finished |
@@ -72,7 +72,8 @@ is due and the task isn't `paused`:
 
 More than half of the write relays must answer each read and accept each claim, or the
 device doesn't run; with no write relays, nothing runs. A device whose `content` doesn't
-decrypt doesn't run. A missed occurrence MAY be claimed until the next one is due.
+decrypt doesn't run. A missed occurrence MAY be claimed until the next one is due. Occurrences due before
+`cron` was last set, or while the task was `paused`, are never claimed or reported missed.
 
 Clients SHOULD show who last ran the task and when (or that it never ran), and, unless it
 is `paused`, warn when `ran` is older than the newest occurrence that was due more than 3
@@ -85,8 +86,10 @@ device signs with its own signer.
 
 ## Editing
 
-Fetch the newest event from the user's write relays, decrypt, change the tags you mean to,
+Fetch the newest event from the user's write relays (their NIP-65 list, nothing else),
+decrypt, change the tags you mean to,
 keep every other tag where it was (public or private), encrypt and publish to the same
-relays with `created_at` = max(now, previous + 1). Setting `claim` or `ran` is an edit like
-any other. Don't write if the relays couldn't be read or the content doesn't decrypt to a
-tag array. Delete with [NIP-09](09.md).
+relays with `created_at` = max(now, previous + 1). Changing `cron` or removing
+`paused` sets `cron`'s last value to now. Setting `claim` or `ran` is an edit like any
+other. More than half of the write relays must answer the read and accept the write; don't
+write if they didn't answer or the content doesn't decrypt to a tag array. Delete with [NIP-09](09.md).
