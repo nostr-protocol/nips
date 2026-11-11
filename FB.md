@@ -16,7 +16,6 @@ Kind `34817`, addressable. `d` is the task's id and the only public tag. `conten
 
 ```json
 {
-  "v": 1,
   "task": "observer",
   "enabled": true,
   "cron": "0 6 * * 1-5",
