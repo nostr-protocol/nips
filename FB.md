@@ -55,11 +55,13 @@ is due, while `enabled`:
 2. Read the newest event from the user's [NIP-65](65.md) write relays. Stop if `claim.due`
    is this occurrence. If the task's result already exists (when the task says how to
    tell), claim it and set `ran` without running.
-3. Publish the event with `claim` set to this occurrence and this installation, to every
-   write relay.
-4. Wait 20 seconds, then read every write relay again. Run only if the newest event (by
-   `created_at`, then lowest `id`) holds this installation's claim.
-5. When done, set `ran`.
+3. Subscribe to the event on every write relay, then publish it with `claim` set to this
+   occurrence and this installation, to every write relay.
+4. After 20 seconds, run only if the newest event seen (by `created_at`, then lowest `id`)
+   holds this installation's claim.
+5. Keep the subscription open while running. If a newer event claims this occurrence for
+   another installation, stop, at the latest before publishing any result.
+6. When done, set `ran`.
 
 More than half of the write relays must answer each read, or the device doesn't run. A
 missed occurrence MAY be claimed until the next one is due. A claim with no `ran` an hour
