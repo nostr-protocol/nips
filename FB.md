@@ -7,7 +7,7 @@ Scheduled Tasks
 `draft` `optional`
 
 A user's recurring jobs (a daily front page, a weekly digest), shared by every client they
-sign into and run by exactly one of their devices.
+sign into. Any of their devices may run a task; the first to claim an occurrence runs it.
 
 ## Event
 
@@ -20,11 +20,8 @@ Kind `34817`, addressable. `d` is the task's id and the only public tag. `conten
   "enabled": true,
   "cron": "0 6 * * 1-5",
   "tz": "America/New_York",
-  "runner": "3f1c9a0e5b7d4c21",
-  "ran": 1794398520,
-  "runners": [
-    { "id": "3f1c9a0e5b7d4c21", "name": "Desktop (Linux)", "app": "amethyst-desktop", "unattended": true, "seen": 1794398520 }
-  ]
+  "claim": { "due": 1794398400, "id": "3f1c9a0e5b7d4c21", "by": "Desktop (Linux)" },
+  "ran": 1794398520
 }
 ```
 
@@ -34,9 +31,8 @@ Kind `34817`, addressable. `d` is the task's id and the only public tag. `conten
 | `enabled` | `false` pauses it |
 | `cron`    | when it runs, read in `tz` |
 | `tz`      | an IANA time zone |
-| `runner`  | the `id` of the one device that runs it; absent or unlisted means none |
-| `runners` | the devices able to run it |
-| `ran`     | unix seconds when the runner last completed an occurrence |
+| `claim`   | the latest claimed occurrence: `due` (unix seconds it was due), `id` (random, kept by the claiming installation), `by` (a name the user recognizes) |
+| `ran`     | unix seconds when the claimed occurrence finished |
 | `params`  | optional task options |
 
 A task meant to exist once per user has a fixed `d` set by its definition; others SHOULD
@@ -50,34 +46,35 @@ No names, seconds or extensions (`?`, `L`, `W`, `#`, `@daily`). When day of mont
 of week are both restricted, either matches. A local time skipped by daylight saving runs
 at the next instant; a repeated one runs once.
 
-## Runners
-
-Each entry is one installation for one user: `id` (random, made by that installation),
-`name`, `app`, `unattended` (can run with nobody at the device), `seen` (unix seconds).
-An installation that can run the task adds or refreshes its entry at most once a day;
-one that can't, such as a web page, never lists itself. The `runner` refreshes its own
-`seen` at least daily while it is running. Entries unseen for 90 days MAY be
-dropped, unless they are the `runner`.
-
 ## Running
 
-- Only the installation whose own `id` is `runner` runs the task, and only while `enabled`.
-- Other clients show who runs it, and MAY set `runner` to any `unattended` entry.
-- Clients SHOULD warn when the runner's `seen` is more than 2 days old, or when `ran` is
-  older than the newest occurrence that was due more than 3 hours ago.
-- A missed occurrence MAY run until the next one is due; no occurrence runs twice.
-- The runner skips an occurrence whose result already exists, when the task says how to
-  tell.
-- After each occurrence, run or skipped, the runner sets `ran` (and its own `seen`) with a
-  fresh read of the event, changing nothing else.
-- A task or `cron` a client doesn't understand is listed and editable, never run. A client
-  whose editor can't show a `cron` leaves it unchanged.
+A device runs tasks only where the user turned that on, on that device. When an occurrence
+is due, while `enabled`:
+
+1. Wait a random 0 to 60 seconds.
+2. Read the newest event from the user's [NIP-65](65.md) write relays. Stop if `claim.due`
+   is this occurrence. If the task's result already exists (when the task says how to
+   tell), claim it and set `ran` without running.
+3. Publish the event with `claim` set to this occurrence and this installation, to every
+   write relay.
+4. Wait 20 seconds, then read every write relay again. Run only if the newest event (by
+   `created_at`, then lowest `id`) holds this installation's claim.
+5. When done, set `ran`.
+
+More than half of the write relays must answer each read, or the device doesn't run. A
+missed occurrence MAY be claimed until the next one is due. A claim with no `ran` an hour
+after it was made MAY be claimed again.
+
+Clients SHOULD show who last ran the task and when, and warn when `ran` is older than the
+newest occurrence that was due more than 3 hours ago. A task or `cron` a client doesn't
+understand is listed and editable, never run; a client whose editor can't show a `cron`
+leaves it unchanged.
 
 Credentials come from elsewhere: an AI task uses the user's [NIP-FA](FA.md) key, and the
-runner signs with its own signer.
+device signs with its own signer.
 
 ## Editing
 
-Fetch the newest event, decrypt, change your fields, keep every other field (also inside
-`runners`), encrypt and publish with `created_at` = max(now, previous + 1). Don't write
-if the relays couldn't be read. Delete with [NIP-09](09.md).
+Fetch the newest event, decrypt, change your fields, keep every other field, encrypt and
+publish with `created_at` = max(now, previous + 1). Don't write if the relays couldn't be
+read. Delete with [NIP-09](09.md).
