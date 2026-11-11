@@ -23,9 +23,8 @@ of a JSON object:
   "v": 1,
   "task": "observer",
   "enabled": true,
-  "time": "06:00",
+  "cron": "0 6 * * 1-5",
   "tz": "America/New_York",
-  "days": ["mon", "tue", "wed", "thu", "fri"],
   "runner": "3f1c9a0e5b7d4c21",
   "runners": [
     { "id": "3f1c9a0e5b7d4c21", "name": "Desktop (Linux)", "app": "amethyst-desktop", "unattended": true,  "seen": 1794355200 },
@@ -47,18 +46,47 @@ of a JSON object:
 | `v`       | yes      | `1` |
 | `task`    | yes      | what to run, named by the app or spec that defines the job (see Tasks) |
 | `enabled` | yes      | `false` keeps the task and its settings but nobody runs it |
-| `time`    | yes      | `HH:MM`, 24-hour wall-clock time in `tz` |
-| `tz`      | yes      | an IANA time zone, normally the zone of whoever last set the time |
-| `days`    | no       | the weekdays it runs on, from `mon` `tue` `wed` `thu` `fri` `sat` `sun`. Absent: every day |
+| `cron`    | yes      | when it runs: a five-field cron expression read in `tz` (see Schedule) |
+| `tz`      | yes      | an IANA time zone, normally the zone of whoever last set the schedule |
 | `runner`  | no       | the `id` of the one device that runs it. Absent or not in `runners`: nobody runs it |
 | `runners` | no       | the devices that can run it (see Runners) |
 | `params`  | no       | an object of options for the task, defined by the task |
 
 Readers ignore fields they don't know, and writers keep them (see Editing).
 
-Because `time` is read in `tz`, every device agrees on the instant whatever its own zone,
-and each one displays it in its own. When a daylight-saving change skips `time`, the task
-runs at the first instant after it; when a change repeats it, at the first occurrence.
+### Schedule
+
+`cron` is the five fields of a POSIX crontab line, separated by single spaces:
+
+| field        | values |
+|--------------|--------|
+| minute       | `0`–`59` |
+| hour         | `0`–`23` |
+| day of month | `1`–`31` |
+| month        | `1`–`12` |
+| day of week  | `0`–`7`, where `0` and `7` are Sunday |
+
+Each field is `*`, a number, a range `a-b`, a step `*/n` or `a-b/n`, or a comma-separated
+list of these. Names (`MON`, `JAN`), seconds, `?`, `L`, `W`, `#` and macros such as
+`@daily` are not part of this NIP: implementations disagree on them. When both day of month
+and day of week are restricted (neither is `*`), the task runs on days matching either one,
+as cron does.
+
+| schedule              | `cron` |
+|-----------------------|--------|
+| every day at 6:00     | `0 6 * * *` |
+| weekdays at 6:00      | `0 6 * * 1-5` |
+| 6:00 and 18:00        | `0 6,18 * * *` |
+| every 6 hours         | `0 */6 * * *` |
+| the 1st of each month | `0 6 1 * *` |
+
+The expression is read in `tz`, so every device agrees on the instant whatever its own
+zone, and each one displays it in its own. When a daylight-saving change skips a matching
+time, the task runs at the first instant after it; when a change repeats one, it runs at
+the first occurrence only.
+
+A client that offers a simple editor (a time, some weekdays) edits `cron` only when it has
+a shape the editor can show again, and otherwise shows the expression as it is.
 
 ### The `d` tag
 
@@ -89,18 +117,18 @@ not `seen` for 90 days, unless it is the `runner`.
 
 - Only the installation whose `id` equals `runner` runs the task, and only while `enabled`
   is `true`. Every other client leaves it alone and SHOULD say who runs it, for example
-  "Printed each morning by Desktop (Linux) at 6:00".
+  "Printed each weekday by Desktop (Linux) at 6:00".
 - A client MAY offer "run on this device": it sets `runner` to its own `id`, and only when
   its entry is `unattended`. Another client MAY set `runner` to any listed `unattended`
   entry.
 - A runner that finds it is no longer the `runner` stops scheduling the task.
-- A runner that was asleep at the time MAY run on waking, within the same day in `tz`. It
-  runs each occurrence at most once.
+- A runner that was asleep at the time MAY run the missed occurrence on waking, as long as
+  the next occurrence hasn't come. It runs each occurrence at most once.
 - Before running, the runner SHOULD check whether the task's result for this occurrence
   already exists (made by hand earlier, or by another device), when the task defines how,
   and skip it if so.
-- A client that doesn't know a `task` still lists it, MAY change `enabled`, `time`, `tz`,
-  `days`, `runner` or delete it, and never runs it.
+- A client that doesn't know a `task`, or can't read its `cron`, still lists it, MAY change
+  `enabled`, `cron`, `tz`, `runner` or delete it, and never runs it.
 
 ## Tasks
 
