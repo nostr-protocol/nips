@@ -47,7 +47,7 @@ Five POSIX fields separated by whitespace: minute (`0`–`59`), hour (`0`–`23`
 (`1`–`31`), month (`1`–`12`), day of week (`0`–`7`, Sunday is `0` and `7`). Each is `*`, a
 number, `a-b`, a step (`*/n`, `a-b/n`) or a comma list of those. A value out of range,
 `a` > `b`, a step of `0`, names, seconds and extensions (`?`, `L`, `W`, `#`, `@daily`) make
-the expression unreadable. When day of month and day of week are both other than `*`,
+the expression unreadable, as does a missing or unknown time zone. When day of month and day of week are both other than `*`,
 either matches. A local time skipped by daylight saving runs
 at the next instant; a repeated one runs once.
 
