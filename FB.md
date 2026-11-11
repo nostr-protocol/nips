@@ -21,6 +21,7 @@ Kind `34817`, addressable. `d` is the task's id and the only public tag. `conten
   "cron": "0 6 * * 1-5",
   "tz": "America/New_York",
   "runner": "3f1c9a0e5b7d4c21",
+  "ran": 1794398520,
   "runners": [
     { "id": "3f1c9a0e5b7d4c21", "name": "Desktop (Linux)", "app": "amethyst-desktop", "unattended": true, "seen": 1794355200 }
   ]
@@ -35,6 +36,7 @@ Kind `34817`, addressable. `d` is the task's id and the only public tag. `conten
 | `tz`      | an IANA time zone |
 | `runner`  | the `id` of the one device that runs it; absent or unlisted means none |
 | `runners` | the devices able to run it |
+| `ran`     | unix seconds when the runner last completed an occurrence |
 | `params`  | optional task options |
 
 A task meant to exist once per user has a fixed `d` set by its definition; others SHOULD
@@ -54,19 +56,20 @@ Each entry is one installation for one user: `id` (random, made by that installa
 `name`, `app`, `unattended` (can run with nobody at the device), `seen` (unix seconds).
 An installation that can run the task adds or refreshes its entry at most once a day;
 one that can't, such as a web page, never lists itself. The `runner` refreshes its own
-`seen` at least daily while it is running, at a time other than when it runs the task. Entries unseen for 90 days MAY be
+`seen` at least daily while it is running. Entries unseen for 90 days MAY be
 dropped, unless they are the `runner`.
 
 ## Running
 
 - Only the installation whose own `id` is `runner` runs the task, and only while `enabled`.
 - Other clients show who runs it, and MAY set `runner` to any `unattended` entry.
-- Clients SHOULD warn when the runner's `seen` is more than 2 days old, and, for a task
-  whose result they can see, when the newest result is older than the last occurrence
-  `cron` says was due, after a grace period the task defines.
+- Clients SHOULD warn when the runner's `seen` is more than 2 days old, or when `ran` is
+  older than the newest occurrence that was due more than 3 hours ago.
 - A missed occurrence MAY run until the next one is due; no occurrence runs twice.
 - The runner skips an occurrence whose result already exists, when the task says how to
-  tell. The result, not this event, records that a run happened.
+  tell.
+- After each occurrence, run or skipped, the runner sets `ran` (and its own `seen`) with a
+  fresh read of the event, changing nothing else.
 - A task or `cron` a client doesn't understand is listed and editable, never run. A client
   whose editor can't show a `cron` leaves it unchanged.
 
