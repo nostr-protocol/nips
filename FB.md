@@ -60,8 +60,8 @@ is due and the task isn't `paused`:
 1. Wait a random 0 to 60 seconds.
 2. Read the newest event from the user's [NIP-65](65.md) write relays. Stop if `claim`
    holds this occurrence, unless that claim is unfinished and was made more than an hour
-   ago. If the task's result already exists (when the task says how to tell), publish the
-   claim and `ran` together without running.
+   ago. If the task's result already exists (when the task says how to tell), go through
+   steps 3 and 4, and on winning set `ran` without running.
 3. Subscribe to the event on every write relay, then publish it with `claim` set to this
    occurrence and this installation, to every write relay.
 4. After 20 seconds, run only if the newest event seen (by `created_at`, then lowest event
@@ -91,6 +91,6 @@ Fetch the newest event from the user's write relays (their NIP-65 list, nothing 
 decrypt, change the tags you mean to,
 keep every other tag where it was (public or private), encrypt and publish to the same
 relays with `created_at` = max(now, previous + 1). Changing `cron` or removing
-`paused` sets `cron`'s last value to now. Setting `claim` or `ran` is an edit like any
+`paused` sets `cron`'s last value to now; changing the time keeps the time zone. Setting `claim` or `ran` is an edit like any
 other. More than half of the write relays must answer the read and accept the write; don't
 write if they didn't answer or the content doesn't decrypt to a tag array. Delete with [NIP-09](09.md).
