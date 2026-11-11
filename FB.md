@@ -64,7 +64,8 @@ is due and the task isn't `paused`:
 3. Subscribe to the event on every write relay, then publish it with `claim` set to this
    occurrence and this installation, to every write relay.
 4. After 20 seconds, run only if the newest event seen (by `created_at`, then lowest event
-   `id`) holds this installation's claim.
+   `id`) holds this installation's claim. If it holds no claim for this occurrence (an
+   edit made without seeing it), go back to step 2.
 5. Keep the subscription open while running. If a newer event claims this occurrence for
    another installation, stop, at the latest before publishing any result.
 6. When done, set `ran`.
