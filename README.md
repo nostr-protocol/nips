@@ -118,6 +118,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-CD: Slash Commands](CD.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
+- [NIP-402: L402 Authentication for Paid Relays](402.md)
 
 ## Event Kinds
 
@@ -327,6 +328,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `CLOSE` | used to stop previous subscriptions                 | [01](01.md) |
 | `AUTH`  | used to send authentication events                  | [42](42.md) |
 | `COUNT` | used to request event counts                        | [45](45.md) |
+| `L402`  | used to send a paid L402 credential                 | [402](402.md) |
 
 ### Relay to Client
 
@@ -339,6 +341,8 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `CLOSED` | used to notify clients that a REQ was ended and why     | [01](01.md) |
 | `AUTH`   | used to send authentication challenges                  | [42](42.md) |
 | `COUNT`  | used to send requested event counts to clients          | [45](45.md) |
+| `L402`   | used to send a paid access challenge                    | [402](402.md) |
+| `L402-OK` | used to acknowledge a presented L402 credential         | [402](402.md) |
 
 ## Criteria for acceptance in this repository
 
