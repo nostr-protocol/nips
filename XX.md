@@ -21,7 +21,9 @@ Events are [addressable events](01.md#kinds) of kind `35353`. The `z` tag define
 - `order`: an order, whose status changes over time.
 - `trade`: a single execution of an order.
 
-The `content` field MUST be an empty string, and clients MUST ignore it.
+The `content` field MUST be an empty string. Clients MUST ignore it, and a non-empty `content` does not make an event invalid.
+
+Clients SHOULD ignore events that do not follow this NIP, e.g. events missing a mandatory tag, with an unknown `z` value, or with both `price` and `premium`.
 
 `expires_at` and `executed_at` are Unix timestamps in seconds.
 
@@ -29,7 +31,7 @@ Amounts, prices and bonds are unsigned decimal strings matching `^[0-9]+(\.[0-9]
 
 ### Asset identity
 
-An asset is identified by its `c`, `layer`, `network` and `contract` tags. For `internal` assets the platform's `pubkey` is also part of the identity, since balances held on different platforms are not fungible. Orders and trades of `internal` assets MUST be signed by the platform that holds the ledger. Publishers MUST use distinct `c` values for `internal` balances that are not fungible with each other.
+An asset is identified by its `c`, `layer`, `network` and, when present, `contract` tags. For `internal` assets the platform's `pubkey` is also part of the identity, since balances held on different platforms are not fungible. Orders and trades of `internal` assets MUST be signed by the platform that holds the ledger. Publishers MUST use distinct `c` values for `internal` balances that are not fungible with each other.
 
 Clients aggregating prices or volumes MUST group orders and trades by the complete asset identity and by fiat currency (`f`). Clients MAY display orders of different assets together, e.g. USDT on several layers.
 
@@ -172,7 +174,7 @@ A trade MUST NOT carry an `expiration` tag, and MUST NOT be replaced except to c
 ### Tags
 
 - `d` < Trade ID >: A unique identifier for the trade, different from any order ID.
-- `a` [Order]: An optional reference to the order this trade fills, as `35353:<pubkey>:<order d>`. It MAY be omitted, including for privacy reasons, even if the order was published. When present, the pubkey MUST be the pubkey of the trade.
+- `a` [Order]: An optional reference to the order this trade fills, as `35353:<pubkey>:<order d>`. It MAY be omitted, including for privacy reasons, even if the order was published. When present, the pubkey MUST be the pubkey of the trade, and the trade's `k`, `c`, `layer`, `network`, `contract` and `f` MUST match the referenced order.
 - `k` < Order type >: The order type, from the point of view of the order's maker.
 - `c`, `layer`, `network`, `contract`, `f`, `y`: As in the order.
 - `amt` < Amount >: The executed amount of the asset. It MUST be greater than zero.
@@ -184,6 +186,8 @@ A trade MUST NOT carry an `expiration` tag, and MUST NOT be replaced except to c
 ## Security considerations
 
 A signature proves that the platform states that an order or trade happened, not that it actually happened. Clients building market statistics SHOULD keep track of which platform produced each data point, SHOULD let users include or exclude platforms, and SHOULD use trades only, since final order values duplicate them.
+
+The protocol cannot verify that a platform published every execution, nor that a replaced trade was a correction. Relays keep only the latest version of an addressable event, so earlier versions of a corrected trade are lost.
 
 The amount, time and payment method of a trade may be enough to link it to a bank transfer. Trades MUST NOT include information about the counterparties. Platforms MAY delay the publication of trades and MAY round `executed_at`. The `a` tag links a trade to its order, which may carry `name`, `rating` or `source`; platforms MAY omit it.
 
