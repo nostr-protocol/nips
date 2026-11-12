@@ -8,20 +8,23 @@ Scheduled Tasks
 
 A user's recurring jobs (a daily front page, a weekly digest), shared by every client they
 sign into. Any of their devices may run a task; the first to claim an occurrence runs it.
+Or a runner they name, such as a hosted assistant, runs it for them.
 
 ## Event
 
 Kind `34817`, addressable, with `d` as the task's id. Like [NIP-51](51.md) lists, its tags
 can be public, in `tags`, or private, in `content` as a [NIP-44](44.md) ciphertext,
-encrypted by the author to themselves, of a JSON array of tags (empty when there are none).
-Readers use both; each tag below appears once, and where there are two, the private one
-wins, then the first. Clients SHOULD keep every tag but `d` private, since `cron` reveals
-the user's time zone and habits, and `claim` their device names.
+encrypted by the author to themselves (or to the runner, see below), of a JSON array of tags
+(empty when there are none). Readers use both; each tag below but `param` appears once, and
+where there are two, the private one wins, then the first. Clients SHOULD keep every tag but
+`d` and `p` private, since `cron` reveals the user's time zone and habits, and `claim` their
+device names.
 
 ```json
 [
   ["task", "observer"],
   ["cron", "0 6 * * 1-5", "America/New_York", "1794300000"],
+  ["param", "model", "anthropic/claude-sonnet-4.5"],
   ["claim", "1794398400", "3f1c9a0e5b7d4c21", "Desktop (Linux)", "1794398431"],
   ["ran", "1794398520"]
 ]
@@ -34,12 +37,20 @@ the user's time zone and habits, and `claim` their device names.
 | `paused` | none; while present, nobody runs the task |
 | `claim`  | the latest claimed occurrence: when it was due, the claiming installation's random id, a name the user recognizes, and when it was claimed |
 | `ran`    | when the latest claimed occurrence finished |
+| `param`  | an option of the task: its name, then its values |
 
 Times are unix seconds. An occurrence's due time is the instant it runs by the rules
 below, so every device computes the same value. A claim is finished when `ran` is at or
-after its due time. Other tags are the task's own options. A task without a readable
+after its due time. A task without a readable
 `task` and `cron` is never run. A task meant to exist once per user has a fixed
 `d` set by its definition; others SHOULD use a random `d`.
+
+### `param`
+
+The task defines its params' names and meaning; this NIP gives them none. A name may
+repeat, in order. Clients keep every `param` as read, including ones they don't understand,
+and don't run a task whose params they don't understand. A task with params and no `cron`
+holds its options for runs started by hand, and never runs on its own.
 
 ### `cron`
 
@@ -84,6 +95,21 @@ leaves it unchanged.
 
 Credentials come from elsewhere: an AI task uses the user's [NIP-FA](FA.md) key, and the
 device signs with its own signer.
+
+## Runner
+
+A public `["p", <pubkey>]` names a runner: another key that runs the task for the author,
+such as a hosted assistant. The private tags are then encrypted by the author to the
+runner, so both can read them, and only the runner runs the task: the author's devices
+don't. The runner can't sign the author's event, so it doesn't claim and never sets `claim`
+or `ran`. It reads the event from the author's write relays, runs with
+its own credentials (its own NIP-FA keys) and publishes the result as its own, with a `p`
+tag naming the author. Clients judge whether the task runs from that result (as the task
+says) instead of `ran`, and warn the same way when it is missing.
+
+A runner runs only tasks whose author it serves by its own records; being named in `p` is
+not enough, or anyone could spend its credentials. With more than one `p`, nobody runs the
+task. Removing `p` re-encrypts the private tags to the author.
 
 ## Editing
 
