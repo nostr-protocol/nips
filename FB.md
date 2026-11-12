@@ -99,17 +99,32 @@ device signs with its own signer.
 ## Runner
 
 A public `["p", <pubkey>]` names a runner: another key that runs the task for the author,
-such as a hosted assistant. The private tags are then encrypted by the author to the
-runner, so both can read them, and only the runner runs the task: the author's devices
-don't. The runner can't sign the author's event, so it doesn't claim and never sets `claim`
-or `ran`. It reads the event from the author's write relays, runs with
-its own credentials (its own NIP-FA keys) and publishes the result as its own, with a `p`
-tag naming the author. Clients judge whether the task runs from that result (as the task
-says) instead of `ran`, and warn the same way when it is missing.
+such as a hosted assistant. Only a public `p` counts; a private one is just a kept tag. The
+private tags are then encrypted by the author to the runner, so both can read them, and
+only the runner runs the task: the author's devices don't. The runner can't sign the
+author's event, so it doesn't claim and never sets `claim` or `ran`. It runs with its own
+credentials (its own NIP-FA keys) and publishes the result as its own, with a `p` tag naming
+the author. Clients judge whether the task runs from that result (as the task says) instead
+of `ran`, and warn the same way when it is missing, which also covers a runner that doesn't
+run.
 
 A runner runs only tasks whose author it serves by its own records; being named in `p` is
-not enough, or anyone could spend its credentials. With more than one `p`, nobody runs the
-task. Removing `p` re-encrypts the private tags to the author.
+not enough, or anyone could spend its credentials. With more than one `p`, or one that isn't
+the lowercase hex key of someone other than the author, the author's devices still don't run
+the task, and nobody else does either. Private tags are then encrypted to the author, as
+when there is no `p`. The author decrypts with the one valid `p` as peer, else with itself.
+
+A runner:
+
+- reads the author's newest event as devices do (more than half of the author's NIP-65 write
+  relays must answer), by author and `d`, not by `#p`, so a newer version that dropped `p`
+  wins; and reads it again right before spending;
+- runs only the latest due occurrence, until the next one is due, never one due before `cron`
+  was last set, never while `paused`, and never one a device holds an unfinished claim on that
+  was made less than an hour ago, or finished;
+- keeps its own record of the occurrences it started and never starts one again on its own;
+  a run that started and never ended counts as done;
+- doesn't run a task naming it whose `content` it can't decrypt.
 
 ## Editing
 
@@ -117,6 +132,8 @@ Fetch the newest event from the user's write relays (their NIP-65 list, nothing 
 decrypt, change the tags you mean to,
 keep every other tag where it was (public or private), encrypt and publish to the same
 relays with `created_at` = max(now, previous + 1). Changing `cron` or removing
-`paused` sets `cron`'s last value to now; changing the time keeps the time zone. Setting `claim` or `ran` is an edit like any
+`paused` sets `cron`'s last value to now; changing the time keeps the time zone. Adding,
+changing or removing the runner `p` sets `cron`'s last value to now, as resuming does, so
+neither the devices nor the runner run an occurrence that was the other's. Setting `claim` or `ran` is an edit like any
 other. More than half of the write relays must answer the read and accept the write; don't
 write if they didn't answer or the content doesn't decrypt to a tag array. Delete with [NIP-09](09.md).
