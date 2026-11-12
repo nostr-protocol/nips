@@ -42,9 +42,10 @@ provider.
 
 Fetch the newest event from the user's [NIP-65](65.md) write relays, decrypt, reorder or
 remove the tags as read (keeping values and tags you don't understand), encrypt and
-publish to the same relays with `created_at` = max(now, previous + 1). Don't write if the
-relays couldn't be read or the content doesn't decrypt to a tag array. An empty list is
-`[]`, since NIP-44 can't encrypt an empty string.
+publish to the same relays with `created_at` = max(now, previous + 1). More than half of the
+write relays must answer the read, since one that has never seen the event answers "none"
+just as fast: don't write otherwise, or when the content doesn't decrypt to a tag array. An
+empty list is `[]`, since NIP-44 can't encrypt an empty string.
 
 ## Security
 
