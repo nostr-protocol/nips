@@ -118,6 +118,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-CD: Slash Commands](CD.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
+- [NIP-FA: AI Agent Keys](FA.md)
 
 ## Event Kinds
 
@@ -232,6 +233,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
 | `10312`       | Room Presence                   | [53](53.md)                            |
 | `10992`       | Installed slash commands        | [51](51.md), [CD](CD.md)               |
+| `12000`       | AI Agent Keys                   | [FA](FA.md)                            |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `13534`       | Membership Lists                | [43](43.md)                            |
 | `15128`       | Root nsite manifest             | [5A](5A.md)                            |
