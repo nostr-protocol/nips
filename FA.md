@@ -25,7 +25,7 @@ encrypted by the author to themselves, of a JSON array of tags:
 
 Readers ignore `key` tags with no URL or a URL breaking that rule, and `key` tags in the
 public `tags`. The first remaining one is the default; the others are alternatives in order
-of preference. Clients MAY add a [NIP-70](70.md) `["-"]` tag.
+of preference.
 
 ## Use
 
@@ -37,15 +37,6 @@ or `403` as a rejected key.
 
 Users SHOULD store keys made for this purpose, each with a spending limit set at the
 provider.
-
-## Editing
-
-Fetch the newest event from the user's [NIP-65](65.md) write relays, decrypt, reorder or
-remove the tags as read (keeping values and tags you don't understand), encrypt and
-publish to the same relays with `created_at` = max(now, previous + 1). More than half of the
-write relays must answer the read, since one that has never seen the event answers "none"
-just as fast: don't write otherwise, or when the content doesn't decrypt to a tag array. An
-empty list is `[]`, since NIP-44 can't encrypt an empty string.
 
 ## Security
 
