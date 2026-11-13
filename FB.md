@@ -71,7 +71,8 @@ is due and the task isn't `paused`:
 1. Wait a random 0 to 60 seconds.
 2. Read the newest event from the user's [NIP-65](65.md) write relays. Stop if `claim`
    holds this occurrence, unless that claim is unfinished and was made more than an hour
-   ago. If the task's result already exists (when the task says how to tell), go through
+   ago (a claim without its fifth value, when it was claimed, counts as made more than an
+   hour ago). If the task's result already exists (when the task says how to tell), go through
    steps 3 and 4, and on winning set `ran` without running.
 3. Subscribe to the event on every write relay, then publish it with `claim` set to this
    occurrence and this installation, to every write relay.
@@ -99,7 +100,9 @@ device signs with its own signer.
 ## Runner
 
 A public `["p", <pubkey>]` names a runner: another key that runs the task for the author,
-such as a hosted assistant. Only a public `p` counts; a private one is just a kept tag. The
+such as a hosted assistant. Only a public `p` counts; a private one is just a kept tag. A `p`
+is a `p` tag with a value: a blank `["p", ""]` counts (the devices stop and nobody runs the
+task), a `["p"]` with no value doesn't. The
 private tags are then encrypted by the author to the runner, so both can read them, and
 only the runner runs the task: the author's devices don't. The runner can't sign the
 author's event, so it doesn't claim and never sets `claim` or `ran`. It runs with its own
@@ -112,18 +115,25 @@ A runner runs only tasks whose author it serves by its own records; being named 
 not enough, or anyone could spend its credentials. With more than one `p`, or one that isn't
 the lowercase hex key of someone other than the author, the author's devices still don't run
 the task, and nobody else does either. Private tags are then encrypted to the author, as
-when there is no `p`. The author decrypts with the one valid `p` as peer, else with itself.
+when there is no `p`. The author decrypts trying first the one valid `p` as peer (else
+itself), then each other `p` value (an older writer may have encrypted to one of them), then
+itself. While a runner is named, every write keeps the private tags encrypted to it, including
+a device's `claim` or `ran` for a run started by hand.
 
 A runner:
 
 - reads the author's newest event as devices do (more than half of the author's NIP-65 write
   relays must answer), by author and `d`, not by `#p`, so a newer version that dropped `p`
-  wins; and reads it again right before spending;
+  wins; and reads it again right before spending, and doesn't run if that read lacks a
+  majority or shows a different version (its `p`, `cron`, `paused` or params changed);
 - runs only the latest due occurrence, until the next one is due, never one due before `cron`
-  was last set, never while `paused`, and never one a device holds an unfinished claim on that
-  was made less than an hour ago, or finished;
+  was last set, and never while `paused`;
+- doesn't run an occurrence a device claimed and finished, nor one a device claimed less than
+  an hour ago and hasn't finished; a claim without its fifth value (when it was claimed)
+  counts as older than an hour;
 - keeps its own record of the occurrences it started and never starts one again on its own;
-  a run that started and never ended counts as done;
+  a run that started and never ended counts as done, but a start it gave up before spending
+  anything (its inputs weren't ready, say) isn't a start;
 - doesn't run a task naming it whose `content` it can't decrypt.
 
 ## Editing
@@ -132,8 +142,9 @@ Fetch the newest event from the user's write relays (their NIP-65 list, nothing 
 decrypt, change the tags you mean to,
 keep every other tag where it was (public or private), encrypt and publish to the same
 relays with `created_at` = max(now, previous + 1). Changing `cron` or removing
-`paused` sets `cron`'s last value to now; changing the time keeps the time zone. Adding,
-changing or removing the runner `p` sets `cron`'s last value to now, as resuming does, so
-neither the devices nor the runner run an occurrence that was the other's. Setting `claim` or `ran` is an edit like any
+`paused` sets `cron`'s last value to now; changing the time keeps the time zone. Any
+change to the set of public `p` values (adding, changing or removing one, fixing a value's
+case included) sets `cron`'s last value to now, as resuming does, so neither the devices nor
+the runner run an occurrence that was the other's. Setting `claim` or `ran` is an edit like any
 other. More than half of the write relays must answer the read and accept the write; don't
 write if they didn't answer or the content doesn't decrypt to a tag array. Delete with [NIP-09](09.md).
