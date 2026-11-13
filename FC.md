@@ -14,7 +14,6 @@ This NIP defines how to publish Maven artifacts (jars, aars, klibs, POMs, Gradle
 - A **manifest** blob lists every file of the release with its sha256 and size.
 - A **release** (`kind:3071`, regular) pins the manifest. Releases are immutable.
 - A **snapshot** (`kind:33071`, addressable) pins the manifest of a `-SNAPSHOT` version and is replaced by newer builds.
-- A **yank** (`kind:3072`, regular) deprecates a release without removing it.
 
 ## Manifest
 
@@ -51,28 +50,11 @@ Checksum files (`.md5`, `.sha1`, `.sha256`, `.sha512`) and `maven-metadata.xml` 
 
 `x` tags let anyone find who signed a given file. Publishers SHOULD keep the event under 16 KB by dropping trailing primary `x` tags; every file remains in the manifest.
 
-For a module `G:A` and version `V`, the canonical release among events **by the publisher the client trusts for `G`** that carry `["j","G:A"]` and `["v","V"]` is the one with the earliest `created_at`, ties broken by the lowest `id`. Publishers MUST NOT publish a second release of a version. [NIP-09][] deletion requests do not apply to releases.
+For a module `G:A` and version `V`, the canonical release among events **by the publisher the client trusts for `G`** that carry `["j","G:A"]` and `["v","V"]` is the one with the earliest `created_at`, ties broken by the lowest `id`. Publishers MUST NOT publish a second release of a version; a bad release is superseded by a new version. [NIP-09][] deletion requests do not apply to releases.
 
 ## Snapshot
 
 Same tags as a release, plus `["d", "<groupId>:<artifactId>:<version>"]` with the root coordinate. The version ends in `-SNAPSHOT`, and file names in the manifest use Maven's timestamped form (`lib-1.0-20260101.120000-3.jar`), from which clients generate the snapshot's `maven-metadata.xml`.
-
-## Yank
-
-```jsonc
-{
-  "kind": 3072,
-  "content": "CVE-2026-0001: upgrade to 1.0.1",
-  "tags": [
-    ["e", "<release id>"],
-    ["k", "3071"],
-    ["j", "com.example:lib"],
-    ["v", "1.0.0"]
-  ]
-}
-```
-
-A yank counts only when signed by the release's author. Yanked releases keep resolving; clients SHOULD warn when serving one and SHOULD NOT report it as the latest version.
 
 ## Publishing
 
@@ -91,7 +73,7 @@ Clients pin each group (and its subgroups) to one publisher key, written in the 
 {"kinds":[3071], "authors":["<pinned key>"], "#j":["G:A"], "#v":["V"]}
 ```
 
-Query several relays, merge results, check signatures, pick the canonical release, fetch the manifest and then the file from the release's `server` tags, then the publisher's current `kind:10063`, and check every blob's sha256. Listing all versions of a module for `maven-metadata.xml` uses the same filter without `#v`, with kinds `3071`, `33071` and `3072`.
+Query several relays, merge results, check signatures, pick the canonical release, fetch the manifest and then the file from the release's `server` tags, then the publisher's current `kind:10063`, and check every blob's sha256. Listing all versions of a module for `maven-metadata.xml` uses the same filter without `#v`, with kinds `3071` and `33071`.
 
 Clients SHOULD record, per project, the release each resolved version came from and the key each NIP-05 address resolved to, and SHOULD fail rather than switch when either changes. Because `created_at` is set by the signer, this record is what protects existing builds if a publisher's key leaks.
 
