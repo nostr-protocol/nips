@@ -56,26 +56,39 @@ For a module `G:A` and version `V`, the canonical release among events **by the 
 
 Same tags as a release, plus `["d", "<groupId>:<artifactId>:<version>"]` with the root coordinate. The version ends in `-SNAPSHOT`, and file names in the manifest use Maven's timestamped form (`lib-1.0-20260101.120000-3.jar`), from which clients generate the snapshot's `maven-metadata.xml`.
 
+## Release key
+
+A `groupId` is a reversed domain, so the domain vouches for the key that signs its releases, through [NIP-05][]:
+
+1. Reverse the `groupId` into a host: `com.vitorpamplona.quartz` → `quartz.vitorpamplona.com`.
+2. From that host down to its registrable domain (per the [Public Suffix List][]), look up `releases`: `releases@quartz.vitorpamplona.com`, then `releases@vitorpamplona.com`.
+3. The first key found is the group's release key, for the group and its subgroups.
+
+Only a definite absence (the domain doesn't exist, `/.well-known/nostr.json` returns 404, or doesn't list `releases`) moves the walk to the parent domain. A domain that can't be read stops it, so an outage never hands a group to another key.
+
+The name is `releases` rather than `_`, which is usually the domain's general identity, so the release key can live apart from any account that posts. Clients MAY let users choose another name on the same domains, or pin a key directly; the latter is the only option for a group that isn't a domain.
+
 ## Publishing
 
-1. Read the publisher's `kind:10063` server list.
-2. Check every blob with [BUD-06][] (`HEAD /upload`) and stop **before signing anything** if some blob fits on no server.
-3. Upload missing blobs with one [BUD-02][] `kind:24242` authorization whose `x` tags cover every blob, falling back to one authorization per blob for servers that refuse it.
-4. Upload the manifest, then sign the release and send it to the publisher's [NIP-65][] write relays.
+1. Check that the group's release key (above) is the signing key; stop otherwise.
+2. Read the publisher's `kind:10063` server list.
+3. Check every blob with [BUD-06][] (`HEAD /upload`) and stop **before signing anything** if some blob fits on no server.
+4. Upload missing blobs with one [BUD-02][] `kind:24242` authorization whose `x` tags cover every blob, falling back to one authorization per blob for servers that refuse it.
+5. Upload the manifest, then sign the release and send it to the publisher's [NIP-65][] write relays.
 
 A release costs two signatures. Builds spread over several machines MAY upload blobs from each and sign one release once every file referenced by every `.module` is present.
 
 ## Using
 
-Clients pin each group (and its subgroups) to one publisher key, written in the build or learned once from a [NIP-05][] address. Events from any other key are ignored. To serve `G/A/V/file`:
+Clients accept events for a group only from its release key. To serve `G/A/V/file`:
 
 ```json
-{"kinds":[3071], "authors":["<pinned key>"], "#j":["G:A"], "#v":["V"]}
+{"kinds":[3071], "authors":["<release key>"], "#j":["G:A"], "#v":["V"]}
 ```
 
 Query several relays, merge results, check signatures, pick the canonical release, fetch the manifest and then the file from the release's `server` tags, then the publisher's current `kind:10063`, and check every blob's sha256. Listing all versions of a module for `maven-metadata.xml` uses the same filter without `#v`, with kinds `3071` and `33071`.
 
-Clients SHOULD record, per project, the release each resolved version came from and the key each NIP-05 address resolved to, and SHOULD fail rather than switch when either changes. Because `created_at` is set by the signer, this record is what protects existing builds if a publisher's key leaks.
+Clients SHOULD record, per project, the release key of each group and the manifest hash each resolved version came from, and SHOULD fail rather than switch when either changes. Because `created_at` is set by the signer, this record is what protects existing builds if a publisher's key leaks. Pinning the manifest rather than the event id lets a publisher who rotates keys re-sign the same manifests without breaking locked builds.
 
 ## Tags
 
@@ -86,6 +99,7 @@ Clients SHOULD record, per project, the release each resolved version came from 
 [BUD-03]: https://github.com/hzrd149/blossom/blob/master/buds/03.md
 [BUD-06]: https://github.com/hzrd149/blossom/blob/master/buds/06.md
 [RFC 8785]: https://www.rfc-editor.org/rfc/rfc8785
+[Public Suffix List]: https://publicsuffix.org/
 [NIP-05]: 05.md
 [NIP-09]: 09.md
 [NIP-65]: 65.md
