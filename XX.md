@@ -79,18 +79,19 @@ Each status change of an order is published as a new event with the same `d` tag
 - `network` < Network >: `mainnet`, or the name of a test network in lowercase. On `internal`, it identifies the platform environment rather than a blockchain network: `mainnet` for production balances and `testnet` for testing balances.
 - `contract` [Contract]: The contract address, mint or asset ID of the token on the given `layer`. It MUST be present for tokens, and MUST be omitted for native assets (e.g. `sol` on `sol`, `eth` on `eth`) and on `internal`. On EVM layers (`eth`, `bsc`, `pol`, `arb`, `op`, `base`, `rsk` and any other EVM chain) the address MUST be lowercase. On `ton` it MUST use the raw form `<workchain>:<hex>` with lowercase hex (e.g. `0:b113a994b5024a16719f69139328eb759596c38a25f59028b146fecdc3621dfe` for USDT). On any other layer it MUST be kept exactly as the chain represents it.
 - `f` < Currency >: The fiat currency, using the [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) code. For currencies with no ISO 4217 code, the uppercase code commonly used in that market MAY be used.
-- `s` < Status >: `pending`, `canceled`, `in-progress`, `success`, `expired`.
+- `s` < Status >: `pending`, `paused`, `canceled`, `in-progress`, `success`, `expired`. A `paused` order cannot be taken for now, carries the same values as in `pending`, and clients MUST NOT display it as available. `pending`, `paused` and `in-progress` orders MAY change to any other status; `success`, `canceled` and `expired` are final.
 - `amt` < Amount >: The amount of the asset, in its main unit. It MUST be `"0"` while the order is `pending` if it is a range order, if its amount is computed when taken, or if it can be taken several times.
 - `fa` < Fiat amount >: The fiat amount. Range orders and orders that can be taken several times carry two values, the minimum and the maximum. The minimum MUST be less than or equal to the maximum.
 - `price` [Price]: The fixed price in fiat per unit of the asset.
 - `premium` [Premium]: The percentage over (positive) or under (negative) a market price that the maker is willing to pay or receive. The source of the market price is defined by the platform.
-- `pm` < Payment method >: The payment methods accepted, one per tag value.
+- `pm` < Payment method >: The payment methods accepted, one per tag value. Values are defined by each platform and are not necessarily comparable across platforms.
 - `source` [Source]: A URL that redirects to the order.
 - `rating` [Rating]: The rating of the maker, as a JSON string. How it is calculated is defined by the platform.
 - `name` [Name]: The name of the maker.
+- `maker` [Maker]: `platform` if the order was made by the platform itself, including accounts that trade on its behalf (e.g. its treasury), and `user` otherwise. Custodial accounts of users are not `platform`. Instead of `user`, a platform MAY use `bot` for an automated agent acting on behalf of a user, or `market-maker` for a user whose main activity is providing liquidity. Values other than `platform` are informational and not necessarily comparable across platforms. Absence means not declared, and clients MUST treat unknown values as not declared.
 - `g` [Geohash]: The geohash of the operation, useful for face to face trades.
 - `bond` [Bond]: The bond amount, a security deposit. An optional second value is the lowercase ticker of the asset the bond is held in (e.g. `["bond", "5", "usdc"]`); if omitted, it is the asset of the order. The amount is in the main unit of that asset. The ticker is informational and does not identify a specific chain or contract; the exact bond asset and terms are defined by the platform. Clients MUST NOT use it for asset aggregation.
-- `expires_at` < Expires At >: The time after which a `pending` order SHOULD be changed to `expired`.
+- `expires_at` < Expires At >: The time after which a `pending` or `paused` order SHOULD be changed to `expired`.
 - `expiration` [Expiration]: The time after which relays SHOULD delete the event ([NIP-40](40.md)).
 - `y` < Platform >: The platform that created the order.
 - `z` < Document >: `order`.
@@ -103,7 +104,7 @@ Mandatory tags are enclosed with `<tag>`, optional tags are enclosed with `[tag]
 
 When an order that can only be taken once moves to `in-progress` or `success`, it MUST carry the values agreed between the parties: a non-zero `amt` and a single-value `fa`.
 
-An order that can be taken several times (e.g. an ad taken by many counterparties) stays `pending` while it can still be taken, with `amt` set to `"0"` and `fa` set to the remaining minimum and maximum. Each execution is recorded as a [trade](#trade). When the order can no longer be taken it moves to `success`, `canceled` or `expired`, and if any execution happened `amt` and `fa` MUST be single values with the executed totals.
+An order that can be taken several times (e.g. an ad taken by many counterparties) stays `pending` while it can still be taken, with `amt` set to `"0"` and `fa` set to the minimum and maximum that can currently be taken. If the whole remaining amount is reserved by executions in progress, it moves to `in-progress`, with `amt` set to `"0"` and `fa` set to the remaining minimum and maximum including reserved amounts, and it returns to `pending` if a reservation is released. Each execution is recorded as a [trade](#trade). When it reaches a final state (`success`, `canceled` or `expired`), if any execution happened `amt` and `fa` MUST be single values with the executed totals.
 
 ### Layers
 
@@ -174,9 +175,9 @@ A trade MUST NOT carry an `expiration` tag, and MUST NOT be replaced except to c
 ### Tags
 
 - `d` < Trade ID >: A unique identifier for the trade, different from any order ID.
-- `a` [Order]: An optional reference to the order this trade fills, as `35353:<pubkey>:<order d>`. It MAY be omitted, including for privacy reasons, even if the order was published. When present, the pubkey MUST be the pubkey of the trade, and the trade's `k`, `c`, `layer`, `network`, `contract` and `f` MUST match the referenced order.
+- `a` [Order]: An optional reference to the order this trade fills, as `35353:<pubkey>:<order d>`. It MAY be omitted, including for privacy reasons, even if the order was published. When present, the pubkey MUST be the pubkey of the trade, and the trade's `k`, `c`, `layer`, `network`, `contract`, `f` and `maker` MUST match the referenced order.
 - `k` < Order type >: The order type, from the point of view of the order's maker.
-- `c`, `layer`, `network`, `contract`, `f`, `y`: As in the order.
+- `c`, `layer`, `network`, `contract`, `f`, `maker`, `y`: As in the order.
 - `amt` < Amount >: The executed amount of the asset. It MUST be greater than zero.
 - `fa` < Fiat amount >: The executed fiat amount. It MUST be greater than zero. The executed price is `fa / amt`.
 - `executed_at` < Executed At >: The time of the execution. It MAY be rounded.
@@ -185,9 +186,9 @@ A trade MUST NOT carry an `expiration` tag, and MUST NOT be replaced except to c
 
 ## Security considerations
 
-A signature proves that the platform states that an order or trade happened, not that it actually happened. Clients building market statistics SHOULD keep track of which platform produced each data point, SHOULD let users include or exclude platforms, and SHOULD use trades only, since final order values duplicate them.
+A signature proves that the platform states that an order or trade happened, not that it actually happened. Clients building market statistics SHOULD keep track of which platform produced each data point, SHOULD let users include or exclude platforms and events with `maker` set to `platform`, and SHOULD use trades only, since final order values duplicate them.
 
-The protocol cannot verify that a platform published every execution, nor that a replaced trade was a correction. Relays keep only the latest version of an addressable event, so earlier versions of a corrected trade are lost.
+The protocol cannot verify that a platform published every execution, nor that a replaced trade was a correction. Relays are only required to keep the latest version of an addressable event, so clients cannot rely on earlier versions of a corrected trade being available.
 
 The amount, time and payment method of a trade may be enough to link it to a bank transfer. Trades MUST NOT include information about the counterparties. Platforms MAY delay the publication of trades and MAY round `executed_at`. The `a` tag links a trade to its order, which may carry `name`, `rating` or `source`; platforms MAY omit it.
 
@@ -208,6 +209,10 @@ USDT/USD trades published since a given time:
 ```
 
 [NIP-01](01.md) only expects relays to index single-letter tags, so `layer`, `network` and `contract` are not filtered by these queries. Their results MUST be grouped by [asset identity](#asset-identity) before aggregating.
+
+## Implementations
+
+- [QvaPay](https://www.qvapay.com/docs/p2p/nostr): orders and trades.
 
 ## References
 
