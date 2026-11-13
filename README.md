@@ -118,6 +118,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-CD: Slash Commands](CD.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
+- [NIP-FC: Maven Repositories](FC.md)
 
 ## Event Kinds
 
@@ -187,6 +188,8 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `2003`        | Torrent                         | [35](35.md)                            |
 | `2004`        | Torrent Comment                 | [35](35.md)                            |
 | `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
+| `3071`        | Maven Release                   | [FC](FC.md)                            |
+| `3072`        | Maven Release Yank              | [FC](FC.md)                            |
 | `4550`        | Community Post Approval         | [72](72.md)                            |
 | `5128`        | nsite manifest snapshot         | [5A](5A.md)                            |
 | `7374`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
@@ -291,6 +294,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `31990`       | Handler information             | [89](89.md)                            |
 | `31992`       | Slash command definition        | [CD](CD.md)                            |
 | `32267`       | Software Application            |                                        |
+| `33071`       | Maven Snapshot                  | [FC](FC.md)                            |
 | `33534`       | Role Definition                 | [43](43.md)                            |
 | `34128`       | Legacy nsite manifest           | [5A](5A.md) (deprecated)               |
 | `34235`       | Addressable Video Event         | [71](71.md)                            |
