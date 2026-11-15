@@ -31,6 +31,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-07: `window.nostr` capability for web browsers](07.md)
 - ~~[NIP-08: Handling Mentions](08.md) --- **unrecommended**: deprecated in favor of [NIP-27](27.md)~~
 - [NIP-09: Event Deletion Request](09.md)
+- [NIP-0D: Relay Onion Addresses](0D.md)
 - [NIP-10: Text Notes and Threads](10.md)
 - [NIP-11: Relay Information Document](11.md)
 - [NIP-13: Proof of Work](13.md)
