@@ -39,6 +39,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-17: Private Direct Messages](17.md)
 - [NIP-18: Reposts](18.md)
 - [NIP-19: bech32-encoded entities](19.md)
+- [NIP-1B: Network Abuse Reports](1B.md)
 - [NIP-21: `nostr:` URI scheme](21.md)
 - [NIP-22: Comment](22.md)
 - [NIP-23: Long-form Content](23.md)
@@ -287,6 +288,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `31923`       | Time-Based Calendar Event       | [52](52.md)                            |
 | `31924`       | Calendar                        | [52](52.md)                            |
 | `31925`       | Calendar Event RSVP             | [52](52.md)                            |
+| `31984`       | Network Abuse Report            | [1B](1B.md)                            |
 | `31989`       | Handler recommendation          | [89](89.md)                            |
 | `31990`       | Handler information             | [89](89.md)                            |
 | `31992`       | Slash command definition        | [CD](CD.md)                            |
