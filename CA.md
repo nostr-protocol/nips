@@ -101,9 +101,9 @@ and it MUST NOT contain a URL. A cairn whose `alt` tag is present but breaks the
 
 ### Immutability
 
-A cairn is a regular event and MUST NOT be replaced or edited: copies of its id prefix may exist
-anywhere, on paper or in stone. To point somewhere else, publish a new cairn. A cairn can be
-withdrawn with a [NIP-09](09.md) deletion request.
+A cairn is a regular event ([NIP-01](01.md)), so it is never replaced or edited, and copies of its id
+prefix stay valid anywhere they are kept, on paper or in stone. To point somewhere else, publish a
+new cairn. A cairn can be withdrawn with a [NIP-09](09.md) deletion request.
 
 ## Publishing
 
