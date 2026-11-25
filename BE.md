@@ -18,11 +18,13 @@ A backgrounded iOS device advertises the UUID only in Apple's "overflow" manufac
 
 Every device runs both GATT roles at once: a peripheral hosting the service, and a central scanning for it.
 
-The service has one characteristic, `5C020905-A8FC-4D19-AB51-1FFDB97FB90A`, with the `write` and `notify` properties. The dialer sends with acknowledged writes and the receiver with notifications. Each write or notification carries exactly one [fragment](#framing), and a device has at most one in flight on the characteristic at a time.
+The service has one characteristic, `5C020905-A8FC-4D19-AB51-1FFDB97FB90A`, with the `write` and `notify` properties. The dialer sends with acknowledged writes and the receiver with notifications. Each write or notification carries exactly one [fragment](#framing), and on each link a device has at most one in flight at a time. A write is in flight until the receiver acknowledges it, and a notification is in flight until the sender's platform accepts it for sending.
 
-The dialer SHOULD negotiate the largest ATT MTU the platform allows. A fragment is at most the ATT MTU minus 3 bytes.
+The dialer opens a link by enabling notifications on the characteristic, and MUST do so before its first write. A receiver MUST refuse with an ATT error any write from a central it has no link with, whether the central has not enabled notifications or the receiver has closed the link. A receiver whose platform cannot disconnect a central closes a link this way, by refusing every later write on it. A dialer whose write is refused with an ATT error MUST close the link.
 
-Two devices that dial each other end up with two links which can't be matched until after authentication. Once authenticated, both devices keep the link dialed by whichever of them has the lower pubkey, and close the other. A peer that authenticated as several pubkeys is compared by the lowest.
+The dialer SHOULD negotiate the largest ATT MTU the platform allows. A fragment is at most the ATT MTU minus 3 bytes, and never more than 512 bytes.
+
+Two devices that dial each other end up with two links which can't be matched until after authentication. Once authenticated, both devices keep the link dialed by whichever of them has the lower pubkey, and close the other. A device that authenticates as several pubkeys is compared by the lowest, which it [authenticates as first](#authentication), so that the comparison does not change as the rest arrive.
 
 ## Framing
 
@@ -34,7 +36,7 @@ Every write is one fragment:
 | 1 | Flags. Bit 0 set means more fragments of this frame follow. The other bits MUST be zero |
 | 2.. | Payload |
 
-A frame is the concatenation of its fragments' payloads. Fragments of frames on different channels MAY interleave, and reassembly is per channel. Fragments of two frames on the same channel MUST NOT interleave. A frame MUST NOT be empty, and MUST NOT exceed 1 MiB. A device that receives a reserved flag or a frame over the limit MUST close the link, and a sender MUST NOT set a flag defined later until a control frame has shown that the peer understands it. A device MUST decrypt a fragment on a channel it does not recognize, which keeps the nonce sequence in step, and then discard it.
+A frame is the concatenation of its fragments' payloads. Fragments of frames on different channels MAY interleave. Reassembly is per channel and per transport, GATT or [L2CAP](#l2cap-upgrade). Fragments of two frames on the same channel and transport MUST NOT interleave. A frame MUST NOT be empty, and MUST NOT exceed 1 MiB. A device that receives a reserved flag or a frame over the limit MUST close the link, and a sender MUST NOT set a flag defined later until a control frame has shown that the peer understands it. A device MUST decrypt a fragment on a channel it does not recognize, which keeps the nonce sequence in step, and then discard it.
 
 Senders SHOULD schedule by channel, control first and blob last, so that blob transfers do not delay heartbeats.
 
@@ -50,7 +52,7 @@ Handshake messages are frames on channel 0. They are not sealed and carry no dis
 
 ### Encryption
 
-After the handshake, each direction seals every fragment, header included, under its Noise transport key, with an explicit nonce in place of Noise's implicit counter. The `n`th fragment a device sends over GATT, counting from zero, uses nonce `2n`. The `n`th it sends over an [L2CAP channel](#l2cap-upgrade) uses nonce `2n+1`. The two pipes deliver independently, and each sequence opens strictly in order. There is no associated data.
+After the handshake, each direction seals every fragment, header included, under its Noise transport key, with an explicit nonce in place of Noise's implicit counter. The `n`th fragment a device sends over GATT, counting from zero, uses nonce `2n`. The `n`th it sends over [L2CAP](#l2cap-upgrade) uses nonce `2n+1`. The two transports deliver independently, and each sequence opens strictly in order. There is no associated data.
 
 A device seals each fragment as it writes it rather than as it queues it, because the scheduler may let a control fragment overtake queued blob fragments.
 
@@ -78,9 +80,9 @@ Once both sides of a session have authenticated, each derives a pair secret, whi
 pair_secret = SHA256("nip-be/pair-secret" || h)
 ```
 
-A device keeps the secret it already holds for a peer it recognized in this session, and replaces any other. A pairing only one side finished is then repaired the next time the two meet.
+A device that recognized the peer in this session keeps the secret the peer's tags matched, and stores that secret against any pubkey the peer authenticated as that recognition did not resolve, because the peer already holds it. A device that did not recognize the peer stores this session's secret, replacing any other. A secret only one device stored is then repaired the next time the two meet.
 
-In every later session, each device sends a list of tags, one per pair secret it holds:
+In every later session, each device sends a list of tags, one per pair secret it holds, however many pubkeys the secret is stored against:
 
 ```
 tag = HMAC-SHA256(pair_secret, h)
@@ -92,7 +94,7 @@ A device that receives a list computes the tag for each secret it holds and look
 
 ### Heartbeat
 
-A device sends a heartbeat every 15 to 30 seconds, jittered, unless it has other frames queued. Any frame proves liveness. A device that has heard nothing for 60 seconds SHOULD close the link once any transfer in flight has had a chance to finish.
+A device sends a heartbeat every 15 to 30 seconds, jittered, unless it has other frames queued. A device that receives a heartbeat when it has sent nothing for 15 seconds answers it with a heartbeat, so a device whose platform suspends its timers still beats as often as its peer does. Any frame proves liveness. A device that has heard nothing for 60 seconds SHOULD close the link once any transfer in flight has had a chance to finish.
 
 ### Pairing
 
@@ -102,7 +104,7 @@ Implementations MAY require explicit device pairing depending on use case or pol
 code = uint32_be(SHA256("nip-be/pairing-code" || h)[0..4]) mod 1000000
 ```
 
-The code MUST be displayed as six decimal digits, with leading zeros. Pairing is complete only once both devices have confirmed that the codes match.
+The code MUST be displayed as six decimal digits, with leading zeros. A pair request asks the peer to show the code to its user. Each device completes the pairing once its own user confirms that the codes match. No frame carries that confirmation to the other device.
 
 ## Authentication
 
@@ -117,13 +119,15 @@ Authentication uses a modified NIP-42 flow, each acting as a relay to the other:
   3. Dialer: `["AUTH", <event>]`.
   4. Receiver: `["AUTH", <event>]`.
 
-A device MUST NOT send on channels 1 and 2 until it has verified the peer's `AUTH` event and sent its own, and MUST close the link if the peer sends on them sooner.
+Each device sends one recognition list and one challenge per session, at its step above, and MUST NOT send another. A challenge stays valid for the whole session. A device MUST ignore any later challenge from the peer, and answers the first. A device MAY authenticate as several pubkeys by answering the same challenge with one `AUTH` event per pubkey, and the peer answers each event with its own `OK`. Such a device MUST send the event for its lowest pubkey first.
 
-Either device MAY close the link at any point before it sends its own `AUTH` event, for instance on the result of recognition or, for the receiver, on the dialer's pubkey. A receiver MAY hold the link for up to five minutes while it asks its user. The dialer SHOULD keep the link open for that long while heartbeats arrive.
+A device MUST NOT send on channels 1 and 2 until it has verified an `AUTH` event from the peer and sent one of its own, and MUST close the link if the peer sends on them sooner.
+
+Either device MAY close the link at any point before it sends its first `AUTH` event, for instance on the result of recognition or, for the receiver, on the dialer's pubkey. A receiver MAY hold the link for up to five minutes while it asks its user. The dialer SHOULD keep the link open for that long while heartbeats arrive.
 
 ## Sync Protocol
 
-Channel 1 carries [NIP-01](01.md) and [NIP-77](77.md) messages as UTF-8 JSON, one message per frame. Both halves of the relay protocol travel in both directions over it. Overloaded verbs are disambiguated based on the message's shape and subscription id. Subscription ids SHOULD be random enough that the two halves' ids don't collide.
+Channel 1 carries [NIP-01](01.md) and [NIP-77](77.md) messages as UTF-8 JSON, one message per frame. Both halves of the relay protocol travel in both directions over it. Overloaded verbs are disambiguated based on the message's shape and subscription id. Subscription ids SHOULD be random enough that the two halves' ids don't collide. A device MUST ignore a message whose verb it does not recognize.
 
 ## Blobs
 
@@ -169,7 +173,7 @@ BLAKE3 hashes and creates a proof for a blob in 1 KiB chunks. Ranges fetched wit
 
 ## L2CAP upgrade
 
-GATT carries around 5 to 15 KB/s. An L2CAP connection-oriented channel over the same BLE connection carries several times that, and devices MAY open one for blob traffic. The channel is part of the same session, using the same Noise keys and framing, and it carries only channel 2.
+GATT carries around 5 to 15 KB/s. An L2CAP connection-oriented channel over the same BLE connection carries several times that, and devices MAY open one for blob traffic. The channel is part of the same session, using the same Noise keys and framing, and it carries only channel 2. A session opens at most one L2CAP channel, because the odd [nonces](#encryption) form one sequence for the whole session, and fragments lost with a channel would leave the two devices out of step.
 
 The platform APIs let the GATT peripheral publish a channel and the central connect to it, so the receiver publishes and the dialer connects, whichever side wants the bandwidth. The two arrange this with control frame `0x04`, whose payload starts with one of these steps:
 
@@ -177,9 +181,11 @@ The platform APIs let the GATT peripheral publish a channel and the central conn
 | --- | --- | --- | --- |
 | `0x01` request | Dialer | Nothing | The dialer wants a channel and asks the receiver to publish one |
 | `0x02` published | Receiver | PSM, 2 bytes, big-endian | The receiver has published a channel at this PSM |
-| `0x03` unavailable | Either | Nothing | This device cannot publish or open a channel, and blob traffic stays on GATT |
+| `0x03` unavailable | Either | Nothing | This device cannot publish, open or keep a channel, and blob traffic stays on GATT for the rest of the session |
 
 The receiver MAY publish without being asked. Devices open the channel without link-layer encryption, which would require bonding, a durable pairing record on both devices. Noise already encrypts the traffic.
+
+Any device connected to the receiver can open a channel at a PSM it has published. The receiver MUST use a channel for a link only if that link's central opened it, and closes any other channel opened at that link's PSM.
 
 On the channel:
 
@@ -188,7 +194,11 @@ On the channel:
 - Fragments are sealed with the odd nonces described under [Encryption](#encryption).
 - A frame finishes on the transport it started on, so blob traffic moves to L2CAP only between frames.
 
-A failed upgrade never closes the link. A device that cannot publish, cannot open, or loses an open channel sends `unavailable`, and both devices move blob traffic back to GATT. A fetcher SHOULD then reissue any blob request in flight, because its answer may have been lost with the channel.
+A failed upgrade never closes the link. A device that cannot publish, cannot open, or loses an open channel sends `unavailable`, and both devices move blob traffic back to GATT. A device that loses the channel discards any partial frame it received over the channel, and finishes on GATT any blob frame it began on GATT. A fetcher SHOULD then reissue any blob request in flight, because its answer may have been lost with the channel.
+
+Once a device has sent or received `unavailable`, blob traffic stays on GATT for the rest of the session, and the device answers a later `request` or `published` with `unavailable`. The device MUST close any open channel, including one the platform reports open after that point, and withdraw any channel it published. Closing or withdrawing a channel does not close the link.
+
+A device MUST ignore a step it does not recognize, and bytes after the fields it knows. A `published` too short to carry a PSM fails the upgrade as `unavailable` does, and the device answers it with `unavailable`.
 
 ## Privacy
 
