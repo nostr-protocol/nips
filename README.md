@@ -77,6 +77,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-58: Badges](58.md)
 - [NIP-59: Gift Wrap](59.md)
 - [NIP-5A: Static Websites (nsites)](5A.md)
+- [NIP-5E: Aggregate Queries](5E.md)
 - [NIP-60: Cashu Wallet](60.md)
 - [NIP-61: Nutzaps](61.md)
 - [NIP-62: Request to Vanish](62.md)
@@ -320,13 +321,14 @@ This table is not exhaustive. For a machine-readable registry of all known event
 
 ### Client to Relay
 
-| type    | description                                         | NIP         |
-| ------- | --------------------------------------------------- | ----------- |
-| `EVENT` | used to publish events                              | [01](01.md) |
-| `REQ`   | used to request events and subscribe to new updates | [01](01.md) |
-| `CLOSE` | used to stop previous subscriptions                 | [01](01.md) |
-| `AUTH`  | used to send authentication events                  | [42](42.md) |
-| `COUNT` | used to request event counts                        | [45](45.md) |
+| type     | description                                         | NIP         |
+| -------- | --------------------------------------------------- | ----------- |
+| `EVENT`  | used to publish events                              | [01](01.md) |
+| `REQ`    | used to request events and subscribe to new updates | [01](01.md) |
+| `CLOSE`  | used to stop previous subscriptions                 | [01](01.md) |
+| `AUTH`   | used to send authentication events                  | [42](42.md) |
+| `COUNT`  | used to request event counts                        | [45](45.md) |
+| `SELECT` | used to request aggregates over events              | [5E](5E.md) |
 
 ### Relay to Client
 
@@ -339,6 +341,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `CLOSED` | used to notify clients that a REQ was ended and why     | [01](01.md) |
 | `AUTH`   | used to send authentication challenges                  | [42](42.md) |
 | `COUNT`  | used to send requested event counts to clients          | [45](45.md) |
+| `SELECT` | used to send requested aggregates to clients            | [5E](5E.md) |
 
 ## Criteria for acceptance in this repository
 
