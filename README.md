@@ -116,6 +116,7 @@ NIPs listed here are not a protocol checklist. Nothing forces any software to im
 - [NIP-C7: Chats](C7.md)
 - [NIP-CC: Geocaching](CC.md)
 - [NIP-CD: Slash Commands](CD.md)
+- [NIP-D5: DNSSEC Proofs](D5.md)
 - ~~[NIP-EE: E2EE Messaging using MLS Protocol](EE.md) --- **unrecommended**: superseded by the [Marmot Protocol](https://github.com/marmot-protocol/marmot)~~
 - [NIP-F4: Podcasts](F4.md)
 
@@ -199,6 +200,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `9000`-`9030` | Group Control Events            | [29](29.md)                            |
 | `9041`        | Zap Goal                        | [75](75.md)                            |
 | `9321`        | Nutzap                          | [61](61.md)                            |
+| `9364`        | DNSSEC Proof                    | [D5](D5.md)                            |
 | `9734`        | Zap Request                     | [57](57.md)                            |
 | `9735`        | Zap                             | [57](57.md)                            |
 | `9802`        | Highlights                      | [84](84.md)                            |
