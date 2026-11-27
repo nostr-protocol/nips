@@ -157,6 +157,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `62`          | Request to Vanish               | [62](62.md)                            |
 | `64`          | Chess (PGN)                     | [64](64.md)                            |
 | `78`          | Application-specific Data       | [78](78.md)                            |
+| `321`         | Block Anchor                    | [Cyberspace][cyberspace]               |
 | `443`         | KeyPackage                      | [Marmot][marmot]                       |
 | `444`         | Welcome Message                 | [Marmot][marmot]                       |
 | `445`         | Group Event                     | [Marmot][marmot]                       |
@@ -187,6 +188,14 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `2003`        | Torrent                         | [35](35.md)                            |
 | `2004`        | Torrent Comment                 | [35](35.md)                            |
 | `2022`        | Coinjoin Pool                   | [joinstr][joinstr]                     |
+| `3330`        | Shard Item                      | [Cyberspace][cyberspace]               |
+| `3333`        | Movement Action                 | [Cyberspace][cyberspace]               |
+| `3340`        | Key Item                        | [Cyberspace][cyberspace]               |
+| `3341`        | Chest Item                      | [Cyberspace][cyberspace]               |
+| `3343`        | Blueprint Card                  | [Cyberspace][cyberspace]               |
+| `3350`        | Seed DNA                        | [Cyberspace][cyberspace]               |
+| `3351`        | Seed                            | [Cyberspace][cyberspace]               |
+| `3352`        | Seed Tend                       | [Cyberspace][cyberspace]               |
 | `4550`        | Community Post Approval         | [72](72.md)                            |
 | `5128`        | nsite manifest snapshot         | [5A](5A.md)                            |
 | `7374`        | Reserved Cashu Wallet Tokens    | [60](60.md)                            |
@@ -232,6 +241,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `10166`       | Relay Monitor Announcement      | [66](66.md)                            |
 | `10312`       | Room Presence                   | [53](53.md)                            |
 | `10992`       | Installed slash commands        | [51](51.md), [CD](CD.md)               |
+| `11333`       | Avatar                          | [Cyberspace][cyberspace]               |
 | `13194`       | Wallet Info                     | [47](47.md)                            |
 | `13534`       | Membership Lists                | [43](43.md)                            |
 | `15128`       | Root nsite manifest             | [5A](5A.md)                            |
@@ -240,6 +250,8 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `22242`       | Client Authentication           | [42](42.md)                            |
 | `23194`       | Wallet Request                  | [47](47.md)                            |
 | `23195`       | Wallet Response                 | [47](47.md)                            |
+| `23330`       | Chat Envelope                   | [Cyberspace][cyberspace]               |
+| `23333`       | Chat Line                       | [Cyberspace][cyberspace]               |
 | `24133`       | Nostr Connect                   | [46](46.md)                            |
 | `24242`       | Blobs stored on mediaservers    | [B7](B7.md)                            |
 | `27235`       | HTTP Auth                       | [98](98.md)                            |
@@ -291,6 +303,12 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `31990`       | Handler information             | [89](89.md)                            |
 | `31992`       | Slash command definition        | [CD](CD.md)                            |
 | `32267`       | Software Application            |                                        |
+| `33330`       | Hidden Bag                      | [Cyberspace][cyberspace]               |
+| `33331`       | 3D Object (SNO)                 | [Cyberspace][cyberspace]               |
+| `33335`       | Sealed Bag Entry                | [Cyberspace][cyberspace]               |
+| `33339`       | Block Layer                     | [Cyberspace][cyberspace]               |
+| `33340`       | Item Listing                    | [Cyberspace][cyberspace]               |
+| `33343`       | Blueprint Record                | [Cyberspace][cyberspace]               |
 | `33534`       | Role Definition                 | [43](43.md)                            |
 | `34128`       | Legacy nsite manifest           | [5A](5A.md) (deprecated)               |
 | `34235`       | Addressable Video Event         | [71](71.md)                            |
@@ -314,6 +332,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 [NKBIP-02]: https://wikistr.com/nkbip-02*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1
 [NKBIP-03]: https://wikistr.com/nkbip-03*fd208ee8c8f283780a9552896e4823cc9dc6bfd442063889577106940fd927c1
 [marmot]: https://github.com/marmot-protocol/marmot
+[cyberspace]: https://github.com/arkin0x/cyberspace
 
 
 ## Message types
