@@ -192,6 +192,7 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `3333`        | Movement Action                 | [Cyberspace][cyberspace]               |
 | `3340`        | Key Item                        | [Cyberspace][cyberspace]               |
 | `3341`        | Chest Item                      | [Cyberspace][cyberspace]               |
+| `3343`        | Blueprint Card                  | [Cyberspace][cyberspace]               |
 | `3350`        | Seed DNA                        | [Cyberspace][cyberspace]               |
 | `3351`        | Seed                            | [Cyberspace][cyberspace]               |
 | `3352`        | Seed Tend                       | [Cyberspace][cyberspace]               |
@@ -305,7 +306,9 @@ This table is not exhaustive. For a machine-readable registry of all known event
 | `33330`       | Hidden Bag                      | [Cyberspace][cyberspace]               |
 | `33331`       | 3D Object (SNO)                 | [Cyberspace][cyberspace]               |
 | `33335`       | Sealed Bag Entry                | [Cyberspace][cyberspace]               |
+| `33339`       | Block Layer                     | [Cyberspace][cyberspace]               |
 | `33340`       | Item Listing                    | [Cyberspace][cyberspace]               |
+| `33343`       | Blueprint Record                | [Cyberspace][cyberspace]               |
 | `33534`       | Role Definition                 | [43](43.md)                            |
 | `34128`       | Legacy nsite manifest           | [5A](5A.md) (deprecated)               |
 | `34235`       | Addressable Video Event         | [71](71.md)                            |
